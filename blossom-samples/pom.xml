@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>fr.mgargadennec.blossom</groupId>
+		<artifactId>blossom-parent</artifactId>
+		<version>${project.version}</version>
+		<relativePath>../blossom-parent</relativePath>
+	</parent>
+
+	<artifactId>blossom-samples</artifactId>
+	<packaging>pom</packaging>
+
+	<name>Blossom Samples</name>
+	<url>http://maven.apache.org</url>
+
+	<modules>
+		<module>blossom-sample-simple</module>
+		<module>blossom-sample-simple-secured</module>
+	</modules>
+</project>

@@ -1,0 +1,26 @@
+#Configuration du contexte root
+fr.mgargadennec.blossom.autoconfigure.EnableBlossom=\
+fr.mgargadennec.blossom.autoconfigure.common.BlossomCommonAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.security.BlossomSecurityAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.indexing.BlossomIndexingAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.user.BlossomUserAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.group.BlossomGroupAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.role.BlossomRoleAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.right.BlossomRightAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.association.group.entity.BlossomAssociationGroupEntityAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.association.group.user.BlossomAssociationGroupUserAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.association.role.right.BlossomAssociationRoleRightAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.association.user.role.BlossomAssociationUserRoleAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.web.BlossomWebAutoConfiguration
+
+
+
+#Configuration web
+fr.mgargadennec.blossom.autoconfigure.EnableBlossomWeb=\
+fr.mgargadennec.blossom.autoconfigure.common.BlossomCommonWebAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.group.BlossomGroupWebAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.user.BlossomUserWebAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.role.BlossomRoleWebAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.association.group.entity.BlossomAssociationGroupEntityWebAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.association.group.user.BlossomAssociationGroupUserWebAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.association.role.right.BlossomAssociationRoleRightWebAutoConfiguration
