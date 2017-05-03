@@ -17,6 +17,5 @@
 	<url>http://maven.apache.org</url>
 
 	<modules>
-	<module>blossom-common-core</module>
 	</modules>
 </project>

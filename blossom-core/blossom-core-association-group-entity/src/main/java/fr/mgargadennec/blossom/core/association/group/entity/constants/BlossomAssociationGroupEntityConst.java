@@ -1,9 +1,0 @@
-package fr.mgargadennec.blossom.core.association.group.entity.constants;
-
-import fr.mgargadennec.blossom.core.association.group.entity.constants.impl.BlossomAssociationGroupEntityEntityConst;
-import fr.mgargadennec.blossom.core.association.group.entity.constants.impl.BlossomAssociationGroupEntityQualifiersConst;
-import fr.mgargadennec.blossom.core.association.group.entity.constants.impl.BlossomAssociationGroupEntitySecurityConst;
-
-public class BlossomAssociationGroupEntityConst implements BlossomAssociationGroupEntitySecurityConst, BlossomAssociationGroupEntityEntityConst, BlossomAssociationGroupEntityQualifiersConst {
-
-}

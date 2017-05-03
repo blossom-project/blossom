@@ -9,13 +9,10 @@
     <relativePath>../blossom-parent</relativePath>
   </parent>
 
-  <artifactId>blossom-core</artifactId>
+  <artifactId>blossom-modules</artifactId>
   <packaging>pom</packaging>
 
-  <name>Blossom Core</name>
+  <name>Blossom Modules</name>
   <url>http://maven.apache.org</url>
 
-  <modules>
-    
-  </modules>
 </project>
