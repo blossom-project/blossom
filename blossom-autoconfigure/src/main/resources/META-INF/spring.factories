@@ -1,2 +1,9 @@
 #Configuration du contexte root
-fr.mgargadennec.blossom.autoconfigure.EnableBlossom=
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+fr.mgargadennec.blossom.autoconfigure.core.user.UserAutoConfiguration
+
+
+fr.mgargadennec.blossom.autoconfigure.EnableBlossom=\
+fr.mgargadennec.blossom.autoconfigure.ui.WebContextAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.ui.api.WebApiAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.ui.web.WebInterfaceAutoConfiguration

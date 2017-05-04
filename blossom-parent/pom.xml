@@ -2,9 +2,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>fr.mgargadennec.blossom</groupId>
+  <parent>
+    <groupId>fr.mgargadennec.blossom</groupId>
+    <artifactId>blossom</artifactId>
+    <version>${project.version}</version>
+  </parent>
+
 	<artifactId>blossom-parent</artifactId>
-	<version>${project.version}</version>
 	<packaging>pom</packaging>
 
 	<name>blossom-parent</name>
@@ -12,10 +16,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.version>0.0.1-SNAPSHOT</project.version>
-		<java.version>1.8</java.version>
 
-		<springboot.version>1.5.2.RELEASE</springboot.version>
+		<springboot.version>1.5.3.RELEASE</springboot.version>
 		<querydsl.version>3.7.0</querydsl.version>
 		<javers.version>1.4.3</javers.version>
 
@@ -25,7 +27,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- Spring boot -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
@@ -35,5 +36,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 </project>

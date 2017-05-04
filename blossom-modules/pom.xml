@@ -15,4 +15,7 @@
   <name>Blossom Modules</name>
   <url>http://maven.apache.org</url>
 
+  <modules>
+  </modules>
+
 </project>

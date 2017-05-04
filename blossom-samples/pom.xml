@@ -16,5 +16,6 @@
 	<url>http://maven.apache.org</url>
 
 	<modules>
-	</modules>
+    <module>blossom-samples-basic</module>
+  </modules>
 </project>
