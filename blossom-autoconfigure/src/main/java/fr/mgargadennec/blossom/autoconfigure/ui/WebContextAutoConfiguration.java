@@ -9,6 +9,11 @@ import org.springframework.boot.autoconfigure.web.WebMvcRegistrationsAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -21,7 +26,26 @@ import java.lang.reflect.Method;
 @Configuration
 @ConditionalOnWebApplication
 @AutoConfigureBefore(WebMvcAutoConfiguration.class)
-public class WebContextAutoConfiguration {
+public class WebContextAutoConfiguration extends WebMvcConfigurerAdapter {
+  private final static String BLOSSOM_BASE_PATH = "blossom";
+  private final static String BLOSSOM_API_BASE_PATH = BLOSSOM_BASE_PATH + "/api";
+
+  @Bean
+  public LocaleResolver localeResolver() {
+    return new SessionLocaleResolver();
+  }
+
+  @Bean
+  public LocaleChangeInterceptor localeChangeInterceptor() {
+    LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+    lci.setParamName("lang");
+    return lci;
+  }
+
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/" + BLOSSOM_BASE_PATH + "/**", "/" + BLOSSOM_API_BASE_PATH + "/**");
+  }
 
   @Bean
   public WebMvcRegistrationsAdapter webMvcRegistrationsHandlerMapping() {
@@ -29,8 +53,6 @@ public class WebContextAutoConfiguration {
       @Override
       public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
         return new RequestMappingHandlerMapping() {
-          private final static String BLOSSOM_BASE_PATH = "blossom";
-          private final static String BLOSSOM_API_BASE_PATH = BLOSSOM_BASE_PATH + "/api";
 
           @Override
           protected void registerHandlerMethod(Object handler, Method method, RequestMappingInfo mapping) {
@@ -55,6 +77,6 @@ public class WebContextAutoConfiguration {
         };
       }
     };
-  }
 
+  }
 }

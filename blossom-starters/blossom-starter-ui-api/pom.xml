@@ -11,7 +11,7 @@
 
   <artifactId>blossom-starter-ui-api</artifactId>
 
-  <name>Blossom Starters : UI starter</name>
+  <name>Blossom Starters : Starter UI Api</name>
   <url>http://maven.apache.org</url>
 
   <dependencies>
@@ -35,22 +35,4 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>1.5.3.RELEASE</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>build-info</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 </project>

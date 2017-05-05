@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class WebApiAutoConfiguration {
 
   @Bean
-  public BuildInfoApiController buildInfoController(BuildProperties buildProperties) {
+  public BuildInfoApiController buildInfoApiController(BuildProperties buildProperties) {
     return new BuildInfoApiController(buildProperties);
   }
 

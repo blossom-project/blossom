@@ -17,5 +17,7 @@
 
 	<modules>
     <module>blossom-samples-basic</module>
+    <module>blossom-samples-ui</module>
+    <module>blossom-samples-ui-override</module>
   </modules>
 </project>

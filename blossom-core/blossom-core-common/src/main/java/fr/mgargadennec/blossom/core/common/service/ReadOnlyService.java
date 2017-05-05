@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface ReadOnlyService<DTO extends AbstractDTO>  {
+public interface ReadOnlyService<DTO extends AbstractDTO> extends ReadOnlyServicePlugin {
 
   Page<DTO> getAll(Pageable pageable);
 

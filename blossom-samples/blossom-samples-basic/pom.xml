@@ -10,6 +10,8 @@
   </parent>
 
   <artifactId>blossom-samples-basic</artifactId>
+  <name>Blossom Basic Sample</name>
+  <description>Blossom sample application with no web interface</description>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -34,6 +36,7 @@
         <executions>
           <execution>
             <goals>
+              <goal>build-info</goal>
               <goal>repackage</goal>
             </goals>
           </execution>

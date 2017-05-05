@@ -5,7 +5,6 @@ import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.JPQLQuery;
-import fr.mgargadennec.blossom.core.common.PredicateProvider;
 import fr.mgargadennec.blossom.core.common.entity.AbstractEntity;
 import fr.mgargadennec.blossom.core.common.repository.CrudRepository;
 import org.springframework.data.domain.Page;
@@ -21,7 +20,6 @@ import java.util.List;
 public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> implements ReadOnlyDao<ENTITY> {
 
   protected final CrudRepository<ENTITY, Long> repository;
-  protected final PredicateProvider predicateProvider;
 
   private Querydsl querydsl;
   private EntityManager entityManager;
@@ -29,9 +27,8 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   private TypeToken<ENTITY> type = new TypeToken<ENTITY>(getClass()) {
   };
 
-  GenericReadOnlyDaoImpl(CrudRepository<ENTITY, Long> repository, PredicateProvider predicateProvider) {
+  GenericReadOnlyDaoImpl(CrudRepository<ENTITY, Long> repository) {
     this.repository = repository;
-    this.predicateProvider = predicateProvider;
   }
 
   /**
@@ -54,23 +51,22 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
 
   @Override
   public ENTITY getOne(long id) {
-    return this.repository.findOne(predicateProvider.getPredicate());
+    return this.repository.findOne(id);
   }
 
   @Override
   public List<ENTITY> getAll() {
-    return this.repository.findAll(predicateProvider.getPredicate());
+    return this.repository.findAll();
   }
 
   @Override
   public List<ENTITY> getAll(List<Long> ids) {
-    return this.repository
-      .findAll(predicateProvider.getPredicate());
+    return this.repository.findAll(ids);
   }
 
   @Override
   public Page<ENTITY> getAll(Pageable pageable) {
-    return repository.findAll(predicateProvider.getPredicate(), pageable);
+    return repository.findAll(pageable);
   }
 
   /**
