@@ -52,6 +52,9 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   @Override
   public User updateLastConnection(Long id, Date lastConnection) {
     User user = repository.findOne(id);
+    if(user == null){
+      return null;
+    }
     user.setLastConnection(lastConnection);
     return repository.save(user);
   }

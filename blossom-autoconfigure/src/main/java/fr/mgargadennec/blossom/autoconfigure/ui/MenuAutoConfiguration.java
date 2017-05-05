@@ -36,7 +36,7 @@ public class MenuAutoConfiguration {
   @Bean
   @Order(0)
   public MenuItem homeMenuItem(MenuItemBuilder builder) {
-    return builder.key("home").label("menu.home", true).icon("fa fa-home").link("/blossom/system").build();
+    return builder.key("home").label("menu.home", true).icon("fa fa-home").link("/blossom").build();
   }
 
   @Bean

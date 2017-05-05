@@ -10,6 +10,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Date;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 /**
@@ -38,6 +40,7 @@ public class SampleUIOverride {
         user.setEmail("Email-" + i);
         user.setPhone("Phone-" + i);
         user.setFunction("Function-" + i);
+        user.setLastConnection(new Date(System.currentTimeMillis() - new Random().nextInt(500000)));
         user.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available.");
         return user;
       }).forEach(u -> userService.create(u));

@@ -4,7 +4,7 @@
 
 <@table.pagetable
   page=users
-  label='users.title'
+  label='users.label'
   iconPath='fa fa-user'
   columns= {
   "firstname": {"label":"users.user.properties.firstname", "sortable":true, "link":"/blossom/administration/users/{id}"},
@@ -13,6 +13,7 @@
   "userFunction": {"label":"users.user.properties.function", "sortable":true},
   "email": {"label":"users.user.properties.email", "sortable":true},
   "phone": {"label":"users.user.properties.phone", "sortable":false},
+  "lastConnection": {"label":"users.user.properties.lastConnection", "sortable":true, "type":"datetime"},
   "dateModification": {"label":"list.modification.date.head", "sortable":true, "type":"datetime"}
   }
   filters=[]
