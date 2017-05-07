@@ -18,6 +18,6 @@ public class WebSystemDashboardAutoConfiguration {
 
   @Bean
   public MenuItem systemBuildMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
-    return builder.key("dashboard").label("menu.system.dashboard", true).link("/blossom/system/dashboard").icon("fa fa-bar-chart-o").parent(systemMenuItem).build();
+    return builder.key("dashboard").label("menu.system.dashboard", true).link("/blossom/system/dashboard").icon("fa fa-bar-chart").parent(systemMenuItem).build();
   }
 }

@@ -20,5 +20,6 @@
         <module>blossom-core-user</module>
         <module>blossom-core-group</module>
         <module>blossom-core-role</module>
+        <module>blossom-core-association-user-group</module>
     </modules>
 </project>

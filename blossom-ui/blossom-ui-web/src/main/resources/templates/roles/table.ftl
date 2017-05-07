@@ -3,11 +3,11 @@
 <#import "/utils/table.ftl" as table>
 
 <@table.pagetable
-  page=groups
-  label='groups.label'
-  iconPath='fa fa-group'
+  page=roles
+  label='roles.label'
+  iconPath='fa fa-key'
   columns= {
-  "name": {"label":"groups.group.properties.name", "sortable":true, "link":"/blossom/administration/groups/{id}"},
+  "name": {"label":"roles.role.properties.name", "sortable":true, "link":"/blossom/administration/roles/{id}"},
   "dateModification": {"label":"list.modification.date.head", "sortable":true, "type":"datetime"}
   }
   filters=[]

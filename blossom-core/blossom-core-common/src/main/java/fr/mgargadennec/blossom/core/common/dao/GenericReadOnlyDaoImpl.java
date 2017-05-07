@@ -19,7 +19,7 @@ import java.util.List;
 
 public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> implements ReadOnlyDao<ENTITY> {
 
-  protected final CrudRepository<ENTITY, Long> repository;
+  protected final CrudRepository<ENTITY> repository;
 
   private Querydsl querydsl;
   private EntityManager entityManager;
@@ -27,7 +27,7 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   private TypeToken<ENTITY> type = new TypeToken<ENTITY>(getClass()) {
   };
 
-  GenericReadOnlyDaoImpl(CrudRepository<ENTITY, Long> repository) {
+  GenericReadOnlyDaoImpl(CrudRepository<ENTITY> repository) {
     this.repository = repository;
   }
 

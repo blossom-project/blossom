@@ -36,9 +36,8 @@
         <div class="">
           <div>
             <h2 class="no-margins">
-            ${group.firstname +' '+group.lastname}
+            ${group.name}
             </h2>
-            <h4>${group.function!''}</h4>
             <small>
             ${group.description!''}
             </small>
@@ -46,63 +45,6 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-
-    </div>
-    <div class="col-md-3">
-    </div>
-
-
-    private String identifier;
-    private String email;
-    private String firstname;
-    private String lastname;
-    private String description;
-    private boolean activated;
-    private String passwordHash;
-    private String phone;
-    private String function;
   </div>
-  <div class="row">
-    <div class="col-lg-3">
-      <div class="ibox">
-        <div class="ibox-content">
-          <h3><@spring.message "groups.group.panel.account"/></h3>
-
-          <p class="small">
-            ${group.identifier}
-          </p>
-
-          <p class="small">
-            ${group.passwordHash}
-          </p>
-
-          <p class="small">
-            ${group.lastConnection?datetime}
-          </p>
-
-
-        </div>
-      </div>
-    </div>
-
-    <div class="col-lg-3">
-      <div class="ibox">
-        <div class="ibox-content">
-          <h3><@spring.message "groups.group.panel.contact"/></h3>
-
-          <p class="small">
-          ${group.description}
-          </p>
-
-          <p class="small font-bold">
-            <span><i class="fa fa-circle text-navy"></i> Online status</span>
-          </p>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 </@master.default>

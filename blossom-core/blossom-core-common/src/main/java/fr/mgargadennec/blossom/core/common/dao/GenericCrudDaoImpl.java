@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends GenericReadOnlyDaoImpl<ENTITY> implements CrudDao<ENTITY> {
 
-  protected GenericCrudDaoImpl(CrudRepository<ENTITY, Long> repository) {
+  protected GenericCrudDaoImpl(CrudRepository<ENTITY> repository) {
     super(repository);
   }
 

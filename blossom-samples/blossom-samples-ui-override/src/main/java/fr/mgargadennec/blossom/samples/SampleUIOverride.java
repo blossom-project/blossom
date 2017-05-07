@@ -1,8 +1,11 @@
 package fr.mgargadennec.blossom.samples;
 
 import fr.mgargadennec.blossom.autoconfigure.EnableBlossom;
+import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupService;
 import fr.mgargadennec.blossom.core.group.GroupDTO;
 import fr.mgargadennec.blossom.core.group.GroupService;
+import fr.mgargadennec.blossom.core.role.RoleDTO;
+import fr.mgargadennec.blossom.core.role.RoleService;
 import fr.mgargadennec.blossom.core.user.User;
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
@@ -12,6 +15,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Date;
 import java.util.Random;
@@ -35,7 +40,7 @@ public class SampleUIOverride {
     }
 
     @Bean
-    public CommandLineRunner clr(UserService userService) {
+    public CommandLineRunner clr(UserService service) {
         return args -> {
             IntStream.range(0, 1000).mapToObj(i -> {
                 UserDTO user = new UserDTO();
@@ -53,12 +58,12 @@ public class SampleUIOverride {
                 user.setLastConnection(new Date(System.currentTimeMillis() - new Random().nextInt(500000)));
                 user.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);
                 return user;
-            }).forEach(u -> userService.create(u));
+            }).forEach(u -> service.create(u));
         };
     }
 
     @Bean
-    public CommandLineRunner clrGroup(GroupService groupService) {
+    public CommandLineRunner clrGroup(GroupService service) {
         return args -> {
             IntStream.range(0, 1000).mapToObj(i -> {
                 GroupDTO group = new GroupDTO();
@@ -66,7 +71,39 @@ public class SampleUIOverride {
                 group.setName("Name-" + i);
                 group.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);
                 return group;
-            }).forEach(g -> groupService.create(g));
+            }).forEach(g -> service.create(g));
+        };
+    }
+
+    @Bean
+    public CommandLineRunner clrRole(RoleService service) {
+        return args -> {
+            IntStream.range(0, 1000).mapToObj(i -> {
+                RoleDTO role = new RoleDTO();
+                role.setId((long) i);
+                role.setName("Name-" + i);
+                role.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);
+                return role;
+            }).forEach(g -> service.create(g));
+        };
+    }
+
+
+    @Bean
+    public CommandLineRunner clrAssociationUserGroup(UserService userService, GroupService groupService, AssociationUserGroupService service) {
+        return args -> {
+            Page<UserDTO> someUsers = userService.getAll(new PageRequest(0, 50));
+            Page<GroupDTO> groupDTOS = groupService.getAll(new PageRequest(0, 50));
+
+            someUsers.forEach(user -> {
+                groupDTOS.forEach(group -> {
+                    service.associate(user, group);
+                });
+
+                LOGGER.info("Association to groups for user {} are {}", user, service.getAllLeft(user).size());
+            });
+
+
         };
     }
 }

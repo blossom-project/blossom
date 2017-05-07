@@ -98,7 +98,7 @@
 <#macro pagetable page columns label filters=[] iconPath="" searchable=false q="" tableId="">
 <div class="ibox float-e-margins">
   <div class="ibox-title">
-    <h5>Basic Table</h5>
+    <h5><@spring.messageText label label/></h5>
     <div class="ibox-tools">
       <a class="collapse-link">
         <i class="fa fa-chevron-up"></i>
