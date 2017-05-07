@@ -87,6 +87,11 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
 
   @Override
   public void indexOne(long id) {
+    if(!existsIndex()){
+      logger.debug("Can't delete {} element with id {} as the index doesn't exist !", this.alias, id);
+      return;
+    }
+
     try {
       DTO dto = this.service.getOne(id);
       if (dto != null) {
@@ -104,11 +109,19 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
 
   @Override
   public void deleteOne(long id) {
+    if(!existsIndex()){
+      logger.debug("Can't delete {} element with id {} as the index doesn't exist !", this.alias, id);
+      return;
+    }
     try {
       this.prepareDeleteRequest(this.alias, this.service.getOne(id)).get();
     } catch (Exception e) {
       logger.error("Can't delete {} element with id {}", this.alias, id, e);
     }
+  }
+
+  private boolean existsIndex(){
+    return !getIndicesFromAliasName().isEmpty();
   }
 
   private String createIndex() {

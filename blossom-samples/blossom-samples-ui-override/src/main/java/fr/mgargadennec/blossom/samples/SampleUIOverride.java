@@ -10,6 +10,7 @@ import fr.mgargadennec.blossom.core.role.RoleService;
 import fr.mgargadennec.blossom.core.user.User;
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
+import org.fluttercode.datafactory.impl.DataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -19,6 +20,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -41,30 +44,40 @@ public class SampleUIOverride {
     }
 
     @Bean
-    public CommandLineRunner clr(UserService service) {
+    public DataFactory df() {
+        return new DataFactory();
+    }
+
+    @Bean
+    public Random random() {
+        return new Random();
+    }
+
+    @Bean
+    public CommandLineRunner clr(UserService service, DataFactory df, Random random) {
         return args -> {
             IntStream.range(0, 1000).mapToObj(i -> {
                 UserDTO user = new UserDTO();
                 user.setId((long) i);
                 user.setIdentifier("Identifier-" + i);
                 user.setPasswordHash("Password-" + i);
-                user.setFirstname("Firstname-" + i);
-                user.setLastname("Lastname-" + i);
+                user.setFirstname(df.getFirstName());
+                user.setLastname(df.getLastName());
                 user.setActivated(true);
-                user.setEmail("Email-" + i);
-                user.setPhone("Phone-" + i);
-                user.setFunction("Function-" + i);
-                user.setCompany("Function-" + i);
-                user.setCivility(User.Civility.MALE);
-                user.setLastConnection(new Date(System.currentTimeMillis() - new Random().nextInt(500000)));
-                user.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);
+                user.setEmail(df.getEmailAddress());
+                user.setPhone("02.xx.xx.xx.xx");
+                user.setFunction(df.getRandomWord());
+                user.setCompany(df.getCity());
+                user.setCivility(random.nextBoolean() ? User.Civility.MAN : User.Civility.WOMAN);
+                user.setLastConnection(new Date(Instant.now().minus(random.nextInt(200000), ChronoUnit.SECONDS).toEpochMilli()));
+                user.setDescription(df.getRandomText(200,600));
                 return user;
             }).forEach(u -> service.create(u));
         };
     }
 
     @Bean
-    public CommandLineRunner clrGroup(GroupService service) {
+    public CommandLineRunner clrGroup(GroupService service,DataFactory df) {
         return args -> {
             IntStream.range(0, 1000).mapToObj(i -> {
                 GroupDTO group = new GroupDTO();

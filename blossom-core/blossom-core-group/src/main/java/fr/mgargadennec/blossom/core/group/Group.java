@@ -4,6 +4,7 @@ import fr.mgargadennec.blossom.core.common.entity.AbstractEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -13,6 +14,7 @@ public class Group extends AbstractEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @Lob
     @Column(name = "description", nullable = false)
     private String description;
 

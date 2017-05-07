@@ -11,4 +11,6 @@ public interface PluginConstants {
 
   String PLUGIN_MENU = "menuPlugin";
 
+  String PLUGIN_INDEXATION_ENGINE = "indexationEnginePlugin";
+
 }

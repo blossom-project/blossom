@@ -107,7 +107,32 @@
   </div>
 
   <div class="ibox-content">
-    <@table page=page columns=columns iconPath=iconPath tableId=tableId/>
+      <div class="row">
+          <div class="col-sm-9 m-b-xs">
+          </div>
+          <div class="col-sm-3">
+              <#if searchable>
+                  <div class="input-group">
+                      <input type="text"
+                             placeholder="<@spring.message "list.searchbar.placeholder"/>"
+                             class="table-search input-sm form-control"
+                             onkeyup="var which = event.which || event.keyCode;if(which === 13) {$(this).closest('.input-group').find('button.table-search').first().click();}"
+                             <#if q?has_content> value="${q}"</#if>
+                      />
+
+                      <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-sm btn-primary table-search"
+                                onclick="var value = $(this).closest('.input-group').children('input.table-search').first().val();window.location.href = $.updateQueryStringParameter(window.location.href,'q',value);">
+                            <i class="fa fa-search"></i>
+                        </button>
+                      </span>
+                  </div>
+              </#if>
+
+          </div>
+      </div>
+      <@table page=page columns=columns iconPath=iconPath tableId=tableId/>
   </div>
 
   <footer class="ibox-footer">

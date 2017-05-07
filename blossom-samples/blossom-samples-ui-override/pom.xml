@@ -21,9 +21,10 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>fr.mgargadennec.blossom</groupId>
-      <artifactId>blossom-starter-ui-api</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.fluttercode.datafactory</groupId>
+      <artifactId>datafactory</artifactId>
+      <version>0.8</version>
+      <type>jar</type>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>

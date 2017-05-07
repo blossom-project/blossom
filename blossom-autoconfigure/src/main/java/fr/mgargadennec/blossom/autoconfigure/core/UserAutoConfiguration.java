@@ -2,7 +2,6 @@ package fr.mgargadennec.blossom.autoconfigure.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import fr.mgargadennec.blossom.autoconfigure.core.CommonAutoConfiguration;
 import fr.mgargadennec.blossom.core.common.search.IndexationEngineImpl;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
 import fr.mgargadennec.blossom.core.common.utils.action_token.ActionTokenService;
@@ -30,38 +29,38 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EntityScan(basePackageClasses = User.class)
 public class UserAutoConfiguration {
 
-  @Bean
-  @ConditionalOnMissingBean(UserMailService.class)
-  public UserMailService userMailService(MailSender mailSender, ActionTokenService actionTokenService) {
-    return new UserMailServiceImpl(mailSender, actionTokenService);
-  }
+    @Bean
+    @ConditionalOnMissingBean(UserMailService.class)
+    public UserMailService userMailService(MailSender mailSender, ActionTokenService actionTokenService) {
+        return new UserMailServiceImpl(mailSender, actionTokenService);
+    }
 
-  @Bean
-  @ConditionalOnMissingBean(UserService.class)
-  public UserService userService(UserDao userDao, UserDTOMapper userDTOMapper, PasswordEncoder passwordEncoder, UserMailService userMailService, ApplicationEventPublisher eventPublisher) {
-    return new UserServiceImpl(userDao, userDTOMapper, eventPublisher, passwordEncoder, userMailService);
-  }
+    @Bean
+    @ConditionalOnMissingBean(UserService.class)
+    public UserService userService(UserDao userDao, UserDTOMapper userDTOMapper, PasswordEncoder passwordEncoder, UserMailService userMailService, ApplicationEventPublisher eventPublisher) {
+        return new UserServiceImpl(userDao, userDTOMapper, eventPublisher, passwordEncoder, userMailService);
+    }
 
-  @Bean
-  @ConditionalOnMissingBean(UserDao.class)
-  public UserDao userDao(UserRepository userRepository) {
-    return new UserDaoImpl(userRepository);
-  }
+    @Bean
+    @ConditionalOnMissingBean(UserDao.class)
+    public UserDao userDao(UserRepository userRepository) {
+        return new UserDaoImpl(userRepository);
+    }
 
-  @Bean
-  @ConditionalOnMissingBean(UserDTOMapper.class)
-  public UserDTOMapper userDTOMapper() {
-    return new UserDTOMapper();
-  }
+    @Bean
+    @ConditionalOnMissingBean(UserDTOMapper.class)
+    public UserDTOMapper userDTOMapper() {
+        return new UserDTOMapper();
+    }
 
-  @Bean
-  public IndexationEngineImpl<UserDTO> userIndexationEngine(Client client, UserService userService, BulkProcessor bulkProcessor, ObjectMapper objectMapper) {
-    return new IndexationEngineImpl<>(UserDTO.class, client, null, "users", u -> "user", userService, bulkProcessor, objectMapper);
-  }
+    @Bean
+    public IndexationEngineImpl<UserDTO> userIndexationEngine(Client client, UserService userService, BulkProcessor bulkProcessor, ObjectMapper objectMapper) {
+        return new IndexationEngineImpl<>(UserDTO.class, client, null, "users", u -> "user", userService, bulkProcessor, objectMapper);
+    }
 
-  @Bean
-  public SearchEngineImpl<UserDTO> userSearchEngine(Client client, BulkProcessor bulkProcessor, ObjectMapper objectMapper) {
-    return new SearchEngineImpl<>(UserDTO.class, client, Lists.newArrayList("firstname", "lastname", "identifier", "email"), "users", objectMapper);
-  }
+    @Bean
+    public SearchEngineImpl<UserDTO> userSearchEngine(Client client, BulkProcessor bulkProcessor, ObjectMapper objectMapper) {
+        return new SearchEngineImpl<>(UserDTO.class, client, Lists.newArrayList("identifier", "email", "firstname", "lastname", "company", "function"), "users", objectMapper);
+    }
 
 }

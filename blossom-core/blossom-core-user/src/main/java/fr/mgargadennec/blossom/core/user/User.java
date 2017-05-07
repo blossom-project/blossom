@@ -16,6 +16,7 @@ public class User extends AbstractEntity {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
+    @Lob
     @Column(name = "description", nullable = false)
     private String description;
 
@@ -147,7 +148,7 @@ public class User extends AbstractEntity {
     }
 
     public enum Civility {
-        UNKNOWN, MALE, FEMALE;
+        UNKNOWN, MAN, WOMAN;
     }
 
     @Override
