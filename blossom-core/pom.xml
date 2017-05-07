@@ -1,30 +1,25 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>fr.mgargadennec.blossom</groupId>
-		<artifactId>blossom-parent</artifactId>
-		<version>${project.version}</version>
-		<relativePath>../blossom-parent</relativePath>
-	</parent>
+    <parent>
+        <groupId>fr.mgargadennec.blossom</groupId>
+        <artifactId>blossom-parent</artifactId>
+        <version>${project.version}</version>
+        <relativePath>../blossom-parent</relativePath>
+    </parent>
 
-	<artifactId>blossom-core</artifactId>
-	<packaging>pom</packaging>
+    <artifactId>blossom-core</artifactId>
+    <packaging>pom</packaging>
 
-	<name>Blossom Core</name>
-	<url>http://maven.apache.org</url>
+    <name>Blossom Core</name>
+    <url>http://maven.apache.org</url>
 
-	<modules>
-		<module>blossom-core-right</module>
-		<module>blossom-core-indexing</module>
-		<module>blossom-core-history</module>
-		<module>blossom-core-user</module>
-		<module>blossom-core-group</module>
-		<module>blossom-core-role</module>
-		<module>blossom-core-association-role-right</module>
-		<module>blossom-core-association-user-role</module>
-		<module>blossom-core-association-group-user</module>
-		<module>blossom-core-association-group-entity</module>
-	</modules>
+    <modules>
+        <module>blossom-core-common</module>
+        <module>blossom-core-user</module>
+        <module>blossom-core-group</module>
+        <module>blossom-core-role</module>
+        <module>blossom-core-association-user-group</module>
+    </modules>
 </project>

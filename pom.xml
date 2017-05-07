@@ -1,27 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>fr.mgargadennec.blossom</groupId>
-	<artifactId>blossom</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+  <groupId>fr.mgargadennec.blossom</groupId>
+  <artifactId>blossom</artifactId>
+  <version>${project.version}</version>
+  <packaging>pom</packaging>
 
-	<name>blossom</name>
-	<url>http://maven.apache.org</url>
+  <name>blossom</name>
+  <url>http://maven.apache.org</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.version>1.0.0-SNAPSHOT</project.version>
+    <java.version>1.8</java.version>
+  </properties>
 
-	<modules>
-		<module>blossom-parent</module>
-		<module>blossom-common</module>
-		<module>blossom-security</module>
-		<module>blossom-core</module>
-		<module>blossom-autoconfigure</module>
-		<module>blossom-starters</module>
-		<module>blossom-samples</module>
-		<module>blossom-tools</module>
-	</modules>
+  <modules>
+    <module>blossom-parent</module>
+    <module>blossom-core</module>
+    <module>blossom-ui</module>
+
+    <module>blossom-modules</module>
+    <module>blossom-autoconfigure</module>
+    <module>blossom-starters</module>
+    <module>blossom-samples</module>
+    <module>blossom-tools</module>
+  </modules>
 </project>
