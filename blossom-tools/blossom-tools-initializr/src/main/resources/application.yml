@@ -104,7 +104,7 @@ initializr:
       content:
         - name: Blossom Core
           id: blossom-core
-          description: Core blossom starter (user, group, security)
+          description: Core blossom starter (group, group, security)
           groupId: fr.mgargadennec.blossom
           artifactId: blossom-core
           version: 1.0.0-SNAPSHOT
@@ -123,7 +123,7 @@ initializr:
               description: Spring Boot and OAuth2
             - rel: guide
               href: https://spring.io/guides/gs/authenticating-ldap/
-              description: Authenticating a User with LDAP
+              description: Authenticating a Group with LDAP
             - rel: reference
               href: http://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/#boot-features-security
         - name: AOP
@@ -203,7 +203,7 @@ initializr:
           id: session
           groupId: org.springframework.session
           artifactId: spring-session
-          description: API and implementations for managing a user’s session information
+          description: API and implementations for managing a group’s session information
           versionRange: 1.3.0.M2
           starter: false
         - name: Retry

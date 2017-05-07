@@ -19,6 +19,8 @@ public interface MenuItem extends MenuItemPlugin {
 
   int level();
 
+  int order();
+
   MenuItem parent();
 
   Collection<MenuItem> items();

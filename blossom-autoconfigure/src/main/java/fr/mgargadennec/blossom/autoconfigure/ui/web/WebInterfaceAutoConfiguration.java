@@ -26,7 +26,6 @@ public class WebInterfaceAutoConfiguration {
     return new HomeController();
   }
 
-
   @Bean
   public CurrentUserControllerAdvice currentUserControllerAdvice() {
     return new CurrentUserControllerAdvice();

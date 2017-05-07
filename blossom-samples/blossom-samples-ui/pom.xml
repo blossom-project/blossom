@@ -11,7 +11,7 @@
 
   <artifactId>blossom-samples-ui</artifactId>
   <name>Blossom UI Sample</name>
-  <description>Blossom sample application with user interface (both web and api)</description>
+  <description>Blossom sample application with group interface (both web and api)</description>
   <packaging>jar</packaging>
 
   <dependencies>

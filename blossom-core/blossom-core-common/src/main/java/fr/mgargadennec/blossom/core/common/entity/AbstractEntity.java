@@ -16,24 +16,24 @@ import java.util.UUID;
 public abstract class AbstractEntity implements Serializable {
 
   @Id
-  @Column(name = "ID")
+  @Column(name = "id")
   private Long id;
 
-  @Column(name = "DATE_CREATION", updatable = false)
+  @Column(name = "date_creation", updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
   @CreatedDate
   private Date dateCreation;
 
-  @Column(name = "DATE_MODIFICATION")
+  @Column(name = "user_creation", updatable = false)
+  @CreatedBy
+  private String userCreation;
+
+  @Column(name = "date_modification")
   @Temporal(TemporalType.TIMESTAMP)
   @LastModifiedDate
   private Date dateModification;
 
-  @Column(name = "USER_CREATION", updatable = false)
-  @CreatedBy
-  private String userCreation;
-
-  @Column(name = "USER_MODIFICATION")
+  @Column(name = "user_modification")
   @LastModifiedBy
   private String userModification;
 

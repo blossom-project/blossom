@@ -34,5 +34,10 @@
       <artifactId>blossom-core-user</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>fr.mgargadennec.blossom</groupId>
+      <artifactId>blossom-core-group</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

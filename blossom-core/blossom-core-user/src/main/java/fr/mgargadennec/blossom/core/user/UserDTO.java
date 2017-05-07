@@ -6,95 +6,112 @@ import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
 import java.util.Date;
 
 public class UserDTO extends AbstractDTO {
+    private String identifier;
+    private String passwordHash;
+    private String description;
+    private boolean activated;
+    private Date lastConnection;
+    private User.Civility civility;
+    private String firstname;
+    private String lastname;
+    private String email;
+    private String phone;
+    private String company;
+    private String function;
 
-  private String identifier;
-  private String email;
-  private String firstname;
-  private String lastname;
-  private String description;
-  private boolean activated;
-  private String passwordHash;
-  private String phone;
-  private String function;
-  private Date lastConnection;
+    public String getIdentifier() {
+        return identifier;
+    }
 
-  public String getIdentifier() {
-    return identifier;
-  }
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
 
-  public void setIdentifier(String identifier) {
-    this.identifier = identifier;
-  }
+    public String getPasswordHash() {
+        return passwordHash;
+    }
 
-  public String getEmail() {
-    return email;
-  }
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 
-  public void setEmail(String email) {
-    this.email = email;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public String getFirstname() {
-    return firstname;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public void setFirstname(String firstname) {
-    this.firstname = firstname;
-  }
+    public boolean isActivated() {
+        return activated;
+    }
 
-  public String getLastname() {
-    return lastname;
-  }
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
 
-  public void setLastname(String lastname) {
-    this.lastname = lastname;
-  }
+    public Date getLastConnection() {
+        return lastConnection;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public void setLastConnection(Date lastConnection) {
+        this.lastConnection = lastConnection;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public User.Civility getCivility() {
+        return civility;
+    }
 
-  public boolean isActivated() {
-    return activated;
-  }
+    public void setCivility(User.Civility civility) {
+        this.civility = civility;
+    }
 
-  public void setActivated(boolean activated) {
-    this.activated = activated;
-  }
+    public String getFirstname() {
+        return firstname;
+    }
 
-  public String getPasswordHash() {
-    return passwordHash;
-  }
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
 
-  public void setPasswordHash(String passwordHash) {
-    this.passwordHash = passwordHash;
-  }
+    public String getLastname() {
+        return lastname;
+    }
 
-  public String getPhone() {
-    return phone;
-  }
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
 
-  public void setPhone(String phone) {
-    this.phone = phone;
-  }
+    public String getEmail() {
+        return email;
+    }
 
-  public String getFunction() {
-    return function;
-  }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-  public void setFunction(String function) {
-    this.function = function;
-  }
+    public String getPhone() {
+        return phone;
+    }
 
-  public Date getLastConnection() {
-    return lastConnection;
-  }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-  public void setLastConnection(Date lastConnection) {
-    this.lastConnection = lastConnection;
-  }
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getFunction() {
+        return function;
+    }
+
+    public void setFunction(String function) {
+        this.function = function;
+    }
 }

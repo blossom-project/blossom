@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -43,6 +44,7 @@ import java.security.SecureRandom;
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 @EnablePluginRegistries({MapperPlugin.class, ReadOnlyServicePlugin.class})
 @EnableJpaAuditing
+@PropertySource("classpath:/freemarker.properties")
 public class CommonAutoConfiguration {
 
   @Configuration
