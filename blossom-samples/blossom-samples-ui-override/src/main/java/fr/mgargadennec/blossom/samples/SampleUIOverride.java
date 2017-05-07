@@ -2,6 +2,7 @@ package fr.mgargadennec.blossom.samples;
 
 import fr.mgargadennec.blossom.autoconfigure.EnableBlossom;
 import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupService;
+import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.mgargadennec.blossom.core.group.GroupDTO;
 import fr.mgargadennec.blossom.core.group.GroupService;
 import fr.mgargadennec.blossom.core.role.RoleDTO;
@@ -102,8 +103,22 @@ public class SampleUIOverride {
 
                 LOGGER.info("Association to groups for user {} are {}", user, service.getAllLeft(user).size());
             });
+        };
+    }
 
+    @Bean
+    public CommandLineRunner clrAssociationUserRole(UserService userService, RoleService roleService, AssociationUserRoleService service) {
+        return args -> {
+            Page<UserDTO> someUsers = userService.getAll(new PageRequest(0, 50));
+            Page<RoleDTO> someRoles = roleService.getAll(new PageRequest(0, 50));
 
+            someUsers.forEach(user -> {
+                someRoles.forEach(role -> {
+                    service.associate(user, role);
+                });
+
+                LOGGER.info("Association to roles for user {} are {}", user, service.getAllLeft(user).size());
+            });
         };
     }
 }

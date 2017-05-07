@@ -4,7 +4,8 @@ fr.mgargadennec.blossom.autoconfigure.core.CommonAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.UserAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.GroupAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.RoleAutoConfiguration,\
-fr.mgargadennec.blossom.autoconfigure.core.AssociationUserGroupAutoConfiguration
+fr.mgargadennec.blossom.autoconfigure.core.AssociationUserGroupAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.core.AssociationUserRoleAutoConfiguration
 
 fr.mgargadennec.blossom.autoconfigure.EnableBlossom=\
 fr.mgargadennec.blossom.autoconfigure.ui.MenuAutoConfiguration,\
