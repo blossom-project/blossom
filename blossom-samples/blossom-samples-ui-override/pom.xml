@@ -21,6 +21,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>fr.mgargadennec.blossom</groupId>
+      <artifactId>blossom-starter-ui-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.fluttercode.datafactory</groupId>
       <artifactId>datafactory</artifactId>
       <version>0.8</version>

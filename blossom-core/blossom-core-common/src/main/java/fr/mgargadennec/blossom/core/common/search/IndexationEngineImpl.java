@@ -98,7 +98,7 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
         this.prepareIndexRequest(this.alias, dto).get();
       }
     } catch (Exception e) {
-      logger.error("Can't index {} element with id", this.alias, id, e);
+      logger.error("Can't index {} element with id {}", this.alias, id, e);
     }
   }
 

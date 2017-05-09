@@ -6,7 +6,8 @@ fr.mgargadennec.blossom.autoconfigure.core.UserAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.GroupAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.RoleAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.AssociationUserGroupAutoConfiguration,\
-fr.mgargadennec.blossom.autoconfigure.core.AssociationUserRoleAutoConfiguration
+fr.mgargadennec.blossom.autoconfigure.core.AssociationUserRoleAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.core.SchedulerAutoConfiguration
 
 fr.mgargadennec.blossom.autoconfigure.EnableBlossom=\
 fr.mgargadennec.blossom.autoconfigure.ui.MenuAutoConfiguration,\
@@ -18,4 +19,5 @@ fr.mgargadennec.blossom.autoconfigure.ui.web.administration.WebAdministrationUse
 fr.mgargadennec.blossom.autoconfigure.ui.web.administration.WebAdministrationGroupAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.ui.web.administration.WebAdministrationRoleAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemBuildAutoConfiguration,\
-fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemDashboardAutoConfiguration
+fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemDashboardAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemSchedulerAutoConfiguration

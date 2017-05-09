@@ -3,15 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>fr.mgargadennec.blossom</groupId>
     <artifactId>blossom-core</artifactId>
     <version>${project.version}</version>
-    <relativePath>..</relativePath>
   </parent>
 
-  <artifactId>blossom-core-user</artifactId>
+  <artifactId>blossom-core-scheduler</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -21,9 +19,8 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>fr.mgargadennec.blossom</groupId>
-      <artifactId>blossom-core-scheduler</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
     </dependency>
   </dependencies>
 
@@ -54,4 +51,6 @@
       </plugin>
     </plugins>
   </build>
+
+
 </project>

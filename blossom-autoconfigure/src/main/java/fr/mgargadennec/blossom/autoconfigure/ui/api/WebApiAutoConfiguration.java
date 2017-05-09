@@ -18,4 +18,5 @@ public class WebApiAutoConfiguration {
     return new BuildInfoApiController(buildProperties);
   }
 
+
 }

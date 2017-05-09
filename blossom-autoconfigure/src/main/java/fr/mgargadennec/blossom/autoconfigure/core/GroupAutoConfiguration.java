@@ -5,8 +5,12 @@ import com.google.common.collect.Lists;
 import fr.mgargadennec.blossom.core.common.search.IndexationEngineImpl;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
 import fr.mgargadennec.blossom.core.group.*;
+import fr.mgargadennec.blossom.core.role.RoleIndexationJob;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
+import org.quartz.JobDetail;
+import org.quartz.SimpleTrigger;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -15,6 +19,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.quartz.JobDetailFactoryBean;
+import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
@@ -53,5 +59,31 @@ public class GroupAutoConfiguration {
     public SearchEngineImpl<GroupDTO> groupSearchEngine(Client client, BulkProcessor bulkProcessor, ObjectMapper objectMapper) {
         return new SearchEngineImpl<>(GroupDTO.class, client, Lists.newArrayList("name", "description"), "groups", objectMapper);
     }
+
+
+
+  @Bean
+  @Qualifier("groupIndexationFullJob")
+  public JobDetailFactoryBean groupIndexationFullJob() {
+    JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+    factoryBean.setJobClass(GroupIndexationJob.class);
+    factoryBean.setGroup("Indexation");
+    factoryBean.setName("Groups Indexation Job");
+    factoryBean.setDescription("Groups Periodic Full indexation Job");
+    factoryBean.setDurability(true);
+    return factoryBean;
+  }
+
+  @Bean
+  @Qualifier("groupScheduledIndexationTrigger")
+  public SimpleTriggerFactoryBean groupScheduledIndexationTrigger(@Qualifier("groupIndexationFullJob") JobDetail groupIndexationFullJob) {
+    SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+    factoryBean.setJobDetail(groupIndexationFullJob);
+    factoryBean.setStartDelay((long)30*1000);
+    factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
+    factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
+    factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
+    return factoryBean;
+  }
 
 }

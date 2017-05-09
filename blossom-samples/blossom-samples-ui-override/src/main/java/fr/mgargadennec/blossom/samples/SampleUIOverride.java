@@ -58,7 +58,6 @@ public class SampleUIOverride {
         return args -> {
             IntStream.range(0, 1000).mapToObj(i -> {
                 UserDTO user = new UserDTO();
-                user.setId((long) i);
                 user.setIdentifier("Identifier-" + i);
                 user.setPasswordHash("Password-" + i);
                 user.setFirstname(df.getFirstName());
@@ -81,7 +80,6 @@ public class SampleUIOverride {
         return args -> {
             IntStream.range(0, 1000).mapToObj(i -> {
                 GroupDTO group = new GroupDTO();
-                group.setId((long) i);
                 group.setName("Name-" + i);
                 group.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);
                 return group;
@@ -94,7 +92,6 @@ public class SampleUIOverride {
         return args -> {
             IntStream.range(0, 1000).mapToObj(i -> {
                 RoleDTO role = new RoleDTO();
-                role.setId((long) i);
                 role.setName("Name-" + i);
                 role.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);
                 return role;

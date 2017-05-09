@@ -18,7 +18,7 @@ public class WebSystemBuildAutoConfiguration {
 
   @Bean
   public MenuItem systemBuildMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
-    return builder.key("build").label("menu.system.build", true).link("/blossom/system/build").icon("fa fa-archive").parent(systemMenuItem).build();
+    return builder.key("build").label("menu.system.build", true).link("/blossom/system/build").order(0).icon("fa fa-archive").parent(systemMenuItem).build();
   }
 
 
