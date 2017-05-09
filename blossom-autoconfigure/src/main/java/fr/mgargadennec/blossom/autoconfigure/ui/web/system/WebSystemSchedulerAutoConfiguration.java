@@ -1,5 +1,6 @@
 package fr.mgargadennec.blossom.autoconfigure.ui.web.system;
 
+import fr.mgargadennec.blossom.core.scheduler.job.ScheduledJobServiceImpl;
 import fr.mgargadennec.blossom.ui.menu.MenuItem;
 import fr.mgargadennec.blossom.ui.menu.MenuItemBuilder;
 import fr.mgargadennec.blossom.ui.web.system.scheduler.SchedulerController;
@@ -20,7 +21,7 @@ public class WebSystemSchedulerAutoConfiguration {
   }
 
   @Bean
-  public SchedulerController schedulerController(Scheduler scheduler){
-    return new SchedulerController(scheduler);
+  public SchedulerController schedulerController(ScheduledJobServiceImpl scheduledJobService){
+    return new SchedulerController(scheduledJobService);
   }
 }

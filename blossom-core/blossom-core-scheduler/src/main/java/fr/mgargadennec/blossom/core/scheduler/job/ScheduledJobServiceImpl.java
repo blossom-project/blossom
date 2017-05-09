@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -24,9 +23,18 @@ public class ScheduledJobServiceImpl {
     this.scheduler = scheduler;
   }
 
-  public Map<String, JobInfo> getAll() {
+  public List<String> getGroups() {
     try {
-      return this.scheduler.getJobKeys(GroupMatcher.groupEquals(groupName)).stream().map(jobKey -> this.getOne(jobKey)).collect(Collectors.toMap());
+      return this.scheduler.getJobGroupNames();
+    } catch (SchedulerException e) {
+      LOGGER.error("Cannot retrieve job group names from quartz scheduler", e);
+      return Lists.newArrayList();
+    }
+  }
+
+  public List<JobInfo> getAll(String groupName) {
+    try {
+      return this.scheduler.getJobKeys(GroupMatcher.groupEquals(groupName)).stream().map(jobKey -> this.getOne(jobKey)).collect(Collectors.toList());
     } catch (SchedulerException e) {
       LOGGER.error("Cannot retrieve job infos for groupName " + groupName, e);
       return Lists.newArrayList();

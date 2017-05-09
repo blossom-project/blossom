@@ -94,7 +94,7 @@ public class SchedulerAutoConfiguration {
   }
 
   @Bean
-  public ScheduledJobServiceImpl jobService(Scheduler scheduler) {
+  public ScheduledJobServiceImpl scheduledJobService(Scheduler scheduler) {
     return new ScheduledJobServiceImpl(scheduler);
   }
 
