@@ -76,6 +76,8 @@ public class RoleAutoConfiguration {
   @Qualifier("roleScheduledIndexationTrigger")
   public SimpleTriggerFactoryBean roleScheduledIndexationTrigger(@Qualifier("roleIndexationFullJob") JobDetail roleIndexationFullJob) {
     SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+    factoryBean.setName("Role re-indexation");
+    factoryBean.setDescription("Periodic re-indexation of all roles of the application");
     factoryBean.setJobDetail(roleIndexationFullJob);
     factoryBean.setStartDelay((long)30*1000);
     factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);

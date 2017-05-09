@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import fr.mgargadennec.blossom.core.common.search.IndexationEngineImpl;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
 import fr.mgargadennec.blossom.core.group.*;
-import fr.mgargadennec.blossom.core.role.RoleIndexationJob;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
 import org.quartz.JobDetail;
@@ -61,29 +60,30 @@ public class GroupAutoConfiguration {
     }
 
 
+    @Bean
+    @Qualifier("groupIndexationFullJob")
+    public JobDetailFactoryBean groupIndexationFullJob() {
+        JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+        factoryBean.setJobClass(GroupIndexationJob.class);
+        factoryBean.setGroup("Indexation");
+        factoryBean.setName("Groups Indexation Job");
+        factoryBean.setDescription("Groups Periodic Full indexation Job");
+        factoryBean.setDurability(true);
+        return factoryBean;
+    }
 
-  @Bean
-  @Qualifier("groupIndexationFullJob")
-  public JobDetailFactoryBean groupIndexationFullJob() {
-    JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
-    factoryBean.setJobClass(GroupIndexationJob.class);
-    factoryBean.setGroup("Indexation");
-    factoryBean.setName("Groups Indexation Job");
-    factoryBean.setDescription("Groups Periodic Full indexation Job");
-    factoryBean.setDurability(true);
-    return factoryBean;
-  }
-
-  @Bean
-  @Qualifier("groupScheduledIndexationTrigger")
-  public SimpleTriggerFactoryBean groupScheduledIndexationTrigger(@Qualifier("groupIndexationFullJob") JobDetail groupIndexationFullJob) {
-    SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-    factoryBean.setJobDetail(groupIndexationFullJob);
-    factoryBean.setStartDelay((long)30*1000);
-    factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
-    factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
-    factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
-    return factoryBean;
-  }
+    @Bean
+    @Qualifier("groupScheduledIndexationTrigger")
+    public SimpleTriggerFactoryBean groupScheduledIndexationTrigger(@Qualifier("groupIndexationFullJob") JobDetail groupIndexationFullJob) {
+        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+        factoryBean.setName("Group re-indexation");
+        factoryBean.setDescription("Periodic re-indexation of all groups of the application");
+        factoryBean.setJobDetail(groupIndexationFullJob);
+        factoryBean.setStartDelay((long) 30 * 1000);
+        factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
+        factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
+        factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
+        return factoryBean;
+    }
 
 }

@@ -4,10 +4,12 @@ import com.google.common.collect.Maps;
 import fr.mgargadennec.blossom.core.scheduler.job.JobInfo;
 import fr.mgargadennec.blossom.core.scheduler.job.ScheduledJobServiceImpl;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
+import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -19,21 +21,26 @@ import java.util.Map;
 @BlossomController("/system/scheduler")
 public class SchedulerController {
 
-  private final ScheduledJobServiceImpl scheduledJobService;
+    private final ScheduledJobServiceImpl scheduledJobService;
 
-  @Autowired
-  public SchedulerController(ScheduledJobServiceImpl scheduledJobService) {
-    this.scheduledJobService = scheduledJobService;
-  }
-
-  @GetMapping
-  public ModelAndView scheduler(Model model) throws SchedulerException {
-    Map<String, List<JobInfo>> jobInfos = Maps.newHashMap();
-    for (String groupName : this.scheduledJobService.getGroups()) {
-      jobInfos.put(groupName, this.scheduledJobService.getAll(groupName));
+    @Autowired
+    public SchedulerController(ScheduledJobServiceImpl scheduledJobService) {
+        this.scheduledJobService = scheduledJobService;
     }
 
-    return new ModelAndView("system/scheduler/scheduler", "jobInfos", jobInfos);
-  }
+    @GetMapping
+    public ModelAndView scheduler(Model model) throws SchedulerException {
+        Map<String, List<JobInfo>> jobInfos = Maps.newHashMap();
+        for (String groupName : this.scheduledJobService.getGroups()) {
+            jobInfos.put(groupName, this.scheduledJobService.getAll(groupName));
+        }
+
+        return new ModelAndView("system/scheduler/scheduler", "jobInfos", jobInfos);
+    }
+
+    @GetMapping("/{group}/{name}")
+    public ModelAndView scheduler(Model model, @PathVariable String group, @PathVariable String name) throws SchedulerException {
+        return new ModelAndView("system/scheduler/detail", "jobInfo", this.scheduledJobService.getOne(JobKey.jobKey(name, group)));
+    }
 
 }

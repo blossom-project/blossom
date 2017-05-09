@@ -84,6 +84,8 @@ public class UserAutoConfiguration {
   @Qualifier("userScheduledIndexationTrigger")
   public SimpleTriggerFactoryBean userScheduledIndexationTrigger(@Qualifier("userIndexationFullJob") JobDetail userIndexationFullJob) {
     SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+    factoryBean.setName("User re-indexation");
+    factoryBean.setDescription("Periodic re-indexation of all users of the application");
     factoryBean.setJobDetail(userIndexationFullJob);
     factoryBean.setStartDelay((long)30*1000);
     factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);

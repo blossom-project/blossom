@@ -23,44 +23,40 @@
       <div class="tabs-container">
         <div class="tabs-left">
           <ul class="nav nav-tabs">
-            <#list jobGroupNames as jobGroupName>
-              <li class="active"><a data-toggle="tab" href="#${jobGroupName}" aria-expanded="true">${jobGroupName}</a></li>
+            <#list jobInfos?keys as groupName>
+              <li <#if groupName?is_first>class="active"</#if>><a data-toggle="tab" href="#${groupName}">${groupName}</a></li>
             </#list>
           </ul>
           <div class="tab-content">
-            <#list jobGroupNames as jobGroupName>
-              <div id="${jobGroupName}" class="tab-pane active">
+            <#list jobInfos?keys as groupName>
+              <div id="${groupName}" class="tab-pane <#if groupName?is_first>active</#if>">
                 <div class="panel-body">
                       <div class="project-list">
-
                         <table class="table table-hover">
                           <tbody>
-                          <#list jobKeysByGroupNames[jobGroupName] as jobKey>
+                          <#list jobInfos[groupName] as jobInfo>
                             <tr>
-                              <td class="project-status">
-                                <span class="label label-primary">Active</span>
-                              </td>
                               <td class="project-title">
-                                <a href="project_detail.html">${jobKey.name}</a>
+                                <a href="/blossom/system/scheduler/${jobInfo.key.group}/${jobInfo.key.name}">${jobInfo.key.name}</a>
                                 <br>
-                                <small>Created 14.08.2014</small>
+                                <small>${jobInfo.detail.description}</small>
                               </td>
-                              <td class="project-completion">
-                                <small>Completion with: 48%</small>
-                                <div class="progress progress-mini">
-                                  <div style="width: 48%;" class="progress-bar"></div>
-                                </div>
+                              <td class="project-status">
+                                  <#if jobInfo.jobExecutionContexts?size gt 0>
+                                      <span class="label label-primary">Active</span>
+                                  <#else>
+                                      <span class="label label-default">Idle</span>
+                                  </#if>
                               </td>
-                              <td class="project-people">
-                                <a href=""><img alt="image" class="img-circle" src="/img/a3.jpg"></a>
-                                <a href=""><img alt="image" class="img-circle" src="/img/a1.jpg"></a>
-                                <a href=""><img alt="image" class="img-circle" src="/img/a2.jpg"></a>
-                                <a href=""><img alt="image" class="img-circle" src="/img/a4.jpg"></a>
-                                <a href=""><img alt="image" class="img-circle" src="/img/a5.jpg"></a>
+                              <td class="project-triggers">
+                                <span>${jobInfo.triggers?size} triggers</span>
                               </td>
-                              <td class="project-actions">
-                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
-                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                              <td class="project-lastExecution">
+                                <#if jobInfo.lastExecutionTime??>
+                                    <i class="fa fa-calendar"></i> ${jobInfo.lastExecutionTime?datetime}
+                                <#else>
+                                    <i class="fa fa-calendar"></i> Never
+                                </#if>
                               </td>
                             </tr>
                           </#list>

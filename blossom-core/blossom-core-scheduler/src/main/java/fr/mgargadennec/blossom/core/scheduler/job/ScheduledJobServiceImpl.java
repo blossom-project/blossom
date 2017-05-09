@@ -1,61 +1,65 @@
 package fr.mgargadennec.blossom.core.scheduler.job;
 
 import com.google.common.collect.Lists;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * Created by Maël Gargadennnec on 09/05/2017.
  */
 public class ScheduledJobServiceImpl {
-  private final static Logger LOGGER = LoggerFactory.getLogger(ScheduledJobServiceImpl.class);
-  private final Scheduler scheduler;
+    private final static Logger LOGGER = LoggerFactory.getLogger(ScheduledJobServiceImpl.class);
+    private final Scheduler scheduler;
 
-  public ScheduledJobServiceImpl(Scheduler scheduler) {
-    this.scheduler = scheduler;
-  }
-
-  public List<String> getGroups() {
-    try {
-      return this.scheduler.getJobGroupNames();
-    } catch (SchedulerException e) {
-      LOGGER.error("Cannot retrieve job group names from quartz scheduler", e);
-      return Lists.newArrayList();
+    public ScheduledJobServiceImpl(Scheduler scheduler) {
+        this.scheduler = scheduler;
     }
-  }
 
-  public List<JobInfo> getAll(String groupName) {
-    try {
-      return this.scheduler.getJobKeys(GroupMatcher.groupEquals(groupName)).stream().map(jobKey -> this.getOne(jobKey)).collect(Collectors.toList());
-    } catch (SchedulerException e) {
-      LOGGER.error("Cannot retrieve job infos for groupName " + groupName, e);
-      return Lists.newArrayList();
+    public List<String> getGroups() {
+        try {
+            return this.scheduler.getJobGroupNames();
+        } catch (SchedulerException e) {
+            LOGGER.error("Cannot retrieve job group names from quartz scheduler", e);
+            return Lists.newArrayList();
+        }
     }
-  }
 
-  public JobInfo getOne(JobKey jobKey) {
-    try {
-      List<? extends Trigger> triggers = this.scheduler.getTriggersOfJob(jobKey);
-
-      JobInfo jobInfo = new JobInfo(jobKey);
-      jobInfo.setDetail(this.scheduler.getJobDetail(jobKey));
-      jobInfo.setAllTriggers(triggers);
-      jobInfo.setNextTrigger(triggers.isEmpty() ? null : triggers.get(0));
-
-      return jobInfo;
-    } catch (SchedulerException e) {
-      LOGGER.error("Cannot retrieve job infos for jobKey " + jobKey, e);
-      return null;
+    public List<JobInfo> getAll(String groupName) {
+        List<JobInfo> jobInfos = Lists.newArrayList();
+        try {
+            Set<JobKey> jobKeys = this.scheduler.getJobKeys(GroupMatcher.groupEquals(groupName));
+            for (JobKey jobKey : jobKeys) {
+                jobInfos.add(this.getOne(jobKey));
+            }
+        } catch (SchedulerException e) {
+            LOGGER.error("Cannot retrieve job infos for groupName " + groupName, e);
+        }
+        return jobInfos;
     }
-  }
+
+    public JobInfo getOne(JobKey jobKey) {
+        try {
+            JobDetail jobDetail = this.scheduler.getJobDetail(jobKey);
+            List<? extends Trigger> triggers = this.scheduler.getTriggersOfJob(jobKey);
+            List<JobExecutionContext> jobExecutionContexts = this.scheduler.getCurrentlyExecutingJobs().stream().filter(jec -> jec.getJobDetail().getKey().equals(jobKey)).collect(Collectors.toList());
+
+            JobInfo jobInfo = new JobInfo(jobKey);
+            jobInfo.setDetail(jobDetail);
+            jobInfo.setTriggers(triggers);
+            jobInfo.setJobExecutionContexts(jobExecutionContexts);
+
+            return jobInfo;
+        } catch (SchedulerException e) {
+            LOGGER.error("Cannot retrieve job infos for jobKey " + jobKey, e);
+            return null;
+        }
+    }
 }
 
 

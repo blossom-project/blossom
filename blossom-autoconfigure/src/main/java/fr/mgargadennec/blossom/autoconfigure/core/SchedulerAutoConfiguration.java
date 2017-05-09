@@ -42,7 +42,7 @@ public class SchedulerAutoConfiguration {
   public JobDetailFactoryBean sampleJobDetail() {
     JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
     factoryBean.setJobClass(SampleJob.class);
-    factoryBean.setGroup("sample");
+    factoryBean.setGroup("Sample");
     factoryBean.setName("Sample Job");
     factoryBean.setDescription("Sample job for demonstration purpose");
     factoryBean.setDurability(false);
@@ -51,7 +51,16 @@ public class SchedulerAutoConfiguration {
 
   @Bean
   public SimpleTriggerFactoryBean sampleJobTrigger(@Qualifier("sampleJobDetail") JobDetail sampleJobDetail) {
-    return createFireOnceTrigger(sampleJobDetail);
+    SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+    factoryBean.setName("Sample job");
+    factoryBean.setDescription("This is a sample job for demonstration purpose");
+    factoryBean.setJobDetail(sampleJobDetail);
+    factoryBean.setStartDelay(0L);
+    factoryBean.setRepeatInterval(5000);
+    factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
+    // in case of misfire, ignore all missed triggers and continue :
+    factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
+    return factoryBean;
   }
 
   @Bean
