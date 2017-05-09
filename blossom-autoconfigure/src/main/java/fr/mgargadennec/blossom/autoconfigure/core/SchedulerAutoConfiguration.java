@@ -2,8 +2,9 @@ package fr.mgargadennec.blossom.autoconfigure.core;
 
 import fr.mgargadennec.blossom.core.scheduler.AutowiringSpringBeanJobFactory;
 import fr.mgargadennec.blossom.core.scheduler.SampleJob;
-import javassist.tools.reflect.Sample;
+import fr.mgargadennec.blossom.core.scheduler.job.ScheduledJobServiceImpl;
 import org.quartz.JobDetail;
+import org.quartz.Scheduler;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
@@ -90,6 +91,11 @@ public class SchedulerAutoConfiguration {
     }
 
     return factory;
+  }
+
+  @Bean
+  public ScheduledJobServiceImpl jobService(Scheduler scheduler) {
+    return new ScheduledJobServiceImpl(scheduler);
   }
 
   @Bean
