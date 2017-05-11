@@ -11,6 +11,7 @@ import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,30 +38,45 @@ import java.util.Properties;
 @PropertySource("classpath:/scheduler.properties")
 public class SchedulerAutoConfiguration {
 
-  @Bean
-  @Qualifier("sampleJobDetail")
-  public JobDetailFactoryBean sampleJobDetail() {
-    JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
-    factoryBean.setJobClass(SampleJob.class);
-    factoryBean.setGroup("Sample");
-    factoryBean.setName("Sample Job");
-    factoryBean.setDescription("Sample job for demonstration purpose");
-    factoryBean.setDurability(false);
-    return factoryBean;
-  }
+  @Configuration
+  @ConditionalOnProperty(name = "blossom.scheduler.show_sample_job", havingValue = "true", matchIfMissing = true)
+  public static class SampleJobConfiguration {
+    @Bean
+    @Qualifier("sampleJobDetail")
+    public JobDetailFactoryBean sampleJobDetail() {
+      JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+      factoryBean.setJobClass(SampleJob.class);
+      factoryBean.setGroup("Sample");
+      factoryBean.setName("Sample Job");
+      factoryBean.setDescription("Sample job for demonstration purpose");
+      factoryBean.setDurability(true);
+      return factoryBean;
+    }
 
-  @Bean
-  public SimpleTriggerFactoryBean sampleJobTrigger(@Qualifier("sampleJobDetail") JobDetail sampleJobDetail) {
-    SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-    factoryBean.setName("Sample job");
-    factoryBean.setDescription("This is a sample job for demonstration purpose");
-    factoryBean.setJobDetail(sampleJobDetail);
-    factoryBean.setStartDelay(0L);
-    factoryBean.setRepeatInterval(5000);
-    factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
-    // in case of misfire, ignore all missed triggers and continue :
-    factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
-    return factoryBean;
+    @Bean
+    public CronTriggerFactoryBean sampleJobSimpleTrigger(@Qualifier("sampleJobDetail") JobDetail sampleJobDetail) {
+      CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
+      factoryBean.setName("Simple trigger");
+      factoryBean.setDescription("This is a simple trigger for demonstration purpose");
+      factoryBean.setJobDetail(sampleJobDetail);
+      factoryBean.setStartDelay(10L);
+      factoryBean.setCronExpression("0/30 * * * * ?");
+      factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_IGNORE_MISFIRE_POLICY);
+      return factoryBean;
+    }
+
+    @Bean
+    public SimpleTriggerFactoryBean sampleJobCronTrigger(@Qualifier("sampleJobDetail") JobDetail sampleJobDetail) {
+      SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+      factoryBean.setName("Cron trigger");
+      factoryBean.setDescription("This is a cron trigger for demonstration purpose");
+      factoryBean.setJobDetail(sampleJobDetail);
+      factoryBean.setStartDelay((long) 30 * 1000);
+      factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
+      factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
+      factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
+      return factoryBean;
+    }
   }
 
   @Bean
@@ -88,6 +104,7 @@ public class SchedulerAutoConfiguration {
   @Bean
   public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory, List<Trigger> triggers) throws IOException {
     SchedulerFactoryBean factory = new SchedulerFactoryBean();
+    factory.setSchedulerName("Default Scheduler");
     factory.setOverwriteExistingJobs(true);
     factory.setAutoStartup(true);
     factory.setDataSource(dataSource);

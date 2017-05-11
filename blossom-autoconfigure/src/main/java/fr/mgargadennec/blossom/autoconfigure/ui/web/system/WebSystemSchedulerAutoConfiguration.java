@@ -6,6 +6,7 @@ import fr.mgargadennec.blossom.ui.menu.MenuItemBuilder;
 import fr.mgargadennec.blossom.ui.web.system.scheduler.SchedulerController;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * Created by Maël Gargadennnec on 04/05/2017.
  */
 @Configuration
+@ConditionalOnBean(Scheduler.class)
 public class WebSystemSchedulerAutoConfiguration {
 
   @Bean

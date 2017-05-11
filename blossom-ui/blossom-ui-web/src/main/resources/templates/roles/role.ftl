@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<div class="wrapper wrapper-content animated fadeInRight">
+<div class="wrapper wrapper-content">
 
 
     <div class="row m-b-lg m-t-lg">

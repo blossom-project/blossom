@@ -17,7 +17,7 @@
   </div>
 </div>
 <div class="wrapper wrapper-content">
-  <div class="middle-box text-center animated fadeInUp">
+  <div class="middle-box text-center">
     <div class="ibox float-e-margins">
       <div class="ibox-content no-padding">
         <table class="table">

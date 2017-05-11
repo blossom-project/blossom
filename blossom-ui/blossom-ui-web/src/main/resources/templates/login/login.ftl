@@ -18,7 +18,7 @@
 
 <body class="gray-bg">
 
-<div class="middle-box text-center loginscreen animated fadeInDown">
+<div class="middle-box text-center loginscreen">
   <div>
     <h3>Welcome to Blossom</h3>
     <p>Perfectly designed and easy to use Back-Office based on Spring-Boot</p>

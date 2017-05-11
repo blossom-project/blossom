@@ -50,4 +50,7 @@
 <!-- ChartJS-->
 <script src="/js/plugins/chartJs/Chart.min.js"></script>
 
+<!-- Pace -->
+<script src="/js/plugins/pace/pace.min.js"></script>
+
 </#macro>
