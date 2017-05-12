@@ -22,7 +22,7 @@ public class WebSystemDashboardAutoConfiguration {
   }
 
   @Bean
-  public DashboardController dashboardController(){
+  public DashboardController dashboardController() {
     return new DashboardController();
   }
 }

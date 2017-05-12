@@ -15,9 +15,4 @@ public class DashboardController {
     return new ModelAndView("system/dashboard/dashboard");
   }
 
-  @GetMapping("/status")
-  public ModelAndView status() throws InterruptedException {
-    Thread.sleep(500);return new ModelAndView("system/dashboard/status");
-  }
-
 }
