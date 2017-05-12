@@ -20,7 +20,7 @@ public class SystemUserDetailsServiceImpl implements UserDetailsService {
       user.setPasswordHash("system");
       user.setFunction("System");
       user.setPhone("");
-      return new CurrentUser(user);
+      return  new CurrentUser(user, "ACTUATOR");
     }
 
     throw new UsernameNotFoundException(String.format("User with email=%s was not found", identifier));

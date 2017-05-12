@@ -21,7 +21,7 @@
     </div>
 </div>
 
-<div class="wrapper wrapper-content animated fadeInUp">
+<div class="wrapper wrapper-content">
     <#include "./table.ftl">
 </div>
 </@master.default>

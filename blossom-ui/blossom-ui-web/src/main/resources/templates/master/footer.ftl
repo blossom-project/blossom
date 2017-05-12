@@ -50,4 +50,13 @@
 <!-- ChartJS-->
 <script src="/js/plugins/chartJs/Chart.min.js"></script>
 
+<!-- Pace -->
+<script src="/js/plugins/pace/pace.min.js"></script>
+
+<!-- Vue.js -->
+<script src="/js/plugins/vue/vue.min.js"></script>
+
+<!-- Moment.js -->
+<script src="/js/plugins/fullcalendar/moment.min.js"></script>
+
 </#macro>

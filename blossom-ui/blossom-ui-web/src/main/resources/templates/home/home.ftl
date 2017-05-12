@@ -22,7 +22,7 @@
     </div>
   </div>
   <div class="wrapper wrapper-content">
-    <div class="middle-box text-center animated fadeInRightBig">
+    <div class="middle-box text-center">
       <h3 class="font-bold">This is page content</h3>
       <div class="error-desc">
         You can create here any grid layout you want. And any variation layout you imagine:) Check out

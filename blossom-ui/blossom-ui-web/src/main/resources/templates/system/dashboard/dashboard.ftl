@@ -1,307 +1,456 @@
-
 <#import "/spring.ftl" as spring>
 <#import "/master/master.ftl" as master>
 
 
 <@master.default currentUser=currentUser>
+
 <div class="wrapper wrapper-content">
   <div class="row">
+    <div class="col-lg-4">
+
+      <div id="status" class="ibox float-e-margins">
+        <div class="ibox-title">
+          <div class="pull-right"><span class="label label-primary">started {{uptime}} ago</span></div>
+          <h5>Server status</h5>
+        </div>
+        <div class="ibox-content" v-class="{'sk-loading':loading}">
+          <div class="sk-spinner sk-spinner-wave">
+            <div class="sk-rect1"></div>
+            <div class="sk-rect2"></div>
+            <div class="sk-rect3"></div>
+            <div class="sk-rect4"></div>
+            <div class="sk-rect5"></div>
+          </div>
+
+          <h2 class="global text-navy">
+            <i class="fa fa-play"
+               :class="{'fa-rotate-270': health.status === 'UP', 'fa-rotate-90': health.status != 'UP'}"></i>
+            {{health.status}}
+          </h2>
+
+          <table class="table table-stripped small m-t-md">
+            <tbody>
+            <tr v-for="(detail, key, index) in health" v-if="key!='status'">
+              <td :class="{ 'no-borders': index === 1, 'text-navy': detail.status === 'UP' }">
+                <i class="fa fa-play"
+                   :class="{'fa-rotate-270': detail.status === 'UP', 'fa-rotate-90': detail.status != 'UP'}"></i>
+                {{detail.status}}
+              </td>
+              <td :class="{ 'no-borders': index === 1 }">
+                {{key}}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div id="memory" class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Memory</h5>
+        </div>
+        <div class="ibox-content" v-class="{'sk-loading':loading}">
+          <div class="sk-spinner sk-spinner-wave">
+            <div class="sk-rect1"></div>
+            <div class="sk-rect2"></div>
+            <div class="sk-rect3"></div>
+            <div class="sk-rect4"></div>
+            <div class="sk-rect5"></div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12">
+              <ul class="stat-list">
+                <li>
+                  <h2 class="no-margins">{{memory.all.percentage}}%</h2>
+                  <small>Global</small>
+                  <div class="stat-percent">{{memory.all.used}} / {{memory.all.total}}</div>
+                  <div class="progress progress-mini">
+                    <div :style="{'width': memory.all.percentage+'%'}" class="progress-bar"></div>
+                  </div>
+                </li>
+                <li>
+                  <h2 class="no-margins ">{{memory.heap.percentage}}%</h2>
+                  <small>Heap memory</small>
+                  <div class="stat-percent">{{memory.heap.used}} / {{memory.heap.committed}}</div>
+                  <div class="progress progress-mini">
+                    <div :style="{'width': memory.heap.percentage+'%'}" class="progress-bar"></div>
+                  </div>
+                </li>
+                <li>
+                  <h2 class="no-margins ">{{memory.nonheap.percentage}}%</h2>
+                  <small>Non-heap memory</small>
+                  <div class="stat-percent">{{memory.nonheap.used}} / {{memory.nonheap.committed}}</div>
+                  <div class="progress progress-mini">
+                    <div :style="{'width': memory.nonheap.percentage+'%'}" class="progress-bar"></div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div id="jvm" class="ibox">
+        <div class="ibox-title">
+          <h5>JVM</h5>
+        </div>
+        <div class="ibox-content" v-class="{'sk-loading':loading}">
+          <div class="sk-spinner sk-spinner-wave">
+            <div class="sk-rect1"></div>
+            <div class="sk-rect2"></div>
+            <div class="sk-rect3"></div>
+            <div class="sk-rect4"></div>
+            <div class="sk-rect5"></div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-6">
+              <h3>Classes</h3>
+              <table class="table table-stripped small">
+                <tbody>
+                <tr>
+                  <td class="no-borders">
+                    Total
+                  </td>
+                  <td class="no-borders">
+                    {{jvm.classes.total}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Loaded
+                  </td>
+                  <td>
+                    {{jvm.classes.loaded}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Unloaded
+                  </td>
+                  <td>
+                    {{jvm.classes.unloaded}}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-xs-6">
+              <h3>GC</h3>
+              <table class="table table-stripped small">
+                <tbody>
+                <tr v-for="(gc, key, index) in jvm.gc">
+                  <td :class="{'no-borders':index ===0}">
+                    {{key}}
+                  </td>
+                  <td :class="{'no-borders':index ===0}">
+                    {{gc.count}} <br/> {{gc.time}}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="col-xs-6">
+              <h3>Threads</h3>
+              <table class="table table-stripped small">
+                <tbody>
+                <tr>
+                  <td class="no-borders">
+                    Total
+                  </td>
+                  <td class="no-borders">
+                    {{jvm.threads.total}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Total started
+                  </td>
+                  <td>
+                    {{jvm.threads.totalStarted}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Peak
+                  </td>
+                  <td>
+                    {{jvm.threads.peak}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Daemons
+                  </td>
+                  <td>
+                    {{jvm.threads.daemon}}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="col-xs-6">
+              <h3>Processors</h3>
+              <table class="table table-stripped small">
+                <tbody>
+                <tr>
+                  <td class="no-borders">
+                    Total
+                  </td>
+                  <td class="no-borders">
+                    {{jvm.processors.total}}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
     <div class="col-lg-12">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content">
-          <div>
-                                        <span class="pull-right text-right">
-                                        <small>Average value of sales in the past month in: <strong>United states</strong></small>
-                                            <br>
-                                            All sales: 162,862
-                                        </span>
-            <h1 class="m-b-xs">$ 50,992</h1>
-            <h3 class="font-bold no-margins">
-              Half-year revenue margin
-            </h3>
-            <small>Sales marketing.</small>
+      <div id="loggers" class="ibox">
+        <div class="ibox-title">
+          <h5>Loggers</h5>
+        </div>
+        <div class="ibox-content" v-class="{'sk-loading':loading}">
+          <div class="sk-spinner sk-spinner-wave">
+            <div class="sk-rect1"></div>
+            <div class="sk-rect2"></div>
+            <div class="sk-rect3"></div>
+            <div class="sk-rect4"></div>
+            <div class="sk-rect5"></div>
           </div>
-
-          <div><iframe class="chartjs-hidden-iframe" style="width: 100%; display: block; border: 0px; height: 0px; margin: 0px; position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px;"></iframe>
-            <canvas id="lineChart" height="320" style="display: block; width: 1373px; height: 320px;" width="1373"></canvas>
-          </div>
-
-          <div class="m-t-md">
-            <small class="pull-right">
-              <i class="fa fa-clock-o"> </i>
-              Update on 16.07.2015
-            </small>
-            <small>
-              <strong>Analysis of sales:</strong> The value has been changed over time, and last month reached a level over $50,000.
-            </small>
-          </div>
-
+          <table class="table table-stripped">
+            <tbody>
+              <tr  v-for="(logger, key,index) in loggers.loggers">
+                <td :class="{ 'no-borders': index === 0}">
+                  {{key}}
+                </td>
+                <td :class="{ 'no-borders': index === 0}">
+                    <button class="btn " :class="{'btn-danger': logger.effectiveLevel ==='ERROR'}" type="button">ERROR</button>
+                    <button class="btn " :class="{'btn-warning': logger.effectiveLevel ==='WARN'}" type="button">WARN</button>
+                    <button class="btn " :class="{'btn-info': logger.effectiveLevel ==='INFO'}" type="button">INFO</button>
+                    <button class="btn " :class="{'btn-success': logger.effectiveLevel ==='DEBUG'}" type="button">DEBUG</button>
+                    <button class="btn " :class="{'btn-primary': logger.effectiveLevel ==='TRACE'}" type="button">TRACE</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
-
-
-  <div class="row">
-
-    <div class="col-lg-4">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <span class="label label-primary pull-right">Today</span>
-          <h5>visits</h5>
-        </div>
-        <div class="ibox-content">
-          <h1 class="no-margins">22 285,400</h1>
-          <div class="stat-percent font-bold text-navy">20% <i class="fa fa-level-up"></i></div>
-          <small>New orders</small>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-4">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <span class="label label-info pull-right">Monthly</span>
-          <h5>Orders</h5>
-        </div>
-        <div class="ibox-content">
-          <h1 class="no-margins">60 420,600</h1>
-          <div class="stat-percent font-bold text-info">40% <i class="fa fa-level-up"></i></div>
-          <small>New orders</small>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-4">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <span class="label label-warning pull-right">Annual</span>
-          <h5>Income</h5>
-        </div>
-        <div class="ibox-content">
-          <h1 class="no-margins">$ 120 430,800</h1>
-          <div class="stat-percent font-bold text-warning">16% <i class="fa fa-level-up"></i></div>
-          <small>New orders</small>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-lg-6">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>New data for the report</h5>
-          <div class="ibox-tools">
-            <a class="collapse-link">
-              <i class="fa fa-chevron-up"></i>
-            </a>
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="fa fa-wrench"></i>
-            </a>
-            <ul class="dropdown-menu dropdown-user">
-              <li><a href="#">Config option 1</a>
-              </li>
-              <li><a href="#">Config option 2</a>
-              </li>
-            </ul>
-            <a class="close-link">
-              <i class="fa fa-times"></i>
-            </a>
-          </div>
-        </div>
-        <div class="ibox-content ibox-heading">
-          <h3>Stock price up
-            <div class="stat-percent text-navy">34% <i class="fa fa-level-up"></i></div>
-          </h3>
-          <small><i class="fa fa-stack-exchange"></i> New economic data from the previous quarter.</small>
-        </div>
-        <div class="ibox-content">
-          <div>
-
-            <div class="pull-right text-right">
-
-              <span class="bar_dashboard" style="display: none;">5,3,9,6,5,9,7,3,5,2,4,7,3,2,7,9,6,4,5,7,3,2,1,0,9,5,6,8,3,2,1</span><svg class="peity" height="16" width="100"><rect fill="#1ab394" x="0" y="7.111111111111111" width="2.2580645161290325" height="8.88888888888889"></rect><rect fill="#d7d7d7" x="3.2580645161290325" y="10.666666666666668" width="2.2580645161290325" height="5.333333333333333"></rect><rect fill="#1ab394" x="6.516129032258065" y="0" width="2.2580645161290325" height="16"></rect><rect fill="#d7d7d7" x="9.774193548387098" y="5.333333333333334" width="2.2580645161290325" height="10.666666666666666"></rect><rect fill="#1ab394" x="13.03225806451613" y="7.111111111111111" width="2.2580645161290325" height="8.88888888888889"></rect><rect fill="#d7d7d7" x="16.290322580645164" y="0" width="2.2580645161290325" height="16"></rect><rect fill="#1ab394" x="19.548387096774196" y="3.555555555555557" width="2.2580645161290325" height="12.444444444444443"></rect><rect fill="#d7d7d7" x="22.806451612903228" y="10.666666666666668" width="2.2580645161290325" height="5.333333333333333"></rect><rect fill="#1ab394" x="26.06451612903226" y="7.111111111111111" width="2.2580645161290325" height="8.88888888888889"></rect><rect fill="#d7d7d7" x="29.322580645161292" y="12.444444444444445" width="2.2580645161290325" height="3.5555555555555554"></rect><rect fill="#1ab394" x="32.58064516129033" y="8.88888888888889" width="2.2580645161290325" height="7.111111111111111"></rect><rect fill="#d7d7d7" x="35.83870967741936" y="3.555555555555557" width="2.2580645161290325" height="12.444444444444443"></rect><rect fill="#1ab394" x="39.09677419354839" y="10.666666666666668" width="2.2580645161290325" height="5.333333333333333"></rect><rect fill="#d7d7d7" x="42.35483870967742" y="12.444444444444445" width="2.2580645161290325" height="3.5555555555555554"></rect><rect fill="#1ab394" x="45.612903225806456" y="3.555555555555557" width="2.2580645161290325" height="12.444444444444443"></rect><rect fill="#d7d7d7" x="48.87096774193549" y="0" width="2.2580645161290325" height="16"></rect><rect fill="#1ab394" x="52.12903225806452" y="5.333333333333334" width="2.2580645161290325" height="10.666666666666666"></rect><rect fill="#d7d7d7" x="55.38709677419355" y="8.88888888888889" width="2.2580645161290325" height="7.111111111111111"></rect><rect fill="#1ab394" x="58.645161290322584" y="7.111111111111111" width="2.2580645161290325" height="8.88888888888889"></rect><rect fill="#d7d7d7" x="61.903225806451616" y="3.555555555555557" width="2.2580645161290325" height="12.444444444444443"></rect><rect fill="#1ab394" x="65.16129032258065" y="10.666666666666668" width="2.2580645161290325" height="5.333333333333333"></rect><rect fill="#d7d7d7" x="68.41935483870968" y="12.444444444444445" width="2.2580645161290325" height="3.5555555555555554"></rect><rect fill="#1ab394" x="71.67741935483872" y="14.222222222222221" width="2.2580645161290325" height="1.7777777777777777"></rect><rect fill="#d7d7d7" x="74.93548387096774" y="15" width="2.2580645161290325" height="1"></rect><rect fill="#1ab394" x="78.19354838709678" y="0" width="2.2580645161290325" height="16"></rect><rect fill="#d7d7d7" x="81.45161290322581" y="7.111111111111111" width="2.2580645161290325" height="8.88888888888889"></rect><rect fill="#1ab394" x="84.70967741935485" y="5.333333333333334" width="2.2580645161290325" height="10.666666666666666"></rect><rect fill="#d7d7d7" x="87.96774193548387" y="1.7777777777777786" width="2.2580645161290325" height="14.222222222222221"></rect><rect fill="#1ab394" x="91.22580645161291" y="10.666666666666668" width="2.2580645161290325" height="5.333333333333333"></rect><rect fill="#d7d7d7" x="94.48387096774194" y="12.444444444444445" width="2.2580645161290325" height="3.5555555555555554"></rect><rect fill="#1ab394" x="97.74193548387098" y="14.222222222222221" width="2.2580645161290325" height="1.7777777777777777"></rect></svg>
-              <br>
-              <small class="font-bold">$ 20 054.43</small>
-            </div>
-            <h4>NYS report new data!
-              <br>
-              <small class="m-r"><a href="graph_flot.html"> Check the stock price! </a> </small>
-            </h4>
-          </div>
-        </div>
-      </div>
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>Read below comments and tweets</h5>
-          <div class="ibox-tools">
-            <a class="collapse-link">
-              <i class="fa fa-chevron-up"></i>
-            </a>
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="fa fa-wrench"></i>
-            </a>
-            <ul class="dropdown-menu dropdown-user">
-              <li><a href="#">Config option 1</a>
-              </li>
-              <li><a href="#">Config option 2</a>
-              </li>
-            </ul>
-            <a class="close-link">
-              <i class="fa fa-times"></i>
-            </a>
-          </div>
-        </div>
-        <div class="ibox-content no-padding">
-          <ul class="list-group">
-            <li class="list-group-item">
-              <p><a class="text-info" href="#">@Alan Marry</a> I belive that. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-              <small class="block text-muted"><i class="fa fa-clock-o"></i> 1 minuts ago</small>
-            </li>
-            <li class="list-group-item">
-              <p><a class="text-info" href="#">@Stock Man</a> Check this stock chart. This price is crazy! </p>
-              <small class="block text-muted"><i class="fa fa-clock-o"></i> 2 hours ago</small>
-            </li>
-            <li class="list-group-item">
-              <p><a class="text-info" href="#">@Kevin Smith</a> Lorem ipsum unknown printer took a galley </p>
-              <small class="block text-muted"><i class="fa fa-clock-o"></i> 2 minuts ago</small>
-            </li>
-            <li class="list-group-item ">
-              <p><a class="text-info" href="#">@Jonathan Febrick</a> The standard chunk of Lorem Ipsum</p>
-              <small class="block text-muted"><i class="fa fa-clock-o"></i> 1 hour ago</small>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-lg-6">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>Timeline</h5>
-          <span class="label label-primary">Meeting today</span>
-          <div class="ibox-tools">
-            <a class="collapse-link">
-              <i class="fa fa-chevron-up"></i>
-            </a>
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="fa fa-wrench"></i>
-            </a>
-            <ul class="dropdown-menu dropdown-user">
-              <li><a href="#">Config option 1</a>
-              </li>
-              <li><a href="#">Config option 2</a>
-              </li>
-            </ul>
-            <a class="close-link">
-              <i class="fa fa-times"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="ibox-content inspinia-timeline">
-
-          <div class="timeline-item">
-            <div class="row">
-              <div class="col-xs-3 date">
-                <i class="fa fa-briefcase"></i>
-                6:00 am
-                <br>
-                <small class="text-navy">2 hour ago</small>
-              </div>
-              <div class="col-xs-7 content no-top-border">
-                <p class="m-b-xs"><strong>Meeting</strong></p>
-
-                <p>Conference on the sales results for the previous year. Monica please examine sales trends in marketing and products.</p>
-
-              </div>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="row">
-              <div class="col-xs-3 date">
-                <i class="fa fa-file-text"></i>
-                7:00 am
-                <br>
-                <small class="text-navy">3 hour ago</small>
-              </div>
-              <div class="col-xs-7 content">
-                <p class="m-b-xs"><strong>Send documents to Mike</strong></p>
-                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since.</p>
-              </div>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="row">
-              <div class="col-xs-3 date">
-                <i class="fa fa-coffee"></i>
-                8:00 am
-                <br>
-              </div>
-              <div class="col-xs-7 content">
-                <p class="m-b-xs"><strong>Coffee Break</strong></p>
-                <p>
-                  Go to shop and find some products.
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="row">
-              <div class="col-xs-3 date">
-                <i class="fa fa-phone"></i>
-                11:00 am
-                <br>
-                <small class="text-navy">21 hour ago</small>
-              </div>
-              <div class="col-xs-7 content">
-                <p class="m-b-xs"><strong>Phone with Jeronimo</strong></p>
-                <p>
-                  Lorem Ipsum has been the industry's standard dummy text ever since.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
 </div>
+
+
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
 
-    var lineData = {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
-      datasets: [
-        {
-          label: "Example dataset",
-          backgroundColor: "rgba(26,179,148,0.5)",
-          borderColor: "rgba(26,179,148,0.7)",
-          pointBackgroundColor: "rgba(26,179,148,1)",
-          pointBorderColor: "#fff",
-          data: [28, 48, 40, 19, 86, 27, 90]
-        },
-        {
-          label: "Example dataset",
-          backgroundColor: "rgba(220,220,220,0.5)",
-          borderColor: "rgba(220,220,220,1)",
-          pointBackgroundColor: "rgba(220,220,220,1)",
-          pointBorderColor: "#fff",
-          data: [65, 59, 80, 81, 56, 55, 40]
+    var status = new Vue({
+      el: '#status',
+      data: {
+        health: {},
+        uptime: ''
+      },
+      methods: {
+        update: function () {
+          this.loading = true;
+          var health = $.get("/blossom/actuator/health");
+          var metrics = $.get("/blossom/actuator/metrics");
+
+          $.when(health, metrics).done(function (h, m) {
+            this.health = h[0];
+            this.uptime = moment.duration(m[0]['uptime']).humanize();
+            this.loading = false;
+          }.bind(this));
         }
-      ]
-    };
+      },
+      created: function () {
+        this.update();
+        setInterval(this.update, 5000);
+      }
+    });
 
-    var lineOptions = {
-      responsive: true
-    };
+
+    var memory = new Vue({
+      el: '#memory',
+      data: {
+        memory: {
+          all: {
+            percentage: 0,
+            total: 0,
+            free: 0,
+            used: 0,
+          },
+          heap: {
+            percentage: 0,
+            total: 0,
+            committed: 0,
+            init: 0,
+            used: 0
+          },
+          nonheap: {
+            percentage: 0,
+            total: 0,
+            committed: 0,
+            init: 0,
+            used: 0
+          }
+        }
+      },
+      methods: {
+        bytesToSize: function (bytes, decimals) {
+          if (bytes == 0) return '0 Bytes';
+          var k = 1000,
+            dm = decimals || 2,
+            sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+            i = Math.floor(Math.log(bytes) / Math.log(k));
+          return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        },
+        update: function () {
+          this.loading = true;
+          $.get("/blossom/actuator/metrics", function (metrics) {
+            this.memory.all = {
+              percentage: ((metrics['mem'] / (metrics['mem'] + metrics['mem.free'])) * 100).toFixed(2),
+              total: this.bytesToSize((metrics['mem'] + metrics['mem.free']) * 1024, 1),
+              free: this.bytesToSize(metrics['mem.free'] * 1024, 1),
+              used: this.bytesToSize(metrics['mem'] * 1024, 1)
+            };
+
+            this.memory.heap = {
+              percentage: !metrics['heap.committed'] || metrics['heap.committed'] === 0 ? 0 : ((metrics['heap.used'] / metrics['heap.committed']) * 100).toFixed(2),
+              total: this.bytesToSize(metrics['heap'] * 1024, 1),
+              committed: this.bytesToSize(metrics['heap.committed'] * 1024, 1),
+              init: this.bytesToSize(metrics['heap.init'] * 1024, 1),
+              used: this.bytesToSize(metrics['heap.used'] * 1024, 1)
+            };
+
+            this.memory.nonheap = {
+              percentage: !metrics['nonheap.committed'] || metrics['nonheap.committed'] === 0 ? 0 : ((metrics['nonheap.used'] / metrics['nonheap.committed']) * 100).toFixed(2),
+              total: this.bytesToSize(metrics['nonheap'] * 1024, 1),
+              committed: this.bytesToSize(metrics['nonheap.committed'] * 1024, 1),
+              init: this.bytesToSize(metrics['nonheap.init'] * 1024, 1),
+              used: this.bytesToSize(metrics['nonheap.used'] * 1024, 1)
+            };
+
+            this.loading = false;
+          }.bind(this));
+        }
+      },
+      created: function () {
+        this.update();
+        setInterval(this.update, 5000);
+      }
+      ,
+      updated: function () {
+        this.$nextTick(function () {
+          console.log("updated");
+        });
+      }
+    });
 
 
-    var ctx = document.getElementById("lineChart").getContext("2d");
-    new Chart(ctx, {type: 'line', data: lineData, options:lineOptions});
+    var jvm = new Vue({
+      el: '#jvm',
+      data: {
+        jvm: {
+          classes: {
+            total: 0,
+            loaded: 0,
+            unloaded: 0
+          },
+          gc: {},
+          processor: {
+            total: 0
+          }
+        }
+      },
+      methods: {
+        update: function () {
+          this.loading = true;
+          $.get("/blossom/actuator/metrics", function (metrics) {
+            this.jvm.classes = {
+              total: metrics['classes'],
+              loaded: metrics['classes.loaded'],
+              unloaded: metrics['classes.unloaded']
+            };
 
+            this.jvm.gc = {};
+            $.each(metrics, function (key, value) {
+              var splittedKey = key.split(".");
+              console.log(splittedKey);
+              if (splittedKey[0] === 'gc') {
+                if (!this.jvm.gc[splittedKey[1]]) {
+                  this.jvm.gc[splittedKey[1]] = {};
+                }
+
+                if (splittedKey[2] === 'time') {
+                  this.jvm.gc[splittedKey[1]][splittedKey[2]] = moment.duration(value).humanize();
+                } else {
+                  this.jvm.gc[splittedKey[1]][splittedKey[2]] = value;
+                }
+              }
+            }.bind(this));
+
+            this.jvm.threads = {
+              total: metrics['threads'],
+              daemon: metrics['threads.daemon'],
+              peak: metrics['threads.peak'],
+              totalStarted: metrics['threads.totalStarted'],
+            };
+
+            this.jvm.processors = {
+              total: metrics['processors']
+            };
+
+            this.loading = false;
+          }.bind(this));
+        }
+      },
+      created: function () {
+        this.update();
+        setInterval(this.update, 5000);
+      }
+      ,
+      updated: function () {
+        this.$nextTick(function () {
+          console.log("updated");
+        });
+      }
+    });
+
+
+    var loggers = new Vue({
+      el: '#loggers',
+      data: {
+        loggers: {},
+      },
+      methods: {
+        update: function () {
+          this.loading = true;
+          var loggers = $.get("/blossom/actuator/loggers");
+
+          $.when(loggers).done(function (l) {
+            this.loggers = l;
+            this.loading = false;
+          }.bind(this));
+        }
+      },
+      created: function () {
+        this.update();
+        setInterval(this.update, 60000);
+      }
+    });
   });
 </script>
 </@master.default>
