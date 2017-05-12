@@ -7,6 +7,8 @@ import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.JPQLQuery;
 import fr.mgargadennec.blossom.core.common.entity.AbstractEntity;
 import fr.mgargadennec.blossom.core.common.repository.CrudRepository;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.Querydsl;
@@ -17,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@CacheConfig(cacheResolver = "blossomCacheResolver")
 public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> implements ReadOnlyDao<ENTITY> {
 
   protected final CrudRepository<ENTITY> repository;
@@ -24,7 +27,7 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   private Querydsl querydsl;
   private EntityManager entityManager;
 
-  private TypeToken<ENTITY> type = new TypeToken<ENTITY>(getClass()) {
+  protected TypeToken<ENTITY> type = new TypeToken<ENTITY>(getClass()) {
   };
 
   GenericReadOnlyDaoImpl(CrudRepository<ENTITY> repository) {
@@ -50,6 +53,7 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   }
 
   @Override
+  @Cacheable
   public ENTITY getOne(long id) {
     return this.repository.findOne(id);
   }

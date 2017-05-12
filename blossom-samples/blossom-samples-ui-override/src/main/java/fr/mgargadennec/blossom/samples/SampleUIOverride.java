@@ -56,7 +56,7 @@ public class SampleUIOverride {
     @Bean
     public CommandLineRunner clr(UserService service, DataFactory df, Random random) {
         return args -> {
-            IntStream.range(0, 1000).mapToObj(i -> {
+            IntStream.range(0, 50).mapToObj(i -> {
                 UserDTO user = new UserDTO();
                 user.setIdentifier("Identifier-" + i);
                 user.setPasswordHash("Password-" + i);
@@ -78,7 +78,7 @@ public class SampleUIOverride {
     @Bean
     public CommandLineRunner clrGroup(GroupService service,DataFactory df) {
         return args -> {
-            IntStream.range(0, 1000).mapToObj(i -> {
+            IntStream.range(0, 50).mapToObj(i -> {
                 GroupDTO group = new GroupDTO();
                 group.setName("Name-" + i);
                 group.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);
@@ -90,7 +90,7 @@ public class SampleUIOverride {
     @Bean
     public CommandLineRunner clrRole(RoleService service) {
         return args -> {
-            IntStream.range(0, 1000).mapToObj(i -> {
+            IntStream.range(0, 15).mapToObj(i -> {
                 RoleDTO role = new RoleDTO();
                 role.setName("Name-" + i);
                 role.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);
@@ -126,6 +126,8 @@ public class SampleUIOverride {
                 someRoles.forEach(role -> {
                     service.associate(user, role);
                 });
+
+                userService.getOne(user.getId());
 
                 LOGGER.info("Association to roles for user {} are {}", user, service.getAllLeft(user).size());
             });

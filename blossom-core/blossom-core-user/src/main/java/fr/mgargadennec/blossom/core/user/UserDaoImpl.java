@@ -1,6 +1,9 @@
 package fr.mgargadennec.blossom.core.user;
 
 import fr.mgargadennec.blossom.core.common.dao.GenericCrudDaoImpl;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.Date;
 

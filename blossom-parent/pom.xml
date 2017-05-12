@@ -23,6 +23,7 @@
     <querydsl.version>3.7.0</querydsl.version>
     <jna.version>3.0.9</jna.version>
     <quartz.version>2.3.0</quartz.version>
+    <caffeine.version>2.5.0</caffeine.version>
   </properties>
 
   <dependencyManagement>

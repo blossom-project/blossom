@@ -59,6 +59,12 @@
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
+      <artifactId>blossom-core-cache</artifactId>
+      <version>${project.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-ui-common</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
