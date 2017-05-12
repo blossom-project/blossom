@@ -6,7 +6,8 @@
 
 <div class="wrapper wrapper-content">
   <div class="row">
-    <div class="col-lg-3">
+    <div class="col-lg-4">
+
       <div id="status" class="ibox float-e-margins">
         <div class="ibox-title">
           <div class="pull-right"><span class="label label-primary">started {{uptime}} ago</span></div>
@@ -45,7 +46,7 @@
       </div>
     </div>
 
-    <div class="col-lg-3">
+    <div class="col-lg-4">
       <div id="memory" class="ibox float-e-margins">
         <div class="ibox-title">
           <h5>Memory</h5>
@@ -92,24 +93,8 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-3">
-      <div class="ibox">
-        <div class="ibox-title">
-          <h5>Tomcat</h5>
-        </div>
-        <div class="ibox-content" v-class="{'sk-loading':loading}">
-          <div class="sk-spinner sk-spinner-wave">
-            <div class="sk-rect1"></div>
-            <div class="sk-rect2"></div>
-            <div class="sk-rect3"></div>
-            <div class="sk-rect4"></div>
-            <div class="sk-rect5"></div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="col-lg-3">
+    <div class="col-lg-4">
       <div id="jvm" class="ibox">
         <div class="ibox-title">
           <h5>JVM</h5>
@@ -227,6 +212,40 @@
               </table>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <div id="loggers" class="ibox">
+        <div class="ibox-title">
+          <h5>Loggers</h5>
+        </div>
+        <div class="ibox-content" v-class="{'sk-loading':loading}">
+          <div class="sk-spinner sk-spinner-wave">
+            <div class="sk-rect1"></div>
+            <div class="sk-rect2"></div>
+            <div class="sk-rect3"></div>
+            <div class="sk-rect4"></div>
+            <div class="sk-rect5"></div>
+          </div>
+          <table class="table table-stripped">
+            <tbody>
+              <tr  v-for="(logger, key,index) in loggers.loggers">
+                <td :class="{ 'no-borders': index === 0}">
+                  {{key}}
+                </td>
+                <td :class="{ 'no-borders': index === 0}">
+                    <button class="btn " :class="{'btn-danger': logger.effectiveLevel ==='ERROR'}" type="button">ERROR</button>
+                    <button class="btn " :class="{'btn-warning': logger.effectiveLevel ==='WARN'}" type="button">WARN</button>
+                    <button class="btn " :class="{'btn-info': logger.effectiveLevel ==='INFO'}" type="button">INFO</button>
+                    <button class="btn " :class="{'btn-success': logger.effectiveLevel ==='DEBUG'}" type="button">DEBUG</button>
+                    <button class="btn " :class="{'btn-primary': logger.effectiveLevel ==='TRACE'}" type="button">TRACE</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -351,8 +370,8 @@
             unloaded: 0
           },
           gc: {},
-          processor:{
-              total:0
+          processor: {
+            total: 0
           }
         }
       },
@@ -390,8 +409,8 @@
               totalStarted: metrics['threads.totalStarted'],
             };
 
-            this.jvm.processors={
-                total:metrics['processors']
+            this.jvm.processors = {
+              total: metrics['processors']
             };
 
             this.loading = false;
@@ -410,43 +429,28 @@
       }
     });
 
-    var indicators = {
-      health: {
-        panels: ["#status"],
-        callback: function (health) {
-          console.log("Health", health);
-          statusPanel.health = health;
-          console.log(statusPanel);
+
+    var loggers = new Vue({
+      el: '#loggers',
+      data: {
+        loggers: {},
+      },
+      methods: {
+        update: function () {
+          this.loading = true;
+          var loggers = $.get("/blossom/actuator/loggers");
+
+          $.when(loggers).done(function (l) {
+            this.loggers = l;
+            this.loading = false;
+          }.bind(this));
         }
       },
-      beans: {
-        panels: ["#beans"],
-        callback: function (beans) {
-          console.log("Beans", beans);
-        }
-      },
-      metrics: {
-        panels: "#metrics",
-        callback: function (metrics) {
-          console.log("Metrics", metrics);
-        }
+      created: function () {
+        this.update();
+        setInterval(this.update, 60000);
       }
-    };
-    var updateIndicator = function (indicator) {
-      $.get("/blossom/actuator/" + indicator, function (data) {
-        indicators[indicator].callback(data);
-      });
-    };
-    var updateAll = function () {
-      $.each(indicators, function (indicator) {
-        updateIndicator(indicator);
-      });
-    };
-
-//    setInterval(updateAll, 5000);
-//
-//    updateAll();
+    });
   });
-
 </script>
 </@master.default>
