@@ -1,6 +1,5 @@
 package fr.mgargadennec.blossom.autoconfigure.core;
 
-import com.google.common.collect.Lists;
 import fr.mgargadennec.blossom.core.cache.BlossomCacheManager;
 import fr.mgargadennec.blossom.core.cache.BlossomCacheResolver;
 import org.slf4j.Logger;
