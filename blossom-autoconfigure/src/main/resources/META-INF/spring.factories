@@ -8,7 +8,8 @@ fr.mgargadennec.blossom.autoconfigure.core.RoleAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.AssociationUserGroupAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.AssociationUserRoleAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.SchedulerAutoConfiguration,\
-fr.mgargadennec.blossom.autoconfigure.core.CacheAutoConfiguration
+fr.mgargadennec.blossom.autoconfigure.core.CacheAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.core.ActuatorAutoConfiguration
 
 fr.mgargadennec.blossom.autoconfigure.EnableBlossom=\
 fr.mgargadennec.blossom.autoconfigure.ui.MenuAutoConfiguration,\

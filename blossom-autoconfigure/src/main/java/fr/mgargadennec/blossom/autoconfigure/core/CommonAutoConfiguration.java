@@ -15,9 +15,11 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,9 +44,10 @@ import java.security.SecureRandom;
  */
 @Configuration
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
+@AutoConfigureBefore(ElasticsearchAutoConfiguration.class)
 @EnablePluginRegistries({MapperPlugin.class, ReadOnlyServicePlugin.class})
 @EnableJpaAuditing
-@PropertySource("classpath:/freemarker.properties")
+@PropertySource({"classpath:/freemarker.properties", "classpath:/elasticsearch.properties"})
 public class CommonAutoConfiguration {
 
   @Configuration
@@ -97,7 +100,7 @@ public class CommonAutoConfiguration {
   }
 
   @Bean
-  @ConditionalOnMissingBean
+  @ConditionalOnMissingBean(BulkProcessor.class)
   @Scope(BeanDefinition.SCOPE_PROTOTYPE)
   public BulkProcessor bulkProcessor(Client client) {
     return BulkProcessor.builder(client, new BulkProcessor.Listener() {

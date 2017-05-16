@@ -27,14 +27,14 @@ public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends 
 
     @Override
     @Transactional
-    @CacheEvict(key = "#toDelete.id")
+    @CacheEvict(key = "#a0.id+''")
     public void delete(ENTITY toDelete) {
         this.repository.delete(toDelete.getId());
     }
 
     @Override
     @Transactional
-    @CachePut(key = "#id")
+    @CachePut(key = "#a0+''")
     public ENTITY update(long id, ENTITY toUpdate) {
         ENTITY entity = this.repository.findOne(id);
         ENTITY modifiedEntity = toUpdate;

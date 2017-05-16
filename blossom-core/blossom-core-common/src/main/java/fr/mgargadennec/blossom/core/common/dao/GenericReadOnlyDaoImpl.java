@@ -8,6 +8,7 @@ import com.querydsl.jpa.JPQLQuery;
 import fr.mgargadennec.blossom.core.common.entity.AbstractEntity;
 import fr.mgargadennec.blossom.core.common.repository.CrudRepository;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,7 +54,7 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   }
 
   @Override
-  @Cacheable
+  @Cacheable(key = "#a0+''")
   public ENTITY getOne(long id) {
     return this.repository.findOne(id);
   }

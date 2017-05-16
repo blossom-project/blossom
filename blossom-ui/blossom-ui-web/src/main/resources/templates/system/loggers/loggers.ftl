@@ -64,12 +64,12 @@
             <td>
               <#list loggers.levels as level>
                 <#assign levelClass = "btn-default"/>
-                <#if level == 'OFF' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "bg-black"/>
-                <#elseif level == 'ERROR' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-danger"/>
-                <#elseif level == 'WARN' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-warning"/>
-                <#elseif level == 'INFO' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-info"/>
-                <#elseif level == 'DEBUG' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-success"/>
-                <#elseif level == 'TRACE' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-primary"/>
+                <#if level == 'OFF' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "bg-black active"/>
+                <#elseif level == 'ERROR' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-danger active"/>
+                <#elseif level == 'WARN' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-warning active"/>
+                <#elseif level == 'INFO' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-info active"/>
+                <#elseif level == 'DEBUG' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-success active"/>
+                <#elseif level == 'TRACE' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-primary active"/>
                 </#if>
                 <button class="btn btn-rounded btn-xs ${levelClass}" data-action="changeLogLevel" data-logger="${name}"
                         data-loglevel="${level}">${level}</button>
