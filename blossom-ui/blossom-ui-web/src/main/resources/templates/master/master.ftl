@@ -9,8 +9,10 @@
       <@header.default/>
       <@header.styles/>
       <@header.scripts/>
+      <meta name="_csrf" content="${_csrf.token}"/>
+      <meta name="_csrf_header" content="${_csrf.headerName}"/>
   </head>
-  <body class="fixed-navigation">
+  <body class="fixed-navigation md-skin">
     <div id="wrapper">
         <@navigation.drawer menu=menu currentUser=currentUser></@navigation.drawer>
 
@@ -23,6 +25,16 @@
 
     <@footer.styles/>
     <@footer.scripts/>
+
+    <script>
+      $(function () {
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        $(document).ajaxSend(function(e, xhr, options) {
+          xhr.setRequestHeader(header, token);
+        });
+      });
+    </script>
   </body>
 </html>
 </#macro>
@@ -34,7 +46,7 @@
       <@header.default/>
       <@header.styles/>
   </head>
-  <body>
+  <body class="md-skin">
       <#nested/>
  	  <@footer.scripts/>
   </body>

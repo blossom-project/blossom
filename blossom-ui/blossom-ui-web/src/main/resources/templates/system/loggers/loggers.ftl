@@ -1,13 +1,12 @@
 <#import "/spring.ftl" as spring>
 <#import "/master/master.ftl" as master>
 
-
 <@master.default currentUser=currentUser>
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
     <h2>
-      <i class="fa fa-cubes"></i>
-      <@spring.message "menu.system.caches"/>
+      <i class="fa fa-pencil"></i>
+      <@spring.message "menu.system.loggers"/>
     </h2>
     <ol class="breadcrumb">
       <li>
@@ -17,7 +16,7 @@
         <a href="/blossom/system"><@spring.message "menu.system"/></a>
       </li>
       <li class="active">
-        <strong><@spring.message "menu.system.caches"/></strong>
+        <strong><@spring.message "menu.system.loggers"/></strong>
       </li>
     </ol>
   </div>
@@ -38,7 +37,6 @@
               <#if q?has_content> value="${q}"</#if>
             />
 
-
             <span class="input-group-btn">
               <button type="button"
                       class="btn btn-sm btn-primary table-search"
@@ -54,56 +52,28 @@
         <thead>
         <tr>
           <th>Name</th>
-          <th>Action</th>
-          <th>Estimated size</th>
-          <th>Hit count</th>
-          <th>Miss count</th>
-          <th>Load success</th>
-          <th>Load failures</th>
-          <th>Total load time</th>
-          <th>Eviction count</th>
-          <th>Eviction weight</th>
+          <th>Level</th>
         </tr>
         </thead>
         <tbody>
-          <#list caches?keys as cacheKey>
+          <#list loggers.loggers?keys as name>
           <tr>
             <td>
-            ${cacheKey}
+            ${name}
             </td>
             <td>
-              <button class="btn btn-xs btn-danger" data-action="emptyCache" data-cache="${cacheKey}"><i
-                class="fa fa-trash"></i></button>
-            </td>
-            <td>
-            ${caches[cacheKey].size?c}
-            </td>
-            <td>
-            ${caches[cacheKey].stats.hitCount()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.missCount()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.loadSuccessCount()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.loadFailureCount()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.totalLoadTime()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.evictionCount()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.evictionWeight()}
+              <#list loggers.levels as level>
+                <#assign levelClass = "btn-default"/>
+                <#if level == 'OFF' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "bg-black"/>
+                <#elseif level == 'ERROR' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-danger"/>
+                <#elseif level == 'WARN' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-warning"/>
+                <#elseif level == 'INFO' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-info"/>
+                <#elseif level == 'DEBUG' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-success"/>
+                <#elseif level == 'TRACE' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-primary"/>
+                </#if>
+                <button class="btn btn-rounded btn-xs ${levelClass}" data-action="changeLogLevel" data-logger="${name}"
+                        data-loglevel="${level}">${level}</button>
+              </#list>
             </td>
           </tr>
           </#list>
@@ -113,13 +83,13 @@
   </div>
 </div>
 
-
 <script>
   $(document).ready(function () {
-    $("[data-action='emptyCache']").click(function (e) {
-      var cache = $(this).data("cache");
+    $("[data-action='changeLogLevel']").click(function (e) {
+      var logger = $(this).data("logger");
+      var loglevel = $(this).data("loglevel");
 
-      $.post("caches/" + cache + "/_empty", function () {
+      $.post("loggers/" + logger + "/" + loglevel, function () {
         window.location.reload(true);
       });
     });

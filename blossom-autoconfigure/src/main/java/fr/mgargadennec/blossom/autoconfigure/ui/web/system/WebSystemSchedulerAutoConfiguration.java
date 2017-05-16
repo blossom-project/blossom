@@ -19,7 +19,7 @@ public class WebSystemSchedulerAutoConfiguration {
 
   @Bean
   public MenuItem systemSchedulerMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
-    return builder.key("scheduler").label("menu.system.scheduler", true).link("/blossom/system/scheduler").order(2).icon("fa fa-calendar").parent(systemMenuItem).build();
+    return builder.key("schedulerManager").label("menu.system.scheduler", true).link("/blossom/system/scheduler").order(2).icon("fa fa-calendar").parent(systemMenuItem).build();
   }
 
   @Bean

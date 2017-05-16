@@ -5,6 +5,8 @@ import fr.mgargadennec.blossom.ui.menu.MenuItemBuilder;
 import fr.mgargadennec.blossom.ui.web.system.dashboard.DashboardController;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.Endpoint;
+import org.springframework.boot.actuate.endpoint.HealthEndpoint;
+import org.springframework.boot.actuate.endpoint.MetricsEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +24,7 @@ public class WebSystemDashboardAutoConfiguration {
   }
 
   @Bean
-  public DashboardController dashboardController() {
-    return new DashboardController();
+  public DashboardController dashboardController(HealthEndpoint healthEndpoint, MetricsEndpoint metricsEndpoint) {
+    return new DashboardController(healthEndpoint, metricsEndpoint);
   }
 }

@@ -16,11 +16,11 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnClass(CacheManagerController.class)
-public class WebSystemCacheAutoConfiguration {
+public class WebSystemCachesAutoConfiguration {
 
   @Bean
   public MenuItem systemCacheMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
-    return builder.key("cacheManager").label("menu.system.cache", true).link("/blossom/system/caches").order(3).icon("fa fa-cubes").parent(systemMenuItem).build();
+    return builder.key("cacheManager").label("menu.system.caches", true).link("/blossom/system/caches").order(3).icon("fa fa-cubes").parent(systemMenuItem).build();
   }
 
 
