@@ -8,6 +8,7 @@ import java.util.Date;
  * Created by Maël Gargadennnec on 03/05/2017.
  */
 public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
+
   public UserDaoImpl(UserRepository repository) {
     super(repository);
   }
@@ -58,4 +59,5 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
     user.setLastConnection(lastConnection);
     return repository.save(user);
   }
+
 }
