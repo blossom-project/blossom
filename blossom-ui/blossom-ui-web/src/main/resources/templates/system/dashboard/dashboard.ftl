@@ -206,76 +206,11 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-lg-12">
-        <div id="loggers" class="ibox">
-          <div class="ibox-title">
-            <h5>Loggers</h5>
-          </div>
-          <div class="ibox-content" v-class="{'sk-loading':loading}">
-            <div class="sk-spinner sk-spinner-wave">
-              <div class="sk-rect1"></div>
-              <div class="sk-rect2"></div>
-              <div class="sk-rect3"></div>
-              <div class="sk-rect4"></div>
-              <div class="sk-rect5"></div>
-            </div>
-            <table class="table table-stripped">
-              <tbody>
-              <tr v-for="(logger, key,index) in loggers.loggers">
-                <td :class="{ 'no-borders': index === 0}">
-                  {{key}}
-                </td>
-                <td :class="{ 'no-borders': index === 0}">
-                  <button class="btn " :class="{'btn-danger': logger.effectiveLevel ==='ERROR'}" type="button">ERROR
-                  </button>
-                  <button class="btn " :class="{'btn-warning': logger.effectiveLevel ==='WARN'}" type="button">WARN
-                  </button>
-                  <button class="btn " :class="{'btn-info': logger.effectiveLevel ==='INFO'}" type="button">INFO
-                  </button>
-                  <button class="btn " :class="{'btn-success': logger.effectiveLevel ==='DEBUG'}" type="button">DEBUG
-                  </button>
-                  <button class="btn " :class="{'btn-primary': logger.effectiveLevel ==='TRACE'}" type="button">TRACE
-                  </button>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
 
   <script>
     $(document).ready(function () {
-
-//    var status = new Vue({
-//      el: '#status',
-//      data: {
-//        health: {},
-//        uptime: ''
-//      },
-//      methods: {
-//        update: function () {
-//          this.loading = true;
-//          var health = $.get("/blossom/actuator/health");
-//          var metrics = $.get("/blossom/actuator/metrics");
-//
-//          $.when(health, metrics).done(function (h, m) {
-//            this.health = h[0];
-//            this.uptime = moment.duration(m[0]['uptime']).humanize();
-//            this.loading = false;
-//          }.bind(this));
-//        }
-//      },
-//      created: function () {
-//        this.update();
-//        setInterval(this.update, 5000);
-//      }
-//    });
-
 
       var memory = new Vue({
         el: '#memory',
@@ -424,28 +359,5 @@
         }
       });
 
-
-      var loggers = new Vue({
-        el: '#loggers',
-        data: {
-          loggers: {},
-        },
-        methods: {
-          update: function () {
-            this.loading = true;
-            var loggers = $.get("/blossom/actuator/loggers");
-
-            $.when(loggers).done(function (l) {
-              this.loggers = l;
-              this.loading = false;
-            }.bind(this));
-          }
-        },
-        created: function () {
-          this.update();
-          setInterval(this.update, 60000);
-        }
-      });
-    });
   </script>
 </@master.default>

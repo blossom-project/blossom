@@ -1,0 +1,153 @@
+{
+  "settings":{
+    "number_of_shards": "1",
+    "number_of_replicas": "0"
+  },
+  "mappings": {
+    "traces": {
+      "_ttl": {
+        "enabled": true,
+        "default": 604800000
+      },
+      "properties": {
+        "headers": {
+          "properties": {
+            "request": {
+              "properties": {
+                "accept": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "accept-encoding": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "accept-language": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "cache-control": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "connection": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "cookie": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "host": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "if-modified-since": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "origin": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "referer": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "upgrade-insecure-requests": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "user-agent": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "x-requested-with": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                }
+              }
+            },
+            "response": {
+              "properties": {
+                "Accept-Ranges": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "Cache-Control": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "Content-Language": {
+                  "type": "string"
+                },
+                "Content-Length": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "Content-Type": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "Date": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "Expires": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "Last-Modified": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "Pragma": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "Transfer-Encoding": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "X-Application-Context": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "X-Content-Type-Options": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "X-Frame-Options": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "X-XSS-Protection": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "status": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                }
+              }
+            }
+          }
+        },
+        "method": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "path": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "timeTaken": {
+          "type": "long"
+        },
+        "timestamp": {
+          "type": "long"
+        }
+      }
+    }
+  }
+}
