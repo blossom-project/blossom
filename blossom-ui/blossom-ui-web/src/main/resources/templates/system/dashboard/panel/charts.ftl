@@ -32,7 +32,7 @@
                     <div class="sk-rect4"></div>
                     <div class="sk-rect5"></div>
                 </div>
-                <div id="response-status-donut-chart" style="height: 200px;"></div>
+                <div id="response-status-tag-cloud" style="height: 200px;"></div>
             </div>
         </div>
     </div>
@@ -152,11 +152,15 @@
             barColors: ['#1ab394']
         });
 
-        var responseStatusDonutChart = Morris.Donut({
-            element: 'response-status-donut-chart',
-            data: [{label:'200', value:1}],
-            resize: true,
-            colors: ['#87d6c6', '#54cdb4', '#1ab394'],
+//        var responseStatusDonutChart = Morris.Donut({
+//            element: 'response-status-donut-chart',
+//            data: [{label:'200', value:1}],
+//            resize: true,
+//            colors: ['#87d6c6', '#54cdb4', '#1ab394'],
+//        });
+
+        var responseStatusTagCloud = $("#response-status-tag-cloud").jQCloud([],{
+            shape: 'rectangular'
         });
 
         var responseContentTypeDonutChart = Morris.Donut({
@@ -217,20 +221,23 @@
             var chartData = [];
             var responseStatuses = data.aggregations.response_status_stats.buckets;
             $.each(responseStatuses, function (index, responseStatus) {
-                var item = {label: responseStatus.key, value: responseStatus.doc_count};
+                var item = {text: responseStatus.key, weight: responseStatus.doc_count};
                 chartData.push(item);
             });
 
-            var rainbow = new Rainbow();
-            rainbow.setSpectrumByArray(['#1ab394', '#d3d3d3']);
-            rainbow.setNumberRange(0, chartData.length);
-            var colors = [];
-            $.each(chartData, function (index) {
-                colors.push('#' + rainbow.colourAt(index));
-            });
+            responseStatusTagCloud.jQCloud('update',chartData);
 
-            responseStatusDonutChart.options.colors=colors;
-            responseStatusDonutChart.setData(chartData);
+//            var rainbow = new Rainbow();
+//            rainbow.setSpectrumByArray(['#1ab394', '#d3d3d3']);
+//            rainbow.setNumberRange(0, chartData.length);
+//            var colors = [];
+//            $.each(chartData, function (index) {
+//                colors.push('#' + rainbow.colourAt(index));
+//            });
+
+//            responseStatusDonutChart.options.colors=colors;
+//            responseStatusDonutChart.setData(chartData);
+
         };
 
 

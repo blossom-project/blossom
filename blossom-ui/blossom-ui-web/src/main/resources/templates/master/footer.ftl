@@ -59,4 +59,7 @@
 <!-- Rainbowvis.js -->
 <script src="/js/plugins/rainbowvis/rainbowvis.js"></script>
 
+<!-- JQCloud.js -->
+<script src="/js/plugins/jqcloud/jqcloud.min.js"></script>
+
 </#macro>
