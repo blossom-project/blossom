@@ -3,6 +3,3 @@ jdk:
 - oraclejdk8
 
 sudo: false # faster builds
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash) -t repository-upload-token
