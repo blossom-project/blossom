@@ -2,6 +2,9 @@ package fr.mgargadennec.blossom.core.group;
 
 import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class GroupDTO extends AbstractDTO {
     private String name;
     private String description;

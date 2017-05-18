@@ -12,6 +12,7 @@ import org.elasticsearch.client.Client;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -19,6 +20,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
@@ -59,8 +61,12 @@ public class UserAutoConfiguration {
   }
 
   @Bean
-  public IndexationEngineImpl<UserDTO> userIndexationEngine(Client client, UserService userService, BulkProcessor bulkProcessor, ObjectMapper objectMapper) {
-    return new IndexationEngineImpl<>(UserDTO.class, client, null, "users", u -> "user", userService, bulkProcessor, objectMapper);
+  public IndexationEngineImpl<UserDTO> userIndexationEngine(Client client,
+                                                            UserService userService,
+                                                            BulkProcessor bulkProcessor,
+                                                            ObjectMapper objectMapper,
+                                                            @Value("classpath:/elasticsearch/users.json") Resource resource) {
+    return new IndexationEngineImpl<>(UserDTO.class, client, resource, "users", u -> "user", userService, bulkProcessor, objectMapper);
   }
 
   @Bean

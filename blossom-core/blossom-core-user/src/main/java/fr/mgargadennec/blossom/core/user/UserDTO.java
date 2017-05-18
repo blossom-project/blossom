@@ -3,8 +3,10 @@ package fr.mgargadennec.blossom.core.user;
 
 import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
+@XmlRootElement
 public class UserDTO extends AbstractDTO {
     private String identifier;
     private String passwordHash;
