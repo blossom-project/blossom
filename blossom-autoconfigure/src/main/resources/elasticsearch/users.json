@@ -1,0 +1,64 @@
+{
+  "settings": {
+    "number_of_shards": "1",
+    "number_of_replicas": "0"
+  },
+  "mappings": {
+    "user": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "activated": {
+          "type": "boolean"
+        },
+        "civility": {
+          "type": "string"
+        },
+        "company": {
+          "type": "string"
+        },
+        "dateCreation": {
+          "type": "long"
+        },
+        "dateModification": {
+          "type": "long"
+        },
+        "description": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "firstname": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string"
+        },
+        "identifier": {
+          "type": "string"
+        },
+        "lastConnection": {
+          "type": "long"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "passwordHash": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "userCreation": {
+          "type": "string"
+        },
+        "userModification": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

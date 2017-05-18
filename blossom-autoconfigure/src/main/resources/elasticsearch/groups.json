@@ -1,0 +1,37 @@
+{
+  "settings": {
+    "number_of_shards": "1",
+    "number_of_replicas": "0"
+  },
+  "mappings": {
+    "group": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "dateCreation": {
+          "type": "long"
+        },
+        "dateModification": {
+          "type": "long"
+        },
+        "userCreation": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "userModification": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+}
