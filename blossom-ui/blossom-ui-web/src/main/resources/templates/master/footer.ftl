@@ -2,7 +2,7 @@
 <div class="footer">
 
   <div class="pull-right">
-    <strong>Copyright</strong> Maël Gargadennec © 2017
+    <strong>Copyright</strong> Blossom © 2017
   </div>
 </div>
 </#macro>
@@ -43,9 +43,6 @@
 
 <!-- Sparkline -->
 <script src="/js/plugins/sparkline/jquery.sparkline.min.js"></script>
-
-<!-- Sparkline demo data  -->
-<script src="/js/demo/sparkline-demo.js"></script>
 
 <!-- ChartJS-->
 <script src="/js/plugins/chartJs/Chart.min.js"></script>

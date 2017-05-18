@@ -39,11 +39,6 @@ public class SampleUIOverride {
     }
 
     @Bean
-    public MainController mainController(UserService userService) {
-        return new MainController(userService);
-    }
-
-    @Bean
     public DataFactory df() {
         return new DataFactory();
     }
