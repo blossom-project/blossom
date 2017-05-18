@@ -54,7 +54,7 @@
 
         var rainbow = new Rainbow();
         rainbow.setSpectrumByArray(['#1ab394','#d3d3d3']);
-        rainbow.setNumberRange(0, keys.length - 1);
+        rainbow.setNumberRange(0, keys.length);
         var colors = [];
         $.each(keys,function(index,key){
           console.log(index,key,rainbow.colourAt(index))
