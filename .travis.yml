@@ -3,3 +3,6 @@ jdk:
 - oraclejdk8
 
 sudo: false # faster builds
+
+after_success:
+  - mvn clean cobertura:cobertura coveralls:report
