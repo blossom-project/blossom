@@ -36,7 +36,7 @@ public class ActuatorAutoConfiguration {
   public ElasticsearchTraceRepository traceRepository(Client client, @Value("classpath:/elasticsearch/traces.json") Resource resource) throws IOException {
     String settings = Resources.toString(resource.getURL(), Charsets.UTF_8);
 
-    return new ElasticsearchTraceRepositoryImpl(client, "traces", Lists.newArrayList("/blossom.*", "/favicon.*"), settings);
+    return new ElasticsearchTraceRepositoryImpl(client, "traces", Lists.newArrayList("/blossom.*", "/favicon.*", "/js.*", "/css.*", "/fonts.*", "/img.*", "/font-awesome.*"), settings);
   }
 
   @Bean

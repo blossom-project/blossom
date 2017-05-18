@@ -1,6 +1,6 @@
-<div id="status" class="ibox float-e-margins">
+<div id="memory" class="ibox float-e-margins">
   <div class="ibox-title">
-    <h5>Server status</h5>
+    <h5>Memory</h5>
   </div>
   <div class="ibox-content">
     <div class="sk-spinner sk-spinner-wave">
@@ -15,27 +15,27 @@
       <div class="col-xs-12">
         <ul class="stat-list">
           <li>
-            <h2 class="no-margins">{{memory.all.percentage}}%</h2>
+            <h2 class="no-margins">${memory.jvm.percentage?string[".0"]}%</h2>
             <small>Global</small>
-            <div class="stat-percent">{{memory.all.used}} / {{memory.all.total}}</div>
+            <div class="stat-percent">used : ${memory.jvm.used} / total : ${memory.jvm.total}</div>
             <div class="progress progress-mini">
-              <div :style="{'width': memory.all.percentage+'%'}" class="progress-bar"></div>
+              <div style="width:${memory.jvm.percentage?c}%" class="progress-bar"></div>
             </div>
           </li>
           <li>
-            <h2 class="no-margins ">{{memory.heap.percentage}}%</h2>
+            <h2 class="no-margins ">${memory.heap.percentage?string[".0"]}%</h2>
             <small>Heap memory</small>
-            <div class="stat-percent">{{memory.heap.used}} / {{memory.heap.committed}}</div>
+            <div class="stat-percent">used : ${memory.heap.used} / committed : ${memory.heap.committed} / max : ${memory.heap.max}</div>
             <div class="progress progress-mini">
-              <div :style="{'width': memory.heap.percentage+'%'}" class="progress-bar"></div>
+              <div style="width: ${memory.heap.percentage?c}%" class="progress-bar"></div>
             </div>
           </li>
           <li>
-            <h2 class="no-margins ">{{memory.nonheap.percentage}}%</h2>
+            <h2 class="no-margins ">${memory.nonheap.percentage?string[".0"]}%</h2>
             <small>Non-heap memory</small>
-            <div class="stat-percent">{{memory.nonheap.used}} / {{memory.nonheap.committed}}</div>
+            <div class="stat-percent">used : ${memory.nonheap.used} / committed : ${memory.nonheap.committed} / max : ${memory.nonheap.max}</div>
             <div class="progress progress-mini">
-              <div :style="{'width': memory.nonheap.percentage+'%'}" class="progress-bar"></div>
+              <div style="width: ${memory.nonheap.percentage?c}%" class="progress-bar"></div>
             </div>
           </li>
         </ul>

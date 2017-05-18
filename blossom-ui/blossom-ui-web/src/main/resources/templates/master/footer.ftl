@@ -59,4 +59,7 @@
 <!-- Moment.js -->
 <script src="/js/plugins/fullcalendar/moment.min.js"></script>
 
+<!-- Rainbowvis.js -->
+<script src="/js/plugins/rainbowvis/rainbowvis.js"></script>
+
 </#macro>

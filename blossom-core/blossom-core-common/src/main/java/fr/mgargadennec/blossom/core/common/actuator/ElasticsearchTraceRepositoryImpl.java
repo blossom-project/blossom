@@ -84,7 +84,7 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryTraceRepository im
       .setSize(0)
       .addAggregation(AggregationBuilders.terms("methods").field("method"))
       .addAggregation(AggregationBuilders.stats("stats").field("timeTaken"))
-      .addAggregation(AggregationBuilders.dateHistogram("histogram").field("timestamp").interval(new DateHistogramInterval("15m")).subAggregation(AggregationBuilders.terms("methods").field("method")));
+      .addAggregation(AggregationBuilders.dateHistogram("histogram").field("timestamp").interval(new DateHistogramInterval("5m")).subAggregation(AggregationBuilders.terms("methods").field("method")));
     SearchResponse response = request.execute().actionGet();
 
     return response;
