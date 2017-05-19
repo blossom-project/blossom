@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.samples;
+package fr.mgargadennec.blossom.integration;
 
 import fr.mgargadennec.blossom.core.group.GroupDTO;
 import fr.mgargadennec.blossom.core.group.GroupService;

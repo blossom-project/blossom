@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.samples;
+package fr.mgargadennec.blossom.integration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

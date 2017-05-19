@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.samples;
+package fr.mgargadennec.blossom.integration;
 
 import fr.mgargadennec.blossom.autoconfigure.EnableBlossom;
 import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupService;

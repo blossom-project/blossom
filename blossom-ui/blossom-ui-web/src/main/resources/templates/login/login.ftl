@@ -31,7 +31,7 @@
       <div class="form-group">
         <input type="password" class="form-control" placeholder="Password" required="required" name="password">
       </div>
-      <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+      <button type="submit" class="btn btn-primary block full-width m-b" id="login">Login</button>
 
       <#if error.isPresent() && SPRING_SECURITY_LAST_EXCEPTION??>
         <p class="alert alert-danger">${SPRING_SECURITY_LAST_EXCEPTION.message}</p>
