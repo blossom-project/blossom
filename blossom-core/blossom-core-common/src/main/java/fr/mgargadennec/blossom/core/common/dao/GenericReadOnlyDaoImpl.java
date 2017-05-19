@@ -35,9 +35,6 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
     this.repository = repository;
   }
 
-  /**
-   * Callback to verify configuration. Used by containers.
-   */
   @PostConstruct
   public void validate() {
     Assert.notNull(entityManager, "EntityManager must not be null!");

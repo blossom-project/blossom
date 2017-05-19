@@ -81,6 +81,12 @@
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>fr.mgargadennec.blossom</groupId>
+      <artifactId>blossom-module-filemanager</artifactId>
+      <version>${project.version}</version>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
 
 </project>

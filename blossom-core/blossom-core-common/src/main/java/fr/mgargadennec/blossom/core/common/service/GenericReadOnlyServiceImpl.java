@@ -2,7 +2,7 @@ package fr.mgargadennec.blossom.core.common.service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
-import fr.mgargadennec.blossom.core.common.dao.CrudDao;
+import fr.mgargadennec.blossom.core.common.dao.ReadOnlyDao;
 import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
 import fr.mgargadennec.blossom.core.common.entity.AbstractEntity;
 import fr.mgargadennec.blossom.core.common.mapper.DTOMapper;
@@ -14,10 +14,10 @@ import java.util.List;
 public abstract class GenericReadOnlyServiceImpl<DTO extends AbstractDTO, ENTITY extends AbstractEntity> implements ReadOnlyService<DTO> {
   private final TypeToken<DTO> typeToken = new TypeToken<DTO>(getClass()) {
   };
-  private final CrudDao<ENTITY> dao;
+  protected final ReadOnlyDao<ENTITY> dao;
   protected final DTOMapper<ENTITY, DTO> mapper;
 
-  GenericReadOnlyServiceImpl(CrudDao<ENTITY> dao, DTOMapper<ENTITY, DTO> mapper) {
+  public GenericReadOnlyServiceImpl(ReadOnlyDao<ENTITY> dao, DTOMapper<ENTITY, DTO> mapper) {
     this.dao = dao;
     this.mapper = mapper;
   }

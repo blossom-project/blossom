@@ -77,7 +77,7 @@ public class GroupAutoConfiguration {
         factoryBean.setJobClass(GroupIndexationJob.class);
         factoryBean.setGroup("Indexation");
         factoryBean.setName("Groups Indexation Job");
-        factoryBean.setDescription("Groups Periodic Full indexation Job");
+        factoryBean.setDescription("Groups full indexation Job");
         factoryBean.setDurability(true);
         return factoryBean;
     }

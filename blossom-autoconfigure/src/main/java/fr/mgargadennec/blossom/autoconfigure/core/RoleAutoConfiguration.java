@@ -73,7 +73,7 @@ public class RoleAutoConfiguration {
         factoryBean.setJobClass(RoleIndexationJob.class);
         factoryBean.setGroup("Indexation");
         factoryBean.setName("Roles Indexation Job");
-        factoryBean.setDescription("Roles Periodic Full indexation Job");
+        factoryBean.setDescription("Roles full indexation Job");
         factoryBean.setDurability(true);
         return factoryBean;
     }

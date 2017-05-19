@@ -18,5 +18,11 @@
       <artifactId>blossom-ui-common</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>fr.mgargadennec.blossom</groupId>
+      <artifactId>blossom-module-filemanager</artifactId>
+      <version>${project.version}</version>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
 </project>

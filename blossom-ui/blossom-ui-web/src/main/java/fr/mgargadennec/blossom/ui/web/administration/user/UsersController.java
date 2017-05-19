@@ -7,7 +7,6 @@ import fr.mgargadennec.blossom.core.user.UserService;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +31,6 @@ public class UsersController {
   private final UserService userService;
   private final SearchEngineImpl<UserDTO> searchEngine;
 
-  @Autowired
   public UsersController(UserService userService, SearchEngineImpl<UserDTO> searchEngine) {
     this.userService = userService;
     this.searchEngine = searchEngine;

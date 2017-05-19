@@ -1,0 +1,46 @@
+package fr.mgargadennec.blossom.module.filemanager;
+
+import fr.mgargadennec.blossom.core.common.mapper.AbstractDTOMapper;
+
+public class FileDTOMapper extends AbstractDTOMapper<File, FileDTO> {
+
+  @Override
+  public FileDTO mapEntity(File entity) {
+    if (entity == null) {
+      return null;
+    }
+
+    FileDTO dto = new FileDTO();
+    mapEntityCommonFields(dto, entity);
+    dto.setName(entity.getName());
+    dto.setPath(entity.getPath());
+    dto.setType(entity.getType());
+    dto.setExtension(entity.getExtension());
+    dto.setSize(entity.getSize());
+    dto.setTags(entity.getTags());
+    dto.setHash(entity.getHash());
+    dto.setHashAlgorithm(entity.getHashAlgorithm());
+
+    return dto;
+  }
+
+  @Override
+  public File mapDto(FileDTO dto) {
+    if (dto == null) {
+      return null;
+    }
+
+    File entity = new File();
+    mapDtoCommonFields(entity, dto);
+    entity.setName(dto.getName());
+    entity.setPath(dto.getPath());
+    entity.setType(dto.getType());
+    entity.setExtension(dto.getExtension());
+    entity.setSize(dto.getSize());
+    entity.setTags(dto.getTags());
+    entity.setHash(dto.getHash());
+    entity.setHashAlgorithm(dto.getHashAlgorithm());
+
+    return entity;
+  }
+}

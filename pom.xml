@@ -20,7 +20,6 @@
     <module>blossom-parent</module>
     <module>blossom-core</module>
     <module>blossom-ui</module>
-
     <module>blossom-modules</module>
     <module>blossom-autoconfigure</module>
     <module>blossom-starters</module>

@@ -9,7 +9,8 @@ fr.mgargadennec.blossom.autoconfigure.core.AssociationUserGroupAutoConfiguration
 fr.mgargadennec.blossom.autoconfigure.core.AssociationUserRoleAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.SchedulerAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.CacheAutoConfiguration,\
-fr.mgargadennec.blossom.autoconfigure.core.ActuatorAutoConfiguration
+fr.mgargadennec.blossom.autoconfigure.core.ActuatorAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.module.FileManagerAutoConfiguration
 
 fr.mgargadennec.blossom.autoconfigure.EnableBlossom=\
 fr.mgargadennec.blossom.autoconfigure.ui.MenuAutoConfiguration,\
@@ -24,4 +25,5 @@ fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemDashboardAutoConfig
 fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemSchedulerAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemCachesAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemLoggersAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.ui.web.module.WebFileManagerAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.ui.actuator.WebActuatorAutoConfiguration

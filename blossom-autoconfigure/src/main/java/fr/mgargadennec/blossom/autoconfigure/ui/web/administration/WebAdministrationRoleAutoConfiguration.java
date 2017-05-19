@@ -1,5 +1,6 @@
 package fr.mgargadennec.blossom.autoconfigure.ui.web.administration;
 
+import fr.mgargadennec.blossom.autoconfigure.core.CommonAutoConfiguration;
 import fr.mgargadennec.blossom.autoconfigure.core.RoleAutoConfiguration;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
 import fr.mgargadennec.blossom.core.role.RoleDTO;
@@ -18,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnClass(RolesController.class)
-@AutoConfigureAfter(RoleAutoConfiguration.class)
+@AutoConfigureAfter(CommonAutoConfiguration.class)
 public class WebAdministrationRoleAutoConfiguration {
 
     @Bean

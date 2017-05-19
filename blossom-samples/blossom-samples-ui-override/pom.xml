@@ -10,9 +10,10 @@
   </parent>
 
   <artifactId>blossom-samples-ui-override</artifactId>
+  <packaging>jar</packaging>
+
   <name>Blossom Sample UI Override</name>
   <description>Blossom sample application with an example of overriden landing page template for blossom.</description>
-  <packaging>jar</packaging>
 
   <dependencies>
     <dependency>

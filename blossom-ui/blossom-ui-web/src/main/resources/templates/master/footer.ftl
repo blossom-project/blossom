@@ -62,4 +62,7 @@
 <!-- JQCloud.js -->
 <script src="/js/plugins/jqcloud/jqcloud.min.js"></script>
 
+<!-- JSTree.js -->
+<script src="/js/plugins/jsTree/jstree.min.js"></script>
+
 </#macro>

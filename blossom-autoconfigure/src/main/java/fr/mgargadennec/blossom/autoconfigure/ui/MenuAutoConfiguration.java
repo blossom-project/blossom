@@ -36,19 +36,19 @@ public class MenuAutoConfiguration {
   @Bean
   @Order(0)
   public MenuItem homeMenuItem(MenuItemBuilder builder) {
-    return builder.key("home").label("menu.home", true).icon("fa fa-home").link("/blossom").build();
+    return builder.key("home").label("menu.home", true).icon("fa fa-home").link("/blossom").order(Integer.MIN_VALUE).build();
   }
 
   @Bean
   @Order(0)
   public MenuItem administrationMenuItem(MenuItemBuilder builder) {
-    return builder.key("administration").label("menu.administration", true).icon("glyphicon glyphicon-list-alt").link("/blossom/administration").build();
+    return builder.key("administration").label("menu.administration", true).icon("glyphicon glyphicon-list-alt").link("/blossom/administration").order(Integer.MIN_VALUE +1).build();
   }
 
   @Bean
   @Order(0)
   public MenuItem systemMenuItem(MenuItemBuilder builder) {
-    return builder.key("system").label("menu.system", true).icon("fa fa-cogs").link("/blossom/system").build();
+    return builder.key("system").label("menu.system", true).icon("fa fa-cogs").link("/blossom/system").order(Integer.MAX_VALUE).build();
   }
 
 

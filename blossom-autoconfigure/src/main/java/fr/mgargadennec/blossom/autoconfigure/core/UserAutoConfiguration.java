@@ -81,7 +81,7 @@ public class UserAutoConfiguration {
     factoryBean.setJobClass(UserIndexationJob.class);
     factoryBean.setGroup("Indexation");
     factoryBean.setName("Users Indexation Job");
-    factoryBean.setDescription("Users Periodic Full indexation Job");
+    factoryBean.setDescription("Users full indexation Job");
     factoryBean.setDurability(true);
     return factoryBean;
   }

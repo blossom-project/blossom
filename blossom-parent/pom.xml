@@ -24,6 +24,7 @@
     <jna.version>3.0.9</jna.version>
     <quartz.version>2.3.0</quartz.version>
     <caffeine.version>2.5.0</caffeine.version>
+    <bouncycastle.version>1.46</bouncycastle.version>
   </properties>
 
   <dependencyManagement>
@@ -51,6 +52,17 @@
         <groupId>org.quartz-scheduler</groupId>
         <artifactId>quartz-jobs</artifactId>
         <version>${quartz.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk16</artifactId>
+        <version>${bouncycastle.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcmail-jdk16</artifactId>
+        <version>${bouncycastle.version}</version>
       </dependency>
 
     </dependencies>

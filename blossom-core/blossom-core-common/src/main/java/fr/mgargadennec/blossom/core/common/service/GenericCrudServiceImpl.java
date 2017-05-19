@@ -17,14 +17,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class GenericCrudServiceImpl<DTO extends AbstractDTO, ENTITY extends AbstractEntity> extends GenericReadOnlyServiceImpl<DTO, ENTITY> implements CrudService<DTO> {
-
-  protected final ApplicationEventPublisher publisher;
   protected final CrudDao<ENTITY> dao;
+  protected final ApplicationEventPublisher publisher;
 
   protected GenericCrudServiceImpl(CrudDao<ENTITY> dao, DTOMapper<ENTITY, DTO> mapper, ApplicationEventPublisher publisher) {
     super(dao, mapper);
-    this.publisher = publisher;
     this.dao = dao;
+    this.publisher = publisher;
   }
 
   @Override

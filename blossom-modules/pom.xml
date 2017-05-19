@@ -16,6 +16,7 @@
   <url>http://maven.apache.org</url>
 
   <modules>
+    <module>blossom-module-filemanager</module>
   </modules>
 
 </project>

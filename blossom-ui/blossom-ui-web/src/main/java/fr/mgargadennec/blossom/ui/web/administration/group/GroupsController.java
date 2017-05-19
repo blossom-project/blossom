@@ -7,7 +7,6 @@ import fr.mgargadennec.blossom.core.group.GroupService;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +30,6 @@ public class GroupsController {
     private final GroupService groupService;
     private final SearchEngineImpl<GroupDTO> searchEngine;
 
-    @Autowired
     public GroupsController(GroupService groupService, SearchEngineImpl<GroupDTO> searchEngine) {
         this.groupService = groupService;
         this.searchEngine = searchEngine;
