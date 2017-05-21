@@ -97,7 +97,7 @@ public class CucumberSteps {
     private enum PAGE {
         LOGIN("/blossom/login"),
         HOME("/"),
-        LOGIN_ERROR("/login", "error");
+        LOGIN_ERROR("/blossom/login", "error");
 
         private final String path;
         private final String query;

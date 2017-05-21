@@ -21,15 +21,26 @@ public class UserDataGenerator implements DataGenerator {
     @Override
     public void generateDatas() {
 
-        User user = new UserBuilder()
+        User activeUser = new UserBuilder()
                 .id(1L)
                 .identifier("jdoe")
                 .passwordHash(this.passwordEncoder.encode("demo"))
                 .firstname("John")
                 .lastname("Doe")
+                .activated(true)
                 .toUser();
-        this.userRepository.save(user);
+        this.userRepository.save(activeUser);
 
+        User inactiveUser = new UserBuilder()
+                .id(2L)
+                .identifier("cdoe")
+                .passwordHash(this.passwordEncoder.encode("demo"))
+                .firstname("Carl")
+                .lastname("Doe")
+                .activated(false)
+                .toUser();
+        this.userRepository.save(inactiveUser);
+        
     }
 
 }
