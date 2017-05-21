@@ -54,7 +54,7 @@ public class CucumberSteps {
     public void createDriver() throws IOException {
 
         service = new ChromeDriverService.Builder()
-                .usingDriverExecutable(new File("D:\\dev\\utils\\chromedriver.exe"))
+                .usingDriverExecutable(new File("G:\\projects\\utils\\chromedriver.exe"))
                 .usingAnyFreePort()
                 .build();
 

@@ -23,8 +23,8 @@ public class UserDataGenerator implements DataGenerator {
 
         User user = new UserBuilder()
                 .id(1L)
-                .email("jdoe@blossom.com")
-                .passwordHash("demo")
+                .identifier("jdoe")
+                .passwordHash(this.passwordEncoder.encode("demo"))
                 .firstname("John")
                 .lastname("Doe")
                 .toUser();
