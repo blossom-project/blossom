@@ -50,13 +50,7 @@ ${folder.getName()}
       <div class="ibox float-e-margins">
         <div class="ibox-content">
           <div class="file-manager">
-            <h5>Show:</h5>
-            <a href="#" class="file-control active">All</a>
-            <a href="#" class="file-control">Documents</a>
-            <a href="#" class="file-control">Audio</a>
-            <a href="#" class="file-control">Images</a>
-            <a href="#" class="file-control">Video</a>
-            <a href="#" class="file-control">Archives</a>
+              <button type="button" class="btn btn-primary">+git add</button>
             <div class="hr-line-dashed"></div>
 
             <h5>Folders</h5>

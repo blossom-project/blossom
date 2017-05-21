@@ -98,7 +98,7 @@ public class DiskFileStoreImpl implements FileStore {
     Path folderPath = root.resolve(path);
     if (Files.exists(folderPath) && Files.isDirectory(folderPath)) {
       DiskFolder folder = new DiskFolder();
-      folder.setName(folderPath.getName());
+      folder.setName(folderPath.getFileName().toString());
       folder.setPath(path);
       return folder;
     }

@@ -59,8 +59,8 @@ public class FileServiceImpl implements FileService {
   @Override
   @Transactional
   public void delete(FileDTO toDelete) {
-    store.delete(toDelete);
     this.publisher.publishEvent(new BeforeDeletedEvent<>(this, toDelete));
+    store.delete(toDelete);
     this.dao.delete(this.mapper.mapDto(toDelete));
     this.publisher.publishEvent(new DeletedEvent<>(this, toDelete));
   }
