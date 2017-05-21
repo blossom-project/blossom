@@ -95,7 +95,7 @@ public class CucumberSteps {
     }
 
     private enum PAGE {
-        LOGIN("/blossom"),
+        LOGIN("/blossom/login"),
         HOME("/blossom"),
         LOGIN_ERROR("/blossom/login", "error");
 
