@@ -17,7 +17,7 @@ public class CucumberUtils {
         this.driver = driver;
     }
 
-    public WebElement lookForElement(String property, String expectedValue, String listId) {
+    public WebElement lookForItemInList(String property, String expectedValue) {
 
         WebElement hasNext;
 
@@ -26,7 +26,7 @@ public class CucumberUtils {
             hasNext = computeHasElement("nextPage");
 
             // GETTING THE ITEMS LIST
-            List<WebElement> itemsList = driver.findElements(By.cssSelector("#" + listId + " tr"));
+            List<WebElement> itemsList = driver.findElements(By.cssSelector(".items tr"));
 
             // LOOKING FOR ITEM
             for (WebElement element : itemsList) {

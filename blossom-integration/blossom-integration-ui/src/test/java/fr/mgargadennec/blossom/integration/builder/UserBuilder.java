@@ -41,6 +41,11 @@ public class UserBuilder {
 		return this;
 	}
 
+	public UserBuilder civility(User.Civility civility) {
+		this.civility = civility;
+		return this;
+	}
+
 	public UserBuilder firstname(String firstname) {
 		this.firstname = firstname;
 		return this;

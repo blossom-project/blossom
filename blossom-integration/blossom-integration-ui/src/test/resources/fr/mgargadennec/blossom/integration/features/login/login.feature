@@ -12,7 +12,7 @@ Feature: Login
   @web
   Scenario: LOG-002 - Fail on login with inactive user
     Given I am on "login" page
-    When I type "jdoe" in "username" field
+    When I type "cdoe" in "username" field
     And I type "demo" in "password" field
     And I click on "login" element
     Then I should be on "login_error" page

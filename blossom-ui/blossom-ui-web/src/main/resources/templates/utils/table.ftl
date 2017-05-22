@@ -4,7 +4,7 @@
 <#import "/utils/icon.ftl" as icon/>
 
 <#macro table page columns iconPath="" tableId="">
-<table class="table table-striped" <#if tableId?has_content>id="${tableId}"</#if>>
+<table class="table table-striped items" <#if tableId?has_content>id="${tableId}"</#if>>
   <thead>
     <#list columns as name, properties>
     <th>
