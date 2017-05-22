@@ -2,24 +2,18 @@ package fr.mgargadennec.blossom.module.filemanager;
 
 import fr.mgargadennec.blossom.core.common.entity.AbstractEntity;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "bo_file")
 public class File extends AbstractEntity {
 
-  @Column(name = "name", nullable = false, unique = true)
+  @Column(name = "name", nullable = false)
   private String name;
 
-  @Column(name = "path")
-  private String path;
-
-  @Column(name = "type", nullable = false)
-  private String type;
+  @Column(name = "content_type", nullable = false)
+  private String contentType;
 
   @Column(name = "extension", nullable = false)
   private String extension;
@@ -27,13 +21,13 @@ public class File extends AbstractEntity {
   @Column(name = "size", nullable = false)
   private Long size;
 
-  @ElementCollection
+  @ElementCollection(fetch = FetchType.EAGER)
   private List<String> tags;
 
-  @Column(name = "hash", nullable = false)
+  @Column(name = "hash", nullable = false, updatable = false)
   private String hash;
 
-  @Column(name = "hash_algorithm", nullable = false)
+  @Column(name = "hash_algorithm", nullable = false, updatable = false)
   private String hashAlgorithm;
 
   public String getName() {
@@ -44,20 +38,12 @@ public class File extends AbstractEntity {
     this.name = name;
   }
 
-  public String getPath() {
-    return path;
+  public String getContentType() {
+    return contentType;
   }
 
-  public void setPath(String path) {
-    this.path = path;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
+  public void setContentType(String type) {
+    this.contentType = type;
   }
 
   public String getExtension() {

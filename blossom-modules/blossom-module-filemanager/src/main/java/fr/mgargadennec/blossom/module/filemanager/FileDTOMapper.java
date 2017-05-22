@@ -13,8 +13,7 @@ public class FileDTOMapper extends AbstractDTOMapper<File, FileDTO> {
     FileDTO dto = new FileDTO();
     mapEntityCommonFields(dto, entity);
     dto.setName(entity.getName());
-    dto.setPath(entity.getPath());
-    dto.setType(entity.getType());
+    dto.setContentType(entity.getContentType());
     dto.setExtension(entity.getExtension());
     dto.setSize(entity.getSize());
     dto.setTags(entity.getTags());
@@ -33,8 +32,7 @@ public class FileDTOMapper extends AbstractDTOMapper<File, FileDTO> {
     File entity = new File();
     mapDtoCommonFields(entity, dto);
     entity.setName(dto.getName());
-    entity.setPath(dto.getPath());
-    entity.setType(dto.getType());
+    entity.setContentType(dto.getContentType());
     entity.setExtension(dto.getExtension());
     entity.setSize(dto.getSize());
     entity.setTags(dto.getTags());

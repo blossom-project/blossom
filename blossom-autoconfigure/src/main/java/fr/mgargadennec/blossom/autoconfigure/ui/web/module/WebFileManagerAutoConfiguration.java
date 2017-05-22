@@ -1,9 +1,12 @@
 package fr.mgargadennec.blossom.autoconfigure.ui.web.module;
 
 import fr.mgargadennec.blossom.autoconfigure.core.CommonAutoConfiguration;
+import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
+import fr.mgargadennec.blossom.module.filemanager.FileDTO;
 import fr.mgargadennec.blossom.module.filemanager.FileService;
 import fr.mgargadennec.blossom.ui.menu.MenuItem;
 import fr.mgargadennec.blossom.ui.menu.MenuItemBuilder;
+import fr.mgargadennec.blossom.ui.web.content.filemanager.FileController;
 import fr.mgargadennec.blossom.ui.web.content.filemanager.FileManagerController;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -35,7 +38,12 @@ public class WebFileManagerAutoConfiguration {
   }
 
   @Bean
-  public FileManagerController fileManagerController(FileService fileService) {
-    return new FileManagerController(fileService);
+  public FileManagerController fileManagerController(FileService fileService, SearchEngineImpl<FileDTO> searchEngine) {
+    return new FileManagerController(fileService, searchEngine);
+  }
+
+  @Bean
+  public FileController fileController(FileService fileService) {
+    return new FileController(fileService);
   }
 }

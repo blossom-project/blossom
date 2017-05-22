@@ -67,8 +67,8 @@ public class WebSecurityAutoConfiguration {
 
 		@Override
 		public void init(AuthenticationManagerBuilder auth) throws Exception {
-			auth.userDetailsService(systemUserDetailsService).and().userDetailsService(dbUserDetailsService)
-					.passwordEncoder(passwordEncoder);
+			auth.userDetailsService(systemUserDetailsService).and()
+          .userDetailsService(dbUserDetailsService).passwordEncoder(passwordEncoder);
 		}
 	}
 

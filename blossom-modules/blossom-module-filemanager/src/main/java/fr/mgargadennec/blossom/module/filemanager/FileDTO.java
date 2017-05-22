@@ -10,7 +10,7 @@ public class FileDTO extends AbstractDTO {
 
   private String name;
   private String path;
-  private String type;
+  private String contentType;
   private String extension;
   private Long size;
   private List<String> tags;
@@ -33,12 +33,12 @@ public class FileDTO extends AbstractDTO {
     this.path = path;
   }
 
-  public String getType() {
-    return type;
+  public String getContentType() {
+    return contentType;
   }
 
-  public void setType(String type) {
-    this.type = type;
+  public void setContentType(String type) {
+    this.contentType = type;
   }
 
   public String getExtension() {

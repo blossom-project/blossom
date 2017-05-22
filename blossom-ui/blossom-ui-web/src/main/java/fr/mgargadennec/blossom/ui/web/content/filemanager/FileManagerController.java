@@ -1,15 +1,27 @@
 package fr.mgargadennec.blossom.ui.web.content.filemanager;
 
+import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
+import fr.mgargadennec.blossom.module.filemanager.FileDTO;
 import fr.mgargadennec.blossom.module.filemanager.FileService;
-import fr.mgargadennec.blossom.module.filemanager.store.Folder;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -17,29 +29,44 @@ import java.util.Optional;
  */
 @BlossomController("/content/filemanager")
 public class FileManagerController {
-    private static final Logger logger = LoggerFactory.getLogger(FileManagerController.class);
+  private static final Logger logger = LoggerFactory.getLogger(FileManagerController.class);
+  private final FileService fileService;
+  private final SearchEngineImpl<FileDTO> searchEngine;
 
-    private final FileService fileService;
+  public FileManagerController(FileService fileService, SearchEngineImpl<FileDTO> searchEngine) {
+    this.fileService = fileService;
+    this.searchEngine = searchEngine;
+  }
 
-    public FileManagerController(FileService fileService) {
-        this.fileService = fileService;
+  @GetMapping
+  public ModelAndView getPage(Model model, @RequestParam(value = "q", required = false, defaultValue = "") String q,
+                              @PageableDefault Pageable pageable) {
+    return new ModelAndView("content/filemanager/filemanager", model.asMap());
+  }
+
+  @GetMapping("/files")
+  public ModelAndView getFiles(Model model, @PageableDefault(size = 20) Pageable pageable, @RequestParam(value = "q", defaultValue = "", required = false) String q) {
+    Page<FileDTO> files = null;
+    if (!StringUtils.isEmpty(q)) {
+      files = searchEngine.search(q, pageable);
+    } else {
+      files = fileService.getAll(pageable);
     }
+    model.addAttribute("files", files);
+    return new ModelAndView("content/filemanager/filelist", model.asMap());
+  }
 
-    @GetMapping
-    public ModelAndView getFilesPage(Model model) {
-        model.addAttribute("folder", fileService.folderTree());
-        return new ModelAndView("content/filemanager/filemanager", model.asMap());
+  @PostMapping(value = "/files", consumes = "multipart/form-data")
+  @ResponseStatus(HttpStatus.CREATED)
+  public void fileUpload(@RequestParam("file") MultipartFile uploadedFile, @RequestParam(value = "tags", required = false) Optional<List<String>> tags) {
+    if (uploadedFile.isEmpty()) {
+      return;
     }
-
-    @GetMapping("/files")
-    public ModelAndView files(Model model, @RequestParam(value = "path", required = false) Optional<String> path) {
-        Folder folder = fileService.folder(path.orElse(""));
-        if (folder != null) {
-            model.addAttribute("folder", folder);
-            model.addAttribute("files", fileService.getAll(folder));
-            return new ModelAndView("content/filemanager/filelist", model.asMap());
-        }
-        return null;
+    try {
+      fileService.upload(uploadedFile);
+    } catch (IOException | SQLException e) {
+      logger.error("Cannot save multipart file !", e);
     }
+  }
 
 }

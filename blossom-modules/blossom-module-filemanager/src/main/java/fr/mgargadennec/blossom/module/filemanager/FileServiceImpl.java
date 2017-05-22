@@ -1,10 +1,9 @@
 package fr.mgargadennec.blossom.module.filemanager;
 
-import fr.mgargadennec.blossom.core.common.event.BeforeDeletedEvent;
-import fr.mgargadennec.blossom.core.common.event.DeletedEvent;
-import fr.mgargadennec.blossom.module.filemanager.store.DigestUtil;
-import fr.mgargadennec.blossom.module.filemanager.store.FileStore;
-import fr.mgargadennec.blossom.module.filemanager.store.Folder;
+import com.google.common.collect.Lists;
+import com.google.common.io.Files;
+import fr.mgargadennec.blossom.core.common.service.GenericCrudServiceImpl;
+import fr.mgargadennec.blossom.module.filemanager.digest.DigestUtil;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.io.DigestInputStream;
@@ -12,71 +11,62 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.sql.SQLException;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
  */
-public class FileServiceImpl implements FileService {
+public class FileServiceImpl extends GenericCrudServiceImpl<FileDTO, File> implements FileService {
   private final static Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
-  private final FileDao dao;
-  private final FileDTOMapper mapper;
-  private final FileStore store;
   private final DigestUtil digestUtil;
-  private final ApplicationEventPublisher publisher;
+  private final FileContentDao fileContentDao;
 
-  public FileServiceImpl(FileDao dao, FileDTOMapper mapper, FileStore store, DigestUtil digestUtil, ApplicationEventPublisher publisher) {
-    this.dao = dao;
-    this.mapper = mapper;
-    this.store = store;
+  public FileServiceImpl(FileDao dao, FileDTOMapper mapper, FileContentDao fileContentDao, DigestUtil digestUtil, ApplicationEventPublisher publisher) {
+    super(dao, mapper, publisher);
+    this.fileContentDao = fileContentDao;
     this.digestUtil = digestUtil;
-    this.publisher = publisher;
   }
 
   @Override
   @Transactional
-  public FileDTO upload(FileDTO newFile, Folder folder, InputStream inputStream) {
+  public FileDTO upload(MultipartFile multipartFile) throws SQLException, IOException {
+    String extension = Files.getFileExtension(multipartFile.getOriginalFilename());
+    if (extension != null) {
+      extension = extension.toLowerCase();
+    }
+
+
+    FileDTO newFile = new FileDTO();
+    newFile.setName(multipartFile.getOriginalFilename());
+    newFile.setContentType(multipartFile.getContentType());
+    newFile.setSize(multipartFile.getSize());
+    newFile.setExtension(extension);
+    newFile.setTags(Lists.newArrayList());
+
+    InputStream is = multipartFile.getInputStream();
+
     Digest digest = new SHA256Digest();
-    DigestInputStream digestStream = new DigestInputStream(inputStream, digest);
+    DigestInputStream digestStream = new DigestInputStream(is, digest);
 
     String hash = digestUtil.getHash(digestStream);
     String hashAlgorithm = digest.getAlgorithmName();
 
     newFile.setHash(hash);
     newFile.setHashAlgorithm(hashAlgorithm);
-    newFile.setPath(folder.getPath());
 
-    File file = this.mapper.mapDto(newFile);
-    FileDTO createdFile = this.mapper.mapEntity(this.dao.create(file));
+    FileDTO createdFile = this.create(newFile);
 
-    store.add(createdFile, inputStream);
+    this.fileContentDao.store(this.mapper.mapDto(createdFile), is, multipartFile.getSize());
 
     return createdFile;
   }
 
   @Override
-  @Transactional
-  public void delete(FileDTO toDelete) {
-    this.publisher.publishEvent(new BeforeDeletedEvent<>(this, toDelete));
-    store.delete(toDelete);
-    this.dao.delete(this.mapper.mapDto(toDelete));
-    this.publisher.publishEvent(new DeletedEvent<>(this, toDelete));
-  }
-
-  @Override
-  public Folder folderTree() {
-    return store.folderTree();
-  }
-
-  @Override
-  public Folder folder(String path) {
-    return store.folder(path);
-  }
-
-  @Override
-  public List<FileDTO> getAll(Folder folder) {
-    return this.mapper.mapEntities(this.dao.getAll(folder.getPath()));
+  public InputStream download(long fileId) throws SQLException {
+    return this.fileContentDao.read(fileId);
   }
 }

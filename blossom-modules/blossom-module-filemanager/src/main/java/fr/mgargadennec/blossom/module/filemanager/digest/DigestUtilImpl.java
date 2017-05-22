@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.module.filemanager.store;
+package fr.mgargadennec.blossom.module.filemanager.digest;
 
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.io.DigestInputStream;

@@ -1,14 +1,74 @@
 {
   "settings": {
     "number_of_shards": "1",
-    "number_of_replicas": "0"
+    "number_of_replicas": "0",
+    "index": {
+      "analysis": {
+        "filter": {
+          "suggest_edgengram_filter": {
+            "type": "edgeNGram",
+            "min_gram": 1,
+            "max_gram": 20
+          }
+        },
+        "analyzer": {
+          "email": {
+            "tokenizer": "lowercase",
+            "filter": [
+              "lowercase",
+              "suggest_edgengram_filter"
+            ]
+          },
+          "default": {
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "asciifolding",
+              "elision"
+            ]
+          },
+          "suggest": {
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "asciifolding",
+              "elision",
+              "suggest_edgengram_filter"
+            ]
+          }
+        }
+      }
+    }
   },
   "mappings": {
     "user": {
+      "_all": {
+        "enabled": false
+      },
       "properties": {
         "id": {
           "type": "string",
           "index": "not_analyzed"
+        },
+        "firstname": {
+          "type": "string",
+          "analyzer": "suggest",
+          "search_analyzer": "default"
+        },
+        "lastname": {
+          "type": "string",
+          "analyzer": "suggest",
+          "search_analyzer": "default"
+        },
+        "identifier": {
+          "type": "string",
+          "analyzer": "suggest",
+          "search_analyzer": "default"
+        },
+        "email": {
+          "type": "string",
+          "analyzer": "email",
+          "search_analyzer": "default"
         },
         "activated": {
           "type": "boolean"
@@ -28,23 +88,11 @@
         "description": {
           "type": "string"
         },
-        "email": {
-          "type": "string"
-        },
-        "firstname": {
-          "type": "string"
-        },
         "function": {
-          "type": "string"
-        },
-        "identifier": {
           "type": "string"
         },
         "lastConnection": {
           "type": "long"
-        },
-        "lastname": {
-          "type": "string"
         },
         "passwordHash": {
           "type": "string"

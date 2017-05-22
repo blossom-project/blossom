@@ -1,7 +1,44 @@
 {
   "settings": {
     "number_of_shards": "1",
-    "number_of_replicas": "0"
+    "number_of_replicas": "0",
+    "index": {
+      "analysis": {
+        "filter": {
+          "suggest_edgengram_filter": {
+            "type": "edgeNGram",
+            "min_gram": 1,
+            "max_gram": 20
+          }
+        },
+        "analyzer": {
+          "email": {
+            "tokenizer": "lowercase",
+            "filter": [
+              "lowercase",
+              "suggest_edgengram_filter"
+            ]
+          },
+          "default": {
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "asciifolding",
+              "elision"
+            ]
+          },
+          "suggest": {
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "asciifolding",
+              "elision",
+              "suggest_edgengram_filter"
+            ]
+          }
+        }
+      }
+    }
   },
   "mappings": {
     "group": {
@@ -11,10 +48,14 @@
           "index": "not_analyzed"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "analyzer": "suggest",
+          "search_analyzer": "default"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "analyzer": "default",
+          "search_analyzer": "default"
         },
         "dateCreation": {
           "type": "long"
