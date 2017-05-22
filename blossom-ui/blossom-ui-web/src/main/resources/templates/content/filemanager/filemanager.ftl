@@ -5,9 +5,9 @@
 <@master.default currentUser=currentUser>
 <link href="/css/plugins/dropzone/dropzone.css" rel="stylesheet">
 <style>
-  .dropzone .dz-preview .dz-image{
-    width:100px;
-    height:100px;
+  .dropzone .dz-preview .dz-image {
+    width: 100px;
+    height: 100px;
   }
 </style>
 
@@ -98,7 +98,7 @@
 
   var updateFilelist = function () {
     context.page = 0;
-    $.get("filemanager/files?q="+context.q, function (data) {
+    $.get("filemanager/files?q=" + context.q, function (data) {
       $("#filelist").html(data);
     });
   };
@@ -116,15 +116,14 @@
 
   Dropzone.options.filemanagerDropzone = {
     headers: defaultHeaders,
-//    maxFiles: 1,
-    parallelUploads: 2,
+    parallelUploads: 1,
     init: function () {
-      this.on("success", function (file) {
-        var that = this;
-        setTimeout(function () {
-          that.removeFile(file);
+      this.on("complete", function (file) {
+        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+          console.log("Removing all ! ")
+          this.removeAllFiles(true);
           updateFilelist();
-        }, 300);
+        }
       });
     }
   };
