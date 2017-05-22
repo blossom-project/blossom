@@ -54,7 +54,7 @@ public class CucumberSteps {
     public void createDriver() throws IOException {
 
         service = new ChromeDriverService.Builder()
-                .usingDriverExecutable(new File("G:\\projects\\utils\\chromedriver.exe"))
+                .usingDriverExecutable(new File("D:\\dev\\utils\\chromedriver.exe"))
                 .usingAnyFreePort()
                 .build();
 
@@ -97,7 +97,8 @@ public class CucumberSteps {
     private enum PAGE {
         LOGIN("/blossom/login"),
         HOME("/blossom"),
-        LOGIN_ERROR("/blossom/login", "error");
+        LOGIN_ERROR("/blossom/login", "error"),
+        USERS("/blossom/administration/users");
 
         private final String path;
         private final String query;
@@ -183,7 +184,7 @@ public class CucumberSteps {
     @Given("I am authenticated with user \"([^\"]*)\"")
     public void I_am_authenticated(String identifier) throws Exception {
         this.I_am_on_page("login");
-        this.I_type_in_field("user1", "username");
+        this.I_type_in_field(identifier, "username");
         this.I_type_in_field("demo", "password");
         this.I_click_on_element("login");
     }
@@ -269,10 +270,10 @@ public class CucumberSteps {
         this.I_click_on_element("importResultLink");
     }
 
-    @When("^I select an element with property \"([^\"]*)\" equals to \"([^\"]*)\" in \"([^\"]*)\" list")
-    public void I_select_an_element_with_property_equals_to_in(String property, String expectedValue, String listId) {
+    @When("^I select an item with property \"([^\"]*)\" equals to \"([^\"]*)\" in list")
+    public void I_select_an_element_with_property_equals_to_in(String property, String expectedValue) {
 
-        WebElement matchingElement = this.cucumberUtils.lookForElement(property, expectedValue, listId);
+        WebElement matchingElement = this.cucumberUtils.lookForItemInList(property, expectedValue);
         if (matchingElement != null) {
 
             List<WebElement> aList = matchingElement.findElements(By.cssSelector("a"));
@@ -348,41 +349,6 @@ public class CucumberSteps {
         Assert.assertTrue("Empty property expected. Actual value " + actualValue, StringUtils.isBlank(actualValue));
     }
 
-    @Then("^import result displays (\\d+) created entities, (\\d+) updated entities and (\\d+) entities in error")
-    public void import_result_displays(int createdEntitiesQuantity, int updateEntitiesQuantity, int entitiesInErrorQuantity) {
-
-        this.I_wait_during_x_seconds(200);
-
-        WebElement created = this.cucumberUtils.findElement(By.id("createdEntitiesQuantity"));
-        Assert.assertEquals(createdEntitiesQuantity, Integer.parseInt(created.getText()));
-
-        WebElement updated = this.cucumberUtils.findElement(By.id("updatedEntitiesQuantity"));
-        Assert.assertEquals(updateEntitiesQuantity, Integer.parseInt(updated.getText()));
-
-        WebElement error = this.cucumberUtils.findElement(By.id("entitiesInErrorQuantity"));
-        Assert.assertEquals(entitiesInErrorQuantity, Integer.parseInt(error.getText()));
-
-
-    }
-
-    @Then("^import result displays (\\d+) errors for line (\\d+)")
-    public void import_result_displays_error_for_line(int errorsQuantity, int lineIndex) {
-
-        this.I_wait_during_x_seconds(200);
-
-        WebElement errorLine = this.cucumberUtils.findElement(By.id("error_line_" + lineIndex));
-        Assert.assertNotNull(errorLine);
-
-        List<WebElement> errorsItems = errorLine.findElements(By.className("errorItem"));
-        Assert.assertEquals(errorsQuantity, errorsItems.size());
-
-    }
-
-    @Then("^import result displays (\\d+) errors for header")
-    public void import_result_displays_error_for_header(int errorsQuantity) {
-        this.import_result_displays_error_for_line(errorsQuantity, 1);
-    }
-
     @Then("^there is an error on property \"([^\"]*)\"$")
     public void there_is_an_error_on_property(String property) {
         WebElement element = this.cucumberUtils.findElement(By.name(property));
@@ -395,17 +361,16 @@ public class CucumberSteps {
         Assert.assertTrue(!errors.isEmpty());
     }
 
-    @Then("^there should be an element with property \"([^\"]*)\" equals to \"([^\"]*)\" in list \"([^\"]*)\"$")
-    public void there_should_be_an_element_with_property_in_list(String property, String expectedValue, String
-            listId) {
-        WebElement matchingElement = this.cucumberUtils.lookForElement(property, expectedValue, listId);
+    @Then("^there should be an item with property \"([^\"]*)\" equals to \"([^\"]*)\" in list$")
+    public void there_should_be_an_element_with_property_in_list(String property, String expectedValue) {
+        WebElement matchingElement = this.cucumberUtils.lookForItemInList(property, expectedValue);
         this.currentElement = matchingElement;
         Assert.assertNotNull(matchingElement);
     }
 
-    @Then("^there shouldn't be element with property \"([^\"]*)\" equals to \"([^\"]*)\" in list \"([^\"]*)\"$")
-    public void there_shouldnt_element_with_property_in_list(String property, String expectedValue, String listId) {
-        WebElement matchingElement = this.cucumberUtils.lookForElement(property, expectedValue, listId);
+    @Then("^there shouldn't be item with property \"([^\"]*)\" equals to \"([^\"]*)\" in list$")
+    public void there_shouldnt_element_with_property_in_list(String property, String expectedValue) {
+        WebElement matchingElement = this.cucumberUtils.lookForItemInList(property, expectedValue);
         this.currentElement = matchingElement;
         Assert.assertNull(matchingElement);
     }
