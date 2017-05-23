@@ -51,7 +51,7 @@ public class GroupsController {
         if (Strings.isNullOrEmpty(q)) {
             groups = this.groupService.getAll(pageable);
         } else {
-            groups = this.searchEngine.search(q, pageable);
+            groups = this.searchEngine.search(q, pageable).getPage();
         }
 
         model.addAttribute("groups", groups);

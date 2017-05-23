@@ -52,7 +52,15 @@
           "analyzer": "suggest",
           "search_analyzer": "default"
         },
-        "type": {
+        "contentType": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "tags": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "extension": {
           "type": "string",
           "index": "not_analyzed"
         },

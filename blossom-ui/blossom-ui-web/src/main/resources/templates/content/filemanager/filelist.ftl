@@ -34,9 +34,6 @@
         <a href="/files/${file.id?c}" target="_blank">${file.name}</a>
         <br/>
         <small>Added: ${file.dateCreation?datetime}</small>
-        <br/>
-        <button type="button" class="btn btn-rounded btn-xs btn-danger"><i class="fa fa-trash"></i></button>
-        <button type="button" class="btn btn-rounded btn-xs btn-primary"><i class="fa fa-download"></i></button>
       </div>
     </div>
   </div>

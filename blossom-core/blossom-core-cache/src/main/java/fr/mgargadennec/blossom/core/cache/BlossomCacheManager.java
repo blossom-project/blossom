@@ -12,22 +12,26 @@ import org.springframework.util.StringUtils;
  */
 public class BlossomCacheManager extends CaffeineCacheManager {
 
-    private final Environment environment;
+  private final Environment environment;
 
-    public BlossomCacheManager(Environment environment) {
-        this.environment = environment;
+  public BlossomCacheManager(Environment environment) {
+    this.environment = environment;
+  }
+
+  @Override
+  protected Cache<Object, Object> createNativeCaffeineCache(String name) {
+    String cacheSpec = environment.getProperty("blossom.cache." + name + ".spec");
+    if (cacheSpec == null) {
+      cacheSpec = environment.getProperty("blossom.cache.default.spec");
     }
 
-    @Override
-    protected Cache<Object, Object> createNativeCaffeineCache(String name) {
-        String cacheSpec = environment.getProperty("blossom.cache."+name+".spec","");
-        if (StringUtils.hasText(cacheSpec)) {
-            Caffeine caffeine = Caffeine.from(CaffeineSpec.parse(cacheSpec));
-            caffeine.recordStats();
-            return caffeine.build();
-        }else{
-           return super.createNativeCaffeineCache(name);
-        }
+    if (StringUtils.hasText(cacheSpec)) {
+      Caffeine caffeine = Caffeine.from(CaffeineSpec.parse(cacheSpec));
+      caffeine.recordStats();
+      return caffeine.build();
+    } else {
+      return super.createNativeCaffeineCache(name);
     }
+  }
 
 }

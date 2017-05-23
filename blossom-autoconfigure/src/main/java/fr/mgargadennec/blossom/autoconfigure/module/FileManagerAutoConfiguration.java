@@ -26,8 +26,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
-import javax.sql.DataSource;
-
 /**
  * Created by Maël Gargadennnec on 19/05/2017.
  */
@@ -79,7 +77,7 @@ public class FileManagerAutoConfiguration {
 
   @Bean
   public SearchEngineImpl<FileDTO> fileSearchEngine(Client client, BulkProcessor bulkProcessor, ObjectMapper objectMapper) {
-    return new SearchEngineImpl<>(FileDTO.class, client, Lists.newArrayList("name", "type"), "files", objectMapper);
+    return new SearchEngineImpl<>(FileDTO.class, client, Lists.newArrayList("name", "contentType", "extension"), "files", objectMapper);
   }
 
   @Bean

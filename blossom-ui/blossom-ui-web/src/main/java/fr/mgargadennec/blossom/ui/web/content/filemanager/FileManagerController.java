@@ -39,16 +39,17 @@ public class FileManagerController {
   }
 
   @GetMapping
-  public ModelAndView getPage(Model model, @RequestParam(value = "q", required = false, defaultValue = "") String q,
-                              @PageableDefault Pageable pageable) {
+  public ModelAndView getPage(Model model) {
     return new ModelAndView("content/filemanager/filemanager", model.asMap());
   }
 
   @GetMapping("/files")
-  public ModelAndView getFiles(Model model, @PageableDefault(size = 20) Pageable pageable, @RequestParam(value = "q", defaultValue = "", required = false) String q) {
+  public ModelAndView getFiles(Model model,
+                               @PageableDefault(size = 20) Pageable pageable,
+                               @RequestParam(value = "q", defaultValue = "", required = false) String q) {
     Page<FileDTO> files = null;
     if (!StringUtils.isEmpty(q)) {
-      files = searchEngine.search(q, pageable);
+      files = searchEngine.search(q, pageable).getPage();
     } else {
       files = fileService.getAll(pageable);
     }

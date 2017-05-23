@@ -52,7 +52,7 @@ public class UsersController {
     if (Strings.isNullOrEmpty(q)) {
       users = this.userService.getAll(pageable);
     } else {
-      users = this.searchEngine.search(q, pageable);
+      users = this.searchEngine.search(q, pageable).getPage();
     }
 
     model.addAttribute("users", users);

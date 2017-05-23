@@ -51,7 +51,7 @@ public class RolesController {
     if (Strings.isNullOrEmpty(q)) {
       roles = this.roleService.getAll(pageable);
     } else {
-      roles = this.searchEngine.search(q, pageable);
+      roles = this.searchEngine.search(q, pageable).getPage();
     }
 
     model.addAttribute("roles", roles);

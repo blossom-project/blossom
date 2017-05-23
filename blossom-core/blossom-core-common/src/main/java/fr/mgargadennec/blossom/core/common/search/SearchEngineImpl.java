@@ -7,14 +7,15 @@ import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder.Type;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -39,12 +40,18 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
     this.objectMapper = objectMapper;
   }
 
-  public Page<DTO> search(String q, Pageable pageable) {
+  public SearchResult<DTO> search(String q, Pageable pageable) {
     return this.search(q, pageable, null);
   }
 
   @Override
-  public Page<DTO> search(String q, Pageable pageable, Iterable<QueryBuilder> filters) {
+  public SearchResult<DTO> search(String q, Pageable pageable, Iterable<QueryBuilder> filters) {
+    return this.search(q, pageable, filters, null);
+  }
+
+  @Override
+  public SearchResult<DTO> search(String q, Pageable pageable, Iterable<QueryBuilder> filters, Iterable<AggregationBuilder> aggregations) {
+
     QueryBuilder initialQuery;
     String[] searchableFields = this.searchableFields();
 
@@ -74,9 +81,15 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
       searchRequest.addSort(SortBuilders.scoreSort());
     }
 
-    List<DTO> resultList = Lists.newArrayList();
+    if (aggregations != null) {
+      for (AggregationBuilder aggregation : aggregations) {
+        searchRequest.addAggregation(aggregation);
+      }
+    }
 
-    SearchResponse searchResponse = searchRequest.get();
+    SearchResponse searchResponse = searchRequest.get(TimeValue.timeValueSeconds(10));
+
+    List<DTO> resultList = Lists.newArrayList();
     for (int i = 0; i < searchResponse.getHits().getHits().length; i++) {
       try {
         SearchHit hit = searchResponse.getHits().getHits()[i];
@@ -87,7 +100,10 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
       }
     }
 
-    return new PageImpl<>(resultList, pageable, searchResponse.getHits().getTotalHits());
+    if (searchResponse.getAggregations() != null) {
+      return new SearchResult(new PageImpl<>(resultList, pageable, searchResponse.getHits().getTotalHits()), searchResponse.getAggregations().asList());
+    }
+    return new SearchResult(new PageImpl<>(resultList, pageable, searchResponse.getHits().getTotalHits()));
   }
 
   private String[] searchableFields() {

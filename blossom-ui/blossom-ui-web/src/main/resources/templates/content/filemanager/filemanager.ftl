@@ -49,12 +49,8 @@
               </span>
             </div>
 
-            <h5>Show:</h5>
-            <a href="#" class="file-control active">All</a>
-            <a href="#" class="file-control">Documents</a>
-            <a href="#" class="file-control">Audio</a>
-            <a href="#" class="file-control">Images</a>
             <div class="hr-line-dashed"></div>
+
             <form id="filemanagerDropzone" action="filemanager/files" method="POST" class="dropzone"
                   enctype="multipart/form-data">
               <div class="fallback">
@@ -62,18 +58,7 @@
               </div>
             </form>
             <div class="hr-line-dashed"></div>
-            <h5 class="tag-title">Tags</h5>
-            <ul class="tag-list" style="padding: 0">
-              <li><a href="">Family</a></li>
-              <li><a href="">Work</a></li>
-              <li><a href="">Home</a></li>
-              <li><a href="">Children</a></li>
-              <li><a href="">Holidays</a></li>
-              <li><a href="">Music</a></li>
-              <li><a href="">Photography</a></li>
-              <li><a href="">Film</a></li>
-            </ul>
-            <div class="clearfix"></div>
+
           </div>
         </div>
       </div>
@@ -93,12 +78,16 @@
 <script>
   var context = {
     page: 0,
-    q: ''
+    q: '',
+    filters:[]
   };
 
   var updateFilelist = function () {
     context.page = 0;
-    $.get("filemanager/files?q=" + context.q, function (data) {
+    var params = "?"
+    params+="q="+context.q;
+
+    $.get("filemanager/files" + params, function (data) {
       $("#filelist").html(data);
     });
   };
