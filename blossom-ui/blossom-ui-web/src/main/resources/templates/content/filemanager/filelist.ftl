@@ -1,3 +1,5 @@
+<#import "/spring.ftl" as spring>
+
 <#function icon file>
   <#if file.extension == 'pdf' >
     <#return "fa fa-file-pdf-o">
@@ -24,32 +26,32 @@
 
 <#if files.content?size gt 0>
   <#list files.content as file>
-  <div class="file-box">
-    <div class="file">
-      <span class="corner"></span>
-      <div class="icon">
-        <i class="${icon(file)}"></i>
-      </div>
-      <div class="file-name">
-        <a href="/files/${file.id?c}" target="_blank">${file.name}</a>
-        <br/>
-        <small>Added: ${file.dateCreation?datetime}</small>
+    <div class="file-box">
+      <div class="file">
+        <span class="corner"></span>
+        <div class="icon">
+          <i class="${icon(file)}"></i>
+        </div>
+        <div class="file-name">
+          <a href="/files/${file.id?c}" target="_blank">${file.name}</a>
+          <br/>
+          <small>Added: ${file.dateCreation?datetime}</small>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    $(document).ready(function () {
-      var heights = $(".file-box .file-name").map(function () {
-        return $(this).height();
-      }).get();
+    <script>
+      $(document).ready(function () {
+        var heights = $(".file-box .file-name").map(function () {
+          return $(this).height();
+        }).get();
 
-      var maxHeight = Math.max.apply(null, heights);
+        var maxHeight = Math.max.apply(null, heights);
 
-      $(".file-box .file-name").height(maxHeight);
-    });
+        $(".file-box .file-name").height(maxHeight);
+      });
 
-  </script>
+    </script>
   </#list>
 
   <#if !files.last>
@@ -61,5 +63,5 @@
   </div>
   </#if>
 <#else>
-<div class="well-lg">No file found</div>
+  <div class="well-lg"><@spring.message "filemanager.search.not_found"/></div>
 </#if>

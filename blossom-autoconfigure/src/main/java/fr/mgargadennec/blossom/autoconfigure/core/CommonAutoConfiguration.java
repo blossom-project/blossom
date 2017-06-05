@@ -126,6 +126,8 @@ public class CommonAutoConfiguration {
   public MultiClasspathReloadableResourceBundleMessageSource messageSource() {
     MultiClasspathReloadableResourceBundleMessageSource messageSource = new MultiClasspathReloadableResourceBundleMessageSource();
     messageSource.setBasenames("classpath*:/messages/*");
+    messageSource.setFallbackToSystemLocale(false);
+    messageSource.setCacheSeconds(3600);
     return messageSource;
   }
 

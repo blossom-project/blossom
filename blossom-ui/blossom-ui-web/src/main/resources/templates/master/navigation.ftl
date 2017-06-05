@@ -15,8 +15,6 @@
                              </span> <span class="text-muted text-xs block">${currentUser.user.function!''}<b class="caret"></b></span> </span> </a>
           <ul class="dropdown-menu animated fadeInRight m-t-xs">
             <li><a href="profile.html">Profile</a></li>
-            <li class="divider"></li>
-            <li><a href="/blossom/logout">Logout</a></li>
           </ul>
         </div>
         <div class="logo-element">
@@ -64,106 +62,25 @@
       </form>
     </div>
     <ul class="nav navbar-top-links navbar-right">
-      <li>
-        <span class="m-r-sm text-muted welcome-message">Welcome to Blossom Back-Office.</span>
-      </li>
       <li class="dropdown">
-        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-          <i class="fa fa-envelope"></i> <span class="label label-warning">16</span>
-        </a>
-        <ul class="dropdown-menu dropdown-messages">
-          <li>
-            <div class="dropdown-messages-box">
-              <a href="profile.html" class="pull-left">
-                <img alt="image" class="img-circle" src="/img/a7.jpg">
-              </a>
-              <div class="media-body">
-                <small class="pull-right">46h ago</small>
-                <strong>Mike Loreipsum</strong> started following <strong>Monica Smith</strong>. <br>
-                <small class="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
-              </div>
-            </div>
-          </li>
-          <li class="divider"></li>
-          <li>
-            <div class="dropdown-messages-box">
-              <a href="profile.html" class="pull-left">
-                <img alt="image" class="img-circle" src="/img/a4.jpg">
-              </a>
-              <div class="media-body ">
-                <small class="pull-right text-navy">5h ago</small>
-                <strong>Chris Johnatan Overtunk</strong> started following <strong>Monica Smith</strong>. <br>
-                <small class="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
-              </div>
-            </div>
-          </li>
-          <li class="divider"></li>
-          <li>
-            <div class="dropdown-messages-box">
-              <a href="profile.html" class="pull-left">
-                <img alt="image" class="img-circle" src="/img/profile.jpg">
-              </a>
-              <div class="media-body ">
-                <small class="pull-right">23h ago</small>
-                <strong>Monica Smith</strong> love <strong>Kim Smith</strong>. <br>
-                <small class="text-muted">2 days ago at 2:30 am - 11.06.2014</small>
-              </div>
-            </div>
-          </li>
-          <li class="divider"></li>
-          <li>
-            <div class="text-center link-block">
-              <a href="mailbox.html">
-                <i class="fa fa-envelope"></i> <strong>Read All Messages</strong>
-              </a>
-            </div>
-          </li>
-        </ul>
-      </li>
-      <li class="dropdown">
-        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-          <i class="fa fa-bell"></i> <span class="label label-primary">8</span>
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+        ${currentLocale.getDisplayLanguage(currentLocale)}<#if currentLocale.getDisplayCountry(currentLocale)?has_content> / ${currentLocale.getDisplayCountry(currentLocale)}</#if>
         </a>
         <ul class="dropdown-menu dropdown-alerts">
-          <li>
-            <a href="mailbox.html">
-              <div>
-                <i class="fa fa-envelope fa-fw"></i> You have 16 messages
-                <span class="pull-right text-muted small">4 minutes ago</span>
-              </div>
-            </a>
-          </li>
-          <li class="divider"></li>
-          <li>
-            <a href="profile.html">
-              <div>
-                <i class="fa fa-twitter fa-fw"></i> 3 New Followers
-                <span class="pull-right text-muted small">12 minutes ago</span>
-              </div>
-            </a>
-          </li>
-          <li class="divider"></li>
-          <li>
-            <a href="grid_options.html">
-              <div>
-                <i class="fa fa-upload fa-fw"></i> Server Rebooted
-                <span class="pull-right text-muted small">4 minutes ago</span>
-              </div>
-            </a>
-          </li>
-          <li class="divider"></li>
-          <li>
-            <div class="text-center link-block">
-              <a href="notifications.html">
-                <strong>See All Alerts</strong>
-                <i class="fa fa-angle-right"></i>
-              </a>
-            </div>
-          </li>
+          <#list locales as locale>
+            <#if locale != currentLocale>
+              <li>
+                <a onclick="window.location.href = $.updateQueryStringParameter(window.location.href,'lang','${locale}');">
+                  <div>
+                    ${locale.getDisplayLanguage(currentLocale)}<#if locale.getDisplayCountry(currentLocale)?has_content> / ${locale.getDisplayCountry(currentLocale)}</#if>
+                    <span class="pull-right text-muted small">( ${locale.getDisplayLanguage(locale)}<#if locale.getDisplayCountry(locale)?has_content> / ${locale.getDisplayCountry(locale)}</#if>)</span>
+                  </div>
+                </a>
+              </li>
+            </#if>
+          </#list>
         </ul>
       </li>
-
-
       <li>
         <a href="/blossom/logout">
           <i class="fa fa-sign-out"></i> Log out

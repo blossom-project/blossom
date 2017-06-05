@@ -19,6 +19,7 @@
     <module>blossom-samples-basic</module>
     <module>blossom-samples-ui</module>
     <module>blossom-samples-ui-override</module>
+    <module>blossom-sample-scheduler</module>
     <module>blossom-sample-filemanager</module>
   </modules>
 </project>

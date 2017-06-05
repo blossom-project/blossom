@@ -1,5 +1,7 @@
 package fr.mgargadennec.blossom.autoconfigure.ui;
 
+import com.google.common.collect.Iterables;
+import fr.mgargadennec.blossom.ui.i18n.RestrictedSessionLocalResolver;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomApiController;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -13,12 +15,13 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.lang.reflect.Method;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
@@ -31,9 +34,12 @@ public class WebContextAutoConfiguration extends WebMvcConfigurerAdapter {
   private final static String BLOSSOM_API_BASE_PATH = BLOSSOM_BASE_PATH + "/api";
 
   @Bean
-  public LocaleResolver localeResolver() {
-    return new SessionLocaleResolver();
+  public LocaleResolver localeResolver(Set<Locale> availableLocales) {
+    RestrictedSessionLocalResolver resolver = new RestrictedSessionLocalResolver(availableLocales);
+    resolver.setDefaultLocale(Iterables.getFirst(availableLocales, Locale.ENGLISH));
+    return resolver;
   }
+
 
   @Bean
   public LocaleChangeInterceptor localeChangeInterceptor() {

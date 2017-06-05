@@ -1,19 +1,29 @@
 package fr.mgargadennec.blossom.autoconfigure.ui.web;
 
 import fr.mgargadennec.blossom.ui.current_user.CurrentUserControllerAdvice;
+import fr.mgargadennec.blossom.ui.i18n.LocaleControllerAdvice;
 import fr.mgargadennec.blossom.ui.menu.Menu;
 import fr.mgargadennec.blossom.ui.menu.MenuControllerAdvice;
 import fr.mgargadennec.blossom.ui.web.HomeController;
 import fr.mgargadennec.blossom.ui.web.LoginController;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
  */
 @Configuration
 @ConditionalOnClass(HomeController.class)
+@PropertySource({"classpath:/languages.properties"})
 public class WebInterfaceAutoConfiguration {
 
   @Bean
@@ -36,5 +46,13 @@ public class WebInterfaceAutoConfiguration {
     return new MenuControllerAdvice(menu);
   }
 
+  @Bean
+  public Set<Locale> availableLocales(@Value("${blossom.languages}") String[] languages){
+    return Stream.of(languages).sequential().map(language -> Locale.forLanguageTag(language)).collect(Collectors.toCollection(LinkedHashSet::new));
+  }
 
+  @Bean
+  public LocaleControllerAdvice languageControllerAdvice(Set<Locale> availableLocales) {
+    return new LocaleControllerAdvice(availableLocales);
+  }
 }

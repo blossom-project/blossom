@@ -34,10 +34,10 @@
       <div class="ibox float-e-margins">
         <div class="ibox-content">
           <div class="file-manager">
-            <h5>Search:</h5>
+            <h5><@spring.message "filemanager.search"/></h5>
             <div class="input-group m-b-md">
               <input type="text"
-                     placeholder="Rechercher..."
+                     placeholder="<@spring.message "filemanager.search.placeholder"/>"
                      class="file-search input-sm form-control"
                      onkeyup="var which = event.which || event.keyCode;if(which === 13) {$(this).closest('.input-group').find('button.file-search').first().click();}">
 
@@ -66,7 +66,6 @@
     <div class="col-lg-9">
       <div class="row">
         <div id="filelist" class="col-xs-12">
-
         </div>
       </div>
     </div>

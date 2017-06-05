@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.core.scheduler;
+package fr.mgargadennec.blossom.sample;
 
 import org.quartz.*;
 import org.slf4j.Logger;
