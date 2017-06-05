@@ -23,14 +23,47 @@
       <div class="ibox">
         <div class="ibox-content">
           <div class="scheduler-info m-t-md">
-            ${scheduler.name}<br/>
-            ${scheduler.start?datetime}<br/>
-            ${scheduler.poolsize}<br/>
-            ${scheduler.jobs}<br/>
-            ${scheduler.triggers}<br/>
-            ${scheduler.started?string('yes','no')}<br/>
-            ${scheduler.standBy?string('yes','no')}<br/>
+            <div class="form form-horizontal">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="col-lg-2 control-label">Scheduler name</label>
+                    <div class="col-lg-10"><p class="form-control-static">${scheduler.name}</p></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-lg-2 control-label">Started</label>
+                    <div class="col-lg-10"><p class="form-control-static">${scheduler.start?datetime}</p></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-lg-2 control-label">Standby</label>
+                    <div class="col-lg-10"><p class="form-control-static">${scheduler.standBy?string('yes','no')}</p>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-lg-2 control-label">Started</label>
+                    <div class="col-lg-10"><p class="form-control-static">${scheduler.started?string('yes','no')}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="col-lg-2 control-label">Pool size</label>
+                    <div class="col-lg-10"><p class="form-control-static">${scheduler.poolsize}</p></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-lg-2 control-label">Jobs</label>
+                    <div class="col-lg-10"><p class="form-control-static">${scheduler.jobs}</p></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-lg-2 control-label">Triggers</label>
+                    <div class="col-lg-10"><p class="form-control-static">${scheduler.triggers}</p></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
+
           <div class="scheduled-tasks-list m-t-md">
             <ul class="nav nav-tabs">
               <#list groups as group>
@@ -109,7 +142,9 @@
     } else {
       var callback = function () {
         $.get(href, function (html) {
-          setTimeout(function(){$("#scheduled-task-detail").html(html)},200);
+          setTimeout(function () {
+            $("#scheduled-task-detail").html(html)
+          }, 200);
         });
       };
       callback();

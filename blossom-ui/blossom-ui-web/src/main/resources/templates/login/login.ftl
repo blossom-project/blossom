@@ -1,3 +1,5 @@
+<#import "/spring.ftl" as spring>
+
 <!DOCTYPE html>
 <html>
 
@@ -6,7 +8,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>BLOSSOM | Login</title>
+  <title>BLOSSOM | <@spring.message "login.page.title"/></title>
 
   <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link href="/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -20,18 +22,17 @@
 
 <div class="middle-box text-center loginscreen">
   <div>
-    <h3>Welcome to Blossom</h3>
-    <p>Perfectly designed and easy to use Back-Office based on Spring-Boot</p>
-    <p>Login in. To see it in action.</p>
+    <h3><@spring.message "login.page.welcome"/></h3>
+    <p><@spring.message "login.page.description"/></p>
     <form class="m-t" role="form" method="POST" action="/blossom/login">
       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
       <div class="form-group">
-        <input type="text" class="form-control" placeholder="Username" required="required" name="username">
+        <input type="text" class="form-control" placeholder="<@spring.message "login.page.form.login"/>" required="required" name="username">
       </div>
       <div class="form-group">
-        <input type="password" class="form-control" placeholder="Password" required="required" name="password">
+        <input type="password" class="form-control" placeholder="<@spring.message "login.page.form.password"/>" required="required" name="password">
       </div>
-      <button type="submit" class="btn btn-primary block full-width m-b" id="login">Login</button>
+      <button type="submit" class="btn btn-primary block full-width m-b" id="login"><@spring.message "login.page.form.button.login"/></button>
 
       <#if error.isPresent() && SPRING_SECURITY_LAST_EXCEPTION??>
         <p class="alert alert-danger">${SPRING_SECURITY_LAST_EXCEPTION.message}</p>
