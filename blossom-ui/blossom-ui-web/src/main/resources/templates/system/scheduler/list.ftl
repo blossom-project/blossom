@@ -11,12 +11,16 @@
         <small>${jobInfo.detail.description}</small>
       </td>
       <td class="project-status">
-        <#if jobInfo.active && jobInfo.executing>
-          <span class="label label-success"><span class="fa fa-spinner fa-spin"></span> In progress </span>
-        <#elseif !jobInfo.executing>
-          <span class="label label-primary">Active</span>
+        <#if scheduler.standBy>
+          <span class="label label-warning-light">Stand-by</span>
         <#else>
-          <span class="label label-default">Idle</span>
+          <#if jobInfo.active && jobInfo.executing>
+            <span class="label label-success"><span class="fa fa-spinner fa-spin"></span> In progress </span>
+          <#elseif jobInfo.active && !jobInfo.executing>
+            <span class="label label-primary">Active</span>
+          <#else>
+            <span class="label label-default">Idle</span>
+          </#if>
         </#if>
       </td>
 

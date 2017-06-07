@@ -3,12 +3,16 @@
 <div class="ibox">
   <div class="ibox-title">
     <h5>
-    <#if jobInfo.active && jobInfo.executing>
-      <span class="label label-success"><span class="fa fa-spinner fa-spin"></span> In progress </span>
-    <#elseif !jobInfo.executing>
-      <span class="label label-primary">Active</span>
+    <#if scheduler.standBy>
+      <span class="label label-warning-light">Stand-by</span>
     <#else>
-      <span class="label label-default">Idle</span>
+      <#if jobInfo.active && jobInfo.executing>
+        <span class="label label-success"><span class="fa fa-spinner fa-spin"></span> In progress </span>
+      <#elseif !jobInfo.executing>
+        <span class="label label-primary">Active</span>
+      <#else>
+        <span class="label label-default">Idle</span>
+      </#if>
     </#if>
       <span class="m-l-sm">${jobInfo.key.group} - ${jobInfo.key.name}</span>
     </h5>
@@ -31,9 +35,12 @@
     <div class="row">
       <div class="col-lg-12 small text-muted m-b-lg">
         <span class="m-r-sm">Durable <i class="fa fa-check-circle <#if jobInfo.detail.durable >text-success</#if>"></i></span>
-        <span class="m-r-sm">Persist data <i class="fa fa-check-circle <#if jobInfo.detail.persistJobDataAfterExecution >text-success</#if>"></i></span>
-        <span class="m-r-sm">Concurrent execution <i class="fa fa-check-circle <#if !jobInfo.detail.concurrentExectionDisallowed >text-success</#if>"></i></span>
-        <span class="m-r-sm">Recovery <i class="fa fa-check-circle <#if jobInfo.detail.requestsRecovery() >text-success</#if>"></i></span>
+        <span class="m-r-sm">Persist data <i
+          class="fa fa-check-circle <#if jobInfo.detail.persistJobDataAfterExecution >text-success</#if>"></i></span>
+        <span class="m-r-sm">Concurrent execution <i
+          class="fa fa-check-circle <#if !jobInfo.detail.concurrentExectionDisallowed >text-success</#if>"></i></span>
+        <span class="m-r-sm">Recovery <i
+          class="fa fa-check-circle <#if jobInfo.detail.requestsRecovery() >text-success</#if>"></i></span>
       </div>
     </div>
 
@@ -44,21 +51,32 @@
       ${jobInfo.detail.description}
       </div>
     </div>
+    <br/>
+    <strong class="m-t-lg"><@spring.message "scheduler.triggers.title"/></strong>
 
-    <#--<strong class="m-t-lg"><@spring.message "scheduler.triggers.title"/></strong>-->
+    <div class="row">
+      <div class="col-lg-12">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Next fire</th>
+          </tr>
+          <tbody>
+          <#list jobInfo.triggers as trigger>
+            <tr>
+              <td>${trigger.name}</td>
+              <td><i class="${triggerIcon(trigger)}"></i> ${triggerType(trigger)}</td>
+              <td>${trigger.nextFireTime?datetime}</td>
+            </tr>
+          </#list>
+          </tbody>
 
-    <#--<div class="row">-->
-    <#--<#list jobInfo.triggers as trigger>-->
-      <#--<div class="col-lg-12 b-r-xs">-->
-        <#--<h4><strong>${trigger.name}</strong></h4>-->
-        <#--<p><i class="${triggerIcon(trigger)}"></i> ${triggerType(trigger)}</p>-->
-        <#--<dl>-->
-          <#--<dt>test</dt>-->
-          <#--<dd>test</dd>-->
-        <#--</dl>-->
-      <#--</div>-->
-    <#--</#list>-->
-    <#--</div>-->
+          </thead>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -73,7 +91,13 @@
 </#function>
 
 <#function triggerType trigger>
-  <#return "Trigger"/>
+  <#if isCron(trigger)>
+    <#return 'cron'/>
+  <#elseif isSimple(trigger)>
+    <#return 'simple'/>
+  <#else>
+    <#return 'unknown'/>
+  </#if>
 </#function>
 
 <#function isCron trigger>

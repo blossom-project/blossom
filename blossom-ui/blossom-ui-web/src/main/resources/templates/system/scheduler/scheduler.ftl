@@ -25,42 +25,30 @@
           <div class="scheduler-info m-t-md">
             <div class="form form-horizontal">
               <div class="row">
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="col-lg-2 control-label">Scheduler name</label>
-                    <div class="col-lg-10"><p class="form-control-static">${scheduler.name}</p></div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-lg-2 control-label">Started</label>
-                    <div class="col-lg-10"><p class="form-control-static">${scheduler.start?datetime}</p></div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-lg-2 control-label">Standby</label>
-                    <div class="col-lg-10"><p class="form-control-static">${scheduler.standBy?string('yes','no')}</p>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-lg-2 control-label">Started</label>
-                    <div class="col-lg-10"><p class="form-control-static">${scheduler.started?string('yes','no')}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="col-lg-2 control-label">Pool size</label>
-                    <div class="col-lg-10"><p class="form-control-static">${scheduler.poolsize}</p></div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-lg-2 control-label">Jobs</label>
-                    <div class="col-lg-10"><p class="form-control-static">${scheduler.jobs}</p></div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-lg-2 control-label">Triggers</label>
-                    <div class="col-lg-10"><p class="form-control-static">${scheduler.triggers}</p></div>
+                <div class="col-lg-12">
+                  <div>
+                    <h2 class="no-margins">
+                    ${scheduler.name}
+                      <span class="small pull-right">
+                        <div class="switch">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" <#if !scheduler.standBy>checked=""</#if>class="onoffswitch-checkbox" id="scheduler-standby">
+                                    <label class="onoffswitch-label" for="scheduler-standby">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                      </span>
+                    </h2>
+                    <p><strong><i class="fa fa-clock-o"></i> ${scheduler.start?datetime}</strong></p>
+                    <small>
+                      There are <b>${scheduler.jobs} jobs</b> and <b>${scheduler.triggers} triggers</b> that are executed by a pool
+                      of <b>${scheduler.poolsize} threads</b>.
+                    </small>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -106,6 +94,13 @@
 <script>
   var listTimer = null;
   var panelTimer = null;
+
+  $("#scheduler-standby").on('change',function(e){
+    var checked = $(this).is(":checked");
+    $.post(window.location.pathname+'/_changeState?state='+checked,function(){
+      updateTabPane($('.scheduler  li.active a[data-toggle="tab"]'));
+    });
+  });
 
   $('.scheduler a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     updateTabPane($(e.target));
