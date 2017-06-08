@@ -3,7 +3,7 @@
 
 <@master.default currentUser=currentUser>
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
+  <div class="col-sm-8">
     <h2>
       <i class="fa fa-pencil"></i>
       <@spring.message "menu.system.loggers"/>

@@ -4,7 +4,7 @@
 
 <@master.default currentUser=currentUser>
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-4">
+    <div class="col-sm-8">
         <h2><i class="fa fa-user"></i> ${user.firstname +' '+ user.lastname}</h2>
         <ol class="breadcrumb">
             <li>
@@ -53,7 +53,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6 col-lg-3">
+        <div class="col-sm-12 col-md-6  col-lg-4">
             <div class="ibox">
                 <div class="ibox-content">
                     <h3><@spring.message "users.user.panel.personal"/></h3>
@@ -73,7 +73,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-lg-3">
+        <div class="col-sm-12 col-md-6 col-lg-4">
             <div class="ibox">
                 <div class="ibox-content">
                     <h3><@spring.message "users.user.panel.account"/></h3>
@@ -94,7 +94,7 @@
             </div>
         </div>
 
-        <div class="col-sm-6 col-lg-3">
+        <div class="col-sm-12 col-md-6 col-lg-4">
             <div class="ibox">
                 <div class="ibox-content">
                     <h3><@spring.message "users.user.panel.contact"/></h3>

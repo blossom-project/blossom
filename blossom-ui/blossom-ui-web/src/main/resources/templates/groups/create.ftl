@@ -4,7 +4,7 @@
 
 <@master.default currentUser=currentUser>
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
+  <div class="col-sm-8">
     <h2>This is main title</h2>
     <ol class="breadcrumb">
       <li>
@@ -15,7 +15,7 @@
       </li>
     </ol>
   </div>
-  <div class="col-sm-8">
+  <div class="col-sm-4">
     <div class="title-action">
       <a href="" class="btn btn-primary">This is action area</a>
     </div>

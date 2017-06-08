@@ -1,3 +1,4 @@
+
 <#import "/spring.ftl" as spring>
 <#import "/master/master.ftl" as master>
 <#import "/utils/table.ftl" as table>
@@ -5,7 +6,7 @@
 
 <@master.default currentUser=currentUser>
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
+  <div class="col-sm-8">
     <h2><i class="fa fa-user"></i> <@spring.message "users.title"/></h2>
     <ol class="breadcrumb">
       <li>

@@ -12,7 +12,7 @@
 </style>
 
 <div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
+  <div class="col-sm-8">
     <h2><i class="fa fa-photo"></i> <@spring.message "menu.content.filemanager"/></h2>
     <ol class="breadcrumb">
       <li>
