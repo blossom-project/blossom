@@ -1,12 +1,16 @@
 package fr.mgargadennec.blossom.core.user;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
 import fr.mgargadennec.blossom.core.common.mapper.DTOMapper;
 import fr.mgargadennec.blossom.core.common.service.GenericCrudServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,12 +24,14 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   private final PasswordEncoder passwordEncoder;
   private final UserDao userDao;
   private final UserMailService userMailService;
+  private final Resource defaultAvatar;
 
-  public UserServiceImpl(UserDao dao, DTOMapper<User, UserDTO> mapper, ApplicationEventPublisher publisher, PasswordEncoder passwordEncoder, UserMailService userMailService) {
+  public UserServiceImpl(UserDao dao, DTOMapper<User, UserDTO> mapper, ApplicationEventPublisher publisher, PasswordEncoder passwordEncoder, UserMailService userMailService, Resource defaultAvatar) {
     super(dao, mapper, publisher);
     this.passwordEncoder = passwordEncoder;
     this.userDao = dao;
     this.userMailService = userMailService;
+    this.defaultAvatar = defaultAvatar;
   }
 
   @Override
@@ -63,5 +69,18 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
     }
   }
 
+  @Override
+  public void updateAvatar(long id, byte[] avatar) {
+    this.userDao.updateAvatar(id,avatar);
+  }
 
+  @Override
+  public byte[] loadAvatar(long id) throws IOException {
+    User user = this.userDao.getOne(id);
+    if(user !=null && user.getAvatar()!=null){
+      return user.getAvatar();
+    }else{
+      return ByteStreams.toByteArray(defaultAvatar.getInputStream());
+    }
+  }
 }

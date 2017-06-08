@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
 /**
@@ -125,6 +127,11 @@ public class UsersController {
     return new ModelAndView("users/update", "user", user);
   }
 
+  @GetMapping(value= "/{id}/avatar", produces = "image/*")
+  @ResponseBody
+  public byte[] displayAvatar(@PathVariable Long id) throws IOException {
+    return this.userService.loadAvatar(id);
+  }
 
   @PostMapping("/{id}/_change_password")
   public String askForPasswordChange(@PathVariable Long id, RedirectAttributes redirectAttributes) {

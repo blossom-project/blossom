@@ -2,6 +2,7 @@ package fr.mgargadennec.blossom.core.user;
 
 import fr.mgargadennec.blossom.core.common.service.CrudService;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
@@ -21,5 +22,9 @@ public interface UserService extends CrudService<UserDTO> {
   UserDTO updateLastConnection(Long id, Date lastConnection);
 
   void askPasswordChange(long id);
+
+  void updateAvatar(long id, byte[] avatar);
+
+  byte[] loadAvatar(long id) throws IOException;
 
 }

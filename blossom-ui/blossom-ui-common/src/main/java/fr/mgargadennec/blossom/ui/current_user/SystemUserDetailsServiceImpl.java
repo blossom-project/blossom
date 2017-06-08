@@ -12,7 +12,7 @@ public class SystemUserDetailsServiceImpl implements UserDetailsService {
   public CurrentUser loadUserByUsername(String identifier) throws UsernameNotFoundException {
     if ("system".equals(identifier)) {
       UserDTO user = new UserDTO();
-      user.setId(UUID.randomUUID().getLeastSignificantBits());
+      user.setId(Math.abs(UUID.randomUUID().getLeastSignificantBits()));
       user.setActivated(true);
       user.setFirstname("System");
       user.setLastname("Root");

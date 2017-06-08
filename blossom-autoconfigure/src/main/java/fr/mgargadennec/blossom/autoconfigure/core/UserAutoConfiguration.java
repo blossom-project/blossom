@@ -44,8 +44,9 @@ public class UserAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(UserService.class)
-  public UserService userService(UserDao userDao, UserDTOMapper userDTOMapper, PasswordEncoder passwordEncoder, UserMailService userMailService, ApplicationEventPublisher eventPublisher) {
-    return new UserServiceImpl(userDao, userDTOMapper, eventPublisher, passwordEncoder, userMailService);
+  public UserService userService(UserDao userDao, UserDTOMapper userDTOMapper, PasswordEncoder passwordEncoder, UserMailService userMailService, ApplicationEventPublisher eventPublisher,
+                                 @Value("classpath:/images/avatar.jpeg") Resource defaultAvatar) {
+    return new UserServiceImpl(userDao, userDTOMapper, eventPublisher, passwordEncoder, userMailService, defaultAvatar);
   }
 
   @Bean

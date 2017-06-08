@@ -31,11 +31,11 @@ import java.util.stream.IntStream;
  */
 @EnableBlossom
 @SpringBootApplication
-public class SampleUIOverride {
-    private final static Logger LOGGER = LoggerFactory.getLogger(SampleUIOverride.class);
+public class SampleComplete {
+    private final static Logger LOGGER = LoggerFactory.getLogger(SampleComplete.class);
 
     public static void main(String[] args) {
-        SpringApplication.run(SampleUIOverride.class, args);
+        SpringApplication.run(SampleComplete.class, args);
     }
 
     @Bean

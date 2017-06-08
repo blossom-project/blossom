@@ -21,6 +21,7 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
     originalEntity.setLastname(modifiedEntity.getLastname());
     originalEntity.setFunction(modifiedEntity.getFunction());
     originalEntity.setPhone(modifiedEntity.getPhone());
+    originalEntity.setAvatar(modifiedEntity.getAvatar());
 
     return originalEntity;
   }
@@ -47,6 +48,13 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   public User updatePassword(Long id, String encodedPassword) {
     User user = repository.findOne(id);
     user.setPasswordHash(encodedPassword);
+    return repository.save(user);
+  }
+
+  @Override
+  public User updateAvatar(Long id, byte[] avatar) {
+    User user = repository.findOne(id);
+    user.setAvatar(avatar);
     return repository.save(user);
   }
 

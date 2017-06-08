@@ -51,6 +51,9 @@ public class User extends AbstractEntity {
     @Column(name = "function", nullable = true)
     private String function;
 
+    @Column(name = "avatar", nullable = true)
+    private byte[] avatar;
+
     public String getIdentifier() {
         return identifier;
     }
@@ -145,6 +148,14 @@ public class User extends AbstractEntity {
 
     public void setFunction(String function) {
         this.function = function;
+    }
+
+    public byte[] getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(byte[] icon) {
+        this.avatar = avatar;
     }
 
     public enum Civility {
