@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
 import fr.mgargadennec.blossom.core.group.GroupDTO;
 import fr.mgargadennec.blossom.core.group.GroupService;
+import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import java.util.NoSuchElementException;
  * Created by Maël Gargadennnec on 05/05/2017.
  */
 @BlossomController("/administration/groups")
+@OpenedMenu("groups")
 public class GroupsController {
 
     private static final Logger logger = LoggerFactory.getLogger(GroupsController.class);

@@ -18,8 +18,8 @@
 	<modules>
     <module>blossom-samples-basic</module>
     <module>blossom-samples-ui</module>
-    <module>blossom-samples-complete</module>
     <module>blossom-sample-scheduler</module>
     <module>blossom-sample-filemanager</module>
+    <module>blossom-samples-complete</module>
   </modules>
 </project>

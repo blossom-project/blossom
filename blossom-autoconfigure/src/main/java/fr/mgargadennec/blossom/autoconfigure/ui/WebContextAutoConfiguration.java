@@ -30,8 +30,8 @@ import java.util.Set;
 @ConditionalOnWebApplication
 @AutoConfigureBefore(WebMvcAutoConfiguration.class)
 public class WebContextAutoConfiguration extends WebMvcConfigurerAdapter {
-  private final static String BLOSSOM_BASE_PATH = "blossom";
-  private final static String BLOSSOM_API_BASE_PATH = BLOSSOM_BASE_PATH + "/api";
+  public final static String BLOSSOM_BASE_PATH = "blossom";
+  public final static String BLOSSOM_API_BASE_PATH = BLOSSOM_BASE_PATH + "/api";
 
   @Bean
   public LocaleResolver localeResolver(Set<Locale> availableLocales) {
@@ -39,7 +39,6 @@ public class WebContextAutoConfiguration extends WebMvcConfigurerAdapter {
     resolver.setDefaultLocale(Iterables.getFirst(availableLocales, Locale.ENGLISH));
     return resolver;
   }
-
 
   @Bean
   public LocaleChangeInterceptor localeChangeInterceptor() {

@@ -1,5 +1,6 @@
 package fr.mgargadennec.blossom.ui.web.system.logger;
 
+import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.springframework.boot.actuate.endpoint.LoggersEndpoint;
 import org.springframework.boot.logging.LogLevel;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  * Created by Maël Gargadennnec on 16/05/2017.
  */
 @BlossomController("/system/loggers")
+@OpenedMenu("loggerManager")
 public class LoggerManagerController {
   private final LoggersEndpoint loggersEndpoint;
 

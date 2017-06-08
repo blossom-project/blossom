@@ -11,13 +11,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.Order;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.plugin.core.config.EnablePluginRegistries;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import static fr.mgargadennec.blossom.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
 
 /**
  * Created by Maël Gargadennnec on 05/05/2017.
  */
 @Configuration
 @EnablePluginRegistries({MenuItemPlugin.class})
-public class MenuAutoConfiguration {
+public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
   @Autowired
   @Qualifier(value = PluginConstants.PLUGIN_MENU)
   private PluginRegistry<MenuItem, String> registry;
@@ -51,5 +55,13 @@ public class MenuAutoConfiguration {
     return builder.key("system").label("menu.system", true).icon("fa fa-cogs").link("/blossom/system").order(Integer.MAX_VALUE).build();
   }
 
+  @Bean
+  public MenuInterceptor menuInterceptor(){
+    return new MenuInterceptor(registry);
+  }
 
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(menuInterceptor()).addPathPatterns("/" + BLOSSOM_BASE_PATH + "/**");
+  }
 }

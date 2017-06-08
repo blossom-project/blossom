@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
+import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import java.util.NoSuchElementException;
  * Created by Maël Gargadennnec on 05/05/2017.
  */
 @BlossomController("/administration/users")
+@OpenedMenu("users")
 public class UsersController {
 
   private static final Logger logger = LoggerFactory.getLogger(UsersController.class);

@@ -3,6 +3,7 @@ package fr.mgargadennec.blossom.ui.web.content.filemanager;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
 import fr.mgargadennec.blossom.module.filemanager.FileDTO;
 import fr.mgargadennec.blossom.module.filemanager.FileService;
+import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import java.util.Optional;
  * Created by Maël Gargadennnec on 19/05/2017.
  */
 @BlossomController("/content/filemanager")
+@OpenedMenu("filemanager")
 public class FileManagerController {
   private static final Logger logger = LoggerFactory.getLogger(FileManagerController.class);
   private final FileService fileService;

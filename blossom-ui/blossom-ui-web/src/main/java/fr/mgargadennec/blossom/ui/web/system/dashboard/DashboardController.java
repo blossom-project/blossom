@@ -1,5 +1,6 @@
 package fr.mgargadennec.blossom.ui.web.system.dashboard;
 
+import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
  * Created by Maël Gargadennnec on 04/05/2017.
  */
 @BlossomController("/system/dashboard")
+@OpenedMenu("dashboard")
 public class DashboardController {
     private final static Logger logger = LoggerFactory.getLogger(DashboardController.class);
 

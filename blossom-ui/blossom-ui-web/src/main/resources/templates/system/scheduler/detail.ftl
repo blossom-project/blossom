@@ -14,7 +14,7 @@
         <span class="label label-default">Idle</span>
       </#if>
     </#if>
-      <span class="m-l-sm">${jobInfo.key.group} - ${jobInfo.key.name}</span>
+      <span class="m-l-sm"><b>${jobInfo.key.group} - ${jobInfo.key.name}</b></span>
     </h5>
     <div class="ibox-tools">
       <a class="close-link" onclick="$(document).trigger('scheduledTaskDeselected')">
