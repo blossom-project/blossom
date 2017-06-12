@@ -1,7 +1,8 @@
-package fr.mgargadennec.blossom.integration;
+package fr.mgargadennec.blossom.integration.configuration;
 
-import org.quartz.JobDetail;
-import org.quartz.SimpleTrigger;
+import org.quartz.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +14,7 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
  * Created by Maël Gargadennnec on 24/05/2017.
  */
 @Configuration
-public class SampleScheduler {
+public class SchedulerConfiguration {
 
   @Bean
   @Qualifier("sampleJobDetail")
@@ -51,4 +52,25 @@ public class SampleScheduler {
     factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
     return factoryBean;
   }
+
+
+  /**
+   * Created by Maël Gargadennnec on 09/05/2017.
+   */
+  @DisallowConcurrentExecution
+  @PersistJobDataAfterExecution
+  public static class SampleJob implements Job {
+    private final Logger LOGGER = LoggerFactory.getLogger(SampleJob.class);
+
+    @Override
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+      LOGGER.info("Sample job execution !");
+      try {
+        Thread.sleep(15000L);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
 }

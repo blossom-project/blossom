@@ -4,8 +4,6 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 
 /**
  * Created by Maël Gargadennnec on 17/05/2017.
@@ -21,10 +19,10 @@ public class TraceStatisticsEndpoint extends AbstractEndpoint<SearchResponse> {
 
   @Override
   public SearchResponse invoke() {
-    return this.invoke(LocalDate.now().minusDays(7L).atStartOfDay().toInstant(ZoneOffset.UTC), LocalDate.now().plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC));
+    return this.invoke(null, null, null);
   }
 
-  public SearchResponse invoke(Instant from, Instant to) {
-    return traceRepository.stats(from, to);
+  public SearchResponse invoke(Instant from, Instant to, String precision) {
+    return traceRepository.stats(from, to, precision);
   }
 }

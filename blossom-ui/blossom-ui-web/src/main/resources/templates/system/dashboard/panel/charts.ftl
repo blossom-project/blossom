@@ -1,5 +1,31 @@
 <div class="row">
   <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-content text-center" style="position: relative">
+        <p>
+          <a class="btn btn-primary btn-xs btn-rounded" data-toggle="period" data-period="PAST_WEEK">Past week</a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_5_DAYS">Past 5 days</a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_3_DAYS">Past 3 days</a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_2_DAYS">Past 2 days</a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="YESTERDAY">Yesterday</a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="TODAY">Today</a>
+          <br/>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_24_HOURS">Past 24h</a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_12_HOURS">Past 12h</a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_6_HOURS">Past 6h</a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_HOUR">Past hour</a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_30_MINUTES">Past 30
+            minutes</a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_5_MINUTES">Past 5
+            minutes</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
     <div id="requests" class="ibox float-e-margins">
       <div class="ibox-title">
         <h5>Requests</h5>
@@ -186,18 +212,22 @@
         });
 
 
-        var rainbow = new Rainbow();
-        rainbow.setSpectrumByArray(['#1ab394', '#d3d3d3']);
-        rainbow.setNumberRange(0, keys.length);
-        var colors = [];
-        $.each(keys, function (index, key) {
-          colors.push('#' + rainbow.colourAt(index));
-        });
+        if (chartData.length > 0) {
+          var rainbow = new Rainbow();
+          rainbow.setSpectrumByArray(['#1ab394', '#d3d3d3']);
+          rainbow.setNumberRange(0, keys.length);
+          var colors = [];
+          $.each(keys, function (index, key) {
+            colors.push('#' + rainbow.colourAt(index));
+          });
 
-        requestHistogramChart.options.lineColors = colors;
-        requestHistogramChart.options.labels = keys;
-        requestHistogramChart.options.ykeys = keys;
-        requestHistogramChart.setData(chartData);
+          requestHistogramChart.options.lineColors = colors;
+          requestHistogramChart.options.labels = keys;
+          requestHistogramChart.options.ykeys = keys;
+          requestHistogramChart.setData(chartData);
+        }else{
+          requestHistogramChart.setData(chartData);
+        }
 
       };
 
@@ -208,6 +238,7 @@
           var item = {time: responseTimeBar.key, count: responseTimeBar.doc_count};
           chartData.push(item);
         });
+
         responseTimeBarChart.setData(chartData);
 
       };
@@ -282,11 +313,23 @@
         $("#flop_uris table tbody").html(html);
       };
 
+      var currentPeriod = 'PAST_WEEK';
+      $("[data-toggle='period']").click(function () {
+        var buttons = $("[data-toggle='period']")
+        buttons.removeClass("btn-primary");
+        buttons.addClass("btn-default");
+
+        var current = $(this);
+        current.removeClass("btn-default");
+        current.addClass("btn-primary");
+
+        currentPeriod = $(this).data("period");
+        updateData();
+      });
+
       var updateData = function () {
-        console.log($(document).find("#charts .ibox-content"));
         $(document).find("#charts .ibox-content").toggleClass("sk-loading");
-        $.get("/blossom/actuator/trace_stats", function (data) {
-          console.log(data);
+        $.get("/blossom/actuator/trace_stats?period=" + currentPeriod, function (data) {
           updateRequests(data);
           updateResponseTime(data);
           updateResponseStatus(data);

@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.integration;
+package fr.mgargadennec.blossom.integration.front;
 
 import fr.mgargadennec.blossom.core.group.GroupDTO;
 import fr.mgargadennec.blossom.core.group.GroupService;

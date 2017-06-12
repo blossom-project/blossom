@@ -10,6 +10,6 @@ import java.time.Instant;
  */
 public interface ElasticsearchTraceRepository extends TraceRepository {
 
-  SearchResponse stats(Instant from, Instant to);
+  SearchResponse stats(Instant from, Instant to, String precision);
 
 }

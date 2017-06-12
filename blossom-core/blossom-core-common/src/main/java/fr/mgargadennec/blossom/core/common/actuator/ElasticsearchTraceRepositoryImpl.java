@@ -1,6 +1,5 @@
 package fr.mgargadennec.blossom.core.common.actuator;
 
-import com.querydsl.core.types.Order;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -69,12 +68,15 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryTraceRepository im
     }
 
     @Override
-    public SearchResponse stats(Instant from, Instant to) {
+    public SearchResponse stats(Instant from, Instant to, String precision) {
         if (from == null) {
             from = LocalDate.now().minusDays(7L).atStartOfDay().toInstant(ZoneOffset.UTC);
         }
         if (to == null) {
             to = LocalDate.now().plusDays(1L).atStartOfDay().toInstant(ZoneOffset.UTC);
+        }
+        if(precision == null){
+          precision = "2h";
         }
 
         RangeQueryBuilder dateFilter = QueryBuilders.rangeQuery("timestamp").includeLower(true).includeUpper(true);
@@ -91,7 +93,7 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryTraceRepository im
                 .addAggregation(AggregationBuilders.terms("response_content_type_stats").field("headers.response.Content-Type"))
                 .addAggregation(AggregationBuilders.terms("top_uris").field("path").order(Terms.Order.aggregation("_count",false)).size(10))
                 .addAggregation(AggregationBuilders.terms("flop_uris").field("path").order(Terms.Order.aggregation("_count",true)).size(10))
-                .addAggregation(AggregationBuilders.dateHistogram("request_histogram").field("timestamp").interval(new DateHistogramInterval("5m")).subAggregation(AggregationBuilders.terms("methods").field("method")));
+                .addAggregation(AggregationBuilders.dateHistogram("request_histogram").field("timestamp").interval(new DateHistogramInterval(precision)).subAggregation(AggregationBuilders.terms("methods").field("method")));
         SearchResponse response = request.execute().actionGet();
 
         return response;

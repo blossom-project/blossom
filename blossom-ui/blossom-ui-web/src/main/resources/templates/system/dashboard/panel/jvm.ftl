@@ -12,7 +12,7 @@
     </div>
 
     <div class="row">
-      <div class="col-xs-12 col-lg-6">
+      <div class="col-xs-12">
         <h3>Classes</h3>
         <table class="table table-stripped small">
           <thead>
@@ -43,7 +43,7 @@
           </tbody>
         </table>
       </div>
-      <div class="col-xs-12 col-lg-6">
+      <div class="col-xs-12">
         <h3>GC</h3>
         <table class="table table-stripped small">
           <thead>
@@ -78,7 +78,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-12 col-lg-6">
+      <div class="col-xs-12">
         <h3>Threads</h3>
         <table class="table table-stripped small">
           <thead>
@@ -116,7 +116,7 @@
         </table>
       </div>
 
-      <div class="col-xs-12 col-lg-6">
+      <div class="col-xs-12">
         <h3>Processors</h3>
         <table class="table table-stripped small">
           <thead>
