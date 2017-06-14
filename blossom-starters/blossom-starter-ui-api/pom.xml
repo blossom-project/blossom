@@ -6,7 +6,7 @@
   <parent>
     <groupId>fr.mgargadennec.blossom</groupId>
     <artifactId>blossom-starters</artifactId>
-    <version>${project.version}</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>blossom-starter-ui-api</artifactId>
@@ -18,7 +18,7 @@
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-starter-basic</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -27,12 +27,12 @@
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-ui-common</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-ui-api</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

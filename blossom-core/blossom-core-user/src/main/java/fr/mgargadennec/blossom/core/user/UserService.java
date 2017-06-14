@@ -11,6 +11,8 @@ import java.util.Optional;
  */
 public interface UserService extends CrudService<UserDTO> {
 
+  UserDTO create(UserCreateForm userCreateForm);
+
   Optional<UserDTO> getByIdentifier(String identifier);
 
   Optional<UserDTO> getByEmail(String email);

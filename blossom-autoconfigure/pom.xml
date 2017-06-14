@@ -5,7 +5,7 @@
   <parent>
     <groupId>fr.mgargadennec.blossom</groupId>
     <artifactId>blossom-parent</artifactId>
-    <version>${project.version}</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>../blossom-parent</relativePath>
   </parent>
 
@@ -24,67 +24,67 @@
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-core-common</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-core-user</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-core-group</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-core-association-user-group</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-core-association-user-role</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-core-scheduler</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-core-cache</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-ui-common</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-ui-api</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-ui-web</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-module-filemanager</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
   </dependencies>

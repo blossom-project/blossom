@@ -2,6 +2,8 @@ package fr.mgargadennec.blossom.ui.web.administration.user;
 
 import com.google.common.base.Strings;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
+import fr.mgargadennec.blossom.core.user.User;
+import fr.mgargadennec.blossom.core.user.UserCreateForm;
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
 import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
@@ -12,7 +14,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -66,23 +67,26 @@ public class UsersController {
   }
 
   @GetMapping("/_create")
-  public ModelAndView getUserCreatePage() {
-    return this.createView(new UserDTO());
+  public ModelAndView getUserCreatePage(Model model) {
+    return this.createView(new UserCreateForm(), model);
   }
 
   @PostMapping("/_create")
-  public ModelAndView handleUserCreateForm(@Valid @ModelAttribute("user") UserDTO user) {
+  public ModelAndView handleUserCreateForm(@Valid @ModelAttribute("userCreateForm") UserCreateForm userCreateForm, Model model) {
+    UserDTO user = null;
     try {
-      user = this.userService.create(user);
+      user = this.userService.create(userCreateForm);
     } catch (DataIntegrityViolationException e) {
-      logger.error("Error on creating user, login " + user.getIdentifier() + " already exists ", e);
-      return this.createView(user);
+      logger.error("Error on creating user, login " + userCreateForm.getIdentifier() + " already exists ", e);
+      return this.createView(userCreateForm, model);
     }
     return new ModelAndView("redirect:/users/" + user.getId());
   }
 
-  private ModelAndView createView(UserDTO user) {
-    return new ModelAndView("users/create", "user", user);
+  private ModelAndView createView(UserCreateForm userCreateForm, Model model) {
+    model.addAttribute("userCreateForm", userCreateForm);
+    model.addAttribute("civilities", User.Civility.values());
+    return new ModelAndView("users/create", model.asMap());
   }
 
 
@@ -127,7 +131,7 @@ public class UsersController {
     return new ModelAndView("users/update", "user", user);
   }
 
-  @GetMapping(value= "/{id}/avatar", produces = "image/*")
+  @GetMapping(value = "/{id}/avatar", produces = "image/*")
   @ResponseBody
   public byte[] displayAvatar(@PathVariable Long id) throws IOException {
     return this.userService.loadAvatar(id);

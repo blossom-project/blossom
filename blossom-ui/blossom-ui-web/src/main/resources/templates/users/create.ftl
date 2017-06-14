@@ -1,5 +1,6 @@
 <#import "/spring.ftl" as spring>
 <#import "/master/master.ftl" as master>
+<#import "/utils/civility.ftl" as civility>
 
 
 <@master.default currentUser=currentUser>
@@ -30,57 +31,49 @@
     <div class="ibox-content">
       <form class="form form-horizontal" method="POST">
 
-
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Identifier</label>
-          <div class="col-sm-10">
-            <input type="text" name="identifier" class="form-control" value="${user.identifier!''}">
-          </div>
-        </div>
-
-        <div class="hr-line-dashed"></div>
-
         <div class="form-group">
           <label class="col-sm-2 control-label"><@spring.message "users.user.properties.firstname"/></label>
 
           <div class="col-sm-10">
-            <input type="text" name="firstname" class="form-control" value="${user.firstname!''}">
+            <input type="text" name="firstname" class="form-control" value="${userCreateForm.firstname}">
           </div>
         </div>
 
         <div class="form-group">
           <label class="col-sm-2 control-label"><@spring.message "users.user.properties.lastname"/></label>
           <div class="col-sm-10">
-            <input type="text" name="lastname" class="form-control" value="${user.lastname!''}">
+            <input type="text" name="lastname" class="form-control" value="${userCreateForm.lastname}">
           </div>
         </div>
 
         <div class="form-group">
           <label class="col-sm-2 control-label"><@spring.message "users.user.properties.civility"/></label>
           <div class="col-sm-10">
-            <div>
-              <label>
-                <input type="radio" checked="" value="option1" id="optionsRadios1" name="optionsRadios">
-                M
-              </label>
-            </div>
+            <#list civilities as civility>
+              <div class="radio radio-inline">
+                <input type="radio" value="${civility}" name="civility" <#if userCreateForm.civility==civility>checked</#if>>
+                <label><@civility.icon civility=civility/> <@civility.label civility=civility/></label>
+              </div>
+            </#list>
           </div>
         </div>
 
         <div class="hr-line-dashed"></div>
 
         <div class="form-group">
-          <label class="col-sm-2 control-label">E-mail</label>
+          <label class="col-sm-2 control-label"><@spring.message "users.user.properties.identifier"/></label>
           <div class="col-sm-10">
-            <input type="text" name="email" class="form-control" value="${user.email!''}">
+            <input type="text" name="identifier" class="form-control" value="${userCreateForm.identifier}">
           </div>
         </div>
 
+        <div class="hr-line-dashed"></div>
+
 
         <div class="form-group">
-          <label class="col-sm-2 control-label">Phone</label>
+          <label class="col-sm-2 control-label"><@spring.message "users.user.properties.email"/></label>
           <div class="col-sm-10">
-            <input type="text" name="phone" class="form-control" value="${user.phone!''}">
+            <input type="text" name="email" class="form-control" value="${userCreateForm.email}">
           </div>
         </div>
       </form>

@@ -1,7 +1,6 @@
 package fr.mgargadennec.blossom.core.user;
 
 import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
 import fr.mgargadennec.blossom.core.common.mapper.DTOMapper;
 import fr.mgargadennec.blossom.core.common.service.GenericCrudServiceImpl;
 import org.slf4j.Logger;
@@ -35,6 +34,17 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   }
 
   @Override
+  public UserDTO create(UserCreateForm userCreateForm) {
+    User user = new User();
+    user.setFirstname(userCreateForm.getFirstname());
+    user.setLastname(userCreateForm.getLastname());
+    user.setCivility(userCreateForm.getCivility());
+    user.setIdentifier(userCreateForm.getIdentifier());
+    user.setEmail(userCreateForm.getEmail());
+    return this.mapper.mapEntity(this.userDao.create(user));
+  }
+
+  @Override
   public Optional<UserDTO> getByEmail(String email) {
     return Optional.ofNullable(mapper.mapEntity(this.userDao.getByEmail(email)));
   }
@@ -56,7 +66,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
 
   @Override
   public UserDTO updateLastConnection(Long id, Date lastConnection) {
-    return mapper.mapEntity(this.userDao.updateLastConnection(id,lastConnection));
+    return mapper.mapEntity(this.userDao.updateLastConnection(id, lastConnection));
   }
 
   @Override
@@ -71,15 +81,15 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
 
   @Override
   public void updateAvatar(long id, byte[] avatar) {
-    this.userDao.updateAvatar(id,avatar);
+    this.userDao.updateAvatar(id, avatar);
   }
 
   @Override
   public byte[] loadAvatar(long id) throws IOException {
     User user = this.userDao.getOne(id);
-    if(user !=null && user.getAvatar()!=null){
+    if (user != null && user.getAvatar() != null) {
       return user.getAvatar();
-    }else{
+    } else {
       return ByteStreams.toByteArray(defaultAvatar.getInputStream());
     }
   }

@@ -6,7 +6,7 @@
   <parent>
     <groupId>fr.mgargadennec.blossom</groupId>
     <artifactId>blossom-samples</artifactId>
-    <version>${project.version}</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>blossom-samples-complete</artifactId>
@@ -19,17 +19,17 @@
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-starter-ui-web</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-starter-ui-api</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-starter-file-manager</artifactId>
-      <version>${project.version}</version>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.fluttercode.datafactory</groupId>
