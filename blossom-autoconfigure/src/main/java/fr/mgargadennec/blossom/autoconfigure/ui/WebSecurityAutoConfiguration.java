@@ -79,6 +79,7 @@ public class WebSecurityAutoConfiguration {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http.antMatcher("/public/**").csrf().disable().authorizeRequests().anyRequest().permitAll();
+      http.antMatcher("/" + BLOSSOM_BASE_PATH + "/public/**").authorizeRequests().anyRequest().permitAll();
 		}
 	}
 

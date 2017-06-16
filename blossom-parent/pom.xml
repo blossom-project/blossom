@@ -19,7 +19,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 
-    <springboot.version>1.5.3.RELEASE</springboot.version>
+    <springboot.version>1.5.4.RELEASE</springboot.version>
     <querydsl.version>3.7.0</querydsl.version>
     <jna.version>3.0.9</jna.version>
     <quartz.version>2.3.0</quartz.version>

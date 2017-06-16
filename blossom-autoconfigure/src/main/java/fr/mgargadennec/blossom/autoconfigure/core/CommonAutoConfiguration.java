@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -50,21 +51,6 @@ import java.security.SecureRandom;
 @PropertySource({"classpath:/freemarker.properties", "classpath:/elasticsearch.properties"})
 public class CommonAutoConfiguration {
 
-  @Configuration
-  @ConditionalOnMissingBean(MailSender.class)
-  public static class MailConfiguration {
-    @Bean
-    @ConditionalOnBean(JavaMailSender.class)
-    public MailSender mailSender(JavaMailSender javaMailSender, freemarker.template.Configuration configuration) {
-      return new MailSenderImpl(javaMailSender, configuration, Sets.newHashSet(), "blossom@cardiweb.com", "http://localhost:8080");
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(JavaMailSender.class)
-    public MailSender noopMailSender() {
-      return new NoopMailSenderImpl();
-    }
-  }
 
   @Bean
   @ConditionalOnMissingBean(SecureRandom.class)

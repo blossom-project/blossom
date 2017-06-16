@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -72,7 +73,10 @@ public class UsersController {
   }
 
   @PostMapping("/_create")
-  public ModelAndView handleUserCreateForm(@Valid @ModelAttribute("userCreateForm") UserCreateForm userCreateForm, Model model) {
+  public ModelAndView handleUserCreateForm(@Valid @ModelAttribute("userCreateForm") UserCreateForm userCreateForm, BindingResult bindingResult, Model model) {
+    if (bindingResult.hasErrors()) {
+      return this.createView(userCreateForm, model);
+    }
     UserDTO user = null;
     try {
       user = this.userService.create(userCreateForm);
@@ -80,7 +84,7 @@ public class UsersController {
       logger.error("Error on creating user, login " + userCreateForm.getIdentifier() + " already exists ", e);
       return this.createView(userCreateForm, model);
     }
-    return new ModelAndView("redirect:/users/" + user.getId());
+    return new ModelAndView("redirect:../users/" + user.getId());
   }
 
   private ModelAndView createView(UserCreateForm userCreateForm, Model model) {

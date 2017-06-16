@@ -4,7 +4,7 @@ server:
 initializr:
   versions:
     - blossom: 1.0.0-SNAPSHOT
-      springboot: 1.5.3.RELEASE
+      springboot: 1.5.4.RELEASE
   groups:
     - name: Core
       description: Blossom core functionalities

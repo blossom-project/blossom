@@ -27,7 +27,7 @@ public class UserMailServiceImpl implements UserMailService {
     Preconditions.checkNotNull(user);
 
     ActionToken actionToken = new ActionToken();
-    actionToken.setAction("USER_ACTIVATION");
+    actionToken.setAction(UserService.USER_ACTIVATION);
     actionToken.setUserId(user.getId());
     actionToken.setExpirationDate(LocalDateTime.now().plusDays(3));
 
@@ -35,7 +35,7 @@ public class UserMailServiceImpl implements UserMailService {
     ctx.put("user", user);
     ctx.put("token", this.tokenService.generateToken(actionToken));
 
-    this.mailSender.sendMail("user-activation", ctx, "[CSM] User activation", user.getEmail());
+    this.mailSender.sendMail("user-activation", ctx, "[Blossom] User activation", user.getEmail());
   }
 
   @Override
@@ -43,7 +43,7 @@ public class UserMailServiceImpl implements UserMailService {
     Preconditions.checkNotNull(user);
 
     ActionToken actionToken = new ActionToken();
-    actionToken.setAction("USER_RESET_PASSWORD");
+    actionToken.setAction(UserService.USER_RESET_PASSWORD);
     actionToken.setUserId(user.getId());
     actionToken.setExpirationDate(LocalDateTime.now().plusHours(3));
 

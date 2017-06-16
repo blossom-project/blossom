@@ -10,6 +10,7 @@ fr.mgargadennec.blossom.autoconfigure.core.AssociationUserRoleAutoConfiguration,
 fr.mgargadennec.blossom.autoconfigure.core.SchedulerAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.CacheAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.ActuatorAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.core.MailAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.module.FileManagerAutoConfiguration
 
 fr.mgargadennec.blossom.autoconfigure.EnableBlossom=\

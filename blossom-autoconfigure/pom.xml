@@ -65,6 +65,12 @@
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
+      <artifactId>blossom-core-validation</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-ui-common</artifactId>
       <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
@@ -86,6 +92,11 @@
       <artifactId>blossom-module-filemanager</artifactId>
       <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>fr.mgargadennec.blossom</groupId>
+      <artifactId>blossom-core-validation</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

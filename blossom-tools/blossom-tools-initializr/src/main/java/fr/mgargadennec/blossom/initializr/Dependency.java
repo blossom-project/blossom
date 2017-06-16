@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom;
+package fr.mgargadennec.blossom.initializr;
 
 /**
  * Created by Maël Gargadennnec on 14/06/2017.

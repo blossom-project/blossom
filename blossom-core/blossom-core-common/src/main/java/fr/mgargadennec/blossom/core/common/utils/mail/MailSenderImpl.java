@@ -1,18 +1,16 @@
 package fr.mgargadennec.blossom.core.common.utils.mail;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
+import com.google.common.base.Preconditions;
+import freemarker.template.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import javax.mail.internet.MimeMessage;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,21 +23,27 @@ public class MailSenderImpl implements MailSender {
   private final JavaMailSender javaMailSender;
   private final Configuration freemarkerConfiguration;
   private final Set<String> filters;
+  private final MessageSource messageSource;
   private final String from;
   private final String basePath;
 
-  public MailSenderImpl(JavaMailSender javaMailSender, Configuration freemarkerConfiguration, Set<String> filters, String from, String basePath) {
+  public MailSenderImpl(JavaMailSender javaMailSender, Configuration freemarkerConfiguration, Set<String> filters, MessageSource messageSource, String from, String basePath) {
     this.javaMailSender = javaMailSender;
     this.freemarkerConfiguration = freemarkerConfiguration;
     this.filters = filters;
+    this.messageSource = messageSource;
     this.from = from;
     this.basePath = basePath;
   }
 
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, String... mailTo) throws Exception {
+    this.sendMail(htmlTemplate, ctx, mailSubject, Locale.getDefault(), mailTo);
+  }
 
-    this.enrichContext(ctx);
+  @Override
+  public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String... mailTo) throws Exception {
+    this.enrichContext(ctx, locale);
 
     final Template template = this.freemarkerConfiguration.getTemplate("mail/" + htmlTemplate + ".ftl");
     final String htmlContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx);
@@ -61,8 +65,12 @@ public class MailSenderImpl implements MailSender {
     }
   }
 
-  private void enrichContext(Map<String, Object> ctx) {
+  private void enrichContext(Map<String, Object> ctx, Locale locale) {
+    Preconditions.checkNotNull(locale);
+    Preconditions.checkNotNull(ctx);
+
     ctx.put("basePath", this.basePath);
+    ctx.put("message", new MessageResolverMethod(this.messageSource, locale));
   }
 
   private String[] filterMails(String[] mailTo) {
@@ -71,6 +79,30 @@ public class MailSenderImpl implements MailSender {
       return matched.toArray(new String[matched.size()]);
     } else {
       return mailTo;
+    }
+  }
+
+
+  private class MessageResolverMethod implements TemplateMethodModelEx {
+
+    private MessageSource messageSource;
+    private Locale locale;
+
+    public MessageResolverMethod(MessageSource messageSource, Locale locale) {
+      this.messageSource = messageSource;
+      this.locale = locale;
+    }
+
+    @Override
+    public Object exec(List arguments) throws TemplateModelException {
+      if (arguments.size() != 1) {
+        throw new TemplateModelException("Wrong number of arguments");
+      }
+      String code = ((SimpleScalar) arguments.get(0)).getAsString();
+      if (code == null || code.isEmpty()) {
+        throw new TemplateModelException("Invalid code value '" + code + "'");
+      }
+      return messageSource.getMessage(code, null, locale);
     }
   }
 }

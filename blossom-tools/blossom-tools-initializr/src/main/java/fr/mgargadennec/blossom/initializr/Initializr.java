@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom;
+package fr.mgargadennec.blossom.initializr;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

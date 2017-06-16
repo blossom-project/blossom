@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom;
+package fr.mgargadennec.blossom.initializr;
 
 import java.util.ArrayList;
 import java.util.List;

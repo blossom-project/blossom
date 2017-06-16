@@ -1,16 +1,21 @@
 package fr.mgargadennec.blossom.autoconfigure.ui;
 
 import com.google.common.collect.Iterables;
+import fr.mgargadennec.blossom.core.common.message_source.MultiClasspathReloadableResourceBundleMessageSource;
 import fr.mgargadennec.blossom.ui.i18n.RestrictedSessionLocalResolver;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomApiController;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebMvcRegistrationsAdapter;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -33,6 +38,9 @@ public class WebContextAutoConfiguration extends WebMvcConfigurerAdapter {
   public final static String BLOSSOM_BASE_PATH = "blossom";
   public final static String BLOSSOM_API_BASE_PATH = BLOSSOM_BASE_PATH + "/api";
 
+  @Autowired
+  private MultiClasspathReloadableResourceBundleMessageSource messageSource;
+
   @Bean
   public LocaleResolver localeResolver(Set<Locale> availableLocales) {
     RestrictedSessionLocalResolver resolver = new RestrictedSessionLocalResolver(availableLocales);
@@ -50,6 +58,14 @@ public class WebContextAutoConfiguration extends WebMvcConfigurerAdapter {
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/" + BLOSSOM_BASE_PATH + "/**", "/" + BLOSSOM_API_BASE_PATH + "/**");
+  }
+
+
+  @Override
+  public Validator getValidator() {
+    LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+    validator.setValidationMessageSource(messageSource);
+    return validator;
   }
 
   @Bean

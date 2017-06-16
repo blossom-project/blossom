@@ -1,9 +1,12 @@
 package fr.mgargadennec.blossom.autoconfigure.ui.web;
 
+import fr.mgargadennec.blossom.core.common.utils.action_token.ActionTokenService;
+import fr.mgargadennec.blossom.core.user.UserService;
 import fr.mgargadennec.blossom.ui.current_user.CurrentUserControllerAdvice;
 import fr.mgargadennec.blossom.ui.i18n.LocaleControllerAdvice;
 import fr.mgargadennec.blossom.ui.menu.Menu;
 import fr.mgargadennec.blossom.ui.menu.MenuControllerAdvice;
+import fr.mgargadennec.blossom.ui.web.ActivationController;
 import fr.mgargadennec.blossom.ui.web.HomeController;
 import fr.mgargadennec.blossom.ui.web.LoginController;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +40,11 @@ public class WebInterfaceAutoConfiguration {
   }
 
   @Bean
+  public ActivationController activationController(ActionTokenService tokenService, UserService userService) {
+    return new ActivationController(tokenService, userService);
+  }
+
+  @Bean
   public CurrentUserControllerAdvice currentUserControllerAdvice() {
     return new CurrentUserControllerAdvice();
   }
@@ -47,7 +55,7 @@ public class WebInterfaceAutoConfiguration {
   }
 
   @Bean
-  public Set<Locale> availableLocales(@Value("${blossom.languages}") String[] languages){
+  public Set<Locale> availableLocales(@Value("${blossom.languages}") String[] languages) {
     return Stream.of(languages).sequential().map(language -> Locale.forLanguageTag(language)).collect(Collectors.toCollection(LinkedHashSet::new));
   }
 

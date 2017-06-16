@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom;
+package fr.mgargadennec.blossom.initializr;
 
 import com.sun.codemodel.*;
 import org.apache.maven.model.Build;

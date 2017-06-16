@@ -10,12 +10,16 @@ import java.util.Optional;
  * Created by Maël Gargadennnec on 03/05/2017.
  */
 public interface UserService extends CrudService<UserDTO> {
+  String USER_ACTIVATION = "USER_ACTIVATION";
+  String USER_RESET_PASSWORD = "USER_RESET_PASSWORD";
 
   UserDTO create(UserCreateForm userCreateForm);
 
   Optional<UserDTO> getByIdentifier(String identifier);
 
   Optional<UserDTO> getByEmail(String email);
+
+  Optional<UserDTO> getById(Long id);
 
   UserDTO updateActivation(long id, boolean activated);
 

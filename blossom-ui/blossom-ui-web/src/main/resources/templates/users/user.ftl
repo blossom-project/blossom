@@ -76,7 +76,7 @@
             <div class="form-group">
               <label class="col-sm-2 control-label"><@spring.message "users.user.properties.description"/></label>
               <div class="col-sm-10">
-                <p class="form-control-static">${user.description}</p>
+                <p class="form-control-static">${user.description!""}</p>
               </div>
             </div>
 
@@ -90,14 +90,14 @@
             <div class="form-group">
               <label class="col-sm-2 control-label"><@spring.message "users.user.properties.company"/></label>
               <div class="col-sm-10">
-                <p class="form-control-static">${user.company}</p>
+                <p class="form-control-static">${user.company!""}</p>
               </div>
             </div>
 
             <div class="form-group">
               <label class="col-sm-2 control-label"><@spring.message "users.user.properties.function"/></label>
               <div class="col-sm-10">
-                <p class="form-control-static">${user.function}</p>
+                <p class="form-control-static">${user.function!""}</p>
               </div>
             </div>
 
@@ -124,7 +124,7 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">Phone</label>
               <div class="col-sm-10">
-                <p class="form-control-static">${user.phone}</p>
+                <p class="form-control-static">${user.phone!''}</p>
               </div>
             </div>
 

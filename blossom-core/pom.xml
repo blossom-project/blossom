@@ -23,6 +23,7 @@
     <module>blossom-core-association-user-group</module>
     <module>blossom-core-association-user-role</module>
     <module>blossom-core-scheduler</module>
-      <module>blossom-core-cache</module>
+    <module>blossom-core-cache</module>
+    <module>blossom-core-validation</module>
   </modules>
 </project>

@@ -41,7 +41,18 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
     user.setCivility(userCreateForm.getCivility());
     user.setIdentifier(userCreateForm.getIdentifier());
     user.setEmail(userCreateForm.getEmail());
-    return this.mapper.mapEntity(this.userDao.create(user));
+
+    String passwordHash = generateRandomPasswordHash();
+    user.setPasswordHash(passwordHash);
+    user.setActivated(false);
+
+    UserDTO savedUser = this.mapper.mapEntity(this.userDao.create(user));
+    try {
+      userMailService.sendAccountCreationEmail(savedUser);
+    } catch (Exception e) {
+      logger.error("Can't send activate email to user {}", savedUser.getId(), e);
+    }
+    return savedUser;
   }
 
   @Override
@@ -52,6 +63,11 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   @Override
   public Optional<UserDTO> getByIdentifier(String identifier) {
     return Optional.ofNullable(mapper.mapEntity(this.userDao.getByIdentifier(identifier)));
+  }
+
+  @Override
+  public Optional<UserDTO> getById(Long id) {
+    return Optional.ofNullable(mapper.mapEntity(this.userDao.getOne(id)));
   }
 
   @Override
@@ -92,5 +108,10 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
     } else {
       return ByteStreams.toByteArray(defaultAvatar.getInputStream());
     }
+  }
+
+
+  protected String generateRandomPasswordHash() {
+    return passwordEncoder.encode(UUID.randomUUID().toString());
   }
 }

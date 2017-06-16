@@ -17,7 +17,7 @@ public class User extends AbstractEntity {
     private String passwordHash;
 
     @Lob
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
 
     @Column(name = "activated", nullable = false)

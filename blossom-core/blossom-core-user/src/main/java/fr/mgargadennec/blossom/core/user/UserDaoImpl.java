@@ -8,9 +8,11 @@ import java.util.Date;
  * Created by Maël Gargadennnec on 03/05/2017.
  */
 public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
+  private final UserRepository userRepository;
 
   public UserDaoImpl(UserRepository repository) {
     super(repository);
+    this.userRepository = repository;
   }
 
   @Override
@@ -28,12 +30,12 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
 
   @Override
   public User getByIdentifier(String identifier) {
-    return from(QUser.user).where(QUser.user.identifier.eq(identifier)).fetchOne();
+    return this.userRepository.findOneByIdentifier(identifier).orElse(null);
   }
 
   @Override
   public User getByEmail(String email) {
-    return from(QUser.user).where(QUser.user.email.eq(email)).fetchOne();
+    return this.userRepository.findOneByEmail(email).orElse(null);
   }
 
 
@@ -61,7 +63,7 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   @Override
   public User updateLastConnection(Long id, Date lastConnection) {
     User user = repository.findOne(id);
-    if(user == null){
+    if (user == null) {
       return null;
     }
     user.setLastConnection(lastConnection);

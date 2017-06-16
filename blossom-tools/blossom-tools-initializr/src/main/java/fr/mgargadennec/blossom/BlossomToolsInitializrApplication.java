@@ -1,5 +1,7 @@
 package fr.mgargadennec.blossom;
 
+import fr.mgargadennec.blossom.initializr.Initializr;
+import fr.mgargadennec.blossom.initializr.ProjectGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
