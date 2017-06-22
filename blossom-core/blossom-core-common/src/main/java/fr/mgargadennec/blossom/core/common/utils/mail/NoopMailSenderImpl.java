@@ -1,6 +1,5 @@
 package fr.mgargadennec.blossom.core.common.utils.mail;
 
-import freemarker.template.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,13 +12,6 @@ import java.util.Map;
  */
 public class NoopMailSenderImpl implements MailSender {
   private final static Logger LOGGER = LoggerFactory.getLogger(NoopMailSenderImpl.class);
-  private final Configuration freemarkerConfiguration;
-  private final String basePath;
-
-  public NoopMailSenderImpl(Configuration freemarkerConfiguration, String basePath) {
-    this.freemarkerConfiguration = freemarkerConfiguration;
-    this.basePath = basePath;
-  }
 
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, String... mailTo) throws Exception {

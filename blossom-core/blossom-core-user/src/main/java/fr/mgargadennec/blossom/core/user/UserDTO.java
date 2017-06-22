@@ -1,10 +1,10 @@
 package fr.mgargadennec.blossom.core.user;
 
-
 import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
+import java.util.Locale;
 
 @XmlRootElement
 public class UserDTO extends AbstractDTO {
@@ -20,6 +20,7 @@ public class UserDTO extends AbstractDTO {
     private String phone;
     private String company;
     private String function;
+    private Locale locale;
 
     public String getIdentifier() {
         return identifier;
@@ -115,5 +116,13 @@ public class UserDTO extends AbstractDTO {
 
     public void setFunction(String function) {
         this.function = function;
+    }
+
+    public Locale getLocale() {
+      return locale;
+    }
+
+    public void setLocale(Locale locale) {
+      this.locale = locale;
     }
 }

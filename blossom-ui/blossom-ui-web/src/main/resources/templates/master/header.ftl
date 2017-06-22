@@ -14,6 +14,7 @@
 <link href="/css/style.css" rel="stylesheet">
 <link href="/css/plugins/jqcloud/jqcloud.min.css" rel="stylesheet">
 <link href="/css/plugins/jsTree/style.min.css" rel="stylesheet">
+<link href="/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
 </#macro>
 
 <#macro scripts>

@@ -28,9 +28,6 @@
   <form id="userCreateForm" class="form form-horizontal" novalidate method="POST">
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
     <div class="ibox">
-      <div class="ibox-title">
-        <h3><@spring.message "users.creation"/></h3>
-      </div>
       <div class="ibox-content">
 
         <@spring.bind "userCreateForm.firstname"/>
@@ -62,15 +59,29 @@
           <label class="col-sm-2 control-label"><@spring.message "users.user.properties.civility"/></label>
           <div class="col-sm-10">
             <#list civilities as civility>
-              <div>
-                <label>
-                  <input type="radio" value="${civility}" name="civility"
-                         <#if userCreateForm.civility == civility>checked</#if>>
-                  <@gender.icon civility=civility/> <@gender.label civility=civility/>
-                </label>
+              <div class="radio radio-success radio-inline">
+                <input type="radio" class="radio" value="${civility}" id="gender_${civility}" name="civility" <#if userCreateForm.civility == civility>checked</#if>>
+                <label for="gender_${civility}"> <@gender.icon civility=civility/> <@gender.label civility=civility/> </label>
               </div>
             </#list>
 
+            <#list spring.status.errorMessages as error>
+              <span class="help-block text-danger m-b-none">${error}</span>
+            </#list>
+          </div>
+        </div>
+
+        <@spring.bind "userCreateForm.locale"/>
+        <div class="form-group <#if spring.status.error>has-error</#if>">
+          <label class="col-sm-2 control-label"><@spring.message "users.user.properties.locale"/></label>
+          <div class="col-sm-10">
+            <select class="form-control m-b" name="locale">
+              <#list locales as locale>
+                <option value="${locale}" <#if locale == userCreateForm.locale>selected</#if> >
+                  ${locale.getDisplayLanguage(currentLocale)}<#if locale.getDisplayCountry(currentLocale)?has_content> / ${locale.getDisplayCountry(currentLocale)}</#if>
+                </option>
+              </#list>
+            </select>
             <#list spring.status.errorMessages as error>
               <span class="help-block text-danger m-b-none">${error}</span>
             </#list>
@@ -83,8 +94,7 @@
         <div class="form-group <#if spring.status.error>has-error</#if>">
           <label class="col-sm-2 control-label"><@spring.message "users.user.properties.identifier"/></label>
           <div class="col-sm-10">
-            <input type="text" name="identifier" class="form-control" value="${userCreateForm.identifier}"
-                   placeholder="<@spring.message "users.user.properties.identifier"/>">
+            <input type="text" name="identifier" class="form-control" value="${userCreateForm.identifier}" placeholder="<@spring.message "users.user.properties.identifier"/>">
 
             <#list spring.status.errorMessages as error>
               <span class="help-block text-danger m-b-none">${error}</span>

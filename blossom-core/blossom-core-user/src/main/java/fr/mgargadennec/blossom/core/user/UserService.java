@@ -13,7 +13,7 @@ public interface UserService extends CrudService<UserDTO> {
   String USER_ACTIVATION = "USER_ACTIVATION";
   String USER_RESET_PASSWORD = "USER_RESET_PASSWORD";
 
-  UserDTO create(UserCreateForm userCreateForm);
+  UserDTO create(UserCreateForm userCreateForm) throws Exception;
 
   Optional<UserDTO> getByIdentifier(String identifier);
 
@@ -27,7 +27,7 @@ public interface UserService extends CrudService<UserDTO> {
 
   UserDTO updateLastConnection(Long id, Date lastConnection);
 
-  void askPasswordChange(long id);
+  void askPasswordChange(long id) throws Exception;
 
   void updateAvatar(long id, byte[] avatar);
 

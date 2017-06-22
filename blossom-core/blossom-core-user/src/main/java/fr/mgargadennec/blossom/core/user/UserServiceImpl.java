@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Date;
@@ -34,24 +35,22 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   }
 
   @Override
-  public UserDTO create(UserCreateForm userCreateForm) {
+  @Transactional
+  public UserDTO create(UserCreateForm userCreateForm) throws Exception{
     User user = new User();
     user.setFirstname(userCreateForm.getFirstname());
     user.setLastname(userCreateForm.getLastname());
     user.setCivility(userCreateForm.getCivility());
     user.setIdentifier(userCreateForm.getIdentifier());
     user.setEmail(userCreateForm.getEmail());
+    user.setLocale(userCreateForm.getLocale());
 
     String passwordHash = generateRandomPasswordHash();
     user.setPasswordHash(passwordHash);
     user.setActivated(false);
 
     UserDTO savedUser = this.mapper.mapEntity(this.userDao.create(user));
-    try {
-      userMailService.sendAccountCreationEmail(savedUser);
-    } catch (Exception e) {
-      logger.error("Can't send activate email to user {}", savedUser.getId(), e);
-    }
+    userMailService.sendAccountCreationEmail(savedUser);
     return savedUser;
   }
 
@@ -71,31 +70,32 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   }
 
   @Override
+  @Transactional
   public UserDTO updateActivation(long id, boolean activated) {
     return mapper.mapEntity(this.userDao.updateActivation(id, activated));
   }
 
   @Override
+  @Transactional
   public UserDTO updatePassword(Long id, String password) {
     return mapper.mapEntity(this.userDao.updatePassword(id, passwordEncoder.encode(password)));
   }
 
   @Override
+  @Transactional
   public UserDTO updateLastConnection(Long id, Date lastConnection) {
     return mapper.mapEntity(this.userDao.updateLastConnection(id, lastConnection));
   }
 
   @Override
-  public void askPasswordChange(long userId) {
+  @Transactional
+  public void askPasswordChange(long userId) throws Exception {
     UserDTO updatedUser = this.updatePassword(userId, passwordEncoder.encode(UUID.randomUUID().toString()));
-    try {
-      userMailService.sendChangePasswordEmail(updatedUser);
-    } catch (Exception e) {
-      logger.error("Can't send password change email to user {}", userId, e);
-    }
+    userMailService.sendChangePasswordEmail(updatedUser);
   }
 
   @Override
+  @Transactional
   public void updateAvatar(long id, byte[] avatar) {
     this.userDao.updateAvatar(id, avatar);
   }

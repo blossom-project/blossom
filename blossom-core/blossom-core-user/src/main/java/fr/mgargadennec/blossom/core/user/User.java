@@ -1,170 +1,177 @@
 package fr.mgargadennec.blossom.core.user;
 
 import fr.mgargadennec.blossom.core.common.entity.AbstractEntity;
+import fr.mgargadennec.blossom.core.common.entity.converter.LocaleConverter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Locale;
 
-@Entity
-@Table(name = "bo_user")
+@Entity @Table(name = "bo_user")
 public class User extends AbstractEntity {
 
-    //* Account informations *//
-    @Column(name = "identifier", nullable = true, unique = true)
-    private String identifier;
+  @Column(name = "identifier", nullable = true, unique = true)
+  private String identifier;
 
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+  @Column(name = "password_hash", nullable = false)
+  private String passwordHash;
 
-    @Lob
-    @Column(name = "description")
-    private String description;
+  @Lob @Column(name = "description")
+  private String description;
 
-    @Column(name = "activated", nullable = false)
-    private boolean activated;
+  @Column(name = "activated", nullable = false)
+  private boolean activated;
 
-    @Column(name = "last_connection", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastConnection;
+  @Column(name = "last_connection", nullable = true) @Temporal(TemporalType.TIMESTAMP)
+  private Date lastConnection;
 
-    //* Personal informations *//
-    @Column(name = "civility")
-    @Enumerated(EnumType.STRING)
-    private Civility civility;
+  @Column(name = "civility") @Enumerated(EnumType.STRING)
+  private Civility civility;
 
-    @Column(name = "firstname", nullable = false)
-    private String firstname;
+  @Column(name = "firstname", nullable = false)
+  private String firstname;
 
-    @Column(name = "lastname", nullable = false)
-    private String lastname;
+  @Column(name = "lastname", nullable = false)
+  private String lastname;
 
-    //* Contact informations *//
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
+  @Column(name = "email", nullable = false, unique = true)
+  private String email;
 
-    @Column(name = "phone", nullable = true)
-    private String phone;
+  @Column(name = "phone")
+  private String phone;
 
-    @Column(name = "company", nullable = true)
-    private String company;
+  @Column(name = "company")
+  private String company;
 
-    @Column(name = "function", nullable = true)
-    private String function;
+  @Column(name = "function")
+  private String function;
 
-    @Column(name = "avatar", nullable = true)
-    private byte[] avatar;
+  @Column(name = "avatar")
+  private byte[] avatar;
 
-    public String getIdentifier() {
-        return identifier;
-    }
+  @Convert(converter = LocaleConverter.class)
+  @Column(name = "locale", nullable = false)
+  private Locale locale;
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
+  public String getIdentifier() {
+    return identifier;
+  }
 
-    public String getPasswordHash() {
-        return passwordHash;
-    }
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
+  }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
+  public String getPasswordHash() {
+    return passwordHash;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setPasswordHash(String passwordHash) {
+    this.passwordHash = passwordHash;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public boolean isActivated() {
-        return activated;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setActivated(boolean activated) {
-        this.activated = activated;
-    }
+  public boolean isActivated() {
+    return activated;
+  }
 
-    public Date getLastConnection() {
-        return lastConnection;
-    }
+  public void setActivated(boolean activated) {
+    this.activated = activated;
+  }
 
-    public void setLastConnection(Date lastConnection) {
-        this.lastConnection = lastConnection;
-    }
+  public Date getLastConnection() {
+    return lastConnection;
+  }
 
-    public Civility getCivility() {
-        return civility;
-    }
+  public void setLastConnection(Date lastConnection) {
+    this.lastConnection = lastConnection;
+  }
 
-    public void setCivility(Civility civility) {
-        this.civility = civility;
-    }
+  public Civility getCivility() {
+    return civility;
+  }
 
-    public String getFirstname() {
-        return firstname;
-    }
+  public void setCivility(Civility civility) {
+    this.civility = civility;
+  }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
+  public String getFirstname() {
+    return firstname;
+  }
 
-    public String getLastname() {
-        return lastname;
-    }
+  public void setFirstname(String firstname) {
+    this.firstname = firstname;
+  }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
+  public String getLastname() {
+    return lastname;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public void setLastname(String lastname) {
+    this.lastname = lastname;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public String getPhone() {
-        return phone;
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+  public String getPhone() {
+    return phone;
+  }
 
-    public String getCompany() {
-        return company;
-    }
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
 
-    public void setCompany(String company) {
-        this.company = company;
-    }
+  public String getCompany() {
+    return company;
+  }
 
-    public String getFunction() {
-        return function;
-    }
+  public void setCompany(String company) {
+    this.company = company;
+  }
 
-    public void setFunction(String function) {
-        this.function = function;
-    }
+  public String getFunction() {
+    return function;
+  }
 
-    public byte[] getAvatar() {
-        return avatar;
-    }
+  public void setFunction(String function) {
+    this.function = function;
+  }
 
-    public void setAvatar(byte[] icon) {
-        this.avatar = avatar;
-    }
+  public byte[] getAvatar() {
+    return avatar;
+  }
 
-    public enum Civility {
-        UNKNOWN, MAN, WOMAN;
-    }
+  public void setAvatar(byte[] icon) {
+    this.avatar = avatar;
+  }
 
-    @Override
-    public String toString() {
-        return "User{" + "id=" + getId() + ", email='" + email.replaceFirst("@.*", "@***") + ", passwordHash='" + passwordHash.substring(0, 10) + '}';
-    }
+  public Locale getLocale() {
+    return locale;
+  }
+
+  public void setLocale(Locale locale) {
+    this.locale = locale;
+  }
+
+  public enum Civility {
+    UNKNOWN, MAN, WOMAN;
+  }
+
+  @Override public String toString() {
+    return "User{" + "id=" + getId() + ", email='" + email.replaceFirst("@.*", "@***") + ", passwordHash='"
+      + passwordHash.substring(0, 10) + '}';
+  }
 
 }

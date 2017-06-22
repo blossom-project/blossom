@@ -5,6 +5,7 @@ import fr.mgargadennec.blossom.core.common.utils.action_token.ActionTokenService
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -81,9 +84,7 @@ public class ActivationController {
   @PostMapping("/change_password")
   public ModelAndView changePassword(Model model, @Valid @ModelAttribute("updatePasswordForm") UpdatePasswordForm updatePasswordForm, BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
-      UpdatePasswordForm newForm = new UpdatePasswordForm();
-      newForm.setToken(updatePasswordForm.getToken());
-      return new ModelAndView("activation/change-password", "updatePasswordForm", newForm);
+      return new ModelAndView("activation/change-password", "updatePasswordForm", updatePasswordForm);
     }
 
     ActionToken actionToken;
@@ -109,7 +110,9 @@ public class ActivationController {
   }
 
   @PostMapping("/forgotten_password")
-  public ModelAndView askForForgottenPassword(@Valid @ModelAttribute("askPasswordForm") AskPasswordForm form, BindingResult bindingResult, Model model) {
+  public ModelAndView askForForgottenPassword(
+    @Valid @ModelAttribute("askPasswordForm") AskPasswordForm form, BindingResult bindingResult, Model model)
+    throws Exception {
     LOGGER.info("Demande de réinitialisation du mot de passe de l'utilisateur " + form.getLoginOrEmail());
     if (!bindingResult.hasErrors()) {
       Optional<UserDTO> userDTO = this.userService.getByIdentifier(form.getLoginOrEmail());
@@ -128,8 +131,18 @@ public class ActivationController {
   }
 
   public static class UpdatePasswordForm {
+    @NotEmpty
     private String token;
+
+    @NotEmpty(message="{change.password.validation.NotEmpty.message}")
+    @Size(min=8, message="{change.password.validation.Size.message}")
+    @Pattern.List({
+      @Pattern(regexp = "(?=.*[0-9]).+", message = "{change.password.validation.Pattern.digit.message}"),
+      @Pattern(regexp = "(?=.*[a-z]).+", message = "{change.password.validation.Pattern.lowercase.message}"),
+      @Pattern(regexp = "(?=.*[A-Z]).+", message = "{change.password.validation.Pattern.uppercase.message}")
+    })
     private String password = "";
+
     private String passwordRepeater = "";
 
     public String getToken() {
