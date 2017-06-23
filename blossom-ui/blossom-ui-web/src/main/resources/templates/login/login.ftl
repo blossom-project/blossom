@@ -37,6 +37,7 @@
       <#if error.isPresent() && SPRING_SECURITY_LAST_EXCEPTION??>
         <p class="alert alert-danger">${SPRING_SECURITY_LAST_EXCEPTION.message}</p>
       </#if>
+      <a href="/blossom/public/forgotten_password"><small><@spring.message "login.forgotten.password"/></small></a>
     </form>
     <p class="m-t"> <small>Blossom &copy; 2017</small> </p>
   </div>
