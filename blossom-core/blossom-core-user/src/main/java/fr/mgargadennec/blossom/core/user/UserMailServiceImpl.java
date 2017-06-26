@@ -22,8 +22,7 @@ public class UserMailServiceImpl implements UserMailService {
     this.tokenService = tokenService;
   }
 
-  @Override
-  public void sendAccountCreationEmail(UserDTO user) throws Exception {
+  @Override public void sendAccountCreationEmail(UserDTO user) throws Exception {
     Preconditions.checkNotNull(user);
 
     ActionToken actionToken = new ActionToken();
@@ -35,11 +34,10 @@ public class UserMailServiceImpl implements UserMailService {
     ctx.put("user", user);
     ctx.put("token", this.tokenService.generateToken(actionToken));
 
-    this.mailSender.sendMail("user-activation", ctx, "[Blossom] User activation", user.getEmail());
+    this.mailSender.sendMail("user-activation", ctx, "[Blossom] User activation", user.getLocale(), user.getEmail());
   }
 
-  @Override
-  public void sendChangePasswordEmail(UserDTO user) throws Exception {
+  @Override public void sendChangePasswordEmail(UserDTO user) throws Exception {
     Preconditions.checkNotNull(user);
 
     ActionToken actionToken = new ActionToken();
@@ -51,6 +49,6 @@ public class UserMailServiceImpl implements UserMailService {
     ctx.put("user", user);
     ctx.put("token", this.tokenService.generateToken(actionToken));
 
-    this.mailSender.sendMail("user-change-password", ctx, "[CSM] Password change", user.getEmail());
+    this.mailSender.sendMail("user-change-password", ctx, "[CSM] Password change", user.getLocale(), user.getEmail());
   }
 }

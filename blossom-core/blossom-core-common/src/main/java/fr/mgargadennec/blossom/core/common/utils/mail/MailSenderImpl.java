@@ -71,6 +71,7 @@ public class MailSenderImpl implements MailSender {
 
     ctx.put("basePath", this.basePath);
     ctx.put("message", new MessageResolverMethod(this.messageSource, locale));
+    ctx.put("lang", locale);
   }
 
   private String[] filterMails(String[] mailTo) {

@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
+import java.util.Locale;
 
 /**
  * Created by Maël Gargadennnec on 13/06/2017.
@@ -23,6 +24,9 @@ public class UserCreateForm {
 
   @NotBlank(message = "{users.user.validation.email.NotBlank.message}") @Email(message = "{users.user.validation.email.Email.message}") @UniqueEmail
   private String email = "";
+
+  @NotNull
+  private Locale locale = Locale.ENGLISH;
 
   public String getFirstname() {
     return firstname;
@@ -63,4 +67,13 @@ public class UserCreateForm {
   public void setEmail(String email) {
     this.email = email;
   }
+
+  public Locale getLocale() {
+    return locale;
+  }
+
+  public void setLocale(Locale locale) {
+    this.locale = locale;
+  }
+
 }

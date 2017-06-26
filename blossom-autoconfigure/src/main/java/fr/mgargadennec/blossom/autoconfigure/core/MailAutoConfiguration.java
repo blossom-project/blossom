@@ -21,13 +21,13 @@ public class MailAutoConfiguration {
   @Bean
   @ConditionalOnBean(JavaMailSender.class)
   public MailSender blossomMailSender(JavaMailSender javaMailSender, MessageSource messageSource, freemarker.template.Configuration configuration) {
-    return new MailSenderImpl(javaMailSender, configuration, Sets.newHashSet(), messageSource, "blossom@cardiweb.com", "http://localhost:8080");
+    return new MailSenderImpl(javaMailSender, configuration, Sets.newHashSet(".*"), messageSource, "blossom@blossom.fr", "http://localhost:8080");
   }
 
   @Bean
   @ConditionalOnMissingBean(JavaMailSender.class)
   public MailSender blossomNoopMailSender(freemarker.template.Configuration freemarkerConfiguration) {
-    return new NoopMailSenderImpl(freemarkerConfiguration, "http://localhost:8080");
+    return new NoopMailSenderImpl();
   }
 
 }

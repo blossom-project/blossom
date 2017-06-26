@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -56,6 +57,7 @@ public class DataConfiguration {
         user.setPhone("02.xx.xx.xx.xx");
         user.setFunction(df.getRandomWord());
         user.setCompany(df.getCity());
+        user.setLocale(Locale.FRENCH);
         user.setCivility(random.nextBoolean() ? User.Civility.MAN : User.Civility.WOMAN);
         user.setLastConnection(new Date(Instant.now().minus(random.nextInt(200000), ChronoUnit.SECONDS).toEpochMilli()));
         user.setDescription(df.getRandomText(200, 600));
