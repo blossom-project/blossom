@@ -1,5 +1,6 @@
 package fr.mgargadennec.blossom.ui.current_user;
 
+import com.google.common.collect.Sets;
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
 import org.junit.Assert;
@@ -13,6 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
+import java.util.Set;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CurrentUserDetailsServiceImplTest {
@@ -50,6 +52,19 @@ public class CurrentUserDetailsServiceImplTest {
         // ARRANGE
         Assert.assertEquals(user, result.getUser());
 
+    }
+
+    @Test
+    public void testTEst() {
+
+        Set<Character> testSet = Sets.newHashSet('a', 'b');
+
+        String character = "b";
+        Character charchar = 'b';
+        Assert.assertTrue(testSet.contains(character));
+
+        character = "bc";
+        Assert.assertFalse(testSet.contains(character));
     }
 
 }
