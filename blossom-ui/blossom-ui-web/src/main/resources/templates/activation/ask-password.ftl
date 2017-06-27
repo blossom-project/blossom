@@ -26,19 +26,31 @@
           <h2 class="font-bold"><@spring.message "ask.password.page.title"/></h2>
 
           <p>
-          <@spring.message "ask.password.description"/>
+            <@spring.message "ask.password.description"/>
           </p>
 
           <div class="row">
 
             <div class="col-lg-12">
-              <form class="m-t" role="form" method="POST">
+              <form class="m-t" role="form" method="POST" novalidate>
+                <@spring.bind "askPasswordForm.loginOrEmail"/>
                 <div class="form-group">
-                  <input type="email" name="" class="form-control" placeholder="<@spring.message "ask.password.form.loginOrEmail.label"/>" required="">
+                  <input type="text" name="loginOrEmail" class="form-control"  value="${askPasswordForm.loginOrEmail}" placeholder="<@spring.message "ask.password.form.loginOrEmail.label"/>" required="">
                 </div>
+                <#list spring.status.errorMessages as error>
+                  <span class="help-block text-danger m-b-none">${error}</span>
+                </#list>
 
-                <button type="submit" class="btn btn-primary block full-width m-b">Send new password</button>
+                <br/>
 
+                <#if resetPasswordMail?? && resetPasswordMail>
+                  <p class="alert alert-success">
+                    <@spring.message "ask.password.mail.sent"/>
+                  </p>
+                  <br/>
+                </#if>
+
+                <button type="submit" class="btn btn-primary block full-width m-b"><@spring.message "ask.password.action"/></button>
               </form>
             </div>
           </div>

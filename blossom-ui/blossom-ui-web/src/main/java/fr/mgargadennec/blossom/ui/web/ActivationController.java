@@ -4,6 +4,7 @@ import fr.mgargadennec.blossom.core.common.utils.action_token.ActionToken;
 import fr.mgargadennec.blossom.core.common.utils.action_token.ActionTokenService;
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
+import fr.mgargadennec.blossom.core.validation.FieldMatch;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
@@ -130,6 +131,7 @@ public class ActivationController {
     return new ModelAndView("activation/ask-password", model.asMap());
   }
 
+  @FieldMatch(message = "{change.password.validation.FieldMatch.message}", value = "password", confirmation = "passwordRepeater")
   public static class UpdatePasswordForm {
     @NotEmpty
     private String token;
@@ -171,6 +173,7 @@ public class ActivationController {
   }
 
   public static class AskPasswordForm {
+    @NotEmpty(message="{ask.password.validation.NotEmpty.message}")
     private String loginOrEmail;
 
     public String getLoginOrEmail() {

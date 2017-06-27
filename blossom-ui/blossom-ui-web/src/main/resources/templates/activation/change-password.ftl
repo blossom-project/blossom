@@ -37,8 +37,11 @@
             <form id="updatePasswordForm" class="m-t" role="form" method="POST" novalidate>
               <input type="hidden" name="token" value="${updatePasswordForm.token}">
 
+              <@spring.bind "updatePasswordForm"/>
+              <#assign hasGlobalError = spring.status.error/>
+
               <@spring.bind "updatePasswordForm.password"/>
-              <div class="form-group <#if spring.status.error>has-error</#if>">
+              <div class="form-group <#if spring.status.error || hasGlobalError>has-error</#if>">
                 <input type="password" name="password" class="form-control" placeholder="<@spring.message "password"/>" required="">
                 <#list spring.status.errorMessages as error>
                   <span class="help-block text-danger m-b-none">${error}</span>
@@ -46,14 +49,24 @@
               </div>
 
               <@spring.bind "updatePasswordForm.passwordRepeater"/>
-              <div class="form-group">
+              <div class="form-group <#if spring.status.error || hasGlobalError>has-error</#if>">
                 <input type="password" name="passwordRepeater" class="form-control" placeholder="<@spring.message "change.password.passwordRepeater"/>" required="">
                 <#list spring.status.errorMessages as error>
                   <span class="help-block text-danger m-b-none">${error}</span>
                 </#list>
               </div>
 
-              <button type="submit" class="btn btn-primary block full-width m-b">Send new password</button>
+              <@spring.bind "updatePasswordForm"/>
+              <#if hasGlobalError>
+                <p class="alert alert-danger">
+                  <#list spring.status.errorMessages as error>
+                    ${error}
+                    <#if !error?is_last><br/></#if>
+                  </#list>
+                </p>
+              </#if>
+
+              <button type="submit" class="btn btn-primary block full-width m-b"><@spring.message "change.password.action"/></button>
 
             </form>
           </div>

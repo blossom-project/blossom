@@ -58,6 +58,11 @@
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
+      <groupId>fr.mgargadennec.blossom</groupId>
+      <artifactId>blossom-core-validation</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>

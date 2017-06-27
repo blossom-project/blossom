@@ -34,7 +34,7 @@ public class UserMailServiceImpl implements UserMailService {
     ctx.put("user", user);
     ctx.put("token", this.tokenService.generateToken(actionToken));
 
-    this.mailSender.sendMail("user-activation", ctx, "[Blossom] User activation", user.getLocale(), user.getEmail());
+    this.mailSender.sendMail("user-activation", ctx, "activation.subject", user.getLocale(), user.getEmail());
   }
 
   @Override public void sendChangePasswordEmail(UserDTO user) throws Exception {
@@ -49,6 +49,6 @@ public class UserMailServiceImpl implements UserMailService {
     ctx.put("user", user);
     ctx.put("token", this.tokenService.generateToken(actionToken));
 
-    this.mailSender.sendMail("user-change-password", ctx, "[CSM] Password change", user.getLocale(), user.getEmail());
+    this.mailSender.sendMail("user-change-password", ctx, "change.password.subject", user.getLocale(), user.getEmail());
   }
 }
