@@ -24,7 +24,7 @@
   <div>
     <h3><@spring.message "login.page.welcome"/></h3>
     <p><@spring.message "login.page.description"/></p>
-    <form class="m-t" role="form" method="POST" action="/blossom/login">
+    <form class="m-t" role="form" method="POST" action="/blossom/login" autocomplete="off" novalidate>
       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
       <div class="form-group">
         <input type="text" class="form-control" placeholder="<@spring.message "login.page.form.login"/>" required="required" name="username">

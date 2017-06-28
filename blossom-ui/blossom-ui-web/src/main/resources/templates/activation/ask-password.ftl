@@ -17,7 +17,7 @@
 
 </head>
 <body class="gray-bg">
-  <div class="passwordBox animated fadeInDown">
+  <div class="passwordBox">
     <div class="row">
 
       <div class="col-md-12">
@@ -50,7 +50,8 @@
                   <br/>
                 </#if>
 
-                <button type="submit" class="btn btn-primary block full-width m-b"><@spring.message "ask.password.action"/></button>
+                  <button type="submit" class="btn btn-primary block full-width m-b"><@spring.message "ask.password.action"/></button>
+                  <a href="/blossom/login" class="btn btn-sm btn-default block full-width m-b"><@spring.message "cancel"/></a>
               </form>
             </div>
           </div>

@@ -174,7 +174,7 @@ public class ActivationController {
 
   public static class AskPasswordForm {
     @NotEmpty(message="{ask.password.validation.NotEmpty.message}")
-    private String loginOrEmail;
+    private String loginOrEmail ="";
 
     public String getLoginOrEmail() {
       return loginOrEmail;
