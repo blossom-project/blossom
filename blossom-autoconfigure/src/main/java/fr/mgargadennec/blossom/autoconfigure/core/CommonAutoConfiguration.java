@@ -36,6 +36,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -49,6 +50,7 @@ import java.security.SecureRandom;
 @EnablePluginRegistries({MapperPlugin.class, ReadOnlyServicePlugin.class})
 @EnableJpaAuditing
 @PropertySource({"classpath:/freemarker.properties", "classpath:/elasticsearch.properties"})
+@EnableTransactionManagement
 public class CommonAutoConfiguration {
 
 

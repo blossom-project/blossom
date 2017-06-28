@@ -6,6 +6,7 @@ import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
 import fr.mgargadennec.blossom.core.common.entity.AbstractAssociationEntity;
 import fr.mgargadennec.blossom.core.common.entity.AbstractEntity;
 import fr.mgargadennec.blossom.core.common.mapper.DTOMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,11 +29,13 @@ public abstract class GenericAssociationServiceImpl<
     }
 
     @Override
+    @Transactional
     public DTO associate(A a, B b) {
         return this.mapper.mapEntity(this.dao.associate(aMapper.mapDto(a), bMapper.mapDto(b)));
     }
 
     @Override
+    @Transactional
     public void dissociate(A a, B b) {
         this.dao.dissociate(aMapper.mapDto(a), bMapper.mapDto(b));
     }

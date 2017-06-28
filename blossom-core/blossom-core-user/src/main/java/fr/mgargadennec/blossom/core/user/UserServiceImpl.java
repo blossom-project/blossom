@@ -1,6 +1,8 @@
 package fr.mgargadennec.blossom.core.user;
 
 import com.google.common.io.ByteStreams;
+import fr.mgargadennec.blossom.core.common.event.CreatedEvent;
+import fr.mgargadennec.blossom.core.common.event.UpdatedEvent;
 import fr.mgargadennec.blossom.core.common.mapper.DTOMapper;
 import fr.mgargadennec.blossom.core.common.service.GenericCrudServiceImpl;
 import org.slf4j.Logger;
@@ -51,6 +53,9 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
 
     UserDTO savedUser = this.mapper.mapEntity(this.userDao.create(user));
     userMailService.sendAccountCreationEmail(savedUser);
+
+    this.publisher.publishEvent(new CreatedEvent<>(this, savedUser));
+
     return savedUser;
   }
 
@@ -72,32 +77,42 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   @Override
   @Transactional
   public UserDTO updateActivation(long id, boolean activated) {
-    return mapper.mapEntity(this.userDao.updateActivation(id, activated));
+    UserDTO user = mapper.mapEntity(this.userDao.updateActivation(id, activated));
+    this.publisher.publishEvent(new UpdatedEvent<>(this, user));
+    return user;
   }
 
   @Override
   @Transactional
   public UserDTO updatePassword(Long id, String password) {
-    return mapper.mapEntity(this.userDao.updatePassword(id, passwordEncoder.encode(password)));
+    UserDTO user = mapper.mapEntity(this.userDao.updatePassword(id, passwordEncoder.encode(password)));
+    this.publisher.publishEvent(new UpdatedEvent<>(this, user));
+    return user;
   }
 
   @Override
   @Transactional
   public UserDTO updateLastConnection(Long id, Date lastConnection) {
-    return mapper.mapEntity(this.userDao.updateLastConnection(id, lastConnection));
+    UserDTO user = mapper.mapEntity(this.userDao.updateLastConnection(id, lastConnection));
+    this.publisher.publishEvent(new UpdatedEvent<>(this, user));
+    return user;
   }
 
   @Override
   @Transactional
   public void askPasswordChange(long userId) throws Exception {
-    UserDTO updatedUser = this.updatePassword(userId, passwordEncoder.encode(UUID.randomUUID().toString()));
-    userMailService.sendChangePasswordEmail(updatedUser);
+    UserDTO user = this.updatePassword(userId, passwordEncoder.encode(UUID.randomUUID().toString()));
+    userMailService.sendChangePasswordEmail(user);
   }
 
   @Override
   @Transactional
   public void updateAvatar(long id, byte[] avatar) {
-    this.userDao.updateAvatar(id, avatar);
+    UserDTO user = this.getOne(id);
+    if(user != null) {
+      this.userDao.updateAvatar(id, avatar);
+    }
+    this.publisher.publishEvent(new UpdatedEvent<>(this, user));
   }
 
   @Override

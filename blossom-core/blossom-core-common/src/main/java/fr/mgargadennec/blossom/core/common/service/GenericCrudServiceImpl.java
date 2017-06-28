@@ -9,6 +9,7 @@ import fr.mgargadennec.blossom.core.common.event.DeletedEvent;
 import fr.mgargadennec.blossom.core.common.event.UpdatedEvent;
 import fr.mgargadennec.blossom.core.common.mapper.DTOMapper;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +28,7 @@ public abstract class GenericCrudServiceImpl<DTO extends AbstractDTO, ENTITY ext
   }
 
   @Override
+  @Transactional
   public DTO create(DTO toCreate) {
     ENTITY entity = this.mapper.mapDto(toCreate);
     DTO dto = this.mapper.mapEntity(this.dao.create(entity));
@@ -35,6 +37,7 @@ public abstract class GenericCrudServiceImpl<DTO extends AbstractDTO, ENTITY ext
   }
 
   @Override
+  @Transactional
   public void delete(DTO toDelete) {
     this.publisher.publishEvent(new BeforeDeletedEvent<DTO>(this, toDelete));
     this.dao.delete(this.mapper.mapDto(toDelete));
@@ -42,6 +45,7 @@ public abstract class GenericCrudServiceImpl<DTO extends AbstractDTO, ENTITY ext
   }
 
   @Override
+  @Transactional
   public DTO update(long id, DTO toUpdate) {
 
     ENTITY modifiedEntity = this.mapper.mapDto(toUpdate);
@@ -56,6 +60,7 @@ public abstract class GenericCrudServiceImpl<DTO extends AbstractDTO, ENTITY ext
   }
 
   @Override
+  @Transactional
   public List<DTO> create(Collection<DTO> toCreates) {
     List<DTO> dtos = this.mapper.mapEntities(this.dao.create(this.mapper.mapDtos(toCreates)));
     dtos.forEach(dto -> this.publisher.publishEvent(new CreatedEvent<DTO>(this, dto)));
@@ -63,6 +68,7 @@ public abstract class GenericCrudServiceImpl<DTO extends AbstractDTO, ENTITY ext
   }
 
   @Override
+  @Transactional
   public List<DTO> update(Collection<DTO> toUpdates) {
     Map<Long, ENTITY> toUpdatesEntities = this.mapper.mapDtos(toUpdates).stream().collect(Collectors.toMap(entity -> entity.getId(), Function.identity()));
 
