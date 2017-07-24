@@ -21,9 +21,10 @@ import fr.mgargadennec.blossom.ui.web.content.filemanager.FileManagerController;
 /**
  * Created by Maël Gargadennnec on 19/05/2017.
  */
+
 @Configuration
 @ConditionalOnBean(FileService.class)
-@ConditionalOnProperty(name = "blossom.filemanager.enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "blossom.filemanager.", name = "enabled")
 @AutoConfigureAfter(CommonAutoConfiguration.class)
 public class WebFileManagerAutoConfiguration {
 
