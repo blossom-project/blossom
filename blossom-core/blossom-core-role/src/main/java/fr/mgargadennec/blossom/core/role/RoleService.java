@@ -7,7 +7,7 @@ import fr.mgargadennec.blossom.core.common.service.CrudService;
  */
 public interface RoleService extends CrudService<RoleDTO> {
 
-  RoleDTO create(RoleCreateForm userCreateForm) throws Exception;
+  RoleDTO create(RoleCreateForm roleCreateForm) throws Exception;
 
   RoleDTO update(Long roleId, RoleUpdateForm roleUpdateForm) throws Exception;
 }
