@@ -1,13 +1,5 @@
 package fr.mgargadennec.blossom.autoconfigure.module;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import fr.mgargadennec.blossom.autoconfigure.core.CommonAutoConfiguration;
-import fr.mgargadennec.blossom.core.common.search.IndexationEngineImpl;
-import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
-import fr.mgargadennec.blossom.module.filemanager.*;
-import fr.mgargadennec.blossom.module.filemanager.digest.DigestUtil;
-import fr.mgargadennec.blossom.module.filemanager.digest.DigestUtilImpl;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
 import org.quartz.JobDetail;
@@ -21,10 +13,32 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+
+import fr.mgargadennec.blossom.autoconfigure.core.CommonAutoConfiguration;
+import fr.mgargadennec.blossom.core.common.search.IndexationEngineImpl;
+import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
+import fr.mgargadennec.blossom.module.filemanager.File;
+import fr.mgargadennec.blossom.module.filemanager.FileContentDao;
+import fr.mgargadennec.blossom.module.filemanager.FileContentDaoImpl;
+import fr.mgargadennec.blossom.module.filemanager.FileContentRepository;
+import fr.mgargadennec.blossom.module.filemanager.FileDTO;
+import fr.mgargadennec.blossom.module.filemanager.FileDTOMapper;
+import fr.mgargadennec.blossom.module.filemanager.FileDao;
+import fr.mgargadennec.blossom.module.filemanager.FileDaoImpl;
+import fr.mgargadennec.blossom.module.filemanager.FileIndexationJob;
+import fr.mgargadennec.blossom.module.filemanager.FileRepository;
+import fr.mgargadennec.blossom.module.filemanager.FileService;
+import fr.mgargadennec.blossom.module.filemanager.FileServiceImpl;
+import fr.mgargadennec.blossom.module.filemanager.digest.DigestUtil;
+import fr.mgargadennec.blossom.module.filemanager.digest.DigestUtilImpl;
 
 /**
  * Created by Maël Gargadennnec on 19/05/2017.
@@ -33,6 +47,7 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 @ConditionalOnClass({File.class})
 @AutoConfigureAfter(CommonAutoConfiguration.class)
 @EnableJpaRepositories(basePackageClasses = FileRepository.class)
+@PropertySource("classpath:/filemanager.properties")
 @EntityScan(basePackageClasses = File.class)
 public class FileManagerAutoConfiguration {
 
@@ -50,7 +65,8 @@ public class FileManagerAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(FileService.class)
-  public FileService fileService(FileDao fileDao, FileDTOMapper fileDTOMapper, FileContentDao fileContentDao, DigestUtil digestUtil, ApplicationEventPublisher eventPublisher) {
+  public FileService fileService(FileDao fileDao, FileDTOMapper fileDTOMapper, FileContentDao fileContentDao,
+      DigestUtil digestUtil, ApplicationEventPublisher eventPublisher) {
     return new FileServiceImpl(fileDao, fileDTOMapper, fileContentDao, digestUtil, eventPublisher);
   }
 
@@ -67,17 +83,18 @@ public class FileManagerAutoConfiguration {
   }
 
   @Bean
-  public IndexationEngineImpl<FileDTO> fileIndexationEngine(Client client,
-                                                            FileService fileService,
-                                                            BulkProcessor bulkProcessor,
-                                                            ObjectMapper objectMapper,
-                                                            @Value("classpath:/elasticsearch/files.json") Resource resource) {
-    return new IndexationEngineImpl<>(FileDTO.class, client, resource, "files", u -> "file", fileService, bulkProcessor, objectMapper);
+  public IndexationEngineImpl<FileDTO> fileIndexationEngine(Client client, FileService fileService,
+      BulkProcessor bulkProcessor, ObjectMapper objectMapper,
+      @Value("classpath:/elasticsearch/files.json") Resource resource) {
+    return new IndexationEngineImpl<>(FileDTO.class, client, resource, "files", u -> "file", fileService,
+        bulkProcessor, objectMapper);
   }
 
   @Bean
-  public SearchEngineImpl<FileDTO> fileSearchEngine(Client client, BulkProcessor bulkProcessor, ObjectMapper objectMapper) {
-    return new SearchEngineImpl<>(FileDTO.class, client, Lists.newArrayList("name", "contentType", "extension"), "files", objectMapper);
+  public SearchEngineImpl<FileDTO> fileSearchEngine(Client client, BulkProcessor bulkProcessor,
+      ObjectMapper objectMapper) {
+    return new SearchEngineImpl<>(FileDTO.class, client, Lists.newArrayList("name", "contentType", "extension"),
+        "files", objectMapper);
   }
 
   @Bean
@@ -94,7 +111,8 @@ public class FileManagerAutoConfiguration {
 
   @Bean
   @Qualifier("fileScheduledIndexationTrigger")
-  public SimpleTriggerFactoryBean fileScheduledIndexationTrigger(@Qualifier("fileIndexationFullJob") JobDetail fileIndexationFullJob) {
+  public SimpleTriggerFactoryBean fileScheduledIndexationTrigger(
+      @Qualifier("fileIndexationFullJob") JobDetail fileIndexationFullJob) {
     SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
     factoryBean.setName("File re-indexation");
     factoryBean.setDescription("Periodic re-indexation of all files of the application");
