@@ -14,7 +14,7 @@
                 <a href="/blossom/administration"><@spring.message "menu.administration"/></a>
             </li>
             <li>
-                <a href="/blossom/administration/groups"><@spring.message "roles.title"/></a>
+                <a href="/blossom/administration/roles"><@spring.message "roles.title"/></a>
             </li>
             <li class="active">
                 <strong><@spring.message "roles.role.title"/></strong>
@@ -26,25 +26,39 @@
 <div class="wrapper wrapper-content">
 
 
-    <div class="row m-b-lg m-t-lg">
-        <div class="col-md-6">
-
-            <div class="profile-image">
-                <img src="/img/a4.jpg" class="img-circle circle-border m-b-md" alt="profile">
-            </div>
-            <div class="profile-info">
-                <div class="">
-                    <div>
-                        <h2 class="no-margins">
-                        ${role.name}
-                        </h2>
-                        <small>
-                        ${role.description!''}
-                        </small>
-                    </div>
+    <div class="row">
+    <div class="col-sm-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h3><@spring.message "panel.information"/></h3>
+        </div>
+         <div class="ibox-content">
+            <form class="form form-horizontal">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label"><@spring.message "roles.role.properties.name"/></label>
+                  <div class="col-sm-10">
+                    <p class="form-control-static">${role.name}</p>
+                  </div>
                 </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label"><@spring.message "roles.role.properties.description"/></label>
+                  <div class="col-sm-10">
+                    <p class="form-control-static"> ${role.description!''}</p>
+                  </div>
+                </div>
+            </form>
+         </div>
+         <div class="ibox-footer">
+            <div class="text-right">
+             <form id="deleteRole" novalidate method="POST"  action="/blossom/administration/roles/${role.id?c}/_delete">
+                <a href="/blossom/administration/roles/${role.id?c}/_edit" class="btn btn-primary"><i class="fa fa-edit"></i> <@spring.message "roles.update"/></a>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                <button type="submit" class="btn btn-danger pull-left"><i class="fa fa-trash"></i> <@spring.message "roles.delete"/></a>
+              </form>
             </div>
         </div>
+      </div>
+    </div>
     </div>
 </div>
 </@master.default>
