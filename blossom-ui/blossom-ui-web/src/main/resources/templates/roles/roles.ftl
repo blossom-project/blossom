@@ -20,9 +20,9 @@
         </ol>
     </div>
     <div class="col-sm-4">
-    <div class="title-action">
-      <a href="/blossom/administration/roles/_create" class="btn btn-primary"><i class="fa fa-plus"></i></a>
-    </div>
+        <div class="title-action">
+          <a href="/blossom/administration/roles/_create" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+        </div>
   </div>
 </div>
 
