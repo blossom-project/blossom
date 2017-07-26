@@ -128,7 +128,7 @@ public class UsersController {
     return new ModelAndView("users/user", "user", user);
   }
 
-  @GetMapping("/{id}/informations")
+  @GetMapping("/{id}/_informations")
   public ModelAndView getUserInformations(@PathVariable Long id, Model model, HttpServletRequest request) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -154,7 +154,7 @@ public class UsersController {
     return this.editView(user);
   }
 
-  @GetMapping("/{id}/groups")
+  @GetMapping("/{id}/_groups")
   public ModelAndView getUserGroupsPage(@PathVariable Long id, Model model) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -170,7 +170,7 @@ public class UsersController {
     return this.groupsView(user, pagedGroups, model);
   }
 
-  @GetMapping("/{id}/roles")
+  @GetMapping("/{id}/_roles")
   public ModelAndView getUserRolesPage(@PathVariable Long id, Model model) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {

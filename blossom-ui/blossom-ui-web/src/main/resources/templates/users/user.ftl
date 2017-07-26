@@ -55,19 +55,19 @@
 
 <script>
     var goToGroupsTab =  function(){
-         $.get("/blossom/administration/users/${user.id?c}/groups", function (data) {
+         $.get("/blossom/administration/users/${user.id?c}/_groups", function (data) {
           $("#userPanelContent").html(data);
         });
     };
     
    var goToRolesTab =  function (){
-        $.get("/blossom/administration/users/${user.id?c}/roles", function (data) {
+        $.get("/blossom/administration/users/${user.id?c}/_roles", function (data) {
           $("#userPanelContent").html(data);
         });
     };
     
     var goToMainTab =  function(){
-        $.get("/blossom/administration/users/${user.id?c}/informations", function (data) {
+        $.get("/blossom/administration/users/${user.id?c}/_informations", function (data) {
           $("#userPanelContent").html(data);
         });
     };
