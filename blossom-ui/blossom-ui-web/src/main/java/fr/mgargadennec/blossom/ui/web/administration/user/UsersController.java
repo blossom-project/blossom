@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -34,7 +35,9 @@ import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleDTO
 import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
 import fr.mgargadennec.blossom.core.group.GroupDTO;
+import fr.mgargadennec.blossom.core.group.GroupService;
 import fr.mgargadennec.blossom.core.role.RoleDTO;
+import fr.mgargadennec.blossom.core.role.RoleService;
 import fr.mgargadennec.blossom.core.user.User;
 import fr.mgargadennec.blossom.core.user.UserCreateForm;
 import fr.mgargadennec.blossom.core.user.UserDTO;
@@ -54,13 +57,18 @@ public class UsersController {
   private final UserService userService;
   private final AssociationUserGroupService associationUserGroupService;
   private final AssociationUserRoleService associationUserRoleService;
+  private final RoleService roleService;
+  private final GroupService groupService;
   private final SearchEngineImpl<UserDTO> searchEngine;
 
   public UsersController(UserService userService, AssociationUserGroupService associationUserGroupService,
-      AssociationUserRoleService associationUserRoleService, SearchEngineImpl<UserDTO> searchEngine) {
+      AssociationUserRoleService associationUserRoleService, RoleService roleService, GroupService groupService,
+      SearchEngineImpl<UserDTO> searchEngine) {
     this.userService = userService;
     this.associationUserGroupService = associationUserGroupService;
     this.associationUserRoleService = associationUserRoleService;
+    this.roleService = roleService;
+    this.groupService = groupService;
     this.searchEngine = searchEngine;
   }
 
@@ -161,13 +169,15 @@ public class UsersController {
       throw new NoSuchElementException(String.format("User=%s not found", id));
     }
     List<AssociationUserGroupDTO> associations = associationUserGroupService.getAllLeft(user);
-    List<GroupDTO> groups = new ArrayList<>();
+    List<GroupDTO> associatedGroups = new ArrayList<>();
     for (AssociationUserGroupDTO association : associations) {
-      groups.add(association.getB());
+      associatedGroups.add(association.getB());
     }
-    Page<GroupDTO> pagedGroups = new PageImpl<>(groups);
+    Page<GroupDTO> pagedGroups = new PageImpl<>(associatedGroups);
 
-    return this.groupsView(user, pagedGroups, model);
+    List<GroupDTO> groups = groupService.getAll();
+    groups = groups.stream().filter(group -> !associatedGroups.contains(group)).collect(Collectors.toList());
+    return this.groupsView(user, pagedGroups, groups, model);
   }
 
   @GetMapping("/{id}/_roles")
@@ -178,13 +188,16 @@ public class UsersController {
     }
     List<AssociationUserRoleDTO> associations = associationUserRoleService.getAllLeft(user);
 
-    List<RoleDTO> roles = new ArrayList<>();
+    List<RoleDTO> associatedRoles = new ArrayList<>();
     for (AssociationUserRoleDTO association : associations) {
-      roles.add(association.getB());
+      associatedRoles.add(association.getB());
     }
-    Page<RoleDTO> pagedRoles = new PageImpl<>(roles);
+    Page<RoleDTO> pagedRoles = new PageImpl<>(associatedRoles);
 
-    return this.rolesView(user, pagedRoles, model);
+    List<RoleDTO> roles = roleService.getAll();
+    roles = roles.stream().filter(role -> !associatedRoles.contains(role)).collect(Collectors.toList());
+
+    return this.rolesView(user, pagedRoles, roles, model);
   }
 
   @PostMapping("/{id}/_edit")
@@ -201,15 +214,17 @@ public class UsersController {
     return new ModelAndView("users/update", "user", user);
   }
 
-  private ModelAndView groupsView(UserDTO user, Page<GroupDTO> pagedGroups, Model model) {
+  private ModelAndView groupsView(UserDTO user, Page<GroupDTO> pagedAssociatedGroups, List<GroupDTO> groups, Model model) {
     model.addAttribute("user", user);
-    model.addAttribute("groups", pagedGroups);
+    model.addAttribute("groups", groups);
+    model.addAttribute("associatedGroups", pagedAssociatedGroups);
     return new ModelAndView("users/usergroups", model.asMap());
   }
 
-  private ModelAndView rolesView(UserDTO user, Page<RoleDTO> pagedRoles, Model model) {
+  private ModelAndView rolesView(UserDTO user, Page<RoleDTO> pagedRoles, List<RoleDTO> roles, Model model) {
     model.addAttribute("user", user);
-    model.addAttribute("roles", pagedRoles);
+    model.addAttribute("associatedRoles", pagedRoles);
+    model.addAttribute("roles", roles);
     return new ModelAndView("users/userroles", model.asMap());
   }
 

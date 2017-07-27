@@ -10,6 +10,8 @@ import fr.mgargadennec.blossom.autoconfigure.core.CommonAutoConfiguration;
 import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupService;
 import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
+import fr.mgargadennec.blossom.core.group.GroupService;
+import fr.mgargadennec.blossom.core.role.RoleService;
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
 import fr.mgargadennec.blossom.ui.menu.MenuItem;
@@ -33,9 +35,10 @@ public class WebAdministrationUserAutoConfiguration {
 
   @Bean
   public UsersController usersController(UserService userService,
-      AssociationUserGroupService associationUserGroupService, AssociationUserRoleService associationUserRoleService,
-      SearchEngineImpl<UserDTO> searchEngine) {
-    return new UsersController(userService, associationUserGroupService, associationUserRoleService, searchEngine);
+      AssociationUserGroupService associationUserGroupService, RoleService roleService, GroupService groupService,
+      AssociationUserRoleService associationUserRoleService, SearchEngineImpl<UserDTO> searchEngine) {
+    return new UsersController(userService, associationUserGroupService, associationUserRoleService, roleService,
+        groupService, searchEngine);
   }
 
 }
