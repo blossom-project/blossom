@@ -1,7 +1,6 @@
 package fr.mgargadennec.blossom.autoconfigure.ui;
 
 import com.google.common.collect.Iterables;
-import fr.mgargadennec.blossom.core.common.message_source.MultiClasspathReloadableResourceBundleMessageSource;
 import fr.mgargadennec.blossom.ui.i18n.RestrictedSessionLocalResolver;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomApiController;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
@@ -31,52 +30,42 @@ import java.util.Set;
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
  */
-@Configuration
-@ConditionalOnWebApplication
-@AutoConfigureBefore(WebMvcAutoConfiguration.class)
-public class WebContextAutoConfiguration extends WebMvcConfigurerAdapter {
+@Configuration @ConditionalOnWebApplication @AutoConfigureBefore(WebMvcAutoConfiguration.class) public class WebContextAutoConfiguration
+  extends WebMvcConfigurerAdapter {
   public final static String BLOSSOM_BASE_PATH = "blossom";
   public final static String BLOSSOM_API_BASE_PATH = BLOSSOM_BASE_PATH + "/api";
 
-  @Autowired
-  private MultiClasspathReloadableResourceBundleMessageSource messageSource;
+  @Autowired private MessageSource messageSource;
 
-  @Bean
-  public LocaleResolver localeResolver(Set<Locale> availableLocales) {
+  @Bean public LocaleResolver localeResolver(Set<Locale> availableLocales) {
     RestrictedSessionLocalResolver resolver = new RestrictedSessionLocalResolver(availableLocales);
     resolver.setDefaultLocale(Iterables.getFirst(availableLocales, Locale.ENGLISH));
     return resolver;
   }
 
-  @Bean
-  public LocaleChangeInterceptor localeChangeInterceptor() {
+  @Bean public LocaleChangeInterceptor localeChangeInterceptor() {
     LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
     lci.setParamName("lang");
     return lci;
   }
 
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/" + BLOSSOM_BASE_PATH + "/**", "/" + BLOSSOM_API_BASE_PATH + "/**");
+  @Override public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(localeChangeInterceptor())
+      .addPathPatterns("/" + BLOSSOM_BASE_PATH + "/**", "/" + BLOSSOM_API_BASE_PATH + "/**");
   }
 
-
-  @Override
-  public Validator getValidator() {
+  @Override public Validator getValidator() {
     LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
     validator.setValidationMessageSource(messageSource);
     return validator;
   }
 
-  @Bean
-  public WebMvcRegistrationsAdapter webMvcRegistrationsHandlerMapping() {
+  @Bean public WebMvcRegistrationsAdapter webMvcRegistrationsHandlerMapping() {
     return new WebMvcRegistrationsAdapter() {
-      @Override
-      public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
+      @Override public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
         return new RequestMappingHandlerMapping() {
 
-          @Override
-          protected void registerHandlerMethod(Object handler, Method method, RequestMappingInfo mapping) {
+          @Override protected void registerHandlerMethod(Object handler, Method method, RequestMappingInfo mapping) {
             Class<?> beanType = method.getDeclaringClass();
             if (AnnotationUtils.findAnnotation(beanType, BlossomController.class) != null) {
               mapping = computeMapping(mapping, BLOSSOM_BASE_PATH);
@@ -88,11 +77,11 @@ public class WebContextAutoConfiguration extends WebMvcConfigurerAdapter {
           }
 
           private RequestMappingInfo computeMapping(RequestMappingInfo mapping, String prefix) {
-            PatternsRequestCondition apiPattern = new PatternsRequestCondition(prefix).combine(mapping.getPatternsCondition());
+            PatternsRequestCondition apiPattern = new PatternsRequestCondition(prefix)
+              .combine(mapping.getPatternsCondition());
 
-            return new RequestMappingInfo(mapping.getName(), apiPattern,
-              mapping.getMethodsCondition(), mapping.getParamsCondition(),
-              mapping.getHeadersCondition(), mapping.getConsumesCondition(),
+            return new RequestMappingInfo(mapping.getName(), apiPattern, mapping.getMethodsCondition(),
+              mapping.getParamsCondition(), mapping.getHeadersCondition(), mapping.getConsumesCondition(),
               mapping.getProducesCondition(), mapping.getCustomCondition());
           }
         };
