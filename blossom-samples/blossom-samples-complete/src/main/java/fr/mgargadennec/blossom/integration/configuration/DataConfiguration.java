@@ -46,7 +46,7 @@ public class DataConfiguration {
   @Bean
   public CommandLineRunner clr(UserService service, DataFactory df, Random random) {
     return args -> {
-      IntStream.range(0, 50).mapToObj(i -> {
+      IntStream.range(0, 15).mapToObj(i -> {
         UserDTO user = new UserDTO();
         user.setIdentifier("Identifier-" + i);
         user.setPasswordHash("Password-" + i);
@@ -69,7 +69,7 @@ public class DataConfiguration {
   @Bean
   public CommandLineRunner clrGroup(GroupService service, DataFactory df) {
     return args -> {
-      IntStream.range(0, 50).mapToObj(i -> {
+      IntStream.range(0, 10).mapToObj(i -> {
         GroupDTO group = new GroupDTO();
         group.setName("Name-" + i);
         group.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);
@@ -81,7 +81,7 @@ public class DataConfiguration {
   @Bean
   public CommandLineRunner clrRole(RoleService service) {
     return args -> {
-      IntStream.range(0, 15).mapToObj(i -> {
+      IntStream.range(0, 10).mapToObj(i -> {
         RoleDTO role = new RoleDTO();
         role.setName("Name-" + i);
         role.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);

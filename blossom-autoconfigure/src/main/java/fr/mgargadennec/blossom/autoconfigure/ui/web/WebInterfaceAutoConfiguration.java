@@ -7,6 +7,7 @@ import fr.mgargadennec.blossom.ui.i18n.LocaleControllerAdvice;
 import fr.mgargadennec.blossom.ui.menu.Menu;
 import fr.mgargadennec.blossom.ui.menu.MenuControllerAdvice;
 import fr.mgargadennec.blossom.ui.web.ActivationController;
+import fr.mgargadennec.blossom.ui.web.ErrorControllerAdvice;
 import fr.mgargadennec.blossom.ui.web.HomeController;
 import fr.mgargadennec.blossom.ui.web.LoginController;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +48,11 @@ public class WebInterfaceAutoConfiguration {
   @Bean
   public CurrentUserControllerAdvice currentUserControllerAdvice() {
     return new CurrentUserControllerAdvice();
+  }
+
+  @Bean
+  public ErrorControllerAdvice errorControllerAdvice(){
+    return new ErrorControllerAdvice();
   }
 
   @Bean

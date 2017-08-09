@@ -11,7 +11,7 @@ initializr:
       dependencies:
         - name: Blossom Core
           id: blossom-starter-basic
-          description: Blossom basic stater (no web interface)
+          description: Blossom basic starter (no web interface)
           groupId: fr.mgargadennec.blossom
           artifactId: blossom-starter-basic
 
