@@ -8,10 +8,17 @@ import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
 import fr.mgargadennec.blossom.core.common.service.ReadOnlyService;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequestBuilder;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
@@ -26,12 +33,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-
 public class IndexationEngineImpl<DTO extends AbstractDTO> implements IndexationEngine {
+
   private final static Logger logger = LoggerFactory.getLogger(IndexationEngineImpl.class);
   private final Class<DTO> supportedClass;
   private final Client client;
@@ -43,8 +46,9 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
   private final ObjectMapper objectMapper;
   private final BulkProcessor bulkProcessor;
 
-  public IndexationEngineImpl(Class<DTO> supportedClass, Client client, Resource source, String alias, Function<DTO, String> typeFunction, ReadOnlyService<DTO> service,
-                              BulkProcessor bulkProcessor, ObjectMapper objectMapper) {
+  public IndexationEngineImpl(Class<DTO> supportedClass, Client client, Resource source,
+    String alias, Function<DTO, String> typeFunction, ReadOnlyService<DTO> service,
+    BulkProcessor bulkProcessor, ObjectMapper objectMapper) {
     this.supportedClass = supportedClass;
     this.client = client;
     this.source = source;
@@ -57,6 +61,7 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
 
   @Override
   public void indexFull() {
+    this.cleanOrphanIndex();
     String newIndexName = this.createIndex();
     try {
       Pageable pageable = new PageRequest(0, 1000);
@@ -84,11 +89,11 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
     }
   }
 
-
   @Override
   public void indexOne(long id) {
-    if(!existsIndex()){
-      logger.debug("Can't delete {} element with id {} as the index doesn't exist !", this.alias, id);
+    if (!existsIndex()) {
+      logger
+        .debug("Can't delete {} element with id {} as the index doesn't exist !", this.alias, id);
       return;
     }
 
@@ -109,24 +114,44 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
 
   @Override
   public void deleteOne(long id) {
-    if(!existsIndex()){
-      logger.debug("Can't delete {} element with id {} as the index doesn't exist !", this.alias, id);
+    if (!existsIndex()) {
+      logger
+        .debug("Can't delete {} element with id {} as the index doesn't exist !", this.alias, id);
       return;
     }
     try {
-      this.prepareDeleteRequest(this.alias, this.service.getOne(id)).get();
+      DTO dto = this.service.getOne(id);
+      if (dto != null) {
+        this.prepareDeleteRequest(this.alias, dto).get();
+      }
     } catch (Exception e) {
       logger.error("Can't delete {} element with id {}", this.alias, id, e);
     }
   }
 
-  private boolean existsIndex(){
+  private void cleanOrphanIndex() {
+    String[] indices = client.admin().cluster().prepareState().execute().actionGet().getState()
+      .getMetaData().concreteAllIndices();
+
+    List<String> orphans = Stream.of(indices)
+      .filter(i -> i.startsWith(this.alias))
+      .filter(i -> 0 == client.admin().indices().getAliases(new GetAliasesRequest().indices(i))
+        .actionGet().getAliases().size())
+      .collect(Collectors.toList());
+
+    for (String orphan : orphans) {
+      client.admin().indices().delete(new DeleteIndexRequest(orphan)).actionGet();
+    }
+  }
+
+  private boolean existsIndex() {
     return !getIndicesFromAliasName().isEmpty();
   }
 
   private String createIndex() {
     final String indexName = this.alias + "_" + System.currentTimeMillis();
-    CreateIndexRequestBuilder prepareCreate = this.client.admin().indices().prepareCreate(indexName);
+    CreateIndexRequestBuilder prepareCreate = this.client.admin().indices()
+      .prepareCreate(indexName);
 
     if (this.source != null) {
       try {
@@ -157,26 +182,32 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
     aliasBuilder.get();
 
     if (indicesNamesForAlias != null && !indicesNamesForAlias.isEmpty()) {
-      this.client.admin().indices().prepareDelete(indicesNamesForAlias.toArray(new String[indicesNamesForAlias.size()])).get();
+      this.client.admin().indices()
+        .prepareDelete(indicesNamesForAlias.toArray(new String[indicesNamesForAlias.size()])).get();
     }
   }
 
   Set<String> getIndicesFromAliasName() {
     IndicesAdminClient iac = this.client.admin().indices();
-    ImmutableOpenMap<String, List<AliasMetaData>> map = iac.getAliases(new GetAliasesRequest(this.alias)).actionGet().getAliases();
+    ImmutableOpenMap<String, List<AliasMetaData>> map = iac
+      .getAliases(new GetAliasesRequest(this.alias)).actionGet().getAliases();
 
     final Set<String> allIndices = Sets.newHashSet();
     map.keysIt().forEachRemaining(allIndices::add);
     return allIndices;
   }
 
-  private UpdateRequestBuilder prepareIndexRequest(String indexName, DTO dto) throws JsonProcessingException {
+  private UpdateRequestBuilder prepareIndexRequest(String indexName, DTO dto)
+    throws JsonProcessingException {
     ObjectNode json = this.objectMapper.valueToTree(dto);
-    return this.client.prepareUpdate(indexName, this.typeFunction.apply(dto), String.valueOf(dto.getId())).setDocAsUpsert(true).setDoc(this.objectMapper.writeValueAsString(json));
+    return this.client
+      .prepareUpdate(indexName, this.typeFunction.apply(dto), String.valueOf(dto.getId()))
+      .setDocAsUpsert(true).setDoc(this.objectMapper.writeValueAsString(json));
   }
 
   private DeleteRequestBuilder prepareDeleteRequest(String indexName, DTO dto) {
-    return this.client.prepareDelete().setIndex(indexName).setType(this.typeFunction.apply(dto)).setId(String.valueOf(dto.getId()));
+    return this.client.prepareDelete().setIndex(indexName).setType(this.typeFunction.apply(dto))
+      .setId(String.valueOf(dto.getId()));
   }
 
   @Override

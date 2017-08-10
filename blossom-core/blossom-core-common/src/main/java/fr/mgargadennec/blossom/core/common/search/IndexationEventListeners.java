@@ -1,11 +1,12 @@
 package fr.mgargadennec.blossom.core.common.search;
 
 import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
+import fr.mgargadennec.blossom.core.common.event.BeforeDeletedEvent;
 import fr.mgargadennec.blossom.core.common.event.CreatedEvent;
-import fr.mgargadennec.blossom.core.common.event.DeletedEvent;
 import fr.mgargadennec.blossom.core.common.event.UpdatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -36,8 +37,8 @@ public class IndexationEventListeners {
     }
   }
 
-  @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-  public void handleEntityDeletion(DeletedEvent deletedEvent) {
+  @EventListener
+  public void handleEntityDeletion(BeforeDeletedEvent deletedEvent) {
     Class<? extends AbstractDTO> clazz = deletedEvent.getDTO() == null ? null : deletedEvent.getDTO().getClass();
     if (clazz != null && indexationEngines.hasPluginFor(clazz)) {
       indexationEngines.getPluginFor(clazz).deleteOne(deletedEvent.getDTO().getId());
