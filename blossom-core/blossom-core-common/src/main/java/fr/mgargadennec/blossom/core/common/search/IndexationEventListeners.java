@@ -1,12 +1,14 @@
 package fr.mgargadennec.blossom.core.common.search;
 
 import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
+import fr.mgargadennec.blossom.core.common.event.BeforeDeletedEvent;
 import fr.mgargadennec.blossom.core.common.event.CreatedEvent;
-import fr.mgargadennec.blossom.core.common.event.DeletedEvent;
 import fr.mgargadennec.blossom.core.common.event.UpdatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.plugin.core.PluginRegistry;
+import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
@@ -20,8 +22,8 @@ public class IndexationEventListeners {
     this.indexationEngines = indexationEngines;
   }
 
-  @TransactionalEventListener
-  public void handleEntityCreation(CreatedEvent<? extends AbstractDTO> createdEvent) {
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+  public void handleEntityCreation(CreatedEvent createdEvent) {
     Class<? extends AbstractDTO> clazz = createdEvent.getDTO() == null ? null : createdEvent.getDTO().getClass();
     if (clazz != null && indexationEngines.hasPluginFor(clazz)) {
       indexationEngines.getPluginFor(clazz).indexOne(createdEvent.getDTO().getId());
@@ -35,8 +37,8 @@ public class IndexationEventListeners {
     }
   }
 
-  @TransactionalEventListener
-  public void handleEntityDeletion(DeletedEvent<? extends AbstractDTO> deletedEvent) {
+  @EventListener
+  public void handleEntityDeletion(BeforeDeletedEvent deletedEvent) {
     Class<? extends AbstractDTO> clazz = deletedEvent.getDTO() == null ? null : deletedEvent.getDTO().getClass();
     if (clazz != null && indexationEngines.hasPluginFor(clazz)) {
       indexationEngines.getPluginFor(clazz).deleteOne(deletedEvent.getDTO().getId());
@@ -50,8 +52,8 @@ public class IndexationEventListeners {
     }
   }
 
-  @TransactionalEventListener
-  public void handleEntityUpdate(UpdatedEvent<? extends AbstractDTO> updatedEvent) {
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+  public void handleEntityUpdate(UpdatedEvent updatedEvent) {
     Class<? extends AbstractDTO> clazz = updatedEvent.getDTO() == null ? null : updatedEvent.getDTO().getClass();
     if (clazz != null && indexationEngines.hasPluginFor(clazz)) {
       indexationEngines.getPluginFor(clazz).indexOne(updatedEvent.getDTO().getId());

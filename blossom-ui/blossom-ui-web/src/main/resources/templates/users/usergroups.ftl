@@ -44,7 +44,7 @@ $("#associateUserGroupForm").submit(function(e){
      $.post("/blossom/administration/memberships",$(form).serialize(), function () {
           goToGroupsTab();
     });
-    
+
 });
 
 </script>

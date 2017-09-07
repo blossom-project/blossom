@@ -8,6 +8,7 @@ import fr.mgargadennec.blossom.core.common.event.CreatedEvent;
 import fr.mgargadennec.blossom.core.common.event.UpdatedEvent;
 import fr.mgargadennec.blossom.core.common.mapper.DTOMapper;
 import fr.mgargadennec.blossom.core.common.service.GenericCrudServiceImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
@@ -20,6 +21,7 @@ public class GroupServiceImpl extends GenericCrudServiceImpl<GroupDTO, Group> im
   }
 
   @Override
+  @Transactional
   public GroupDTO create(GroupCreateForm groupCreateForm) throws Exception {
 
     Group groupToCreate = new Group();
@@ -34,6 +36,7 @@ public class GroupServiceImpl extends GenericCrudServiceImpl<GroupDTO, Group> im
   }
 
   @Override
+  @Transactional
   public GroupDTO update(Long groupId, GroupUpdateForm groupUpdateForm) throws Exception {
 
     Group groupToUpdate = new Group();

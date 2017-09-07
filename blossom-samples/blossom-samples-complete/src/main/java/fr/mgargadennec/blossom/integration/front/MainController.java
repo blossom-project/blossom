@@ -56,7 +56,7 @@ public class MainController {
     @GetMapping("/roles")
     @ResponseBody
     public List<RoleDTO> roles() {
-        return roleService.getAll();
+        throw new RuntimeException("mael test");
     }
 
     @GetMapping("/groups")

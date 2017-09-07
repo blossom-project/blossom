@@ -8,6 +8,7 @@ import fr.mgargadennec.blossom.core.common.event.CreatedEvent;
 import fr.mgargadennec.blossom.core.common.event.UpdatedEvent;
 import fr.mgargadennec.blossom.core.common.mapper.DTOMapper;
 import fr.mgargadennec.blossom.core.common.service.GenericCrudServiceImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
@@ -20,6 +21,7 @@ public class RoleServiceImpl extends GenericCrudServiceImpl<RoleDTO, Role> imple
   }
 
   @Override
+  @Transactional
   public RoleDTO create(RoleCreateForm roleCreateForm) throws Exception {
 
     Role roleToCreate = new Role();
@@ -34,6 +36,7 @@ public class RoleServiceImpl extends GenericCrudServiceImpl<RoleDTO, Role> imple
   }
 
   @Override
+  @Transactional
   public RoleDTO update(Long roleId, RoleUpdateForm roleUpdateForm) throws Exception {
 
     Role roleToUpdate = new Role();
