@@ -23,15 +23,15 @@ import fr.mgargadennec.blossom.core.common.utils.mail.NoopMailSenderImpl;
 @PropertySource({"classpath:/mailsender.properties"})
 public class MailAutoConfiguration {
 
-  @Value("${blossom.email.url}")
-  String baseUrlForEmail;
+  @Value("${blossom.mail.url}")
+  String baseUrlForMail;
 
   @Bean
   @ConditionalOnBean(JavaMailSender.class)
   public MailSender blossomMailSender(JavaMailSender javaMailSender, MessageSource messageSource,
       freemarker.template.Configuration configuration) {
     return new MailSenderImpl(javaMailSender, configuration, Sets.newHashSet(".*"), messageSource,
-        "blossom@blossom.fr", baseUrlForEmail);
+        "blossom@blossom.fr", baseUrlForMail);
   }
 
   @Bean
