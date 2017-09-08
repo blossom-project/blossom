@@ -119,7 +119,7 @@
       <div class="ibox-footer">
         <div class="text-right">
           <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <@spring.message "save"/></button>
-          <a href=".." class="btn btn-default btn-sm"><i class="fa fa-remove"></i> <@spring.message "cancel"/></a>
+          <a href="/blossom/administration/users" class="btn btn-default btn-sm"><i class="fa fa-remove"></i> <@spring.message "cancel"/></a>
         </div>
       </div>
     </div>
