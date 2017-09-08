@@ -119,75 +119,10 @@
       <div class="ibox-footer">
         <div class="text-right">
           <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <@spring.message "save"/></button>
-          <a href=".." class="btn btn-default btn-sm"><i class="fa fa-remove"></i> <@spring.message "cancel"/></a>
+          <a href="/blossom/administration/users" class="btn btn-default btn-sm"><i class="fa fa-remove"></i> <@spring.message "cancel"/></a>
         </div>
       </div>
     </div>
   </form>
 </div>
-
-
-<script>
-  $(document).ready(function () {
-    $('#userCreateForm').formValidation({
-      framework: 'bootstrap',
-      icon: {
-        valid: 'glyphicon glyphicon-ok',
-        invalid: 'glyphicon glyphicon-remove',
-        validating: 'glyphicon glyphicon-refresh'
-      },
-      fields: {
-        firstname: {
-          row: '.col-xs-4',
-          validators: {
-            notEmpty: {
-              message: 'The first name is required'
-            }
-          }
-        },
-        lastname: {
-          row: '.col-xs-4',
-          validators: {
-            notEmpty: {
-              message: 'The last name is required'
-            }
-          }
-        },
-        identifier: {
-          validators: {
-            notEmpty: {
-              message: 'The username is required'
-            },
-            stringLength: {
-              min: 6,
-              max: 30,
-              message: 'The username must be more than 6 and less than 30 characters long'
-            },
-            regexp: {
-              regexp: /^[a-zA-Z0-9_\.]+$/,
-              message: 'The username can only consist of alphabetical, number, dot and underscore'
-            }
-          }
-        },
-        email: {
-          validators: {
-            notEmpty: {
-              message: 'The email address is required'
-            },
-            emailAddress: {
-              message: 'The input is not a valid email address'
-            }
-          }
-        },
-        civility: {
-          validators: {
-            notEmpty: {
-              message: 'The gender is required'
-            }
-          }
-        }
-      }
-    });
-  });
-</script>
 </@master.default>
