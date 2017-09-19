@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -19,7 +20,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -30,97 +30,115 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @ConditionalOnWebApplication
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
+@PropertySource("classpath:/security.properties")
+@EnableConfigurationProperties(DefaultAccountProperties.class)
 public class WebSecurityAutoConfiguration {
 
-	private static final String BLOSSOM_BASE_PATH = "blossom";
-	private static final String BLOSSOM_API_BASE_PATH = BLOSSOM_BASE_PATH + "/api";
-	private static final String BLOSSOM_REMEMBER_ME_COOKIE_NAME = "blossom";
+  private static final String BLOSSOM_BASE_PATH = "blossom";
+  private static final String BLOSSOM_API_BASE_PATH = BLOSSOM_BASE_PATH + "/api";
+  private static final String BLOSSOM_REMEMBER_ME_COOKIE_NAME = "blossom";
 
-	@Bean
-	public UserDetailsService dbUserDetailsService(UserService userService) {
-		return new CurrentUserDetailsServiceImpl(userService);
-	}
+  @Bean
+  public UserDetailsService dbUserDetailsService(UserService userService) {
+    return new CurrentUserDetailsServiceImpl(userService);
+  }
 
-	@Bean
-	public UserDetailsService systemUserDetailsService() {
-		return new SystemUserDetailsServiceImpl();
-	}
 
-	@Bean
-	public LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler(
-			UserService userService) {
-		return new LastConnectionUpdateAuthenticationSuccessHandlerImpl(userService);
-	}
+  @Bean
+  public UserDetailsService systemUserDetailsService(DefaultAccountProperties properties) {
+    if (properties.isEnabled()) {
+      return new SystemUserDetailsServiceImpl(properties.getIdentifier(), properties.getPassword());
+    }
+    return null;
+  }
 
-	@Configuration
-	@Order(-1)
-	public static class GlobalSecurityConfigurerAdapter extends GlobalAuthenticationConfigurerAdapter {
-		@Autowired
-		@Qualifier(value = "dbUserDetailsService")
-		public UserDetailsService dbUserDetailsService;
+  @Bean
+  public LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler(
+    UserService userService) {
+    return new LastConnectionUpdateAuthenticationSuccessHandlerImpl(userService);
+  }
 
-		@Autowired
-		@Qualifier(value = "systemUserDetailsService")
-		public UserDetailsService systemUserDetailsService;
+  @Configuration
+  @Order(-1)
+  public static class GlobalSecurityConfigurerAdapter extends
+    GlobalAuthenticationConfigurerAdapter {
 
-		@Autowired
-		public PasswordEncoder passwordEncoder;
+    @Autowired
+    @Qualifier(value = "dbUserDetailsService")
+    public UserDetailsService dbUserDetailsService;
 
-		@Override
-		public void init(AuthenticationManagerBuilder auth) throws Exception {
-			auth.userDetailsService(systemUserDetailsService).and()
-          .userDetailsService(dbUserDetailsService).passwordEncoder(passwordEncoder);
-		}
-	}
+    @Autowired(required = false)
+    @Qualifier(value = "systemUserDetailsService")
+    public UserDetailsService systemUserDetailsService;
 
-	@Configuration
-	@Order(1)
-	public static class PublicWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.antMatcher("/public/**").csrf().disable().authorizeRequests().anyRequest().permitAll();
-      http.antMatcher("/" + BLOSSOM_BASE_PATH + "/public/**").authorizeRequests().anyRequest().permitAll();
-		}
-	}
+    @Autowired
+    public PasswordEncoder passwordEncoder;
 
-	@Configuration
-	@Order(2)
-	public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.antMatcher("/" + BLOSSOM_API_BASE_PATH + "/**").csrf().disable().authorizeRequests().anyRequest()
-					.fullyAuthenticated().and().httpBasic().and().exceptionHandling().and().sessionManagement()
-					.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		}
-	}
+    @Override
+    public void init(AuthenticationManagerBuilder auth) throws Exception {
+      if (systemUserDetailsService != null) {
+        auth.userDetailsService(systemUserDetailsService);
+      }
+      auth
+        .userDetailsService(dbUserDetailsService).passwordEncoder(passwordEncoder);
+    }
+  }
 
-	@Configuration
-	@Order(3)
-	public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+  @Configuration
+  @Order(1)
+  public static class PublicWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
-		@Autowired
-		private LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler;
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+      http.antMatcher("/public/**").csrf().disable().authorizeRequests().anyRequest().permitAll();
+      http.antMatcher("/" + BLOSSOM_BASE_PATH + "/public/**").authorizeRequests().anyRequest()
+        .permitAll();
+    }
+  }
 
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.antMatcher("/" + BLOSSOM_BASE_PATH + "/**").authorizeRequests().anyRequest().fullyAuthenticated().and()
-					.formLogin().loginPage("/" + BLOSSOM_BASE_PATH + "/login")
-					.failureUrl("/" + BLOSSOM_BASE_PATH + "/login?error")
-					.successHandler(lastConnectionUpdateAuthenticationSuccessHandler).permitAll().and().logout()
-					.logoutRequestMatcher(new AntPathRequestMatcher("/" + BLOSSOM_BASE_PATH + "/logout"))
-					.deleteCookies(BLOSSOM_REMEMBER_ME_COOKIE_NAME).logoutSuccessUrl("/" + BLOSSOM_BASE_PATH + "/login")
-					.permitAll().and().rememberMe().rememberMeCookieName(BLOSSOM_REMEMBER_ME_COOKIE_NAME).and()
-					.exceptionHandling();
-		}
+  @Configuration
+  @Order(2)
+  public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
-	}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+      http.antMatcher("/" + BLOSSOM_API_BASE_PATH + "/**").csrf().disable().authorizeRequests()
+        .anyRequest()
+        .fullyAuthenticated().and().httpBasic().and().exceptionHandling().and().sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+  }
 
-	@Configuration
-	@Order(4)
-	public static class AppWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.antMatcher("/**").csrf().disable().authorizeRequests().anyRequest().permitAll();
-		}
-	}
+  @Configuration
+  @Order(3)
+  public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler;
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+      http.antMatcher("/" + BLOSSOM_BASE_PATH + "/**").authorizeRequests().anyRequest()
+        .fullyAuthenticated().and()
+        .formLogin().loginPage("/" + BLOSSOM_BASE_PATH + "/login")
+        .failureUrl("/" + BLOSSOM_BASE_PATH + "/login?error")
+        .successHandler(lastConnectionUpdateAuthenticationSuccessHandler).permitAll().and().logout()
+        .logoutRequestMatcher(new AntPathRequestMatcher("/" + BLOSSOM_BASE_PATH + "/logout"))
+        .deleteCookies(BLOSSOM_REMEMBER_ME_COOKIE_NAME)
+        .logoutSuccessUrl("/" + BLOSSOM_BASE_PATH + "/login")
+        .permitAll().and().rememberMe().rememberMeCookieName(BLOSSOM_REMEMBER_ME_COOKIE_NAME).and()
+        .exceptionHandling();
+    }
+
+  }
+
+  @Configuration
+  @Order(4)
+  public static class AppWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+      http.antMatcher("/**").csrf().disable().authorizeRequests().anyRequest().permitAll();
+    }
+  }
 }
