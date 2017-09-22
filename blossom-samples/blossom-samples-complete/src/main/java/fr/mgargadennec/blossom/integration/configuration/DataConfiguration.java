@@ -2,35 +2,41 @@ package fr.mgargadennec.blossom.integration.configuration;
 
 import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupService;
 import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
+import fr.mgargadennec.blossom.core.common.PluginConstants;
+import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
 import fr.mgargadennec.blossom.core.group.GroupDTO;
 import fr.mgargadennec.blossom.core.group.GroupService;
+import fr.mgargadennec.blossom.core.role.Role;
 import fr.mgargadennec.blossom.core.role.RoleDTO;
+import fr.mgargadennec.blossom.core.role.RoleDao;
 import fr.mgargadennec.blossom.core.role.RoleService;
 import fr.mgargadennec.blossom.core.user.User;
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
-import fr.mgargadennec.blossom.integration.SampleComplete;
-import org.fluttercode.datafactory.impl.DataFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.fluttercode.datafactory.impl.DataFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.plugin.core.PluginRegistry;
 
 /**
  * Created by Maël Gargadennnec on 09/06/2017.
  */
 @Configuration
 public class DataConfiguration {
+
   private final static Logger LOGGER = LoggerFactory.getLogger(DataConfiguration.class);
 
   @Bean
@@ -59,7 +65,8 @@ public class DataConfiguration {
         user.setCompany(df.getCity());
         user.setLocale(Locale.FRENCH);
         user.setCivility(random.nextBoolean() ? User.Civility.MAN : User.Civility.WOMAN);
-        user.setLastConnection(new Date(Instant.now().minus(random.nextInt(200000), ChronoUnit.SECONDS).toEpochMilli()));
+        user.setLastConnection(
+          new Date(Instant.now().minus(random.nextInt(200000), ChronoUnit.SECONDS).toEpochMilli()));
         user.setDescription(df.getRandomText(200, 600));
         return user;
       }).forEach(u -> service.create(u));
@@ -72,27 +79,36 @@ public class DataConfiguration {
       IntStream.range(0, 10).mapToObj(i -> {
         GroupDTO group = new GroupDTO();
         group.setName("Name-" + i);
-        group.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);
+        group.setDescription(
+          "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available."
+            + i);
         return group;
       }).forEach(g -> service.create(g));
     };
   }
 
   @Bean
-  public CommandLineRunner clrRole(RoleService service) {
+  public CommandLineRunner clrRole(RoleDao dao,
+    @Qualifier(PluginConstants.PLUGIN_PRIVILEGES)
+      PluginRegistry<PrivilegePlugin, String> privilegesRegistry) {
     return args -> {
       IntStream.range(0, 10).mapToObj(i -> {
-        RoleDTO role = new RoleDTO();
+        Role role = new Role();
         role.setName("Name-" + i);
-        role.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available." + i);
+        role.setDescription(
+          "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available."
+            + i);
+        role.setPrivileges(privilegesRegistry.getPlugins().stream().map(p -> p.privilege()).collect(
+          Collectors.toList()));
         return role;
-      }).forEach(g -> service.create(g));
+      }).forEach(role -> dao.create(role));
     };
   }
 
 
   @Bean
-  public CommandLineRunner clrAssociationUserGroup(UserService userService, GroupService groupService, AssociationUserGroupService service) {
+  public CommandLineRunner clrAssociationUserGroup(UserService userService,
+    GroupService groupService, AssociationUserGroupService service) {
     return args -> {
       Page<UserDTO> someUsers = userService.getAll(new PageRequest(0, 50));
       Page<GroupDTO> groupDTOS = groupService.getAll(new PageRequest(0, 50));
@@ -102,13 +118,15 @@ public class DataConfiguration {
           service.associate(user, group);
         });
 
-        LOGGER.info("Association to groups for user {} are {}", user, service.getAllLeft(user).size());
+        LOGGER
+          .info("Association to groups for user {} are {}", user, service.getAllLeft(user).size());
       });
     };
   }
 
   @Bean
-  public CommandLineRunner clrAssociationUserRole(UserService userService, RoleService roleService, AssociationUserRoleService service) {
+  public CommandLineRunner clrAssociationUserRole(UserService userService, RoleService roleService,
+    AssociationUserRoleService service) {
     return args -> {
       Page<UserDTO> someUsers = userService.getAll(new PageRequest(0, 50));
       Page<RoleDTO> someRoles = roleService.getAll(new PageRequest(0, 50));
@@ -118,7 +136,8 @@ public class DataConfiguration {
           service.associate(user, role);
           roleService.getOne(role.getId());
 
-          LOGGER.info("Association users / roles {} are {} for user {} and {} for role {}", user, service.getAllLeft(user).size(), user.getId(), service.getAllRight(role), role.getId());
+          LOGGER.info("Association users / roles {} are {} for user {} and {} for role {}", user,
+            service.getAllLeft(user).size(), user.getId(), service.getAllRight(role), role.getId());
         });
 
         userService.getOne(user.getId());

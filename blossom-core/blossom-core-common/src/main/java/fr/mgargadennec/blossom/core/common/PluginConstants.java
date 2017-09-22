@@ -13,4 +13,6 @@ public interface PluginConstants {
 
   String PLUGIN_INDEXATION_ENGINE = "indexationEnginePlugin";
 
+  String PLUGIN_PRIVILEGES = "privilegesPlugin";
+
 }

@@ -5,6 +5,10 @@ import fr.mgargadennec.blossom.core.common.event.CreatedEvent;
 import fr.mgargadennec.blossom.core.common.event.UpdatedEvent;
 import fr.mgargadennec.blossom.core.common.mapper.DTOMapper;
 import fr.mgargadennec.blossom.core.common.service.GenericCrudServiceImpl;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -12,15 +16,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
-
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
  */
 public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> implements UserService {
+
   private final static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
   private final PasswordEncoder passwordEncoder;
@@ -28,7 +28,9 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   private final UserMailService userMailService;
   private final Resource defaultAvatar;
 
-  public UserServiceImpl(UserDao dao, DTOMapper<User, UserDTO> mapper, ApplicationEventPublisher publisher, PasswordEncoder passwordEncoder, UserMailService userMailService, Resource defaultAvatar) {
+  public UserServiceImpl(UserDao dao, DTOMapper<User, UserDTO> mapper,
+    ApplicationEventPublisher publisher, PasswordEncoder passwordEncoder,
+    UserMailService userMailService, Resource defaultAvatar) {
     super(dao, mapper, publisher);
     this.passwordEncoder = passwordEncoder;
     this.userDao = dao;
@@ -38,7 +40,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
 
   @Override
   @Transactional
-  public UserDTO create(UserCreateForm userCreateForm) throws Exception{
+  public UserDTO create(UserCreateForm userCreateForm) throws Exception {
     User user = new User();
     user.setFirstname(userCreateForm.getFirstname());
     user.setLastname(userCreateForm.getLastname());
@@ -75,6 +77,22 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   }
 
   @Override
+  public UserDTO update(Long userId, UserUpdateForm userUpdateForm){
+    UserDTO toUpdate = this.getOne(userId);
+    toUpdate.setActivated(userUpdateForm.isActivated());
+    toUpdate.setFirstname(userUpdateForm.getFirstname());
+    toUpdate.setLastname(userUpdateForm.getLastname());
+    toUpdate.setDescription(userUpdateForm.getDescription());
+    toUpdate.setCivility(userUpdateForm.getCivility());
+    toUpdate.setCompany(userUpdateForm.getCompany());
+    toUpdate.setFunction(userUpdateForm.getFunction());
+    toUpdate.setEmail(userUpdateForm.getEmail());
+    toUpdate.setPhone(userUpdateForm.getPhone());
+
+    return this.update(userId, toUpdate);
+  }
+
+  @Override
   @Transactional
   public UserDTO updateActivation(long id, boolean activated) {
     UserDTO user = mapper.mapEntity(this.userDao.updateActivation(id, activated));
@@ -85,7 +103,8 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   @Override
   @Transactional
   public UserDTO updatePassword(Long id, String password) {
-    UserDTO user = mapper.mapEntity(this.userDao.updatePassword(id, passwordEncoder.encode(password)));
+    UserDTO user = mapper
+      .mapEntity(this.userDao.updatePassword(id, passwordEncoder.encode(password)));
     this.publisher.publishEvent(new UpdatedEvent<>(this, user));
     return user;
   }
@@ -101,7 +120,8 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   @Override
   @Transactional
   public void askPasswordChange(long userId) throws Exception {
-    UserDTO user = this.updatePassword(userId, passwordEncoder.encode(UUID.randomUUID().toString()));
+    UserDTO user = this
+      .updatePassword(userId, passwordEncoder.encode(UUID.randomUUID().toString()));
     userMailService.sendChangePasswordEmail(user);
   }
 
@@ -109,7 +129,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   @Transactional
   public void updateAvatar(long id, byte[] avatar) {
     UserDTO user = this.getOne(id);
-    if(user != null) {
+    if (user != null) {
       this.userDao.updateAvatar(id, avatar);
     }
     this.publisher.publishEvent(new UpdatedEvent<>(this, user));

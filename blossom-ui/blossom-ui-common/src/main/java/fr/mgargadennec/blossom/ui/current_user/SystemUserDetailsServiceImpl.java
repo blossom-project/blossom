@@ -2,8 +2,12 @@ package fr.mgargadennec.blossom.ui.current_user;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
 import fr.mgargadennec.blossom.core.user.UserDTO;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -12,17 +16,22 @@ public class SystemUserDetailsServiceImpl implements UserDetailsService {
   private final static String DEFAULT_IDENTIFIER = "system";
   private final static String DEFAULT_PASSWORD = "system";
 
+  private final PluginRegistry<PrivilegePlugin, String> privilegeRegistry;
   private final String identifier;
   private final String password;
 
-  public SystemUserDetailsServiceImpl() {
+  public SystemUserDetailsServiceImpl(
+    PluginRegistry<PrivilegePlugin, String> privilegeRegistry) {
+    this.privilegeRegistry = privilegeRegistry;
     this.identifier = DEFAULT_IDENTIFIER;
     this.password = DEFAULT_PASSWORD;
   }
 
-  public SystemUserDetailsServiceImpl(String identifier, String password) {
+  public SystemUserDetailsServiceImpl(PluginRegistry<PrivilegePlugin, String> privilegeRegistry,
+    String identifier, String password) {
     Preconditions.checkArgument(!Strings.isNullOrEmpty(identifier));
     Preconditions.checkArgument(!Strings.isNullOrEmpty(password));
+    this.privilegeRegistry = privilegeRegistry;
     this.identifier = identifier;
     this.password = password;
   }
@@ -40,7 +49,12 @@ public class SystemUserDetailsServiceImpl implements UserDetailsService {
       user.setPasswordHash(this.password);
       user.setFunction("System");
       user.setPhone("");
-      return new CurrentUser(user, "ACTUATOR");
+
+      Set<String> privileges = privilegeRegistry.getPlugins().stream()
+        .map(plugin -> plugin.privilege()).collect(
+          Collectors.toSet());
+
+      return new CurrentUser(user, privileges);
     }
 
     throw new UsernameNotFoundException(
