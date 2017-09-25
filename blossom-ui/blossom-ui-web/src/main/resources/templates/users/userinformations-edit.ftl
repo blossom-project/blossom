@@ -1,7 +1,8 @@
 <#import "/spring.ftl" as spring>
 <#import "/utils/civility.ftl" as gender>
 <#import "/utils/buttons.ftl" as buttons>
-<#import "/utils/notifications.ftl" as notifications>
+<#import "/utils/notification.ftl" as notification>
+<#import "/utils/modal.ftl" as modal>
 
 <form class="form form-horizontal" onsubmit="submit_userinformations(this);return false;">
 
@@ -42,7 +43,7 @@
     <div class="form-group <#if spring.status.error>has-error</#if>">
       <label class="col-sm-2 control-label"><@spring.message "users.user.properties.firstname"/></label>
       <div class="col-sm-10">
-        <input type="text" name="firstname" class="form-control" value="${userUpdateForm.firstname}" placeholder="<@spring.message "users.user.properties.firstname"/>">
+        <input type="text" name="firstname" class="form-control" value="${userUpdateForm.firstname!''}" placeholder="<@spring.message "users.user.properties.firstname"/>">
         <#list spring.status.errorMessages as error>
           <span class="help-block text-danger m-b-none">${error}</span>
         </#list>
@@ -53,7 +54,7 @@
     <div class="form-group <#if spring.status.error>has-error</#if>">
       <label class="col-sm-2 control-label"><@spring.message "users.user.properties.lastname"/></label>
       <div class="col-sm-10">
-        <input type="text" name="lastname" class="form-control" value="${userUpdateForm.lastname}" placeholder="<@spring.message "users.user.properties.lastname"/>">
+        <input type="text" name="lastname" class="form-control" value="${userUpdateForm.lastname!''}" placeholder="<@spring.message "users.user.properties.lastname"/>">
         <#list spring.status.errorMessages as error>
           <span class="help-block text-danger m-b-none">${error}</span>
         </#list>
@@ -64,7 +65,7 @@
     <div class="form-group <#if spring.status.error>has-error</#if>">
       <label class="col-sm-2 control-label"><@spring.message "users.user.properties.description"/></label>
       <div class="col-sm-10">
-        <textarea class="form-control" rows="5" name="description">${userUpdateForm.description}</textarea>
+        <textarea class="form-control" rows="5" name="description">${userUpdateForm.description!''}</textarea>
         <#list spring.status.errorMessages as error>
           <span class="help-block text-danger m-b-none">${error}</span>
         </#list>
@@ -92,7 +93,7 @@
     <div class="form-group <#if spring.status.error>has-error</#if>">
       <label class="col-sm-2 control-label"><@spring.message "users.user.properties.company"/></label>
       <div class="col-sm-10">
-        <input type="text" name="company" class="form-control" value="${userUpdateForm.company}" placeholder="<@spring.message "users.user.properties.company"/>">
+        <input type="text" name="company" class="form-control" value="${userUpdateForm.company!''}" placeholder="<@spring.message "users.user.properties.company"/>">
         <#list spring.status.errorMessages as error>
           <span class="help-block text-danger m-b-none">${error}</span>
         </#list>
@@ -103,7 +104,7 @@
     <div class="form-group <#if spring.status.error>has-error</#if>">
       <label class="col-sm-2 control-label"><@spring.message "users.user.properties.function"/></label>
       <div class="col-sm-10">
-        <input type="text" name="function" class="form-control" value="${userUpdateForm.function}" placeholder="<@spring.message "users.user.properties.function"/>">
+        <input type="text" name="function" class="form-control" value="${userUpdateForm.function!''}" placeholder="<@spring.message "users.user.properties.function"/>">
       <#list spring.status.errorMessages as error>
         <span class="help-block text-danger m-b-none">${error}</span>
       </#list>
@@ -115,7 +116,9 @@
     <div class="form-group">
       <label class="col-sm-2 control-label"><@spring.message "users.user.properties.avatar"/></label>
       <div class="col-sm-10 profile-image">
-        <img src="/blossom/administration/users/${user.id?c}/avatar" class="img-circle circle-border m-b-md" alt="profile">
+        <a data-target="#userAvatarUpdateForm" data-toggle="modal">
+          <img src="/blossom/administration/users/${user.id?c}/avatar" class="img-circle circle-border m-b-md" alt="profile">
+        </a>
       </div>
     </div>
 
@@ -125,7 +128,7 @@
     <div class="form-group <#if spring.status.error>has-error</#if>">
       <label class="col-sm-2 control-label"><@spring.message "users.user.properties.email"/></label>
       <div class="col-sm-10">
-        <input type="text" name="email" class="form-control" value="${userUpdateForm.email}" placeholder="<@spring.message "users.user.properties.email"/>">
+        <input type="text" name="email" class="form-control" value="${userUpdateForm.email!''}" placeholder="<@spring.message "users.user.properties.email"/>">
       <#list spring.status.errorMessages as error>
         <span class="help-block text-danger m-b-none">${error}</span>
       </#list>
@@ -136,7 +139,7 @@
     <div class="form-group <#if spring.status.error>has-error</#if>">
       <label class="col-sm-2 control-label"><@spring.message "users.user.properties.phone"/></label>
       <div class="col-sm-10">
-        <input type="text" name="phone" class="form-control" value="${userUpdateForm.phone}" placeholder="<@spring.message "users.user.properties.phone"/>">
+        <input type="text" name="phone" class="form-control" value="${userUpdateForm.phone!''}" placeholder="<@spring.message "users.user.properties.phone"/>">
         <#list spring.status.errorMessages as error>
           <span class="help-block text-danger m-b-none">${error}</span>
         </#list>
@@ -166,7 +169,7 @@
 
     $.post(edit, form.serialize()).done(function (responseText, textStatus, jqXHR) {
       $(targetSelector).html(responseText);
-    <@notifications.success message="updated"/>
+      <@notification.success message="updated"/>
       $(targetSelector+ ' > .ibox-content').removeClass("sk-loading");
     });
   };
@@ -181,3 +184,6 @@
     });
   };
 </script>
+
+
+<@modal.large id="userAvatarUpdateForm" href="/blossom/administration/users/${id?c}/_avatar/_edit"/>

@@ -1,6 +1,7 @@
 <#import "/spring.ftl" as spring>
 <#import "/utils/civility.ftl" as civility>
 <#import "/utils/buttons.ftl" as buttons>
+<#import "/utils/modal.ftl" as modal>
 
 <div class="ibox-content">
   <div class="sk-spinner sk-spinner-wave">
@@ -85,7 +86,7 @@
         <label class="col-sm-2 control-label"><@spring.message "users.user.properties.avatar"/></label>
 
         <div class="col-sm-10 profile-image">
-          <img src="/blossom/administration/users/${user.id?c}/avatar" class="img-circle circle-border m-b-md" alt="profile">
+          <img src="/blossom/administration/users/${user.id?c}/avatar" class="img-circle circle-border m-b-md" alt="profile" >
         </div>
       </div>
 
@@ -97,7 +98,6 @@
           <p class="form-control-static">${user.email}</p>
         </div>
       </div>
-
 
       <div class="form-group">
         <label class="col-sm-2 control-label">Phone</label>

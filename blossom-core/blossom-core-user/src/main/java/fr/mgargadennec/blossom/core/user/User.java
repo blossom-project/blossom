@@ -46,6 +46,7 @@ public class User extends AbstractEntity {
   @Column(name = "function")
   private String function;
 
+  @Lob
   @Column(name = "avatar")
   private byte[] avatar;
 
@@ -153,7 +154,7 @@ public class User extends AbstractEntity {
     return avatar;
   }
 
-  public void setAvatar(byte[] icon) {
+  public void setAvatar(byte[] avatar) {
     this.avatar = avatar;
   }
 
