@@ -1,7 +1,12 @@
 package fr.mgargadennec.blossom.ui.current_user;
 
+import static org.mockito.Matchers.any;
+
+import com.google.common.collect.Lists;
+import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
+import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,44 +17,46 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.Optional;
-
 @RunWith(MockitoJUnitRunner.class)
 public class CurrentUserDetailsServiceImplTest {
 
-    @Mock
-    private UserService userService;
+  @Mock
+  private UserService userService;
+  @Mock
+  private AssociationUserRoleService associationUserRoleService;
 
-    @InjectMocks
-    @Spy
-    private CurrentUserDetailsServiceImpl currentUserDetailsService;
+  @InjectMocks
+  @Spy
+  private CurrentUserDetailsServiceImpl currentUserDetailsService;
 
-    @Test(expected = UsernameNotFoundException.class)
-    public void loadUserByUsername_should_throw_exception_when_no_user_found() {
+  @Test(expected = UsernameNotFoundException.class)
+  public void loadUserByUsername_should_throw_exception_when_no_user_found() {
 
-        // ARRANGE
-        String identifier = "USER_18918";
-        Mockito.doReturn(Optional.empty()).when(this.userService).getByIdentifier(identifier);
+    // ARRANGE
+    String identifier = "USER_18918";
+    Mockito.doReturn(Optional.empty()).when(this.userService).getByIdentifier(identifier);
 
-        // ACT
-        this.currentUserDetailsService.loadUserByUsername(identifier);
-    }
+    // ACT
+    this.currentUserDetailsService.loadUserByUsername(identifier);
+  }
 
-    @Test
-    public void loadUserByUsername_should_return_user() {
+  @Test
+  public void loadUserByUsername_should_return_user() {
 
-        // ARRANGE
-        String identifier = "USER_18918";
+    // ARRANGE
+    String identifier = "USER_18918";
 
-        UserDTO user = new UserDTOBuilder().identifier(identifier).passwordHash("PASSWORD_HASH").toUserDTO();
-        Mockito.doReturn(Optional.of(user)).when(this.userService).getByIdentifier(identifier);
+    UserDTO user = new UserDTOBuilder().identifier(identifier).passwordHash("PASSWORD_HASH")
+      .toUserDTO();
+    Mockito.doReturn(Optional.of(user)).when(this.userService).getByIdentifier(identifier);
+    Mockito.doReturn(Lists.newArrayList()).when(this.associationUserRoleService).getAllLeft(any(UserDTO.class));
 
-        // ACT
-        CurrentUser result = this.currentUserDetailsService.loadUserByUsername(identifier);
+    // ACT
+    CurrentUser result = this.currentUserDetailsService.loadUserByUsername(identifier);
 
-        // ARRANGE
-        Assert.assertEquals(user, result.getUser());
+    // ARRANGE
+    Assert.assertEquals(user, result.getUser());
 
-    }
+  }
 
 }

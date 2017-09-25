@@ -21,6 +21,8 @@ public interface UserService extends CrudService<UserDTO> {
 
   Optional<UserDTO> getById(Long id);
 
+  UserDTO update(Long userId, UserUpdateForm userUpdateForm);
+
   UserDTO updateActivation(long id, boolean activated);
 
   UserDTO updatePassword(Long id, String password);

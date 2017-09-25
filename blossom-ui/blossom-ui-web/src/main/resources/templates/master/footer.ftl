@@ -65,6 +65,10 @@
 <!-- JSTree.js -->
 <script src="/js/plugins/jsTree/jstree.min.js"></script>
 
+<!-- Chosen-->
+<script src="/js/plugins/chosen/chosen.jquery.js"></script>
 
+<!-- Toaster-->
+<script src="/js/plugins/toastr/toastr.min.js"></script>
 
 </#macro>

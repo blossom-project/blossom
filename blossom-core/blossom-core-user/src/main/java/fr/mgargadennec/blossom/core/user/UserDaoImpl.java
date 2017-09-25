@@ -1,7 +1,6 @@
 package fr.mgargadennec.blossom.core.user;
 
 import fr.mgargadennec.blossom.core.common.dao.GenericCrudDaoImpl;
-
 import java.util.Date;
 
 /**
@@ -17,12 +16,15 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
 
   @Override
   protected User updateEntity(User originalEntity, User modifiedEntity) {
-    originalEntity.setIdentifier(modifiedEntity.getIdentifier());
-    originalEntity.setEmail(modifiedEntity.getEmail());
+    originalEntity.setActivated(modifiedEntity.isActivated());
     originalEntity.setFirstname(modifiedEntity.getFirstname());
     originalEntity.setLastname(modifiedEntity.getLastname());
-    originalEntity.setFunction(modifiedEntity.getFunction());
+    originalEntity.setCivility(modifiedEntity.getCivility());
+    originalEntity.setEmail(modifiedEntity.getEmail());
     originalEntity.setPhone(modifiedEntity.getPhone());
+    originalEntity.setDescription(modifiedEntity.getDescription());
+    originalEntity.setCompany(modifiedEntity.getCompany());
+    originalEntity.setFunction(modifiedEntity.getFunction());
     originalEntity.setAvatar(modifiedEntity.getAvatar());
 
     return originalEntity;

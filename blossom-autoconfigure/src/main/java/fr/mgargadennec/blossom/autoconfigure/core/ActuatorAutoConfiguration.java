@@ -6,6 +6,9 @@ import com.google.common.io.Resources;
 import fr.mgargadennec.blossom.core.common.actuator.ElasticsearchTraceRepository;
 import fr.mgargadennec.blossom.core.common.actuator.ElasticsearchTraceRepositoryImpl;
 import fr.mgargadennec.blossom.core.common.actuator.TraceStatisticsEndpoint;
+import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
+import fr.mgargadennec.blossom.core.common.utils.privilege.SimplePrivilege;
+import java.io.IOException;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.TraceRepositoryAutoConfiguration;
@@ -17,8 +20,6 @@ import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAu
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-
-import java.io.IOException;
 
 /**
  * Created by Maël Gargadennnec on 11/05/2017.
@@ -33,16 +34,30 @@ public class ActuatorAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(ElasticsearchTraceRepository.class)
-  public ElasticsearchTraceRepository traceRepository(Client client, @Value("classpath:/elasticsearch/traces.json") Resource resource) throws IOException {
+  public ElasticsearchTraceRepository traceRepository(Client client,
+    @Value("classpath:/elasticsearch/traces.json") Resource resource) throws IOException {
     String settings = Resources.toString(resource.getURL(), Charsets.UTF_8);
 
-    return new ElasticsearchTraceRepositoryImpl(client, "traces", Lists.newArrayList("/blossom.*", "/favicon.*", "/js.*", "/css.*", "/fonts.*", "/img.*", "/font-awesome.*"), settings);
+    return new ElasticsearchTraceRepositoryImpl(client, "traces", Lists
+      .newArrayList("/blossom.*", "/favicon.*", "/js.*", "/css.*", "/fonts.*", "/img.*",
+        "/font-awesome.*"), settings);
   }
 
   @Bean
   @ConditionalOnBean(ElasticsearchTraceRepository.class)
-  public TraceStatisticsEndpoint traceStatisticsEndpoint(ElasticsearchTraceRepository elasticsearchTraceRepository) {
+  public TraceStatisticsEndpoint traceStatisticsEndpoint(
+    ElasticsearchTraceRepository elasticsearchTraceRepository) {
     return new TraceStatisticsEndpoint(elasticsearchTraceRepository);
+  }
+
+  @Bean
+  public PrivilegePlugin actuatorReadPrivilegePlugin() {
+    return new SimplePrivilege("actuator", "read");
+  }
+
+  @Bean
+  public PrivilegePlugin actuatorWritePrivilegePlugin() {
+    return new SimplePrivilege("actuator", "write");
   }
 
 }

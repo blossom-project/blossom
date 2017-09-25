@@ -1,27 +1,65 @@
-<#macro tabulation tabnavlist idContent idPanelContent>
- <div class="row">
-    <div class="col-sm-12">
-      <div class="tabs-container">
-        <ul class="nav nav-tabs">
-            <#list tabnavlist as nav>
-                <#if nav.isActive>
-                <li class="active">
-                <#else>
-                <li>
-                </#if>
-                <a href="${nav.href}" onclick="${nav.onClick}" data-toggle="tab">
-                       <@spring.message "${nav.linkLabel}"/> 
-                    </a>
-                </li>
-            </#list>
-        </ul>
-        <div class="tab-content">
-            <div id="${idContent}" class="tab-pane active">
-                <div class="panel-body" id="${idPanelContent}">
-                </div>
+<#macro tabs id tabs>
+<div class="row">
+  <div class="col-sm-12">
+    <div id="${id}" class="tabs-container">
+      <ul class="nav nav-tabs">
+        <#list tabs as nav>
+          <li>
+            <a data-target="#${id}_tab_${nav?index}" data-toggle="tabajax">
+              <@spring.message "${nav.linkLabel}"/>
+            </a>
+          </li>
+        </#list>
+      </ul>
+
+      <div class="tab-content">
+        <#list tabs as nav>
+          <#assign tabId = id+'_tab_'+nav?index />
+          <div id="${tabId}" class="tab-pane" data-view="${nav.view}" <#if nav.edit??>data-edit="${nav.edit}"</#if>>
+            <div class="ibox-content sk-loading">
+              <div class="sk-spinner sk-spinner-wave">
+                <div class="sk-rect1"></div>
+                <div class="sk-rect2"></div>
+                <div class="sk-rect3"></div>
+                <div class="sk-rect4"></div>
+                <div class="sk-rect5"></div>
+              </div>
             </div>
-        </div>
+          </div>
+        </#list>
       </div>
     </div>
   </div>
+</div>
+
+
+<script>
+
+  var load_${id} = function(targetSelector){
+    $(targetSelector + ' > .ibox-content').addClass("sk-loading");
+
+    var view = $(targetSelector).data("view");
+
+    $.get(view).done(function (responseText, textStatus, jqXHR) {
+      if (jqXHR.status === 200) {
+        $(targetSelector).html(responseText);
+      }
+      $(targetSelector).removeClass("sk-loading");
+    });
+  };
+
+  $(document).ready(function () {
+    $('#${id}').on('click', '[data-toggle="tabajax"]', function (e) {
+      var $this = $(this);
+      var targetSelector = $this.data('target');
+      if(!$this.parent().hasClass("active")){
+        $this.tab('show');
+        load_${id}(targetSelector);
+      }
+      return false;
+    });
+
+    $('#${id}').find('[data-toggle="tabajax"]').first().click();
+  });
+</script>
 </#macro>

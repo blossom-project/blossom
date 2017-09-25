@@ -1,15 +1,30 @@
 package fr.mgargadennec.blossom.ui.web.administration.user;
 
+import com.google.common.base.Strings;
+import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupDTO;
+import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupService;
+import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleDTO;
+import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
+import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
+import fr.mgargadennec.blossom.core.group.GroupDTO;
+import fr.mgargadennec.blossom.core.group.GroupService;
+import fr.mgargadennec.blossom.core.role.RoleDTO;
+import fr.mgargadennec.blossom.core.role.RoleService;
+import fr.mgargadennec.blossom.core.user.User;
+import fr.mgargadennec.blossom.core.user.UserCreateForm;
+import fr.mgargadennec.blossom.core.user.UserDTO;
+import fr.mgargadennec.blossom.core.user.UserService;
+import fr.mgargadennec.blossom.core.user.UserUpdateForm;
+import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
+import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -27,24 +42,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.common.base.Strings;
-
-import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupDTO;
-import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupService;
-import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleDTO;
-import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
-import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
-import fr.mgargadennec.blossom.core.group.GroupDTO;
-import fr.mgargadennec.blossom.core.group.GroupService;
-import fr.mgargadennec.blossom.core.role.RoleDTO;
-import fr.mgargadennec.blossom.core.role.RoleService;
-import fr.mgargadennec.blossom.core.user.User;
-import fr.mgargadennec.blossom.core.user.UserCreateForm;
-import fr.mgargadennec.blossom.core.user.UserDTO;
-import fr.mgargadennec.blossom.core.user.UserService;
-import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
-import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
-
 /**
  * Created by Maël Gargadennnec on 05/05/2017.
  */
@@ -61,9 +58,11 @@ public class UsersController {
   private final GroupService groupService;
   private final SearchEngineImpl<UserDTO> searchEngine;
 
-  public UsersController(UserService userService, AssociationUserGroupService associationUserGroupService,
-      AssociationUserRoleService associationUserRoleService, RoleService roleService, GroupService groupService,
-      SearchEngineImpl<UserDTO> searchEngine) {
+  public UsersController(UserService userService,
+    AssociationUserGroupService associationUserGroupService,
+    AssociationUserRoleService associationUserRoleService, RoleService roleService,
+    GroupService groupService,
+    SearchEngineImpl<UserDTO> searchEngine) {
     this.userService = userService;
     this.associationUserGroupService = associationUserGroupService;
     this.associationUserRoleService = associationUserRoleService;
@@ -74,13 +73,13 @@ public class UsersController {
 
   @GetMapping
   public ModelAndView getUsersPage(@RequestParam(value = "q", required = false) String q,
-      @PageableDefault(size = 25) Pageable pageable, Model model) {
+    @PageableDefault(size = 25) Pageable pageable, Model model) {
     return tableView(q, pageable, model, "users/users");
   }
 
   @GetMapping("/_list")
   public ModelAndView getUsersTable(@RequestParam(value = "q", required = false) String q,
-      @PageableDefault(size = 25) Pageable pageable, Model model) {
+    @PageableDefault(size = 25) Pageable pageable, Model model) {
     return tableView(q, pageable, model, "users/table");
   }
 
@@ -107,8 +106,9 @@ public class UsersController {
   }
 
   @PostMapping("/_create")
-  public ModelAndView handleUserCreateForm(@Valid @ModelAttribute("userCreateForm") UserCreateForm userCreateForm,
-      BindingResult bindingResult, Model model) {
+  public ModelAndView handleUserCreateForm(
+    @Valid @ModelAttribute("userCreateForm") UserCreateForm userCreateForm,
+    BindingResult bindingResult, Model model) {
     if (bindingResult.hasErrors()) {
       return this.createView(userCreateForm, model);
     }
@@ -137,13 +137,50 @@ public class UsersController {
   }
 
   @GetMapping("/{id}/_informations")
-  public ModelAndView getUserInformations(@PathVariable Long id, Model model, HttpServletRequest request) {
+  public ModelAndView getUserInformations(@PathVariable Long id) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
       throw new NoSuchElementException(String.format("User=%s not found", id));
     }
-    model.addAttribute("user", user);
+    return this.viewUserInformationView(user);
+  }
+
+  @GetMapping("/{id}/_informations/_edit")
+  public ModelAndView getUserInformationsForm(@PathVariable Long id, Model model) {
+    UserDTO user = this.userService.getOne(id);
+    if (user == null) {
+      throw new NoSuchElementException(String.format("User=%s not found", id));
+    }
+    return this.updateUserInformationView(new UserUpdateForm(user), user, model);
+  }
+
+  @PostMapping("/{id}/_informations/_edit")
+  public ModelAndView handleUserInformationsUpdateForm(@PathVariable Long id,
+    @Valid @ModelAttribute("userUpdateForm") UserUpdateForm userUpdateForm,
+    BindingResult bindingResult, Model model) {
+    UserDTO user = this.userService.getOne(id);
+    if (user == null) {
+      throw new NoSuchElementException(String.format("User=%s not found", id));
+    }
+
+    if (bindingResult.hasErrors()) {
+      return this.updateUserInformationView(userUpdateForm, user, model);
+    }
+
+    UserDTO updatedUser = this.userService.update(id, userUpdateForm);
+    return this.viewUserInformationView(updatedUser);
+  }
+
+  private ModelAndView viewUserInformationView(UserDTO user) {
     return new ModelAndView("users/userinformations", "user", user);
+  }
+
+  private ModelAndView updateUserInformationView(UserUpdateForm userUpdateForm, UserDTO user,
+    Model model) {
+    model.addAttribute("userUpdateForm", userUpdateForm);
+    model.addAttribute("user", user);
+    model.addAttribute("civilities", User.Civility.values());
+    return new ModelAndView("users/userinformations-edit", model.asMap());
   }
 
   @PostMapping("/{id}/_delete")
@@ -176,7 +213,8 @@ public class UsersController {
     Page<GroupDTO> pagedGroups = new PageImpl<>(associatedGroups);
 
     List<GroupDTO> groups = groupService.getAll();
-    groups = groups.stream().filter(group -> !associatedGroups.contains(group)).collect(Collectors.toList());
+    groups = groups.stream().filter(group -> !associatedGroups.contains(group))
+      .collect(Collectors.toList());
     return this.groupsView(user, pagedGroups, groups, model);
   }
 
@@ -195,13 +233,15 @@ public class UsersController {
     Page<RoleDTO> pagedRoles = new PageImpl<>(associatedRoles);
 
     List<RoleDTO> roles = roleService.getAll();
-    roles = roles.stream().filter(role -> !associatedRoles.contains(role)).collect(Collectors.toList());
+    roles = roles.stream().filter(role -> !associatedRoles.contains(role))
+      .collect(Collectors.toList());
 
     return this.rolesView(user, pagedRoles, roles, model);
   }
 
   @PostMapping("/{id}/_edit")
-  public ModelAndView handleUpdateUserForm(@PathVariable Long id, @Valid @ModelAttribute("user") UserDTO user) {
+  public ModelAndView handleUpdateUserForm(@PathVariable Long id,
+    @Valid @ModelAttribute("user") UserDTO user) {
     try {
       this.userService.update(id, user);
     } catch (Exception e) {
@@ -214,14 +254,16 @@ public class UsersController {
     return new ModelAndView("users/update", "user", user);
   }
 
-  private ModelAndView groupsView(UserDTO user, Page<GroupDTO> pagedAssociatedGroups, List<GroupDTO> groups, Model model) {
+  private ModelAndView groupsView(UserDTO user, Page<GroupDTO> pagedAssociatedGroups,
+    List<GroupDTO> groups, Model model) {
     model.addAttribute("user", user);
     model.addAttribute("groups", groups);
     model.addAttribute("associatedGroups", pagedAssociatedGroups);
     return new ModelAndView("users/usergroups", model.asMap());
   }
 
-  private ModelAndView rolesView(UserDTO user, Page<RoleDTO> pagedRoles, List<RoleDTO> roles, Model model) {
+  private ModelAndView rolesView(UserDTO user, Page<RoleDTO> pagedRoles, List<RoleDTO> roles,
+    Model model) {
     model.addAttribute("user", user);
     model.addAttribute("associatedRoles", pagedRoles);
     model.addAttribute("roles", roles);
@@ -235,7 +277,8 @@ public class UsersController {
   }
 
   @PostMapping("/{id}/_change_password")
-  public String askForPasswordChange(@PathVariable Long id, RedirectAttributes redirectAttributes) throws Exception {
+  public String askForPasswordChange(@PathVariable Long id, RedirectAttributes redirectAttributes)
+    throws Exception {
     this.userService.askPasswordChange(id);
     redirectAttributes.addAttribute("reseted", true);
     return "redirect:/users/" + id;

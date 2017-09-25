@@ -1,9 +1,11 @@
 package fr.mgargadennec.blossom.ui.current_user;
 
 import fr.mgargadennec.blossom.core.user.UserDTO;
+import java.util.Set;
 import org.springframework.security.core.authority.AuthorityUtils;
 
 public class CurrentUser extends org.springframework.security.core.userdetails.User {
+
   private static final long serialVersionUID = 1L;
 
   private UserDTO user;
@@ -13,8 +15,15 @@ public class CurrentUser extends org.springframework.security.core.userdetails.U
     this.user = user;
   }
 
-  public CurrentUser(UserDTO user, String... roles) {
-    super(user.getIdentifier(), user.getPasswordHash(), AuthorityUtils.createAuthorityList(roles));
+  public CurrentUser(UserDTO user, String... privileges) {
+    super(user.getIdentifier(), user.getPasswordHash(),
+      AuthorityUtils.createAuthorityList(privileges));
+    this.user = user;
+  }
+
+  public CurrentUser(UserDTO user, Set<String> privileges) {
+    super(user.getIdentifier(), user.getPasswordHash(),
+      AuthorityUtils.createAuthorityList(privileges.toArray(new String[privileges.size()])));
     this.user = user;
   }
 

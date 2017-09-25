@@ -14,6 +14,8 @@ public class RoleDaoImpl extends GenericCrudDaoImpl<Role> implements RoleDao {
     protected Role updateEntity(Role originalEntity, Role modifiedEntity) {
         originalEntity.setName(modifiedEntity.getName());
         originalEntity.setDescription(modifiedEntity.getDescription());
+        originalEntity.getPrivileges().clear();
+        originalEntity.getPrivileges().addAll(modifiedEntity.getPrivileges());
         return originalEntity;
     }
 }

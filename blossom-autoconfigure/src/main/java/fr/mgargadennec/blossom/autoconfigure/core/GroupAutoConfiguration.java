@@ -6,6 +6,8 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import fr.mgargadennec.blossom.core.common.search.IndexationEngineImpl;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
+import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
+import fr.mgargadennec.blossom.core.common.utils.privilege.SimplePrivilege;
 import fr.mgargadennec.blossom.core.group.*;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
@@ -96,4 +98,23 @@ public class GroupAutoConfiguration {
         return factoryBean;
     }
 
+  @Bean
+  public PrivilegePlugin groupReadPrivilegePlugin() {
+    return new SimplePrivilege("group", "read");
+  }
+
+  @Bean
+  public PrivilegePlugin groupWritePrivilegePlugin() {
+    return new SimplePrivilege("group", "write");
+  }
+
+  @Bean
+  public PrivilegePlugin groupCreatePrivilegePlugin() {
+    return new SimplePrivilege("group", "create");
+  }
+
+  @Bean
+  public PrivilegePlugin groupDeletePrivilegePlugin() {
+    return new SimplePrivilege("group", "delete");
+  }
 }

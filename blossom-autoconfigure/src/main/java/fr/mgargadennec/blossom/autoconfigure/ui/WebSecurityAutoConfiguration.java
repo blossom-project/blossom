@@ -1,5 +1,8 @@
 package fr.mgargadennec.blossom.autoconfigure.ui;
 
+import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
+import fr.mgargadennec.blossom.core.common.PluginConstants;
+import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
 import fr.mgargadennec.blossom.core.user.UserService;
 import fr.mgargadennec.blossom.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
 import fr.mgargadennec.blossom.ui.current_user.CurrentUserDetailsServiceImpl;
@@ -13,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
+import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -39,15 +43,19 @@ public class WebSecurityAutoConfiguration {
   private static final String BLOSSOM_REMEMBER_ME_COOKIE_NAME = "blossom";
 
   @Bean
-  public UserDetailsService dbUserDetailsService(UserService userService) {
-    return new CurrentUserDetailsServiceImpl(userService);
+  public UserDetailsService dbUserDetailsService(UserService userService,
+    AssociationUserRoleService associationUserRoleService) {
+    return new CurrentUserDetailsServiceImpl(userService, associationUserRoleService);
   }
 
-
   @Bean
-  public UserDetailsService systemUserDetailsService(DefaultAccountProperties properties) {
+  public UserDetailsService systemUserDetailsService(
+    @Qualifier(PluginConstants.PLUGIN_PRIVILEGES)
+      PluginRegistry<PrivilegePlugin, String> privilegeRegistry,
+    DefaultAccountProperties properties) {
     if (properties.isEnabled()) {
-      return new SystemUserDetailsServiceImpl(properties.getIdentifier(), properties.getPassword());
+      return new SystemUserDetailsServiceImpl(privilegeRegistry, properties.getIdentifier(),
+        properties.getPassword());
     }
     return null;
   }

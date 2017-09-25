@@ -26,55 +26,27 @@
 </div>
 
 <div class="wrapper wrapper-content">
-<@tabulation.tabulation
-    tabnavlist=[
+<@tabulation.tabs
+    id="userContent"
+    tabs=[
         {
-            "isActive": true,
-            "href": "#userContent",
-            "onClick": "goToMainTab();",
-            "linkLabel": "panel.information"
+          "isActive": true,
+          "linkLabel": "panel.information",
+          "view": "/blossom/administration/users/${user.id?c}/_informations",
+          "edit": "/blossom/administration/users/${user.id?c}/_informations/_edit"
         },
         {
-            "isActive": false,
-            "href": "#userContent",
-            "onClick": "goToGroupsTab();",
-            "linkLabel": "users.user.groups"
+          "isActive": false,
+          "linkLabel": "users.user.groups",
+          "view": "/blossom/administration/users/${user.id?c}/_groups"
         },
         {
-            "isActive": false,
-            "href": "#userContent",
-            "onClick": "goToRolesTab();",
-            "linkLabel": "users.user.roles"
+          "isActive": false,
+          "view": "/blossom/administration/users/${user.id?c}/_roles",
+          "linkLabel": "users.user.roles"
         }
     ]
-    idContent="userContent"
-    idPanelContent="userPanelContent"
-   
+
 />
 </div>
-
-<script>
-    var goToGroupsTab =  function(){
-         $.get("/blossom/administration/users/${user.id?c}/_groups", function (data) {
-          $("#userPanelContent").html(data);
-        });
-    };
-    
-   var goToRolesTab =  function (){
-        $.get("/blossom/administration/users/${user.id?c}/_roles", function (data) {
-          $("#userPanelContent").html(data);
-        });
-    };
-    
-    var goToMainTab =  function(){
-        $.get("/blossom/administration/users/${user.id?c}/_informations", function (data) {
-          $("#userPanelContent").html(data);
-        });
-    };
-    
-    $(document).ready(function(){
-        goToMainTab();
-    });
-</script>
-
 </@master.default>
