@@ -2,10 +2,13 @@ package fr.mgargadennec.blossom.core.user;
 
 import fr.mgargadennec.blossom.core.common.dao.GenericCrudDaoImpl;
 import java.util.Date;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
  */
+@CacheConfig(cacheResolver = "blossomCacheResolver")
 public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   private final UserRepository userRepository;
 
@@ -25,8 +28,6 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
     originalEntity.setDescription(modifiedEntity.getDescription());
     originalEntity.setCompany(modifiedEntity.getCompany());
     originalEntity.setFunction(modifiedEntity.getFunction());
-    originalEntity.setAvatar(modifiedEntity.getAvatar());
-
     return originalEntity;
   }
 
@@ -42,6 +43,7 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
 
 
   @Override
+  @CachePut(key = "#a0+''")
   public User updateActivation(long id, boolean activated) {
     User user = repository.findOne(id);
     user.setActivated(activated);
@@ -49,6 +51,7 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   }
 
   @Override
+  @CachePut(key = "#a0+''")
   public User updatePassword(Long id, String encodedPassword) {
     User user = repository.findOne(id);
     user.setPasswordHash(encodedPassword);
@@ -56,6 +59,7 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   }
 
   @Override
+  @CachePut(key = "#a0+''")
   public User updateAvatar(Long id, byte[] avatar) {
     User user = repository.findOne(id);
     user.setAvatar(avatar);
@@ -63,6 +67,7 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   }
 
   @Override
+  @CachePut(key = "#a0+''")
   public User updateLastConnection(Long id, Date lastConnection) {
     User user = repository.findOne(id);
     if (user == null) {

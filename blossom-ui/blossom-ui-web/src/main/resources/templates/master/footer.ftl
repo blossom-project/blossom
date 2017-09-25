@@ -71,4 +71,7 @@
 <!-- Toaster-->
 <script src="/js/plugins/toastr/toastr.min.js"></script>
 
+<!-- Image cropper -->
+<script src="/js/plugins/cropper/cropper.min.js"></script>
+
 </#macro>
