@@ -74,4 +74,7 @@
 <!-- Image cropper -->
 <script src="/js/plugins/cropper/cropper.min.js"></script>
 
+<!-- Dual listbox -->
+<script src="/js/plugins/dualListbox/jquery.bootstrap-duallistbox.js"></script>
+
 </#macro>

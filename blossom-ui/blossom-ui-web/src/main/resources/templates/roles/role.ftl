@@ -35,12 +35,18 @@
     "view": "/blossom/administration/roles/${role.id?c}/_informations",
     "edit": "/blossom/administration/roles/${role.id?c}/_informations/_edit"
   },
-  {
+    {
     "isActive": false,
     "linkLabel": "roles.panel.privileges",
     "view": "/blossom/administration/roles/${role.id?c}/_privileges",
     "edit": "/blossom/administration/roles/${role.id?c}/_privileges/_edit"
-  }
+    },
+    {
+    "isActive": false,
+    "linkLabel": "roles.panel.users",
+    "view": "/blossom/administration/responsabilities/roles/${role.id?c}/users",
+    "edit": "/blossom/administration/responsabilities/roles/${role.id?c}/users/_edit"
+    }
   ]
 />
 </div>
