@@ -6,7 +6,7 @@ import fr.mgargadennec.blossom.core.common.search.IndexationEngineImpl;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
 import fr.mgargadennec.blossom.core.common.utils.action_token.ActionTokenService;
 import fr.mgargadennec.blossom.core.common.utils.mail.MailSender;
-import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
 import fr.mgargadennec.blossom.core.common.utils.privilege.SimplePrivilege;
 import fr.mgargadennec.blossom.core.user.*;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -101,26 +101,5 @@ public class UserAutoConfiguration {
     factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
     factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
     return factoryBean;
-  }
-
-
-  @Bean
-  public PrivilegePlugin userReadPrivilegePlugin() {
-    return new SimplePrivilege("user", "read");
-  }
-
-  @Bean
-  public PrivilegePlugin userWritePrivilegePlugin() {
-    return new SimplePrivilege("user", "write");
-  }
-
-  @Bean
-  public PrivilegePlugin userCreatePrivilegePlugin() {
-    return new SimplePrivilege("user", "create");
-  }
-
-  @Bean
-  public PrivilegePlugin userDeletePrivilegePlugin() {
-    return new SimplePrivilege("user", "delete");
   }
 }

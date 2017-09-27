@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import fr.mgargadennec.blossom.core.common.PluginConstants;
 import fr.mgargadennec.blossom.core.common.search.IndexationEngineImpl;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
-import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
 import fr.mgargadennec.blossom.core.common.utils.privilege.SimplePrivilege;
 import fr.mgargadennec.blossom.core.role.Role;
 import fr.mgargadennec.blossom.core.role.RoleDTO;
@@ -48,7 +48,7 @@ public class RoleAutoConfiguration {
 
   @Qualifier(PluginConstants.PLUGIN_PRIVILEGES)
   @Autowired
-  private PluginRegistry<PrivilegePlugin, String> privilegesRegistry;
+  private PluginRegistry<Privilege, String> privilegesRegistry;
 
   @Bean
   @ConditionalOnMissingBean(RoleService.class)
@@ -113,25 +113,5 @@ public class RoleAutoConfiguration {
     factoryBean.setMisfireInstruction(
       SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
     return factoryBean;
-  }
-
-  @Bean
-  public PrivilegePlugin roleReadPrivilegePlugin() {
-    return new SimplePrivilege("role", "read");
-  }
-
-  @Bean
-  public PrivilegePlugin roleWritePrivilegePlugin() {
-    return new SimplePrivilege("role", "write");
-  }
-
-  @Bean
-  public PrivilegePlugin roleCreatePrivilegePlugin() {
-    return new SimplePrivilege("role", "create");
-  }
-
-  @Bean
-  public PrivilegePlugin roleDeletePrivilegePlugin() {
-    return new SimplePrivilege("role", "delete");
   }
 }

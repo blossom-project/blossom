@@ -6,7 +6,7 @@ import fr.mgargadennec.blossom.core.common.mapper.MapperPlugin;
 import fr.mgargadennec.blossom.core.common.service.ReadOnlyServicePlugin;
 import fr.mgargadennec.blossom.core.common.utils.action_token.ActionTokenService;
 import fr.mgargadennec.blossom.core.common.utils.action_token.ActionTokenServiceImpl;
-import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -49,7 +49,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 @AutoConfigureBefore(ElasticsearchAutoConfiguration.class)
 @EnablePluginRegistries({
-  MapperPlugin.class, ReadOnlyServicePlugin.class, PrivilegePlugin.class})
+  MapperPlugin.class, ReadOnlyServicePlugin.class, Privilege.class})
 @EnableJpaAuditing
 @PropertySource({
   "classpath:/freemarker.properties",

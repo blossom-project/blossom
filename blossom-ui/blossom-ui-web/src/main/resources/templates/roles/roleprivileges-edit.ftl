@@ -14,25 +14,31 @@
     <div class="sk-rect5"></div>
   </div>
 
-    <div class="row">
-    <#list privileges?keys as namespace>
-      <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="form-group">
-          <label class="col-sm-4 control-label">${namespace}</label>
-          <div class="col-sm-8">
-            <#list privileges[namespace] as privilege>
-              <div>
-                <label>
-                  <input type="checkbox" value="${privilege.privilege()}" name="privileges" <#if rolePrivilegeUpdateForm.privileges?seq_contains(privilege.privilege())>checked="checked"</#if>>
-                ${privilege.right()}
-                </label>
+  <#list privileges?keys as namespace>
+    <div>
+      <h3 class="text-capitalize">${namespace}</h3>
+      <div class="row">
+        <#list privileges[namespace]?keys as feature>
+          <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="form-group">
+              <div class="col-sm-12">
+                <h5 class="text-capitalize">${feature}</h5>
+                <#list privileges[namespace][feature] as privilege>
+                  <div>
+                    <label>
+                      <input type="checkbox" value="${privilege.privilege()}" name="privileges" <#if rolePrivilegeUpdateForm.privileges?seq_contains(privilege.privilege())>checked="checked"</#if>>
+                    ${privilege.right()}
+                    </label>
+                  </div>
+                </#list>
               </div>
-            </#list>
+            </div>
           </div>
-        </div>
+        </#list>
       </div>
-    </#list>
     </div>
+    <#if !(namespace?is_last)> <hr/></#if>
+  </#list>
 </div>
 
 <div class="ibox-footer">

@@ -1,6 +1,6 @@
 package fr.mgargadennec.blossom.autoconfigure.module;
 
-import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
 import fr.mgargadennec.blossom.core.common.utils.privilege.SimplePrivilege;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
@@ -124,25 +124,5 @@ public class FileManagerAutoConfiguration {
     factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
     factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
     return factoryBean;
-  }
-
-  @Bean
-  public PrivilegePlugin fileManagerReadPrivilegePlugin() {
-    return new SimplePrivilege("file-manager", "read");
-  }
-
-  @Bean
-  public PrivilegePlugin fileManagerWritePrivilegePlugin() {
-    return new SimplePrivilege("file-manager", "write");
-  }
-
-  @Bean
-  public PrivilegePlugin fileManagerCreatePrivilegePlugin() {
-    return new SimplePrivilege("file-manager", "create");
-  }
-
-  @Bean
-  public PrivilegePlugin fileManagerDeletePrivilegePlugin() {
-    return new SimplePrivilege("file-manager", "delete");
   }
 }

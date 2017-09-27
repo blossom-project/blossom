@@ -23,6 +23,8 @@ public interface MenuItem extends MenuItemPlugin {
 
   MenuItem parent();
 
+  String privilege();
+
   Collection<MenuItem> items();
 
 }

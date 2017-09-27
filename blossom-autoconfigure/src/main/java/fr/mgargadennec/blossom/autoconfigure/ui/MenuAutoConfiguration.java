@@ -1,7 +1,15 @@
 package fr.mgargadennec.blossom.autoconfigure.ui;
 
+import static fr.mgargadennec.blossom.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
+
 import fr.mgargadennec.blossom.core.common.PluginConstants;
-import fr.mgargadennec.blossom.ui.menu.*;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
+import fr.mgargadennec.blossom.ui.menu.Menu;
+import fr.mgargadennec.blossom.ui.menu.MenuImpl;
+import fr.mgargadennec.blossom.ui.menu.MenuInterceptor;
+import fr.mgargadennec.blossom.ui.menu.MenuItem;
+import fr.mgargadennec.blossom.ui.menu.MenuItemBuilder;
+import fr.mgargadennec.blossom.ui.menu.MenuItemPlugin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -13,8 +21,6 @@ import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.plugin.core.config.EnablePluginRegistries;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import static fr.mgargadennec.blossom.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
 
 /**
  * Created by Maël Gargadennnec on 05/05/2017.
@@ -46,7 +52,11 @@ public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
   @Bean
   @Order(0)
   public MenuItem administrationMenuItem(MenuItemBuilder builder) {
-    return builder.key("administration").label("menu.administration", true).icon("glyphicon glyphicon-list-alt").link("/blossom/administration").order(Integer.MIN_VALUE +1).build();
+    return builder.key("administration")
+                  .label("menu.administration", true)
+                  .icon("glyphicon glyphicon-list-alt")
+                  .link("/blossom/administration")
+                  .order(Integer.MIN_VALUE +1).build();
   }
 
   @Bean

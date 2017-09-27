@@ -30,11 +30,11 @@ public class CurrentUserDetailsServiceImpl implements UserDetailsService {
     List<AssociationUserRoleDTO> associationsUserRoles = associationUserRoleService
       .getAllLeft(user);
 
-    Set<String> mergesPrivileges = associationsUserRoles.stream()
+    Set<String> mergedPrivileges = associationsUserRoles.stream()
       .flatMap(association -> association.getB().getPrivileges().stream()).collect(
         Collectors.toSet());
 
-    return new CurrentUser(user, mergesPrivileges);
+    return new CurrentUser(user, mergedPrivileges);
   }
 
 }

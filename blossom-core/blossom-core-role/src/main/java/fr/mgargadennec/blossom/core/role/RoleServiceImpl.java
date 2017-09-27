@@ -5,7 +5,7 @@ import fr.mgargadennec.blossom.core.common.event.CreatedEvent;
 import fr.mgargadennec.blossom.core.common.event.UpdatedEvent;
 import fr.mgargadennec.blossom.core.common.mapper.DTOMapper;
 import fr.mgargadennec.blossom.core.common.service.GenericCrudServiceImpl;
-import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,10 +22,10 @@ public class RoleServiceImpl extends GenericCrudServiceImpl<RoleDTO, Role> imple
 
   private static final Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
 
-  private final PluginRegistry<PrivilegePlugin, String> privilegesRegistry;
+  private final PluginRegistry<Privilege, String> privilegesRegistry;
 
   public RoleServiceImpl(RoleDao dao, DTOMapper<Role, RoleDTO> mapper,
-    PluginRegistry<PrivilegePlugin, String> privilegesRegistry,
+    PluginRegistry<Privilege, String> privilegesRegistry,
     ApplicationEventPublisher publisher) {
     super(dao, mapper, publisher);
     this.privilegesRegistry = privilegesRegistry;
@@ -63,8 +63,7 @@ public class RoleServiceImpl extends GenericCrudServiceImpl<RoleDTO, Role> imple
   }
 
   @Override
-  public Map<String, List<PrivilegePlugin>> getAvailablePrivileges() {
-    return privilegesRegistry.getPlugins().stream().collect(
-      Collectors.groupingBy(plugin -> plugin.namespace()));
+  public List<Privilege> getAvailablePrivileges() {
+    return privilegesRegistry.getPlugins();
   }
 }

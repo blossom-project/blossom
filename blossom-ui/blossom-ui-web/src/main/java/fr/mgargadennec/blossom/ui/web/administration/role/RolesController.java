@@ -1,7 +1,11 @@
 package fr.mgargadennec.blossom.ui.web.administration.role;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
 import fr.mgargadennec.blossom.core.role.RoleCreateForm;
 import fr.mgargadennec.blossom.core.role.RoleDTO;
 import fr.mgargadennec.blossom.core.role.RolePrivilegeUpdateForm;
@@ -9,7 +13,9 @@ import fr.mgargadennec.blossom.core.role.RoleService;
 import fr.mgargadennec.blossom.core.role.RoleUpdateForm;
 import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -202,13 +208,31 @@ public class RolesController {
 
   private ModelAndView viewRolePrivilegeView(RoleDTO role, Model model) {
     model.addAttribute("role", role);
-    model.addAttribute("privileges", this.roleService.getAvailablePrivileges());
+    model.addAttribute("privileges", groupPrivileges(this.roleService.getAvailablePrivileges()));
     return new ModelAndView("roles/roleprivileges", model.asMap());
   }
 
-  private ModelAndView updateRolePrivilegesView(RolePrivilegeUpdateForm rolePrivilegeUpdateForm, Model model) {
+  private ModelAndView updateRolePrivilegesView(RolePrivilegeUpdateForm rolePrivilegeUpdateForm,
+    Model model) {
     model.addAttribute("rolePrivilegeUpdateForm", rolePrivilegeUpdateForm);
-    model.addAttribute("privileges", this.roleService.getAvailablePrivileges());
+    model.addAttribute("privileges", groupPrivileges(this.roleService.getAvailablePrivileges()));
     return new ModelAndView("roles/roleprivileges-edit", model.asMap());
   }
+
+  private Map<String, Map<String, List<Privilege>>> groupPrivileges(List<Privilege> privileges) {
+    Map<String, Map<String, List<Privilege>>> groupedPrivileges = Maps.newTreeMap(Ordering.natural());
+    for (Privilege privilege : privileges) {
+      String namespace = privilege.namespace();
+      if (!groupedPrivileges.containsKey(namespace)) {
+        groupedPrivileges.put(namespace, Maps.newTreeMap(Ordering.natural()));
+      }
+      String feature = privilege.feature();
+      if (!groupedPrivileges.get(namespace).containsKey(feature)){
+        groupedPrivileges.get(namespace).put(feature, Lists.newArrayList());
+      }
+      groupedPrivileges.get(namespace).get(feature).add(privilege);
+    }
+    return groupedPrivileges;
+  }
+
 }

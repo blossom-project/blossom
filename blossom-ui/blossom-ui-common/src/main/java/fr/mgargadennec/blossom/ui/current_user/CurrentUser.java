@@ -7,7 +7,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 public class CurrentUser extends org.springframework.security.core.userdetails.User {
 
   private static final long serialVersionUID = 1L;
-
   private UserDTO user;
 
   public CurrentUser(UserDTO user) {
@@ -34,6 +33,10 @@ public class CurrentUser extends org.springframework.security.core.userdetails.U
   @Override
   public boolean isEnabled() {
     return this.user.isActivated();
+  }
+
+  public boolean hasPrivilege(String privilege) {
+    return this.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals(privilege));
   }
 
   @Override

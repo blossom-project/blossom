@@ -6,7 +6,7 @@ import com.google.common.io.Resources;
 import fr.mgargadennec.blossom.core.common.actuator.ElasticsearchTraceRepository;
 import fr.mgargadennec.blossom.core.common.actuator.ElasticsearchTraceRepositoryImpl;
 import fr.mgargadennec.blossom.core.common.actuator.TraceStatisticsEndpoint;
-import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
 import fr.mgargadennec.blossom.core.common.utils.privilege.SimplePrivilege;
 import java.io.IOException;
 import org.elasticsearch.client.Client;
@@ -49,15 +49,4 @@ public class ActuatorAutoConfiguration {
     ElasticsearchTraceRepository elasticsearchTraceRepository) {
     return new TraceStatisticsEndpoint(elasticsearchTraceRepository);
   }
-
-  @Bean
-  public PrivilegePlugin actuatorReadPrivilegePlugin() {
-    return new SimplePrivilege("actuator", "read");
-  }
-
-  @Bean
-  public PrivilegePlugin actuatorWritePrivilegePlugin() {
-    return new SimplePrivilege("actuator", "write");
-  }
-
 }

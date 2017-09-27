@@ -1,11 +1,9 @@
 package fr.mgargadennec.blossom.autoconfigure.ui.web.administration;
 
 import fr.mgargadennec.blossom.autoconfigure.core.CommonAutoConfiguration;
-import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupService;
-import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
-import fr.mgargadennec.blossom.core.group.GroupService;
-import fr.mgargadennec.blossom.core.role.RoleService;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
+import fr.mgargadennec.blossom.core.common.utils.privilege.SimplePrivilege;
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
 import fr.mgargadennec.blossom.ui.menu.MenuItem;
@@ -28,14 +26,42 @@ public class WebAdministrationUserAutoConfiguration {
   @Bean
   public MenuItem administrationUserMenuItem(MenuItemBuilder builder,
     @Qualifier("administrationMenuItem") MenuItem administrationMenuItem) {
-    return builder.key("users").label("menu.administration.users", true)
+    return builder
+      .key("users")
+      .label("menu.administration.users", true)
       .link("/blossom/administration/users")
-      .icon("fa fa-user").order(1).parent(administrationMenuItem).build();
+      .icon("fa fa-user")
+      .order(1)
+      .privilege(userReadPrivilege())
+      .parent(administrationMenuItem)
+      .build();
   }
 
   @Bean
-  public UsersController usersController(UserService userService, SearchEngineImpl<UserDTO> searchEngine) {
+  public UsersController usersController(UserService userService,
+    SearchEngineImpl<UserDTO> searchEngine) {
     return new UsersController(userService, searchEngine);
+  }
+
+
+  @Bean
+  public Privilege userReadPrivilege() {
+    return new SimplePrivilege("administration", "user", "read");
+  }
+
+  @Bean
+  public Privilege userWritePrivilege() {
+    return new SimplePrivilege("administration", "user", "write");
+  }
+
+  @Bean
+  public Privilege userCreatePrivilege() {
+    return new SimplePrivilege("administration", "user", "create");
+  }
+
+  @Bean
+  public Privilege userDeletePrivilege() {
+    return new SimplePrivilege("administration", "user", "delete");
   }
 
 }

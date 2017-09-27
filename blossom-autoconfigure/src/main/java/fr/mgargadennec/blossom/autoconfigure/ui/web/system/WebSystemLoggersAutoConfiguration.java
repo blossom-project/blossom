@@ -1,5 +1,7 @@
 package fr.mgargadennec.blossom.autoconfigure.ui.web.system;
 
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
+import fr.mgargadennec.blossom.core.common.utils.privilege.SimplePrivilege;
 import fr.mgargadennec.blossom.ui.menu.MenuItem;
 import fr.mgargadennec.blossom.ui.menu.MenuItemBuilder;
 import fr.mgargadennec.blossom.ui.web.system.logger.LoggerManagerController;
@@ -17,14 +19,27 @@ import org.springframework.context.annotation.Configuration;
 public class WebSystemLoggersAutoConfiguration {
 
   @Bean
-  public MenuItem systemLoggerManagerMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
-    return builder.key("loggerManager").label("menu.system.loggers", true).link("/blossom/system/loggers").order(4).icon("fa fa-pencil").parent(systemMenuItem).build();
+  public MenuItem systemLoggerManagerMenuItem(MenuItemBuilder builder,
+    @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
+    return builder.key("loggerManager")
+      .label("menu.system.loggers", true)
+      .link("/blossom/system/loggers")
+      .order(4)
+      .icon("fa fa-pencil")
+      .privilege(loggersPrivilegePlugin())
+      .parent(systemMenuItem)
+      .build();
   }
 
 
   @Bean
   public LoggerManagerController loggerManagerController(LoggersEndpoint loggersEndpoint) {
     return new LoggerManagerController(loggersEndpoint);
+  }
+
+  @Bean
+  public Privilege loggersPrivilegePlugin() {
+    return new SimplePrivilege("system","logger", "manager");
   }
 
 }
