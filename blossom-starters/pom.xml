@@ -20,5 +20,6 @@
     <module>blossom-starter-ui-web</module>
     <module>blossom-starter-ui-api</module>
     <module>blossom-starter-file-manager</module>
+    <module>blossom-starter-articles</module>
   </modules>
 </project>

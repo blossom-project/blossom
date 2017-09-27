@@ -5,30 +5,26 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>fr.mgargadennec.blossom</groupId>
-    <artifactId>blossom-ui</artifactId>
+    <artifactId>blossom-starters</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>blossom-ui-web</artifactId>
+  <artifactId>blossom-starter-articles</artifactId>
   <packaging>jar</packaging>
+
+  <name>Blossom Starters : Starter Articles</name>
+  <url>http://maven.apache.org</url>
 
   <dependencies>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
-      <artifactId>blossom-ui-common</artifactId>
+      <artifactId>blossom-starter-basic</artifactId>
       <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>fr.mgargadennec.blossom</groupId>
-      <artifactId>blossom-module-filemanager</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
       <artifactId>blossom-module-articles</artifactId>
       <version>1.0.0-SNAPSHOT</version>
-      <optional>true</optional>
     </dependency>
   </dependencies>
 </project>

@@ -28,7 +28,6 @@ initializr:
           description: Blossom UI Api starter (Back-office)
           groupId: fr.mgargadennec.blossom
           artifactId: blossom-starter-ui-api
-
     - name: Miscellanous
       description: Blossom modules to add some functionnality in your application !
       dependencies:
@@ -37,3 +36,8 @@ initializr:
           description: File storing and serving feature and tools
           groupId: fr.mgargadennec.blossom
           artifactId: blossom-starter-file-manager
+        - name: Blossom Articles
+          id: blossom-starter-articles
+          description: Richtext articles and front serving
+          groupId: fr.mgargadennec.blossom
+          artifactId: blossom-starter-articles
