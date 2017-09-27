@@ -158,16 +158,16 @@
       <#if value?? && !(value?is_string)>${value?date("yyyy-MM-dd")}</#if>
     </#if>
     <#if type == "date">
-      <#if value?? !(value?is_string)>${value?date}</#if>
+      <#if value?? && !(value?is_string)>${value?date}</#if>
     </#if>
     <#if type == "time">
-      <#if value?? !(value?is_string)>${value?time}</#if>
+      <#if value?? && !(value?is_string)>${value?time}</#if>
     </#if>
     <#if type == "datetime">
-      <#if value?? !(value?is_string)>${value?datetime}</#if>
+      <#if value?? && !(value?is_string)>${value?datetime}</#if>
     </#if>
     <#if type == "boolean">
-      <#if value?? !(value?is_string)>${value?string("oui","non")}</#if>
+      <#if value?? && !(value?is_string)><@spring.message value?string('yes','no')/></#if>
     </#if>
     <#if type == "enum">
       <#assign enumLabel = "${label}.${value.toString()}.label" />
