@@ -1,5 +1,7 @@
 package fr.mgargadennec.blossom.autoconfigure.ui.web.module;
 
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
+import fr.mgargadennec.blossom.core.common.utils.privilege.SimplePrivilege;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -38,8 +40,14 @@ public class WebFileManagerAutoConfiguration {
   @Bean
   public MenuItem contentFileManagerMenuItem(MenuItemBuilder builder,
       @Qualifier("contentMenuItem") MenuItem contentMenuItem) {
-    return builder.key("filemanager").label("menu.content.filemanager", true).link("/blossom/content/filemanager")
-        .icon("fa fa-photo").order(0).parent(contentMenuItem).build();
+    return builder
+      .key("filemanager")
+      .label("menu.content.filemanager", true)
+      .link("/blossom/content/filemanager")
+      .icon("fa fa-photo")
+      .order(0)
+      .privilege(fileManagerReadPrivilegePlugin())
+      .parent(contentMenuItem).build();
   }
 
   @Bean
@@ -50,5 +58,25 @@ public class WebFileManagerAutoConfiguration {
   @Bean
   public FileController fileController(FileService fileService) {
     return new FileController(fileService);
+  }
+
+  @Bean
+  public Privilege fileManagerReadPrivilegePlugin() {
+    return new SimplePrivilege("content","file-manager", "read");
+  }
+
+  @Bean
+  public Privilege fileManagerWritePrivilegePlugin() {
+    return new SimplePrivilege("content","file-manager", "write");
+  }
+
+  @Bean
+  public Privilege fileManagerCreatePrivilegePlugin() {
+    return new SimplePrivilege("content","file-manager", "create");
+  }
+
+  @Bean
+  public Privilege fileManagerDeletePrivilegePlugin() {
+    return new SimplePrivilege("content","file-manager", "delete");
   }
 }

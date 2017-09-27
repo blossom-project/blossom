@@ -2,7 +2,7 @@ package fr.mgargadennec.blossom.autoconfigure.ui;
 
 import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.mgargadennec.blossom.core.common.PluginConstants;
-import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
 import fr.mgargadennec.blossom.core.user.UserService;
 import fr.mgargadennec.blossom.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
 import fr.mgargadennec.blossom.ui.current_user.CurrentUserDetailsServiceImpl;
@@ -51,7 +51,7 @@ public class WebSecurityAutoConfiguration {
   @Bean
   public UserDetailsService systemUserDetailsService(
     @Qualifier(PluginConstants.PLUGIN_PRIVILEGES)
-      PluginRegistry<PrivilegePlugin, String> privilegeRegistry,
+      PluginRegistry<Privilege, String> privilegeRegistry,
     DefaultAccountProperties properties) {
     if (properties.isEnabled()) {
       return new SystemUserDetailsServiceImpl(privilegeRegistry, properties.getIdentifier(),

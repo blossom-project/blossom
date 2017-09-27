@@ -3,7 +3,7 @@ package fr.mgargadennec.blossom.integration.configuration;
 import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupService;
 import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.mgargadennec.blossom.core.common.PluginConstants;
-import fr.mgargadennec.blossom.core.common.utils.privilege.PrivilegePlugin;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
 import fr.mgargadennec.blossom.core.group.GroupDTO;
 import fr.mgargadennec.blossom.core.group.GroupService;
 import fr.mgargadennec.blossom.core.role.Role;
@@ -65,8 +65,6 @@ public class DataConfiguration {
         user.setCompany(df.getCity());
         user.setLocale(Locale.FRENCH);
         user.setCivility(random.nextBoolean() ? User.Civility.MAN : User.Civility.WOMAN);
-        user.setLastConnection(
-          new Date(Instant.now().minus(random.nextInt(200000), ChronoUnit.SECONDS).toEpochMilli()));
         user.setDescription(df.getRandomText(200, 600));
         return user;
       }).forEach(u -> service.create(u));
@@ -90,7 +88,7 @@ public class DataConfiguration {
   @Bean
   public CommandLineRunner clrRole(RoleDao dao,
     @Qualifier(PluginConstants.PLUGIN_PRIVILEGES)
-      PluginRegistry<PrivilegePlugin, String> privilegesRegistry) {
+      PluginRegistry<Privilege, String> privilegesRegistry) {
     return args -> {
       IntStream.range(0, 10).mapToObj(i -> {
         Role role = new Role();

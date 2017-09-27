@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring>
+<#import "/utils/privilege.ftl" as privilege>
 
 
 <#macro drawer menu currentUser>
@@ -23,27 +24,31 @@
         </div>
       </li>
       <#list menu.items() as menuItem>
-        <li data-menuId="${menuItem.key()}" <#if currentMenu?seq_contains(menuItem.key())>class="active"</#if>>
-          <#if menuItem.link()??><a href="${menuItem.link()}"></#if>
-          <#if menuItem.icon()??><i class="${menuItem.icon()}"></i></#if>
-          <span class="nav-label"><@spring.messageText menuItem.label() menuItem.label()/></span>
-          <#if menuItem.items()?size gt 0>
-            <span class="fa arrow"></span>
-          </#if>
-          <#if menuItem.link??></a></#if>
-          <#if menuItem.items()?size gt 0>
-            <ul class="nav nav-second-level collapse">
-              <#list menuItem.items() as subMenuItem>
-                <li data-menuId="${subMenuItem.key()}" <#if currentMenu?seq_contains(subMenuItem.key())>class="active"</#if>>
-                  <#if subMenuItem.link()??><a href="${subMenuItem.link()}"></#if>
-                  <#if subMenuItem.icon()??><i class="${subMenuItem.icon()}"></i></#if>
-                  <span class="nav-label"><@spring.messageText subMenuItem.label() subMenuItem.label()/></span>
-                  <#if subMenuItem.link??></a></#if>
-                </li>
-              </#list>
-            </ul>
-          </#if>
-        </li>
+        <@privilege.has privilege=menuItem.privilege() currentUser=currentUser>
+          <li data-menuId="${menuItem.key()}" <#if currentMenu?seq_contains(menuItem.key())>class="active"</#if>>
+            <#if menuItem.link()??><a href="${menuItem.link()}"></#if>
+            <#if menuItem.icon()??><i class="${menuItem.icon()}"></i></#if>
+            <span class="nav-label"><@spring.messageText menuItem.label() menuItem.label()/></span>
+            <#if menuItem.items()?size gt 0>
+              <span class="fa arrow"></span>
+            </#if>
+            <#if menuItem.link??></a></#if>
+            <#if menuItem.items()?size gt 0>
+              <ul class="nav nav-second-level collapse">
+                <#list menuItem.items() as subMenuItem>
+                  <@privilege.has privilege=subMenuItem.privilege() currentUser=currentUser>
+                  <li data-menuId="${subMenuItem.key()}" <#if currentMenu?seq_contains(subMenuItem.key())>class="active"</#if>>
+                    <#if subMenuItem.link()??><a href="${subMenuItem.link()}"></#if>
+                    <#if subMenuItem.icon()??><i class="${subMenuItem.icon()}"></i></#if>
+                    <span class="nav-label"><@spring.messageText subMenuItem.label() subMenuItem.label()/></span>
+                    <#if subMenuItem.link??></a></#if>
+                  </li>
+                  </@privilege.has>
+                </#list>
+              </ul>
+            </#if>
+          </li>
+        </@privilege.has>
       </#list>
     </ul>
   </div>
