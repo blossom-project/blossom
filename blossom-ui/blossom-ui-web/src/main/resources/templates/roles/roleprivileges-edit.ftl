@@ -5,28 +5,39 @@
 
 <form class="form form-horizontal" onsubmit="submit_roleprivileges(this);return false;">
 
-<div class="ibox-content" >
-  <div class="sk-spinner sk-spinner-wave">
-    <div class="sk-rect1"></div>
-    <div class="sk-rect2"></div>
-    <div class="sk-rect3"></div>
-    <div class="sk-rect4"></div>
-    <div class="sk-rect5"></div>
-  </div>
+  <div class="ibox-content">
+    <div class="sk-spinner sk-spinner-wave">
+      <div class="sk-rect1"></div>
+      <div class="sk-rect2"></div>
+      <div class="sk-rect3"></div>
+      <div class="sk-rect4"></div>
+      <div class="sk-rect5"></div>
+    </div>
 
   <#list privileges?keys as namespace>
     <div>
       <h3 class="text-capitalize">${namespace}</h3>
       <div class="row">
         <#list privileges[namespace]?keys as feature>
-          <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+          <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 feature-${feature}">
             <div class="form-group">
               <div class="col-sm-12">
-                <h5 class="text-capitalize">${feature}</h5>
+                <h5 class="text-capitalize">
+                  <#assign featurePrivilege=namespace+':'+feature+':*'/>
+                  <#assign allFeatureEnabled = rolePrivilegeUpdateForm.privileges?seq_contains(featurePrivilege)/>
+                  <input onclick="select_all_feature(this, '${feature}');"
+                         type="checkbox"
+                         value="${featurePrivilege}" name="privileges"
+                         <#if allFeatureEnabled>checked="checked"</#if>>
+                ${feature}
+                </h5>
+
                 <#list privileges[namespace][feature] as privilege>
-                  <div>
+                  <div class="m-l-md">
                     <label>
-                      <input type="checkbox" value="${privilege.privilege()}" name="privileges" <#if rolePrivilegeUpdateForm.privileges?seq_contains(privilege.privilege())>checked="checked"</#if>>
+                      <input type="checkbox" value="${privilege.privilege()}" name="privileges"
+                             <#if rolePrivilegeUpdateForm.privileges?seq_contains(privilege.privilege())>checked="checked"</#if>
+                             <#if allFeatureEnabled>onclick="return false;" readonly</#if>>
                     ${privilege.right()}
                     </label>
                   </div>
@@ -37,42 +48,41 @@
         </#list>
       </div>
     </div>
-    <#if !(namespace?is_last)> <hr/></#if>
+    <#if !(namespace?is_last)>
+      <hr/></#if>
   </#list>
-</div>
-
-<div class="ibox-footer">
-  <div class="text-right">
-    <button class="btn btn-default btn-view" type="button" onclick="cancel_roleprivileges(this);">
-      <@spring.message "cancel"/>
-    </button>
-
-    <button class="btn btn-primary btn-view" type="submit">
-      <@spring.message "save"/>
-    </button>
   </div>
-</div>
+
+  <div class="ibox-footer">
+    <div class="text-right">
+      <button class="btn btn-default btn-view" type="button" onclick="cancel_roleprivileges(this);">
+      <@spring.message "cancel"/>
+      </button>
+
+      <button class="btn btn-primary btn-view" type="submit">
+      <@spring.message "save"/>
+      </button>
+    </div>
+  </div>
 
 </form>
 
-
-
 <script>
   var submit_roleprivileges = function (button) {
-    var targetSelector = '#'+$(button).closest(".tab-pane").attr('id');
+    var targetSelector = '#' + $(button).closest(".tab-pane").attr('id');
     $(targetSelector + ' > .ibox-content').addClass("sk-loading");
     var edit = $(targetSelector).data("edit");
     var form = $(targetSelector + ' > form');
 
     $.post(edit, form.serialize()).done(function (responseText, textStatus, jqXHR) {
       $(targetSelector).html(responseText);
-      <@notification.success message="updated"/>
-      $(targetSelector+ ' > .ibox-content').removeClass("sk-loading");
+    <@notification.success message="updated"/>
+      $(targetSelector + ' > .ibox-content').removeClass("sk-loading");
     });
   };
 
   var cancel_roleprivileges = function (button) {
-    var targetSelector = '#'+$(button).closest(".tab-pane").attr('id');
+    var targetSelector = '#' + $(button).closest(".tab-pane").attr('id');
     $(targetSelector + ' > .ibox-content').addClass("sk-loading");
     var view = $(targetSelector).data("view");
     $.get(view).done(function (responseText, textStatus, jqXHR) {
@@ -80,4 +90,25 @@
       $(targetSelector).removeClass("sk-loading");
     });
   };
+
+  var select_all_feature = function (element, feature) {
+    var featureDOM = $(element).closest(".feature-" + feature);
+    var checkboxes = featureDOM.find("input[type=checkbox]");
+
+    $.each(checkboxes, function (index, checkbox) {
+      console.log(checkbox, element);
+      if (!(checkbox == element)) {
+        if ($(element).is(':checked')) {
+          $(checkbox).attr('checked', true);
+          $(checkbox).attr('readonly', "");
+          checkbox.onclick = function () {
+            return false;
+          }
+        } else {
+          $(checkbox).removeAttr('readonly');
+          checkbox.onclick = null;
+        }
+      }
+    })
+  }
 </script>

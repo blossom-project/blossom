@@ -22,9 +22,13 @@
             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
               <div class="form-group">
                 <div class="col-sm-12">
-                  <h5 class="text-capitalize">${feature}</h5>
+                  <h5 class="text-capitalize">
+                    <#assign featurePrivilege=namespace+':'+feature+':*'/>
+                    <input type="checkbox" value="${featurePrivilege}" name="privileges" disabled <#if role.privileges?? && role.privileges?seq_contains(featurePrivilege)>checked="checked"</#if>>
+                    ${feature}
+                  </h5>
                   <#list privileges[namespace][feature] as privilege>
-                    <div>
+                    <div class="m-l-md">
                       <label>
                         <input type="checkbox" value="${privilege.privilege()}" name="privileges" disabled <#if role.privileges?? && role.privileges?seq_contains(privilege.privilege())>checked="checked"</#if>>
                       ${privilege.right()}

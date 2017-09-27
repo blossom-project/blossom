@@ -32,10 +32,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  */
 @Configuration
 @ConditionalOnWebApplication
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 @PropertySource("classpath:/security.properties")
 @EnableConfigurationProperties(DefaultAccountProperties.class)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityAutoConfiguration {
 
   private static final String BLOSSOM_BASE_PATH = "blossom";
