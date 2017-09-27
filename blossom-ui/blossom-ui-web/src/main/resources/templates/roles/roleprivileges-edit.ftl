@@ -1,7 +1,7 @@
 <#import "/spring.ftl" as spring>
 <#import "/utils/civility.ftl" as civility>
 <#import "/utils/buttons.ftl" as buttons>
-<#import "/utils/notifications.ftl" as notifications>
+<#import "/utils/notification.ftl" as notification>
 
 <form class="form form-horizontal" onsubmit="submit_roleprivileges(this);return false;">
 
@@ -60,7 +60,7 @@
 
     $.post(edit, form.serialize()).done(function (responseText, textStatus, jqXHR) {
       $(targetSelector).html(responseText);
-      <@notifications.success message="updated"/>
+      <@notification.success message="updated"/>
       $(targetSelector+ ' > .ibox-content').removeClass("sk-loading");
     });
   };

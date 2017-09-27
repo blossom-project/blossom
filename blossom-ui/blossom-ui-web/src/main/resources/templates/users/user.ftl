@@ -38,12 +38,14 @@
         {
           "isActive": false,
           "linkLabel": "users.user.groups",
-          "view": "/blossom/administration/users/${user.id?c}/_groups"
+          "view": "/blossom/administration/memberships/users/${user.id?c}/groups",
+          "edit": "/blossom/administration/memberships/users/${user.id?c}/groups/_edit"
         },
         {
           "isActive": false,
-          "view": "/blossom/administration/users/${user.id?c}/_roles",
-          "linkLabel": "users.user.roles"
+          "linkLabel": "users.user.roles",
+          "view": "/blossom/administration/responsabilities/users/${user.id?c}/roles",
+          "edit": "/blossom/administration/responsabilities/users/${user.id?c}/roles/_edit"
         }
     ]
 

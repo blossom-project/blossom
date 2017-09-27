@@ -44,7 +44,7 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
     Preconditions.checkNotNull(b);
 
     ASSOCIATION association = repository.findOneByAAndB(a, b);
-    if (repository.findOneByAAndB(a, b) != null) {
+    if (repository.findOneByAAndB(a, b) == null) {
       throw new RuntimeException("Association does not exists !");
     }
     this.repository.delete(association);

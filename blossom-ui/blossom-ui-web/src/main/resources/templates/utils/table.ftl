@@ -5,95 +5,94 @@
 
 <#macro table page columns iconPath="" tableId="">
 <div class="table-responsive">
-    <table class="table table-striped items" <#if tableId?has_content>id="${tableId}"</#if>>
-      <thead>
-        <#list columns as name, properties>
-        <th>
-          <#if properties.sortable?? && properties.sortable>
-            <#assign sortOrder = (page.sort??)?then((page.sort.getOrderFor(name)??)?then(page.sort.getOrderFor(name).getDirection().name(),""),"")/>
-            <@sortable.icon name=name order=sortOrder/>
-          </#if>
-    	    		<@spring.messageText properties.label properties.label />
-        </th>
-        </#list>
-      </thead>
-      <tbody>
-        <#if page.content?size == 0>
-        <tr>
-          <td colspan="${columns?size}">
-            <div class="alert alert-default text-center"><@spring.message "list.no.element.found.label" /></div>
-          </td>
-        </tr>
-        <#else>
-          <#list page.content as item>
-          <tr id="item_${item.id?c}">
-            <#list columns as name, properties>
-              <td class="${name}_property">
-                <#if properties.link??>
-                <a id="item_${item.id}_link"
-                  <#if item.code??>
-                   name="item_code_${item.code}_link"
-                  </#if>
-                   class="text-primary clickable" href="<@spring.url relativeUrl=properties.link id=item.id />">
-                <strong>
-                </#if>
-    
-                <!-- Icon -->
-                <#if name?index == 0>
-                  <#if iconPath?has_content && iconPath?is_sequence>
-                    <#assign result = item/>
-                    <#list iconPath as pathItem>
-                      <#assign result = result[pathItem]/>
-                    </#list>
-                    <@icon.default icon=result/>
-                  </#if>
-                  <#if iconPath?has_content &&  iconPath?is_string>
-                    <@icon.default icon=iconPath/>
-                  </#if>
-                </#if>
-    
-                <!-- Value -->
-                <#if properties.type??>
-                  <#if properties.type == "localdate">
-                    <#if item[name]??>${item[name]?date("yyyy-MM-dd")}</#if>
-                  </#if>
-                  <#if properties.type == "date">
-                    <#if item[name]??>${item[name]?date}</#if>
-                  </#if>
-                  <#if properties.type == "time">
-                    <#if item[name]??>${item[name]?time}</#if>
-                  </#if>
-                  <#if properties.type == "datetime">
-                    <#if item[name]??>${item[name]?datetime}</#if>
-                  </#if>
-                  <#if properties.type == "boolean">
-                    <#if item[name]??>${item[name]?string("oui","non")}</#if>
-                  </#if>
-                  <#if properties.type == "enum">
-                    <#assign enumLabel = "${properties.label}.${item[name].toString()}.label" />
-                    <@spring.messageText enumLabel, item[name].toString() />
-                  </#if>
-                  <#if properties.type == "list">
-                    <ul>
-                      <#list item[name] as value>
-                        <li>${value}</li>
-                      </#list>
-                    </ul>
-                  </#if>
-                <#else>
-                ${item[name]!""}
-                </#if>
-    
-                <#if properties.link??>
-                </strong></a>
-                </#if>
-              </td>
-            </#list>
-          </tr>
-          </#list>
+  <table class="table table-striped items" <#if tableId?has_content>id="${tableId}"</#if>>
+    <thead>
+      <#list columns as name, properties>
+      <th>
+        <#if properties.sortable?? && properties.sortable>
+          <#assign sortOrder = (page.sort??)?then((page.sort.getOrderFor(name)??)?then(page.sort.getOrderFor(name).getDirection().name(),""),"")/>
+          <@sortable.icon name=name order=sortOrder/>
         </#if>
-      </tbody>
-    </table>
+    	    		<@spring.messageText properties.label properties.label />
+      </th>
+      </#list>
+    </thead>
+    <tbody>
+      <#if page.content?size == 0>
+      <tr>
+        <td colspan="${columns?size}">
+          <div
+            class="alert alert-default text-center"><@spring.message "list.no.element.found.label" /></div>
+        </td>
+      </tr>
+      <#else>
+        <#list page.content as item>
+        <tr id="item_${item.id?c}">
+          <#list columns as name, properties>
+            <td class="${name}_property">
+              <#if properties.link??>
+              <a id="item_${item.id?c}_link" class="text-primary clickable"
+                <#if item.code??>
+                 name="item_code_${item.code}_link"
+                </#if>
+
+                 <#assign itemId = item.id/>
+                 <#if properties.nestedIdPath??>
+                   <#assign resultId = item/>
+                   <#list properties.nestedIdPath as pathItem>
+                     <#assign resultId = resultId[pathItem]/>
+                   </#list>
+                   <#assign itemId = resultId/>
+                 </#if>
+                 href="<@spring.url relativeUrl=properties.link id=itemId />">
+              <strong>
+              </#if>
+
+              <!-- Icon -->
+              <#if name?index == 0>
+                <#if iconPath?has_content && iconPath?is_sequence>
+                  <#assign result = item/>
+                  <#list iconPath as pathItem>
+                    <#assign result = result[pathItem]/>
+                  </#list>
+                  <@icon.default icon=result/>
+                </#if>
+
+                <#if iconPath?has_content &&  iconPath?is_string>
+                  <@icon.default icon=iconPath/>
+                </#if>
+              </#if>
+
+              <!-- Value -->
+              <#if properties.nestedPath??>
+                <#if properties.nestedPath?has_content && properties.nestedPath?is_sequence>
+                  <#assign result = item/>
+                  <#list properties.nestedPath as pathItem>
+                    <#if result[pathItem]??>
+                      <#assign result = result[pathItem]/>
+                    </#if>
+                  </#list>
+
+                  <@displayProperty value=result type=properties.type label=properties.label/>
+                </#if>
+
+                <#if properties.nestedPath?has_content && properties.nestedPath?is_string>
+                  <@displayProperty value=item[properties.nestedPath] type=properties.type label=properties.label/>
+                </#if>
+              <#else>
+                <@displayProperty value=item[name] type=properties.type label=properties.label/>
+              </#if>
+
+              <#if properties.link??>
+              </strong></a>
+              </#if>
+            </td>
+          </#list>
+        </tr>
+        </#list>
+      </#if>
+    </tbody>
+  </table>
 </div>
 </#macro>
 
@@ -109,32 +108,32 @@
   </div>
 
   <div class="ibox-content">
-      <div class="row">
-          <div class="col-sm-9 m-b-xs">
-          </div>
-          <div class="col-sm-3">
-              <#if searchable>
-                  <div class="input-group">
-                      <input type="text"
-                             placeholder="<@spring.message "list.searchbar.placeholder"/>"
-                             class="table-search input-sm form-control"
-                             onkeyup="var which = event.which || event.keyCode;if(which === 13) {$(this).closest('.input-group').find('button.table-search').first().click();}"
-                             <#if q?has_content> value="${q}"</#if>
-                      />
+    <div class="row">
+      <div class="col-sm-9 m-b-xs">
+      </div>
+      <div class="col-sm-3">
+        <#if searchable>
+          <div class="input-group">
+            <input type="text"
+                   placeholder="<@spring.message "list.searchbar.placeholder"/>"
+                   class="table-search input-sm form-control"
+                   onkeyup="var which = event.which || event.keyCode;if(which === 13) {$(this).closest('.input-group').find('button.table-search').first().click();}"
+              <#if q?has_content> value="${q}"</#if>
+            />
 
-                      <span class="input-group-btn">
+            <span class="input-group-btn">
                         <button type="button"
                                 class="btn btn-sm btn-primary table-search"
                                 onclick="var value = $(this).closest('.input-group').children('input.table-search').first().val();window.location.href = $.updateQueryStringParameter(window.location.href,'q',value);">
                             <i class="fa fa-search"></i>
                         </button>
                       </span>
-                  </div>
-              </#if>
-
           </div>
+        </#if>
+
       </div>
-      <@table page=page columns=columns iconPath=iconPath tableId=tableId/>
+    </div>
+    <@table page=page columns=columns iconPath=iconPath tableId=tableId/>
   </div>
 
   <footer class="ibox-footer">
@@ -150,4 +149,38 @@
     </div>
   </footer>
 </div>
+</#macro>
+
+
+<#macro displayProperty value label="" type="" >
+  <#if type?has_content>
+    <#if type == "localdate">
+      <#if value??>${value?date("yyyy-MM-dd")}</#if>
+    </#if>
+    <#if type == "date">
+      <#if value??>${value?date}</#if>
+    </#if>
+    <#if type == "time">
+      <#if value??>${value?time}</#if>
+    </#if>
+    <#if type == "datetime">
+      <#if value??>${value?datetime}</#if>
+    </#if>
+    <#if type == "boolean">
+      <#if value??>${value?string("oui","non")}</#if>
+    </#if>
+    <#if type == "enum">
+      <#assign enumLabel = "${label}.${value.toString()}.label" />
+      <@spring.messageText enumLabel, value.toString() />
+    </#if>
+    <#if type == "list">
+    <ul>
+      <#list value as value>
+        <li>${value}</li>
+      </#list>
+    </ul>
+    </#if>
+  <#else>
+    ${value!""}
+  </#if>
 </#macro>

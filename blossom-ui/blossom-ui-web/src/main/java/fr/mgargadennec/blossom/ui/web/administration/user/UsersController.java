@@ -1,15 +1,7 @@
 package fr.mgargadennec.blossom.ui.web.administration.user;
 
 import com.google.common.base.Strings;
-import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupDTO;
-import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupService;
-import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleDTO;
-import fr.mgargadennec.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
-import fr.mgargadennec.blossom.core.group.GroupDTO;
-import fr.mgargadennec.blossom.core.group.GroupService;
-import fr.mgargadennec.blossom.core.role.RoleDTO;
-import fr.mgargadennec.blossom.core.role.RoleService;
 import fr.mgargadennec.blossom.core.user.User;
 import fr.mgargadennec.blossom.core.user.UserCreateForm;
 import fr.mgargadennec.blossom.core.user.UserDTO;
@@ -18,17 +10,13 @@ import fr.mgargadennec.blossom.core.user.UserUpdateForm;
 import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -55,22 +43,10 @@ public class UsersController {
   private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
   private final UserService userService;
-  private final AssociationUserGroupService associationUserGroupService;
-  private final AssociationUserRoleService associationUserRoleService;
-  private final RoleService roleService;
-  private final GroupService groupService;
   private final SearchEngineImpl<UserDTO> searchEngine;
 
-  public UsersController(UserService userService,
-    AssociationUserGroupService associationUserGroupService,
-    AssociationUserRoleService associationUserRoleService, RoleService roleService,
-    GroupService groupService,
-    SearchEngineImpl<UserDTO> searchEngine) {
+  public UsersController(UserService userService, SearchEngineImpl<UserDTO> searchEngine) {
     this.userService = userService;
-    this.associationUserGroupService = associationUserGroupService;
-    this.associationUserRoleService = associationUserRoleService;
-    this.roleService = roleService;
-    this.groupService = groupService;
     this.searchEngine = searchEngine;
   }
 
@@ -197,7 +173,8 @@ public class UsersController {
 
   @PostMapping("/{id}/_avatar/_edit")
   @ResponseStatus(HttpStatus.OK)
-  public void handleUserAvatarUpdateForm(@PathVariable Long id, @RequestParam("avatar") MultipartFile file)
+  public void handleUserAvatarUpdateForm(@PathVariable Long id,
+    @RequestParam("avatar") MultipartFile file)
     throws IOException {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -210,62 +187,6 @@ public class UsersController {
   public String deleteUser(@PathVariable Long id) {
     this.userService.delete(this.userService.getOne(id));
     return "redirect:/users";
-  }
-
-  @GetMapping("/{id}/_groups")
-  public ModelAndView getUserGroupsPage(@PathVariable Long id, Model model) {
-    UserDTO user = this.userService.getOne(id);
-    if (user == null) {
-      throw new NoSuchElementException(String.format("User=%s not found", id));
-    }
-    List<AssociationUserGroupDTO> associations = associationUserGroupService.getAllLeft(user);
-    List<GroupDTO> associatedGroups = new ArrayList<>();
-    for (AssociationUserGroupDTO association : associations) {
-      associatedGroups.add(association.getB());
-    }
-    Page<GroupDTO> pagedGroups = new PageImpl<>(associatedGroups);
-
-    List<GroupDTO> groups = groupService.getAll();
-    groups = groups.stream().filter(group -> !associatedGroups.contains(group))
-      .collect(Collectors.toList());
-    return this.groupsView(user, pagedGroups, groups, model);
-  }
-
-  private ModelAndView groupsView(UserDTO user, Page<GroupDTO> pagedAssociatedGroups,
-    List<GroupDTO> groups, Model model) {
-    model.addAttribute("user", user);
-    model.addAttribute("groups", groups);
-    model.addAttribute("associatedGroups", pagedAssociatedGroups);
-    return new ModelAndView("users/usergroups", model.asMap());
-  }
-
-  @GetMapping("/{id}/_roles")
-  public ModelAndView getUserRolesPage(@PathVariable Long id, Model model) {
-    UserDTO user = this.userService.getOne(id);
-    if (user == null) {
-      throw new NoSuchElementException(String.format("User=%s not found", id));
-    }
-    List<AssociationUserRoleDTO> associations = associationUserRoleService.getAllLeft(user);
-
-    List<RoleDTO> associatedRoles = new ArrayList<>();
-    for (AssociationUserRoleDTO association : associations) {
-      associatedRoles.add(association.getB());
-    }
-    Page<RoleDTO> pagedRoles = new PageImpl<>(associatedRoles);
-
-    List<RoleDTO> roles = roleService.getAll();
-    roles = roles.stream().filter(role -> !associatedRoles.contains(role))
-      .collect(Collectors.toList());
-
-    return this.rolesView(user, pagedRoles, roles, model);
-  }
-
-  private ModelAndView rolesView(UserDTO user, Page<RoleDTO> pagedRoles, List<RoleDTO> roles,
-    Model model) {
-    model.addAttribute("user", user);
-    model.addAttribute("associatedRoles", pagedRoles);
-    model.addAttribute("roles", roles);
-    return new ModelAndView("users/userroles", model.asMap());
   }
 
   @GetMapping(value = "/{id}/avatar", produces = "image/*")
