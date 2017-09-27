@@ -152,7 +152,7 @@
 </#macro>
 
 
-<#macro displayProperty value label="" type="" >
+<#macro displayProperty value="" label="" type="" >
   <#if type?has_content>
     <#if type == "localdate">
       <#if value??>${value?date("yyyy-MM-dd")}</#if>
