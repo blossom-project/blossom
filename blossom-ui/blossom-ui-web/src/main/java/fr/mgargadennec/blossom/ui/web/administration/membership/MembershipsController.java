@@ -31,19 +31,13 @@ public class MembershipsController {
 
   private final AssociationUserGroupService associationUserGroupService;
   private final UserService userService;
-  private final SearchEngineImpl<GroupDTO> userSearchEngine;
-
   private final GroupService groupService;
-  private final SearchEngineImpl<GroupDTO> groupSearchEngine;
 
   public MembershipsController(AssociationUserGroupService associationUserGroupService,
-    UserService userService, SearchEngineImpl<GroupDTO> userSearchEngine, GroupService groupService,
-    SearchEngineImpl<GroupDTO> groupSearchEngine) {
+    UserService userService, GroupService groupService){
     this.associationUserGroupService = associationUserGroupService;
     this.userService = userService;
-    this.userSearchEngine = userSearchEngine;
     this.groupService = groupService;
-    this.groupSearchEngine = groupSearchEngine;
   }
 
   @GetMapping("/users/{id}/groups")

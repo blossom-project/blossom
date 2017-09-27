@@ -19,11 +19,9 @@ import fr.mgargadennec.blossom.ui.web.administration.responsability.Responsabili
 public class WebAdministrationResponsabilityAutoConfiguration {
 
   @Bean
-  public ResponsabilitiesController responsabilityController(UserService userService,
-      AssociationUserRoleService associationUserRoleService, RoleService roleService) {
+  public ResponsabilitiesController responsabilityController(UserService userService, AssociationUserRoleService associationUserRoleService, RoleService roleService) {
     return new ResponsabilitiesController(userService, associationUserRoleService, roleService);
   }
-
 
   @Bean
   public Privilege responsabilitiesReadPrivilegePlugin() {

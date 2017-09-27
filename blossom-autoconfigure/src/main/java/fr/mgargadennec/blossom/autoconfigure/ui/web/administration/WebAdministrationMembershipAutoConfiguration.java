@@ -2,10 +2,8 @@ package fr.mgargadennec.blossom.autoconfigure.ui.web.administration;
 
 import fr.mgargadennec.blossom.autoconfigure.core.CommonAutoConfiguration;
 import fr.mgargadennec.blossom.core.association_user_group.AssociationUserGroupService;
-import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
 import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
 import fr.mgargadennec.blossom.core.common.utils.privilege.SimplePrivilege;
-import fr.mgargadennec.blossom.core.group.GroupDTO;
 import fr.mgargadennec.blossom.core.group.GroupService;
 import fr.mgargadennec.blossom.core.user.UserService;
 import fr.mgargadennec.blossom.ui.web.administration.membership.MembershipsController;
@@ -19,23 +17,19 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter(CommonAutoConfiguration.class)
 public class WebAdministrationMembershipAutoConfiguration {
 
-  @Bean
-  public MembershipsController membershipsController(
-    AssociationUserGroupService associationUserGroupService,
-    UserService userService, SearchEngineImpl<GroupDTO> userSearchEngine, GroupService groupService,
-    SearchEngineImpl<GroupDTO> groupSearchEngine) {
-    return new MembershipsController(associationUserGroupService, userService, userSearchEngine, groupService,groupSearchEngine);
-  }
+    @Bean
+    public MembershipsController membershipsController(AssociationUserGroupService associationUserGroupService, UserService userService, GroupService groupService) {
+        return new MembershipsController(associationUserGroupService, userService, groupService);
+    }
 
+    @Bean
+    public Privilege membershipsReadPrivilegePlugin() {
+        return new SimplePrivilege("administration", "memberships", "read");
+    }
 
-  @Bean
-  public Privilege membershipsReadPrivilegePlugin() {
-    return new SimplePrivilege("administration", "memberships", "read");
-  }
-
-  @Bean
-  public Privilege membershipsChangePrivilegePlugin() {
-    return new SimplePrivilege("administration", "memberships", "change");
-  }
+    @Bean
+    public Privilege membershipsChangePrivilegePlugin() {
+        return new SimplePrivilege("administration", "memberships", "change");
+    }
 
 }
