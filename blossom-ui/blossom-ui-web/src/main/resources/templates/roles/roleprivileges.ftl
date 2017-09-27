@@ -1,6 +1,7 @@
 <#import "/spring.ftl" as spring>
 <#import "/utils/civility.ftl" as civility>
 <#import "/utils/buttons.ftl" as buttons>
+<#import "/utils/privilege.ftl" as privilege>
 
 
 
@@ -23,8 +24,6 @@
               <div class="form-group">
                 <div class="col-sm-12">
                   <h5 class="text-capitalize">
-                    <#assign featurePrivilege=namespace+':'+feature+':*'/>
-                    <input type="checkbox" value="${featurePrivilege}" name="privileges" disabled <#if role.privileges?? && role.privileges?seq_contains(featurePrivilege)>checked="checked"</#if>>
                     ${feature}
                   </h5>
                   <#list privileges[namespace][feature] as privilege>
@@ -46,25 +45,28 @@
   </form>
 </div>
 
-<div class="ibox-footer">
-  <div class="text-right">
-    <button class="btn btn-primary btn-view" onclick="edit_roleprivileges(this);">
-    <@spring.message "edit"/>
-    </button>
+
+<@privilege.has currentUser=currentUser privilege="administration:roles:write">
+  <div class="ibox-footer">
+    <div class="text-right">
+      <button class="btn btn-primary btn-view" onclick="edit_roleprivileges(this);">
+      <@spring.message "edit"/>
+      </button>
+    </div>
   </div>
-</div>
 
 
-<script>
-  var edit_roleprivileges = function (button) {
-    var targetSelector = '#' + $(button).closest(".tab-pane").attr('id');
-    $(targetSelector + ' > .ibox-content').addClass("sk-loading");
-    var edit = $(targetSelector).data("edit");
-    $.get(edit).done(function (responseText, textStatus, jqXHR) {
-      if (jqXHR.status === 200) {
-        $(targetSelector).html(responseText);
-      }
-      $(targetSelector).removeClass("sk-loading");
-    });
-  };
-</script>
+  <script>
+    var edit_roleprivileges = function (button) {
+      var targetSelector = '#' + $(button).closest(".tab-pane").attr('id');
+      $(targetSelector + ' > .ibox-content').addClass("sk-loading");
+      var edit = $(targetSelector).data("edit");
+      $.get(edit).done(function (responseText, textStatus, jqXHR) {
+        if (jqXHR.status === 200) {
+          $(targetSelector).html(responseText);
+        }
+        $(targetSelector).removeClass("sk-loading");
+      });
+    };
+  </script>
+</@privilege.has>

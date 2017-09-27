@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,15 +55,10 @@ public class RolesController {
   }
 
   @GetMapping
+  @PreAuthorize("hasAuthority('administration:roles:read')")
   public ModelAndView getRolesPage(@RequestParam(value = "q", required = false) String q,
     @PageableDefault(size = 25) Pageable pageable, Model model) {
     return tableView(q, pageable, model, "roles/roles");
-  }
-
-  @GetMapping("/_list")
-  public ModelAndView getRolesTable(@RequestParam(value = "q", required = false) String q,
-    @PageableDefault(size = 25) Pageable pageable, Model model) {
-    return tableView(q, pageable, model, "roles/table");
   }
 
   private ModelAndView tableView(String q, Pageable pageable, Model model, String viewName) {
@@ -81,11 +77,13 @@ public class RolesController {
   }
 
   @GetMapping("/_create")
+  @PreAuthorize("hasAuthority('administration:roles:create')")
   public ModelAndView getRoleCreatePage(Model model, Locale locale) {
     return this.createView(new RoleCreateForm(), model);
   }
 
   @PostMapping("/_create")
+  @PreAuthorize("hasAuthority('administration:roles:create')")
   public ModelAndView handleRoleCreateForm(
     @Valid @ModelAttribute("roleCreateForm") RoleCreateForm roleCreateForm,
     BindingResult bindingResult, Model model) {
@@ -108,6 +106,7 @@ public class RolesController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAuthority('administration:roles:read')")
   public ModelAndView getRole(@PathVariable Long id, Model model, HttpServletRequest request) {
     RoleDTO role = this.roleService.getOne(id);
     if (role == null) {
@@ -118,12 +117,14 @@ public class RolesController {
   }
 
   @PostMapping("/{id}/_delete")
+  @PreAuthorize("hasAuthority('administration:roles:delete')")
   public String deleteRole(@PathVariable Long id) {
     this.roleService.delete(this.roleService.getOne(id));
     return "redirect:..";
   }
 
   @GetMapping("/{id}/_informations")
+  @PreAuthorize("hasAuthority('administration:roles:read')")
   public ModelAndView getRoleInformations(@PathVariable Long id, HttpServletRequest request) {
     RoleDTO role = this.roleService.getOne(id);
     if (role == null) {
@@ -133,6 +134,7 @@ public class RolesController {
   }
 
   @GetMapping("/{id}/_informations/_edit")
+  @PreAuthorize("hasAuthority('administration:roles:write')")
   public ModelAndView getRoleInformationsForm(@PathVariable Long id, Model model,
     HttpServletRequest request) {
     RoleDTO role = this.roleService.getOne(id);
@@ -143,6 +145,7 @@ public class RolesController {
   }
 
   @PostMapping("/{id}/_informations/_edit")
+  @PreAuthorize("hasAuthority('administration:roles:write')")
   public ModelAndView handleRoleInformationsForm(@PathVariable Long id, Model model,
     HttpServletResponse response,
     @Valid @ModelAttribute("roleUpdateForm") RoleUpdateForm roleUpdateForm,
@@ -171,6 +174,7 @@ public class RolesController {
   }
 
   @GetMapping("/{id}/_privileges")
+  @PreAuthorize("hasAuthority('administration:roles:read')")
   public ModelAndView getRolePrivileges(@PathVariable Long id, Model model) {
     RoleDTO role = this.roleService.getOne(id);
     if (role == null) {
@@ -180,6 +184,7 @@ public class RolesController {
   }
 
   @GetMapping("/{id}/_privileges/_edit")
+  @PreAuthorize("hasAuthority('administration:roles:write')")
   public ModelAndView getRolePrivilegesForm(@PathVariable Long id, Model model) {
     RoleDTO role = this.roleService.getOne(id);
     if (role == null) {
@@ -190,6 +195,7 @@ public class RolesController {
 
   @PostMapping("/{id}/_privileges/_edit")
   @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("hasAuthority('administration:roles:write')")
   public ModelAndView handleRolePrivilegesForm(@PathVariable Long id,
     @Valid @ModelAttribute("rolePrivilegeUpdateForm") RolePrivilegeUpdateForm rolePrivilegeUpdateForm,
     BindingResult bindingResult, Model model) {

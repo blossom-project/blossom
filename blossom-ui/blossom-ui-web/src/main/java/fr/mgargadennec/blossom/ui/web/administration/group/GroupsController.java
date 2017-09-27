@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,15 +45,10 @@ public class GroupsController {
   }
 
   @GetMapping
+  @PreAuthorize("hasAuthority('administration:groups:read')")
   public ModelAndView getGroupsPage(@RequestParam(value = "q", required = false) String q,
     @PageableDefault(size = 25) Pageable pageable, Model model) {
     return tableView(q, pageable, model, "groups/groups");
-  }
-
-  @GetMapping("/_list")
-  public ModelAndView getGroupsTable(@RequestParam(value = "q", required = false) String q,
-    @PageableDefault(size = 25) Pageable pageable, Model model) {
-    return tableView(q, pageable, model, "groups/table");
   }
 
   private ModelAndView tableView(String q, Pageable pageable, Model model, String viewName) {
@@ -71,6 +67,7 @@ public class GroupsController {
   }
 
   @GetMapping("/_create")
+  @PreAuthorize("hasAuthority('administration:groups:create')")
   public ModelAndView getGroupCreatePage(Model model, Locale locale) {
     GroupCreateForm groupCreateForm = new GroupCreateForm();
     groupCreateForm.setLocale(locale);
@@ -78,6 +75,7 @@ public class GroupsController {
   }
 
   @PostMapping("/_create")
+  @PreAuthorize("hasAuthority('administration:groups:create')")
   public ModelAndView handleGroupCreateForm(
     @Valid @ModelAttribute("groupCreateForm") GroupCreateForm groupCreateForm,
     BindingResult bindingResult, Model model) {
@@ -102,6 +100,7 @@ public class GroupsController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAuthority('administration:groups:read')")
   public ModelAndView getGroup(@PathVariable Long id, Model model, HttpServletRequest request) {
     GroupDTO group = this.groupService.getOne(id);
     if (group == null) {
@@ -112,6 +111,7 @@ public class GroupsController {
   }
 
   @PostMapping("/{id}/_delete")
+  @PreAuthorize("hasAuthority('administration:groups:delete')")
   public String deleteGroup(@PathVariable Long id) {
     this.groupService.delete(this.groupService.getOne(id));
     return "redirect:..";
@@ -119,6 +119,7 @@ public class GroupsController {
 
 
   @GetMapping("/{id}/_informations")
+  @PreAuthorize("hasAuthority('administration:groups:read')")
   public ModelAndView getRoleInformations(@PathVariable Long id, HttpServletRequest request) {
     GroupDTO group = this.groupService.getOne(id);
     if (group == null) {
@@ -128,6 +129,7 @@ public class GroupsController {
   }
 
   @GetMapping("/{id}/_informations/_edit")
+  @PreAuthorize("hasAuthority('administration:groups:write')")
   public ModelAndView getGroupInformationsForm(@PathVariable Long id, Model model) {
     GroupDTO group = this.groupService.getOne(id);
     if (group == null) {
@@ -137,6 +139,7 @@ public class GroupsController {
   }
 
   @PostMapping("/{id}/_informations/_edit")
+  @PreAuthorize("hasAuthority('administration:groups:write')")
   public ModelAndView handleGroupInformationsForm(@PathVariable Long id, Model model,
     @Valid @ModelAttribute("groupUpdateForm") GroupUpdateForm groupUpdateForm,
     BindingResult bindingResult) {

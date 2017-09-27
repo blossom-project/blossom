@@ -32,7 +32,7 @@ public class WebAdministrationGroupAutoConfiguration {
       .link("/blossom/administration/groups")
       .icon("fa fa-users")
       .order(2)
-      .privilege(groupReadPrivilegePlugin())
+      .privilege(groupsReadPrivilegePlugin())
       .parent(administrationMenuItem)
       .build();
   }
@@ -44,22 +44,22 @@ public class WebAdministrationGroupAutoConfiguration {
   }
 
   @Bean
-  public Privilege groupReadPrivilegePlugin() {
-    return new SimplePrivilege("administration", "group", "read");
+  public Privilege groupsReadPrivilegePlugin() {
+    return new SimplePrivilege("administration", "groups", "read");
   }
 
   @Bean
-  public Privilege groupWritePrivilegePlugin() {
-    return new SimplePrivilege("administration", "group", "write");
+  public Privilege groupsWritePrivilegePlugin() {
+    return new SimplePrivilege("administration", "groups", "write");
   }
 
   @Bean
-  public Privilege groupCreatePrivilegePlugin() {
-    return new SimplePrivilege("administration", "group", "create");
+  public Privilege groupsCreatePrivilegePlugin() {
+    return new SimplePrivilege("administration", "groups", "create");
   }
 
   @Bean
-  public Privilege groupDeletePrivilegePlugin() {
-    return new SimplePrivilege("administration", "group", "delete");
+  public Privilege groupsDeletePrivilegePlugin() {
+    return new SimplePrivilege("administration", "groups", "delete");
   }
 }

@@ -28,24 +28,28 @@
 <div class="wrapper wrapper-content">
   <@tabulation.tabs
     id="roleContent"
+    currentUser=currentUser
     tabs=[
   {
     "isActive": true,
     "linkLabel": "panel.information",
     "view": "/blossom/administration/roles/${role.id?c}/_informations",
-    "edit": "/blossom/administration/roles/${role.id?c}/_informations/_edit"
+    "edit": "/blossom/administration/roles/${role.id?c}/_informations/_edit",
+    "privilege":"administration:roles:read"
   },
     {
     "isActive": false,
     "linkLabel": "roles.panel.privileges",
     "view": "/blossom/administration/roles/${role.id?c}/_privileges",
-    "edit": "/blossom/administration/roles/${role.id?c}/_privileges/_edit"
+    "edit": "/blossom/administration/roles/${role.id?c}/_privileges/_edit",
+    "privilege":"administration:roles:read"
     },
     {
     "isActive": false,
     "linkLabel": "roles.panel.users",
     "view": "/blossom/administration/responsabilities/roles/${role.id?c}/users",
-    "edit": "/blossom/administration/responsabilities/roles/${role.id?c}/users/_edit"
+    "edit": "/blossom/administration/responsabilities/roles/${role.id?c}/users/_edit",
+    "privilege":"administration:responsabilities:read"
     }
   ]
 />

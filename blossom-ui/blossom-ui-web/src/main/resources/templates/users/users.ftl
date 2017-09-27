@@ -1,7 +1,7 @@
-
 <#import "/spring.ftl" as spring>
 <#import "/master/master.ftl" as master>
 <#import "/utils/table.ftl" as table>
+<#import "/utils/privilege.ftl" as privilege>
 
 
 <@master.default currentUser=currentUser>
@@ -22,7 +22,9 @@
   </div>
   <div class="col-sm-4">
     <div class="title-action">
-      <a href="/blossom/administration/users/_create" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+      <@privilege.has currentUser=currentUser privilege="administration:users:create">
+        <a href="/blossom/administration/users/_create" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+      </@privilege.has>
     </div>
   </div>
 </div>

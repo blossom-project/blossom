@@ -51,7 +51,7 @@ public class UsersController {
   }
 
   @GetMapping
-  @PreAuthorize("hasAnyAuthority('administration:users:*','administration:users:read')")
+  @PreAuthorize("hasAuthority('administration:users:read')")
   public ModelAndView getUsersPage(@RequestParam(value = "q", required = false) String q,
     @PageableDefault(size = 25) Pageable pageable, Model model) {
     return tableView(q, pageable, model, "users/users");
@@ -73,7 +73,7 @@ public class UsersController {
   }
 
   @GetMapping("/_create")
-  @PreAuthorize("hasAnyAuthority('administration:users:*','administration:users:create')")
+  @PreAuthorize("hasAuthority('administration:users:create')")
   public ModelAndView getUserCreatePage(Model model, Locale locale) {
     UserCreateForm userCreateForm = new UserCreateForm();
     userCreateForm.setLocale(locale);
@@ -81,7 +81,7 @@ public class UsersController {
   }
 
   @PostMapping("/_create")
-  @PreAuthorize("hasAnyAuthority('administration:users:*','administration:users:create')")
+  @PreAuthorize("hasAuthority('administration:users:create')")
   public ModelAndView handleUserCreateForm(
     @Valid @ModelAttribute("userCreateForm") UserCreateForm userCreateForm,
     BindingResult bindingResult, Model model) {
@@ -103,7 +103,7 @@ public class UsersController {
   }
 
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthority('administration:users:*','administration:users:read')")
+  @PreAuthorize("hasAuthority('administration:users:read')")
   public ModelAndView getUser(@PathVariable Long id, Model model, HttpServletRequest request) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -114,7 +114,7 @@ public class UsersController {
   }
 
   @GetMapping("/{id}/_informations")
-  @PreAuthorize("hasAnyAuthority('administration:users:*','administration:users:read')")
+  @PreAuthorize("hasAuthority('administration:users:read')")
   public ModelAndView getUserInformations(@PathVariable Long id) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -124,7 +124,7 @@ public class UsersController {
   }
 
   @GetMapping("/{id}/_informations/_edit")
-  @PreAuthorize("hasAnyAuthority('administration:users:*','administration:users:update')")
+  @PreAuthorize("hasAuthority('administration:users:write')")
   public ModelAndView getUserInformationsForm(@PathVariable Long id, Model model) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -134,7 +134,7 @@ public class UsersController {
   }
 
   @PostMapping("/{id}/_informations/_edit")
-  @PreAuthorize("hasAnyAuthority('administration:users:*','administration:users:update')")
+  @PreAuthorize("hasAuthority('administration:users:write')")
   public ModelAndView handleUserInformationsUpdateForm(@PathVariable Long id,
     @Valid @ModelAttribute("userUpdateForm") UserUpdateForm userUpdateForm,
     BindingResult bindingResult, Model model) {
@@ -163,8 +163,14 @@ public class UsersController {
     return new ModelAndView("users/userinformations-edit", model.asMap());
   }
 
+  @GetMapping(value = "/{id}/avatar", produces = "image/*")
+  @ResponseBody
+  public byte[] displayAvatar(@PathVariable Long id) throws IOException {
+    return this.userService.loadAvatar(id);
+  }
+
   @GetMapping("/{id}/_avatar/_edit")
-  @PreAuthorize("hasAnyAuthority('administration:users:*','administration:users:update')")
+  @PreAuthorize("hasAuthority('administration:users:write')")
   public ModelAndView getUserAvatarForm(@PathVariable Long id, Model model) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -175,7 +181,7 @@ public class UsersController {
 
   @PostMapping("/{id}/_avatar/_edit")
   @ResponseStatus(HttpStatus.OK)
-  @PreAuthorize("hasAnyAuthority('administration:users:*','administration:users:update')")
+  @PreAuthorize("hasAuthority('administration:users:write')")
   public void handleUserAvatarUpdateForm(@PathVariable Long id,
     @RequestParam("avatar") MultipartFile file)
     throws IOException {
@@ -187,15 +193,9 @@ public class UsersController {
   }
 
   @PostMapping("/{id}/_delete")
-  @PreAuthorize("hasAnyAuthority('administration:users:*','administration:users:delete')")
+  @PreAuthorize("hasAuthority('administration:users:delete')")
   public String deleteUser(@PathVariable Long id) {
     this.userService.delete(this.userService.getOne(id));
     return "redirect:/users";
-  }
-
-  @GetMapping(value = "/{id}/avatar", produces = "image/*")
-  @ResponseBody
-  public byte[] displayAvatar(@PathVariable Long id) throws IOException {
-    return this.userService.loadAvatar(id);
   }
 }

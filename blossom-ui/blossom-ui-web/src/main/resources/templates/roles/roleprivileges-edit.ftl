@@ -23,21 +23,14 @@
             <div class="form-group">
               <div class="col-sm-12">
                 <h5 class="text-capitalize">
-                  <#assign featurePrivilege=namespace+':'+feature+':*'/>
-                  <#assign allFeatureEnabled = rolePrivilegeUpdateForm.privileges?seq_contains(featurePrivilege)/>
-                  <input onclick="select_all_feature(this, '${feature}');"
-                         type="checkbox"
-                         value="${featurePrivilege}" name="privileges"
-                         <#if allFeatureEnabled>checked="checked"</#if>>
-                ${feature}
+                  ${feature}
                 </h5>
 
                 <#list privileges[namespace][feature] as privilege>
                   <div class="m-l-md">
                     <label>
                       <input type="checkbox" value="${privilege.privilege()}" name="privileges"
-                             <#if rolePrivilegeUpdateForm.privileges?seq_contains(privilege.privilege())>checked="checked"</#if>
-                             <#if allFeatureEnabled>onclick="return false;" readonly</#if>>
+                             <#if rolePrivilegeUpdateForm.privileges?seq_contains(privilege.privilege())>checked="checked"</#if>>
                     ${privilege.right()}
                     </label>
                   </div>
@@ -90,25 +83,4 @@
       $(targetSelector).removeClass("sk-loading");
     });
   };
-
-  var select_all_feature = function (element, feature) {
-    var featureDOM = $(element).closest(".feature-" + feature);
-    var checkboxes = featureDOM.find("input[type=checkbox]");
-
-    $.each(checkboxes, function (index, checkbox) {
-      console.log(checkbox, element);
-      if (!(checkbox == element)) {
-        if ($(element).is(':checked')) {
-          $(checkbox).attr('checked', true);
-          $(checkbox).attr('readonly', "");
-          checkbox.onclick = function () {
-            return false;
-          }
-        } else {
-          $(checkbox).removeAttr('readonly');
-          checkbox.onclick = null;
-        }
-      }
-    })
-  }
 </script>
