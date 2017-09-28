@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -35,8 +36,8 @@ public class AssociationUserGroupAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(AssociationUserGroupService.class)
-    public AssociationUserGroupService associationUserGroupService(AssociationUserGroupDao dao, AssociationUserGroupDTOMapper mapper, UserDTOMapper aMapper, GroupDTOMapper bMapper) {
-        return new AssociationUserGroupServiceImpl(dao, mapper, aMapper, bMapper);
+    public AssociationUserGroupService associationUserGroupService(AssociationUserGroupDao dao, AssociationUserGroupDTOMapper mapper, UserDTOMapper aMapper, GroupDTOMapper bMapper, ApplicationEventPublisher eventPublisher) {
+        return new AssociationUserGroupServiceImpl(dao, mapper, aMapper, bMapper, eventPublisher);
     }
 
 }

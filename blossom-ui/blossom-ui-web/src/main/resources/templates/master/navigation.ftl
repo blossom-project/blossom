@@ -7,20 +7,18 @@
   <div class="sidebar-collapse">
     <ul class="nav metismenu" id="side-menu">
       <li class="nav-header">
-        <div class="dropdown profile-element">
-            <span>
-              <img alt="image" class="img-circle" width="48" height="48" src="/blossom/administration/users/${currentUser.user.id?c}/avatar">
+        <div class="dropdown profile-element text-center">
+          <span>
+            <img alt="image" class="img-circle" width="80" height="80" src="/blossom/administration/users/${currentUser.user.id?c}/avatar">
+          </span>
+          <span class="clear text-white">
+            <span class="block m-t-xs">
+              <strong class="font-bold">${currentUser.user.firstname +' '+currentUser.user.lastname}</strong>
             </span>
-          <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <span class="clear"> <span class="block m-t-xs"> <strong
-                              class="font-bold">${currentUser.user.firstname +' '+currentUser.user.lastname}</strong>
-                             </span> <span class="text-muted text-xs block">${currentUser.user.function!''}<b class="caret"></b></span> </span> </a>
-          <ul class="dropdown-menu animated fadeInRight m-t-xs">
-            <li><a href="profile.html">Profile</a></li>
-          </ul>
+          </span>
         </div>
         <div class="logo-element">
-          IN+
+          Blossom
         </div>
       </li>
       <#list menu.items() as menuItem>
@@ -60,10 +58,10 @@
   <nav class="navbar navbar-static-top  " role="navigation" style="margin-bottom: 0">
     <div class="navbar-header">
       <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+
       <form role="search" class="navbar-form-custom" action="search_results.html">
         <div class="form-group">
-          <input type="text" placeholder="Search for something..." class="form-control" name="top-search"
-                 id="top-search">
+          <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
         </div>
       </form>
     </div>
@@ -96,4 +94,20 @@
 
   </nav>
 </div>
+
+<script>
+  $("#top-search").keyup(function() {
+    var that = $(this);
+    var val = $(this).val();
+    if(!val || val.length  == 0){
+      return;
+    }
+
+    delay(function(){
+      $.get("/blossom/_search?q="+val).done(function(data){
+        console.log(data);
+      });
+    }, 1000 );
+  });
+</script>
 </#macro>

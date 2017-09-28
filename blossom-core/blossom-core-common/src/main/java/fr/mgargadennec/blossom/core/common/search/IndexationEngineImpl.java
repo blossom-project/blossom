@@ -199,10 +199,14 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
 
   private UpdateRequestBuilder prepareIndexRequest(String indexName, DTO dto)
     throws JsonProcessingException {
-    ObjectNode json = this.objectMapper.valueToTree(dto);
+    ObjectNode json = prepareDocument(dto);
     return this.client
       .prepareUpdate(indexName, this.typeFunction.apply(dto), String.valueOf(dto.getId()))
       .setDocAsUpsert(true).setDoc(this.objectMapper.writeValueAsString(json));
+  }
+
+  protected ObjectNode prepareDocument(DTO dto) {
+    return this.objectMapper.valueToTree(dto);
   }
 
   private DeleteRequestBuilder prepareDeleteRequest(String indexName, DTO dto) {
