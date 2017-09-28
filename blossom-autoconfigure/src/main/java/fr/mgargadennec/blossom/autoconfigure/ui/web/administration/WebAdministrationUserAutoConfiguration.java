@@ -32,7 +32,7 @@ public class WebAdministrationUserAutoConfiguration {
       .link("/blossom/administration/users")
       .icon("fa fa-user")
       .order(1)
-      .privilege(userReadPrivilege())
+      .privilege(usersReadPrivilege())
       .parent(administrationMenuItem)
       .build();
   }
@@ -45,23 +45,23 @@ public class WebAdministrationUserAutoConfiguration {
 
 
   @Bean
-  public Privilege userReadPrivilege() {
-    return new SimplePrivilege("administration", "user", "read");
+  public Privilege usersReadPrivilege() {
+    return new SimplePrivilege("administration", "users", "read");
   }
 
   @Bean
-  public Privilege userWritePrivilege() {
-    return new SimplePrivilege("administration", "user", "write");
+  public Privilege usersWritePrivilege() {
+    return new SimplePrivilege("administration", "users", "write");
   }
 
   @Bean
-  public Privilege userCreatePrivilege() {
-    return new SimplePrivilege("administration", "user", "create");
+  public Privilege usersCreatePrivilege() {
+    return new SimplePrivilege("administration", "users", "create");
   }
 
   @Bean
-  public Privilege userDeletePrivilege() {
-    return new SimplePrivilege("administration", "user", "delete");
+  public Privilege usersDeletePrivilege() {
+    return new SimplePrivilege("administration", "users", "delete");
   }
 
 }

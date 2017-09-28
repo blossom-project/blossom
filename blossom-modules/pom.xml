@@ -17,6 +17,7 @@
 
   <modules>
     <module>blossom-module-filemanager</module>
+    <module>blossom-module-articles</module>
   </modules>
 
 </project>

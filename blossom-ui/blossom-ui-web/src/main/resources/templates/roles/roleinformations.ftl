@@ -2,6 +2,7 @@
 <#import "/utils/civility.ftl" as civility>
 <#import "/utils/buttons.ftl" as buttons>
 <#import "/utils/tabulation.ftl" as tabulation>
+<#import "/utils/privilege.ftl" as privilege>
 
 <div class="ibox-content">
   <div class="sk-spinner sk-spinner-wave">
@@ -29,24 +30,26 @@
   </form>
 </div>
 
-<div class="ibox-footer">
-  <div class="text-right">
-    <button class="btn btn-primary btn-view" onclick="edit_roleinformations(this);">
-    <@spring.message "edit"/>
-    </button>
+<@privilege.has currentUser=currentUser privilege="administration:roles:write">
+  <div class="ibox-footer">
+    <div class="text-right">
+      <button class="btn btn-primary btn-view" onclick="edit_roleinformations(this);">
+      <@spring.message "edit"/>
+      </button>
+    </div>
   </div>
-</div>
 
-<script>
-  var edit_roleinformations = function (button) {
-    var targetSelector = '#'+$(button).closest(".tab-pane").attr('id');
-    $(targetSelector + ' > .ibox-content').addClass("sk-loading");
-    var edit = $(targetSelector).data("edit");
-    $.get(edit).done(function (responseText, textStatus, jqXHR) {
-      if (jqXHR.status === 200) {
-        $(targetSelector).html(responseText);
-      }
-      $(targetSelector).removeClass("sk-loading");
-    });
-  };
-</script>
+  <script>
+    var edit_roleinformations = function (button) {
+      var targetSelector = '#'+$(button).closest(".tab-pane").attr('id');
+      $(targetSelector + ' > .ibox-content').addClass("sk-loading");
+      var edit = $(targetSelector).data("edit");
+      $.get(edit).done(function (responseText, textStatus, jqXHR) {
+        if (jqXHR.status === 200) {
+          $(targetSelector).html(responseText);
+        }
+        $(targetSelector).removeClass("sk-loading");
+      });
+    };
+  </script>
+</@privilege.has>

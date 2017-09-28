@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,22 +31,17 @@ public class MembershipsController {
 
   private final AssociationUserGroupService associationUserGroupService;
   private final UserService userService;
-  private final SearchEngineImpl<GroupDTO> userSearchEngine;
-
   private final GroupService groupService;
-  private final SearchEngineImpl<GroupDTO> groupSearchEngine;
 
   public MembershipsController(AssociationUserGroupService associationUserGroupService,
-    UserService userService, SearchEngineImpl<GroupDTO> userSearchEngine, GroupService groupService,
-    SearchEngineImpl<GroupDTO> groupSearchEngine) {
+    UserService userService, GroupService groupService){
     this.associationUserGroupService = associationUserGroupService;
     this.userService = userService;
-    this.userSearchEngine = userSearchEngine;
     this.groupService = groupService;
-    this.groupSearchEngine = groupSearchEngine;
   }
 
   @GetMapping("/users/{id}/groups")
+  @PreAuthorize("hasAuthority('administration:memberships:read')")
   public ModelAndView getUserMembershipsPage(@PathVariable Long id, Model model) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -57,6 +53,7 @@ public class MembershipsController {
   }
 
   @GetMapping("/users/{id}/groups/_edit")
+  @PreAuthorize("hasAuthority('administration:memberships:change')")
   public ModelAndView getUserMembershipsForm(@PathVariable Long id, Model model) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -66,8 +63,9 @@ public class MembershipsController {
       .membershipsForm(associationUserGroupService.getAllLeft(user), user, null, "user", model);
   }
 
-  @PostMapping("/users/{id}/groups/_edit")
   @Transactional
+  @PostMapping("/users/{id}/groups/_edit")
+  @PreAuthorize("hasAuthority('administration:memberships:change')")
   public ModelAndView handleUserMembershipsForm(@PathVariable Long id, Model model,
     @ModelAttribute("form") UpdateAssociationUserGroupForm updateMembershipsForm) {
     UserDTO user = this.userService.getOne(id);
@@ -98,6 +96,7 @@ public class MembershipsController {
   }
 
   @GetMapping("/groups/{id}/users")
+  @PreAuthorize("hasAuthority('administration:memberships:read')")
   public ModelAndView getGroupMembershipsPage(@PathVariable Long id, Model model) {
     GroupDTO group = this.groupService.getOne(id);
     if (group == null) {
@@ -109,6 +108,7 @@ public class MembershipsController {
   }
 
   @GetMapping("/groups/{id}/users/_edit")
+  @PreAuthorize("hasAuthority('administration:memberships:change')")
   public ModelAndView getGroupMembershipsForm(@PathVariable Long id, Model model) {
     GroupDTO group = this.groupService.getOne(id);
     if (group == null) {
@@ -118,8 +118,9 @@ public class MembershipsController {
       .membershipsForm(associationUserGroupService.getAllRight(group), null, group, "group", model);
   }
 
-  @PostMapping("/groups/{id}/users/_edit")
   @Transactional
+  @PostMapping("/groups/{id}/users/_edit")
+  @PreAuthorize("hasAuthority('administration:memberships:change')")
   public ModelAndView handleGroupMembershipsForm(@PathVariable Long id, Model model,
     @ModelAttribute("form") UpdateAssociationUserGroupForm updateAssociationUserGroupForm) {
     GroupDTO group = this.groupService.getOne(id);
@@ -133,13 +134,13 @@ public class MembershipsController {
       .collect(
         Collectors.toSet());
 
-    Set<Long> toDelete = Sets.difference(actualUserIds , userIds);
+    Set<Long> toDelete = Sets.difference(actualUserIds, userIds);
     List<UserDTO> toDeleteUsers = userService.getAll(Lists.newArrayList(toDelete));
-    for (UserDTO toDeleteUser: toDeleteUsers) {
+    for (UserDTO toDeleteUser : toDeleteUsers) {
       associationUserGroupService.dissociate(toDeleteUser, group);
     }
 
-    Set<Long> toCreate = Sets.difference(userIds, actualUserIds );
+    Set<Long> toCreate = Sets.difference(userIds, actualUserIds);
     List<UserDTO> toCreateUsers = userService.getAll(Lists.newArrayList(toCreate));
     for (UserDTO toCreateUser : toCreateUsers) {
       associationUserGroupService.associate(toCreateUser, group);

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,11 +42,13 @@ public class FileManagerController {
   }
 
   @GetMapping
+  @PreAuthorize("hasAuthority('content:file-manager:read')")
   public ModelAndView getPage(Model model) {
     return new ModelAndView("content/filemanager/filemanager", model.asMap());
   }
 
   @GetMapping("/files")
+  @PreAuthorize("hasAuthority('content:file-manager:read')")
   public ModelAndView getFiles(Model model,
                                @PageableDefault(size = 20) Pageable pageable,
                                @RequestParam(value = "q", defaultValue = "", required = false) String q) {
@@ -61,6 +64,7 @@ public class FileManagerController {
 
   @PostMapping(value = "/files", consumes = "multipart/form-data")
   @ResponseStatus(HttpStatus.CREATED)
+  @PreAuthorize("hasAuthority('content:file-manager:create')")
   public void fileUpload(@RequestParam("file") MultipartFile uploadedFile, @RequestParam(value = "tags", required = false) Optional<List<String>> tags) {
     if (uploadedFile.isEmpty()) {
       return;

@@ -32,7 +32,7 @@ public class WebAdministrationRoleAutoConfiguration {
       .label("menu.administration.roles", true)
       .link("/blossom/administration/roles")
       .icon("fa fa-key")
-      .privilege(roleReadPrivilegePlugin())
+      .privilege(rolesReadPrivilegePlugin())
       .order(3)
       .parent(administrationMenuItem).build();
   }
@@ -43,23 +43,23 @@ public class WebAdministrationRoleAutoConfiguration {
   }
 
   @Bean
-  public Privilege roleReadPrivilegePlugin() {
-    return new SimplePrivilege("administration","role", "read");
+  public Privilege rolesReadPrivilegePlugin() {
+    return new SimplePrivilege("administration","roles", "read");
   }
 
   @Bean
-  public Privilege roleWritePrivilegePlugin() {
-    return new SimplePrivilege("administration","role", "write");
+  public Privilege rolesWritePrivilegePlugin() {
+    return new SimplePrivilege("administration","roles", "write");
   }
 
   @Bean
-  public Privilege roleCreatePrivilegePlugin() {
-    return new SimplePrivilege("administration","role", "create");
+  public Privilege rolesCreatePrivilegePlugin() {
+    return new SimplePrivilege("administration","roles", "create");
   }
 
   @Bean
-  public Privilege roleDeletePrivilegePlugin() {
-    return new SimplePrivilege("administration","role", "delete");
+  public Privilege rolesDeletePrivilegePlugin() {
+    return new SimplePrivilege("administration","roles", "delete");
   }
 
 }

@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +40,7 @@ public class ResponsabilitiesController {
   }
 
   @GetMapping("/users/{id}/roles")
+  @PreAuthorize("hasAuthority('administration:responsabilities:read')")
   public ModelAndView getUserMembershipsPage(@PathVariable Long id, Model model) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -50,6 +52,7 @@ public class ResponsabilitiesController {
   }
 
   @GetMapping("/users/{id}/roles/_edit")
+  @PreAuthorize("hasAuthority('administration:responsabilities:change')")
   public ModelAndView getUserMembershipsForm(@PathVariable Long id, Model model) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -59,8 +62,9 @@ public class ResponsabilitiesController {
       .responsabilitiesForm(associationUserRoleService.getAllLeft(user), user, null, "user", model);
   }
 
-  @PostMapping("/users/{id}/roles/_edit")
   @Transactional
+  @PostMapping("/users/{id}/roles/_edit")
+  @PreAuthorize("hasAuthority('administration:responsabilities:change')")
   public ModelAndView handleUserMembershipsForm(@PathVariable Long id, Model model,
     @ModelAttribute("form") UpdateAssociationUserRoleForm updateAssociationUserRoleForm) {
     UserDTO user = this.userService.getOne(id);
@@ -91,6 +95,7 @@ public class ResponsabilitiesController {
   }
 
   @GetMapping("/roles/{id}/users")
+  @PreAuthorize("hasAuthority('administration:responsabilities:read')")
   public ModelAndView getRoleMembershipsPage(@PathVariable Long id, Model model) {
     RoleDTO role = this.roleService.getOne(id);
     if (role == null) {
@@ -102,6 +107,7 @@ public class ResponsabilitiesController {
   }
 
   @GetMapping("/roles/{id}/users/_edit")
+  @PreAuthorize("hasAuthority('administration:responsabilities:change')")
   public ModelAndView getRoleMembershipsForm(@PathVariable Long id, Model model) {
     RoleDTO role = this.roleService.getOne(id);
     if (role== null) {
@@ -111,8 +117,9 @@ public class ResponsabilitiesController {
       .responsabilitiesForm(associationUserRoleService.getAllRight(role), null, role, "role", model);
   }
 
-  @PostMapping("/roles/{id}/users/_edit")
   @Transactional
+  @PostMapping("/roles/{id}/users/_edit")
+  @PreAuthorize("hasAuthority('administration:responsabilities:change')")
   public ModelAndView handleRoleResponsabilitiesForm(@PathVariable Long id, Model model,
     @ModelAttribute("form") UpdateAssociationUserRoleForm updateAssociationUserRoleForm) {
     RoleDTO role = this.roleService.getOne(id);

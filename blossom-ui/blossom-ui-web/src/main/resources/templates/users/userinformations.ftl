@@ -2,6 +2,7 @@
 <#import "/utils/civility.ftl" as civility>
 <#import "/utils/buttons.ftl" as buttons>
 <#import "/utils/modal.ftl" as modal>
+<#import "/utils/privilege.ftl" as privilege>
 
 <div class="ibox-content">
   <div class="sk-spinner sk-spinner-wave">
@@ -108,13 +109,14 @@
   </form>
 </div>
 
-<div class="ibox-footer">
-  <div class="text-right">
-    <button class="btn btn-primary btn-view" onclick="edit_userinformations(this);">
-    <@spring.message "edit"/>
-    </button>
+<@privilege.has currentUser=currentUser privilege="administration:users:write">
+  <div class="ibox-footer">
+    <div class="text-right">
+        <button class="btn btn-primary btn-view" onclick="edit_userinformations(this);">
+        <@spring.message "edit"/>
+        </button>
+    </div>
   </div>
-</div>
 
 <script>
   var edit_userinformations = function (button) {
@@ -129,3 +131,4 @@
     });
   };
 </script>
+</@privilege.has>

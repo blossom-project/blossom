@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * Created by Maël Gargadennnec on 05/05/2017.
@@ -51,15 +51,10 @@ public class UsersController {
   }
 
   @GetMapping
+  @PreAuthorize("hasAuthority('administration:users:read')")
   public ModelAndView getUsersPage(@RequestParam(value = "q", required = false) String q,
     @PageableDefault(size = 25) Pageable pageable, Model model) {
     return tableView(q, pageable, model, "users/users");
-  }
-
-  @GetMapping("/_list")
-  public ModelAndView getUsersTable(@RequestParam(value = "q", required = false) String q,
-    @PageableDefault(size = 25) Pageable pageable, Model model) {
-    return tableView(q, pageable, model, "users/table");
   }
 
   private ModelAndView tableView(String q, Pageable pageable, Model model, String viewName) {
@@ -78,6 +73,7 @@ public class UsersController {
   }
 
   @GetMapping("/_create")
+  @PreAuthorize("hasAuthority('administration:users:create')")
   public ModelAndView getUserCreatePage(Model model, Locale locale) {
     UserCreateForm userCreateForm = new UserCreateForm();
     userCreateForm.setLocale(locale);
@@ -85,6 +81,7 @@ public class UsersController {
   }
 
   @PostMapping("/_create")
+  @PreAuthorize("hasAuthority('administration:users:create')")
   public ModelAndView handleUserCreateForm(
     @Valid @ModelAttribute("userCreateForm") UserCreateForm userCreateForm,
     BindingResult bindingResult, Model model) {
@@ -106,6 +103,7 @@ public class UsersController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAuthority('administration:users:read')")
   public ModelAndView getUser(@PathVariable Long id, Model model, HttpServletRequest request) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -116,6 +114,7 @@ public class UsersController {
   }
 
   @GetMapping("/{id}/_informations")
+  @PreAuthorize("hasAuthority('administration:users:read')")
   public ModelAndView getUserInformations(@PathVariable Long id) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -125,6 +124,7 @@ public class UsersController {
   }
 
   @GetMapping("/{id}/_informations/_edit")
+  @PreAuthorize("hasAuthority('administration:users:write')")
   public ModelAndView getUserInformationsForm(@PathVariable Long id, Model model) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -134,6 +134,7 @@ public class UsersController {
   }
 
   @PostMapping("/{id}/_informations/_edit")
+  @PreAuthorize("hasAuthority('administration:users:write')")
   public ModelAndView handleUserInformationsUpdateForm(@PathVariable Long id,
     @Valid @ModelAttribute("userUpdateForm") UserUpdateForm userUpdateForm,
     BindingResult bindingResult, Model model) {
@@ -162,7 +163,14 @@ public class UsersController {
     return new ModelAndView("users/userinformations-edit", model.asMap());
   }
 
+  @GetMapping(value = "/{id}/avatar", produces = "image/*")
+  @ResponseBody
+  public byte[] displayAvatar(@PathVariable Long id) throws IOException {
+    return this.userService.loadAvatar(id);
+  }
+
   @GetMapping("/{id}/_avatar/_edit")
+  @PreAuthorize("hasAuthority('administration:users:write')")
   public ModelAndView getUserAvatarForm(@PathVariable Long id, Model model) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
@@ -173,6 +181,7 @@ public class UsersController {
 
   @PostMapping("/{id}/_avatar/_edit")
   @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("hasAuthority('administration:users:write')")
   public void handleUserAvatarUpdateForm(@PathVariable Long id,
     @RequestParam("avatar") MultipartFile file)
     throws IOException {
@@ -184,35 +193,9 @@ public class UsersController {
   }
 
   @PostMapping("/{id}/_delete")
+  @PreAuthorize("hasAuthority('administration:users:delete')")
   public String deleteUser(@PathVariable Long id) {
     this.userService.delete(this.userService.getOne(id));
     return "redirect:/users";
   }
-
-  @GetMapping(value = "/{id}/avatar", produces = "image/*")
-  @ResponseBody
-  public byte[] displayAvatar(@PathVariable Long id) throws IOException {
-    return this.userService.loadAvatar(id);
-  }
-
-  @PostMapping("/{id}/_change_password")
-  public String askForPasswordChange(@PathVariable Long id, RedirectAttributes redirectAttributes)
-    throws Exception {
-    this.userService.askPasswordChange(id);
-    redirectAttributes.addAttribute("reseted", true);
-    return "redirect:/users/" + id;
-  }
-
-  @PostMapping("/{id}/_enable")
-  public String enableUser(@PathVariable Long id) {
-    this.userService.updateActivation(id, true);
-    return "redirect:/users/" + id;
-  }
-
-  @PostMapping("/{id}/_disable")
-  public String disableUser(@PathVariable Long id) {
-    this.userService.updateActivation(id, false);
-    return "redirect:/users/" + id;
-  }
-
 }

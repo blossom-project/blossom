@@ -28,20 +28,23 @@
 <div class="wrapper wrapper-content">
   <@tabulation.tabs
     id="groupContent"
-  tabs=[
-  {
-  "isActive": true,
-  "linkLabel": "panel.information",
-  "view": "/blossom/administration/groups/${group.id?c}/_informations",
-  "edit": "/blossom/administration/groups/${group.id?c}/_informations/_edit"
-  },
-  {
-  "isActive": false,
-  "linkLabel": "groups.panel.users",
-  "view": "/blossom/administration/memberships/groups/${group.id?c}/users",
-  "edit": "/blossom/administration/memberships/groups/${group.id?c}/users/_edit"
-  }
-  ]
+    currentUser=currentUser
+    tabs=[
+    {
+    "isActive": true,
+    "linkLabel": "panel.information",
+    "view": "/blossom/administration/groups/${group.id?c}/_informations",
+    "edit": "/blossom/administration/groups/${group.id?c}/_informations/_edit",
+    "privilege":"administration:groups:read"
+    },
+    {
+    "isActive": false,
+    "linkLabel": "groups.panel.users",
+    "view": "/blossom/administration/memberships/groups/${group.id?c}/users",
+    "edit": "/blossom/administration/memberships/groups/${group.id?c}/users/_edit",
+    "privilege":"administration:memberships:read"
+    }
+    ]
 />
 </div>
 </@master.default>

@@ -13,9 +13,6 @@ import fr.mgargadennec.blossom.core.role.RoleService;
 import fr.mgargadennec.blossom.core.user.User;
 import fr.mgargadennec.blossom.core.user.UserDTO;
 import fr.mgargadennec.blossom.core.user.UserService;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -26,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.plugin.core.PluginRegistry;
@@ -34,7 +30,7 @@ import org.springframework.plugin.core.PluginRegistry;
 /**
  * Created by Maël Gargadennnec on 09/06/2017.
  */
-@Configuration
+//@Configuration
 public class DataConfiguration {
 
   private final static Logger LOGGER = LoggerFactory.getLogger(DataConfiguration.class);

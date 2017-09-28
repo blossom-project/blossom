@@ -1,6 +1,7 @@
 <#import "/spring.ftl" as spring>
 <#import "/master/master.ftl" as master>
 <#import "/utils/table.ftl" as table>
+<#import "/utils/privilege.ftl" as privilege>
 
 <@master.default currentUser=currentUser>
 <link href="/css/plugins/dropzone/dropzone.css" rel="stylesheet">
@@ -30,40 +31,43 @@
 
 <div class="wrapper wrapper-content">
   <div class="row">
-    <div class="col-lg-3">
-      <div class="ibox float-e-margins">
-        <div class="ibox-content">
-          <div class="file-manager">
-            <h5><@spring.message "filemanager.search"/></h5>
-            <div class="input-group m-b-md">
-              <input type="text"
-                     placeholder="<@spring.message "filemanager.search.placeholder"/>"
-                     class="file-search input-sm form-control"
-                     onkeyup="var which = event.which || event.keyCode;if(which === 13) {$(this).closest('.input-group').find('button.file-search').first().click();}">
+    <@privilege.has currentUser=currentUser privilege="content:file-manager:create">
+      <div class="col-lg-3">
+        <div class="ibox float-e-margins">
+          <div class="ibox-content">
+            <div class="file-manager">
+              <h5><@spring.message "filemanager.search"/></h5>
+              <div class="input-group m-b-md">
+                <input type="text"
+                       placeholder="<@spring.message "filemanager.search.placeholder"/>"
+                       class="file-search input-sm form-control"
+                       onkeyup="var which = event.which || event.keyCode;if(which === 13) {$(this).closest('.input-group').find('button.file-search').first().click();}">
 
-              <span class="input-group-btn">
-                <button type="button" class="btn btn-sm btn-primary file-search"
-                        onclick="var value = $(this).closest('.input-group').children('input.file-search').first().val();context.q=value;updateFilelist();">
-                    <i class="fa fa-search"></i>
-                </button>
-              </span>
-            </div>
-
-            <div class="hr-line-dashed"></div>
-
-            <form id="filemanagerDropzone" action="filemanager/files" method="POST" class="dropzone"
-                  enctype="multipart/form-data">
-              <div class="fallback">
-                <input name="file" type="file" multiple="false"/>
+                <span class="input-group-btn">
+                  <button type="button" class="btn btn-sm btn-primary file-search"
+                          onclick="var value = $(this).closest('.input-group').children('input.file-search').first().val();context.q=value;updateFilelist();">
+                      <i class="fa fa-search"></i>
+                  </button>
+                </span>
               </div>
-            </form>
-            <div class="hr-line-dashed"></div>
 
+              <div class="hr-line-dashed"></div>
+
+              <form id="filemanagerDropzone" action="filemanager/files" method="POST" class="dropzone"
+                    enctype="multipart/form-data">
+                <div class="fallback">
+                  <input name="file" type="file" multiple="false"/>
+                </div>
+              </form>
+              <div class="hr-line-dashed"></div>
+
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="col-lg-9">
+    </@privilege.has>
+
+    <div class="<#if privilege.hasOne(currentUser,"content:file-manager:create")>col-lg-9<#else>col-lg-12</#if>">
       <div class="row">
         <div id="filelist" class="col-xs-12">
         </div>

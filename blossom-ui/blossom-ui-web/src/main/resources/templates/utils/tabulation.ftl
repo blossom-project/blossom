@@ -1,31 +1,37 @@
-<#macro tabs id tabs>
+<#import "/utils/privilege.ftl" as privilege>
+
+<#macro tabs id tabs currentUser>
 <div class="row">
   <div class="col-sm-12">
     <div id="${id}" class="tabs-container">
       <ul class="nav nav-tabs">
         <#list tabs as nav>
-          <li>
-            <a data-target="#${id}_tab_${nav?index}" data-toggle="tabajax">
-              <@spring.message "${nav.linkLabel}"/>
-            </a>
-          </li>
+          <#if !(nav.privilege?has_content) || privilege.hasOne(currentUser, nav.privilege)>
+            <li>
+              <a data-target="#${id}_tab_${nav?index}" data-toggle="tabajax">
+                <@spring.message "${nav.linkLabel}"/>
+              </a>
+            </li>
+          </#if>
         </#list>
       </ul>
 
       <div class="tab-content">
         <#list tabs as nav>
-          <#assign tabId = id+'_tab_'+nav?index />
-          <div id="${tabId}" class="tab-pane" data-view="${nav.view}" <#if nav.edit??>data-edit="${nav.edit}"</#if>>
-            <div class="ibox-content sk-loading">
-              <div class="sk-spinner sk-spinner-wave">
-                <div class="sk-rect1"></div>
-                <div class="sk-rect2"></div>
-                <div class="sk-rect3"></div>
-                <div class="sk-rect4"></div>
-                <div class="sk-rect5"></div>
+          <#if !(nav.privilege?has_content) || privilege.hasOne(currentUser,nav.privilege)>
+            <#assign tabId = id+'_tab_'+nav?index />
+            <div id="${tabId}" class="tab-pane" data-view="${nav.view}" <#if nav.edit??>data-edit="${nav.edit}"</#if>>
+              <div class="ibox-content sk-loading">
+                <div class="sk-spinner sk-spinner-wave">
+                  <div class="sk-rect1"></div>
+                  <div class="sk-rect2"></div>
+                  <div class="sk-rect3"></div>
+                  <div class="sk-rect4"></div>
+                  <div class="sk-rect5"></div>
+                </div>
               </div>
             </div>
-          </div>
+          </#if>
         </#list>
       </div>
     </div>
