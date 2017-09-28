@@ -42,13 +42,13 @@ public class FileManagerController {
   }
 
   @GetMapping
-  @PreAuthorize("hasAuthority('content:file-manager:read')")
+  @PreAuthorize("hasAuthority('content:filemanager:read')")
   public ModelAndView getPage(Model model) {
     return new ModelAndView("content/filemanager/filemanager", model.asMap());
   }
 
   @GetMapping("/files")
-  @PreAuthorize("hasAuthority('content:file-manager:read')")
+  @PreAuthorize("hasAuthority('content:filemanager:read')")
   public ModelAndView getFiles(Model model,
                                @PageableDefault(size = 20) Pageable pageable,
                                @RequestParam(value = "q", defaultValue = "", required = false) String q) {
@@ -64,7 +64,7 @@ public class FileManagerController {
 
   @PostMapping(value = "/files", consumes = "multipart/form-data")
   @ResponseStatus(HttpStatus.CREATED)
-  @PreAuthorize("hasAuthority('content:file-manager:create')")
+  @PreAuthorize("hasAuthority('content:filemanager:create')")
   public void fileUpload(@RequestParam("file") MultipartFile uploadedFile, @RequestParam(value = "tags", required = false) Optional<List<String>> tags) {
     if (uploadedFile.isEmpty()) {
       return;

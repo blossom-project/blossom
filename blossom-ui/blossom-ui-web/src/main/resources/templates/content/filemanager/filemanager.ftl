@@ -31,7 +31,7 @@
 
 <div class="wrapper wrapper-content">
   <div class="row">
-    <@privilege.has currentUser=currentUser privilege="content:file-manager:create">
+    <@privilege.has currentUser=currentUser privilege="content:filemanager:create">
       <div class="col-lg-3">
         <div class="ibox float-e-margins">
           <div class="ibox-content">
@@ -67,7 +67,7 @@
       </div>
     </@privilege.has>
 
-    <div class="<#if privilege.hasOne(currentUser,"content:file-manager:create")>col-lg-9<#else>col-lg-12</#if>">
+    <div class="<#if privilege.hasOne(currentUser,"content:filemanager:create")>col-lg-9<#else>col-lg-12</#if>">
       <div class="row">
         <div id="filelist" class="col-xs-12">
         </div>

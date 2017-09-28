@@ -28,7 +28,7 @@
     </dependency>
     <dependency>
       <groupId>fr.mgargadennec.blossom</groupId>
-      <artifactId>blossom-starter-file-manager</artifactId>
+      <artifactId>blossom-starter-filemanager</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
