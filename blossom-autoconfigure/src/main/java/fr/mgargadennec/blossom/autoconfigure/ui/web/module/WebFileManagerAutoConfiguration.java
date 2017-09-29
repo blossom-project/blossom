@@ -62,21 +62,21 @@ public class WebFileManagerAutoConfiguration {
 
   @Bean
   public Privilege fileManagerReadPrivilegePlugin() {
-    return new SimplePrivilege("content","file-manager", "read");
+    return new SimplePrivilege("content","filemanager", "read");
   }
 
   @Bean
   public Privilege fileManagerWritePrivilegePlugin() {
-    return new SimplePrivilege("content","file-manager", "write");
+    return new SimplePrivilege("content","filemanager", "write");
   }
 
   @Bean
   public Privilege fileManagerCreatePrivilegePlugin() {
-    return new SimplePrivilege("content","file-manager", "create");
+    return new SimplePrivilege("content","filemanager", "create");
   }
 
   @Bean
   public Privilege fileManagerDeletePrivilegePlugin() {
-    return new SimplePrivilege("content","file-manager", "delete");
+    return new SimplePrivilege("content","filemanager", "delete");
   }
 }

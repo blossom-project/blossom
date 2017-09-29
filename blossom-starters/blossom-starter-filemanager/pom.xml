@@ -9,7 +9,7 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>blossom-starter-file-manager</artifactId>
+  <artifactId>blossom-starter-filemanager</artifactId>
   <packaging>jar</packaging>
 
   <name>Blossom Starters : Starter FileManager</name>

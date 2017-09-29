@@ -9,7 +9,8 @@ import org.springframework.cache.annotation.CacheConfig;
 
 @CacheConfig(cacheResolver = "blossomCacheResolver")
 public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B extends AbstractEntity, ASSOCIATION extends AbstractAssociationEntity<A, B>>
-    implements AssociationDao<A, B, ASSOCIATION> {
+  implements AssociationDao<A, B, ASSOCIATION> {
+
   private final AssociationRepository<A, B, ASSOCIATION> repository;
 
   protected GenericAssociationDaoImpl(AssociationRepository<A, B, ASSOCIATION> repository) {
@@ -60,6 +61,11 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
 //  @Cacheable(key = "''+#a0")
   public ASSOCIATION getOne(long id) {
     return this.repository.findOne(id);
+  }
+
+  @Override
+  public ASSOCIATION getOne(A a, B b) {
+    return this.repository.findOneByAAndB(a, b);
   }
 
   protected abstract ASSOCIATION create();

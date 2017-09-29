@@ -1,5 +1,8 @@
 package fr.mgargadennec.blossom.autoconfigure.ui.web;
 
+import fr.mgargadennec.blossom.core.common.PluginConstants;
+import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
+import fr.mgargadennec.blossom.core.common.search.SearchEngine;
 import fr.mgargadennec.blossom.core.common.utils.action_token.ActionTokenService;
 import fr.mgargadennec.blossom.core.user.UserService;
 import fr.mgargadennec.blossom.ui.current_user.CurrentUserControllerAdvice;
@@ -10,17 +13,20 @@ import fr.mgargadennec.blossom.ui.web.ActivationController;
 import fr.mgargadennec.blossom.ui.web.ErrorControllerAdvice;
 import fr.mgargadennec.blossom.ui.web.HomeController;
 import fr.mgargadennec.blossom.ui.web.LoginController;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-
+import fr.mgargadennec.blossom.ui.web.OmnisearchController;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.elasticsearch.client.Client;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.plugin.core.PluginRegistry;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
@@ -41,7 +47,14 @@ public class WebInterfaceAutoConfiguration {
   }
 
   @Bean
-  public ActivationController activationController(ActionTokenService tokenService, UserService userService) {
+  public OmnisearchController searchController(Client client,
+    @Qualifier(PluginConstants.PLUGIN_SEARCH_ENGINE) PluginRegistry<SearchEngine, Class<? extends AbstractDTO>> registry) {
+    return new OmnisearchController(client, registry);
+  }
+
+  @Bean
+  public ActivationController activationController(ActionTokenService tokenService,
+    UserService userService) {
     return new ActivationController(tokenService, userService);
   }
 
@@ -51,7 +64,7 @@ public class WebInterfaceAutoConfiguration {
   }
 
   @Bean
-  public ErrorControllerAdvice errorControllerAdvice(){
+  public ErrorControllerAdvice errorControllerAdvice() {
     return new ErrorControllerAdvice();
   }
 
@@ -62,7 +75,8 @@ public class WebInterfaceAutoConfiguration {
 
   @Bean
   public Set<Locale> availableLocales(@Value("${blossom.languages}") String[] languages) {
-    return Stream.of(languages).sequential().map(language -> Locale.forLanguageTag(language)).collect(Collectors.toCollection(LinkedHashSet::new));
+    return Stream.of(languages).sequential().map(language -> Locale.forLanguageTag(language))
+      .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   @Bean

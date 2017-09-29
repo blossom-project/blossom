@@ -29,6 +29,7 @@ fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemDashboardAutoConfig
 fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemSchedulerAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemCachesAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemLoggersAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.ui.web.system.WebSystemSessionsAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.ui.web.module.WebFileManagerAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.ui.web.module.WebArticleAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.ui.actuator.WebActuatorAutoConfiguration

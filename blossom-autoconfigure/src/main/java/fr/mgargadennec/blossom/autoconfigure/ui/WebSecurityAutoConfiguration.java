@@ -7,11 +7,13 @@ import fr.mgargadennec.blossom.core.user.UserService;
 import fr.mgargadennec.blossom.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
 import fr.mgargadennec.blossom.ui.current_user.CurrentUserDetailsServiceImpl;
 import fr.mgargadennec.blossom.ui.current_user.SystemUserDetailsServiceImpl;
+import fr.mgargadennec.blossom.ui.web.utils.session.BlossomSessionRegistryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -23,8 +25,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
@@ -123,6 +127,8 @@ public class WebSecurityAutoConfiguration {
 
     @Autowired
     private LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler;
+    @Autowired
+    private AssociationUserRoleService associationUserRoleService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -135,8 +141,23 @@ public class WebSecurityAutoConfiguration {
         .deleteCookies(BLOSSOM_REMEMBER_ME_COOKIE_NAME)
         .logoutSuccessUrl("/" + BLOSSOM_BASE_PATH + "/login")
         .permitAll().and().rememberMe().rememberMeCookieName(BLOSSOM_REMEMBER_ME_COOKIE_NAME).and()
-        .exceptionHandling();
+        .exceptionHandling().and()
+        .sessionManagement().maximumSessions(10)
+        .maxSessionsPreventsLogin(true)
+        .expiredUrl("/" + BLOSSOM_BASE_PATH + "/login")
+        .sessionRegistry(blossomSessionRegistry());
     }
+
+
+    @Bean
+    public SessionRegistry blossomSessionRegistry() {
+      return new BlossomSessionRegistryImpl(associationUserRoleService);
+    }
+    @Bean
+    public static ServletListenerRegistrationBean httpSessionEventPublisher() {
+      return new ServletListenerRegistrationBean(new HttpSessionEventPublisher());
+    }
+
 
   }
 

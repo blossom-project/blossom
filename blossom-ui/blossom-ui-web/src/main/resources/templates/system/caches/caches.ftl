@@ -23,7 +23,7 @@
   </div>
 </div>
 
-<div class="wrapper wrapper-content scheduler">
+<div class="wrapper wrapper-content">
   <div class="ibox float-e-margins">
     <div class="ibox-content">
       <div class="row">
