@@ -38,16 +38,36 @@
           <#list sessions as principal, sessions>
           <tr>
             <td>
-            <a href="/blossom/administration/users/${principal.user.id?c}">
-              ${principal.user.identifier}
-            </a>
+              <a href="/blossom/administration/users/${principal.user.id?c}">
+                ${principal.user.identifier}
+              </a>
             </td>
             <td>
-              <ul>
+              <table class="table table-stripped small">
+                <tbody>
                 <#list sessions as session>
-                  <li>${session.lastRequest?datetime} / ${session.sessionId} /  ${session.expired?string('yes','no')}</li>
+                  <tr>
+                    <td class="no-borders">
+                      <i class="fa fa-circle <#if session.expired>text-warning<#else>text-navy</#if>"></i>
+                    </td>
+                    <td class="no-borders">
+                      ${session.sessionId}
+                    </td>
+                    <td class="no-borders text-muted">
+                      ${session.lastRequest?datetime}
+                    </td>
+                    <td class="no-borders">
+                      <button
+                        class="btn btn-xs btn-danger"
+                        data-action="expireSession"
+                        data-session-id="${session.sessionId}">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
                 </#list>
-              </ul>
+                </tbody>
+              </table>
             </td>
           </tr>
           </#list>
@@ -56,4 +76,17 @@
     </div>
   </div>
 </div>
+
+
+<script>
+  $(document).ready(function () {
+    $("[data-action='expireSession']").click(function (e) {
+      var sessionId = $(this).data("session-id");
+
+      $.post("sessions/" + sessionId+ "/_invalidate", function () {
+        window.location.reload(true);
+      });
+    });
+  });
+</script>
 </@master.default>

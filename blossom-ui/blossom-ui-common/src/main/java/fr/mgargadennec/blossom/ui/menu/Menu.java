@@ -1,5 +1,6 @@
 package fr.mgargadennec.blossom.ui.menu;
 
+import fr.mgargadennec.blossom.ui.current_user.CurrentUser;
 import java.util.Collection;
 
 /**
@@ -8,5 +9,7 @@ import java.util.Collection;
 public interface Menu {
 
   Collection<MenuItem> items();
+
+  Collection<MenuItem> filteredItems(CurrentUser currentUser);
 
 }

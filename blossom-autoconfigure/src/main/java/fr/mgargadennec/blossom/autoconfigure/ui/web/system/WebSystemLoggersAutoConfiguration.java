@@ -39,7 +39,7 @@ public class WebSystemLoggersAutoConfiguration {
 
   @Bean
   public Privilege loggersPrivilegePlugin() {
-    return new SimplePrivilege("system","logger", "manager");
+    return new SimplePrivilege("system","loggers", "manager");
   }
 
 }

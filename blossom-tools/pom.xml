@@ -18,5 +18,6 @@
 
 	<modules>
     <module>blossom-tools-initializr</module>
+    <module>blossom-tools-simple-module-generator</module>
 	</modules>
 </project>

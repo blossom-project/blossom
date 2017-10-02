@@ -40,7 +40,7 @@ public class WebSystemCachesAutoConfiguration {
 
   @Bean
   public Privilege cacheManagerPrivilegePlugin() {
-    return new SimplePrivilege("system","cache", "manager");
+    return new SimplePrivilege("system","caches", "manager");
   }
 
 }

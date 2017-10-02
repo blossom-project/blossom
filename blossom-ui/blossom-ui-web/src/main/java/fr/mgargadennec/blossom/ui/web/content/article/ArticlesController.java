@@ -43,22 +43,18 @@ public class ArticlesController {
     @PreAuthorize("hasAuthority('content:articles:read')")
     public ModelAndView getArticlesPage(@RequestParam(value = "q", required = false) String q,
                                         @PageableDefault(size = 25) Pageable pageable, Model model) {
-        return tableView(q, pageable, model, "articles/articles");
-    }
+      Page<ArticleDTO> articles;
 
-    private ModelAndView tableView(String q, Pageable pageable, Model model, String viewName) {
-        Page<ArticleDTO> articles;
+      if (Strings.isNullOrEmpty(q)) {
+        articles = this.articleService.getAll(pageable);
+      } else {
+        articles = this.searchEngine.search(q, pageable).getPage();
+      }
 
-        if (Strings.isNullOrEmpty(q)) {
-            articles = this.articleService.getAll(pageable);
-        } else {
-            articles = this.searchEngine.search(q, pageable).getPage();
-        }
+      model.addAttribute("articles", articles);
+      model.addAttribute("q", q);
 
-        model.addAttribute("articles", articles);
-        model.addAttribute("q", q);
-
-        return new ModelAndView(viewName, model.asMap());
+      return new ModelAndView("articles/articles", model.asMap());
     }
 
     @GetMapping("/_create")

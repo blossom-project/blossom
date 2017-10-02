@@ -3,7 +3,6 @@ package fr.mgargadennec.blossom.autoconfigure.ui;
 import static fr.mgargadennec.blossom.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
 
 import fr.mgargadennec.blossom.core.common.PluginConstants;
-import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
 import fr.mgargadennec.blossom.ui.menu.Menu;
 import fr.mgargadennec.blossom.ui.menu.MenuImpl;
 import fr.mgargadennec.blossom.ui.menu.MenuInterceptor;
@@ -28,6 +27,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 @EnablePluginRegistries({MenuItemPlugin.class})
 public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
+
   @Autowired
   @Qualifier(value = PluginConstants.PLUGIN_MENU)
   private PluginRegistry<MenuItem, String> registry;
@@ -46,27 +46,42 @@ public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
   @Bean
   @Order(0)
   public MenuItem homeMenuItem(MenuItemBuilder builder) {
-    return builder.key("home").label("menu.home", true).icon("fa fa-home").link("/blossom").order(Integer.MIN_VALUE).build();
+    return builder
+      .key("home")
+      .label("menu.home", true)
+      .icon("fa fa-home")
+      .link("/blossom")
+      .order(Integer.MIN_VALUE)
+      .build();
   }
 
   @Bean
   @Order(0)
   public MenuItem administrationMenuItem(MenuItemBuilder builder) {
     return builder.key("administration")
-                  .label("menu.administration", true)
-                  .icon("glyphicon glyphicon-list-alt")
-                  .link("/blossom/administration")
-                  .order(Integer.MIN_VALUE +1).build();
+      .label("menu.administration", true)
+      .icon("glyphicon glyphicon-list-alt")
+      .link("/blossom/administration")
+      .leaf(false)
+      .order(Integer.MIN_VALUE + 1)
+      .build();
   }
 
   @Bean
   @Order(0)
   public MenuItem systemMenuItem(MenuItemBuilder builder) {
-    return builder.key("system").label("menu.system", true).icon("fa fa-cogs").link("/blossom/system").order(Integer.MAX_VALUE).build();
+    return builder
+      .key("system")
+      .label("menu.system", true)
+      .icon("fa fa-cogs")
+      .link("/blossom/system")
+      .leaf(false)
+      .order(Integer.MAX_VALUE)
+      .build();
   }
 
   @Bean
-  public MenuInterceptor menuInterceptor(){
+  public MenuInterceptor menuInterceptor() {
     return new MenuInterceptor(registry);
   }
 
