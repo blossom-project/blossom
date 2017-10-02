@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.simple_module_generator.generator;
+package fr.mgargadennec.blossom.simple_module_generator.classes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -12,7 +12,8 @@ import com.helger.jcodemodel.JMod;
 import com.helger.jcodemodel.JVar;
 import fr.mgargadennec.blossom.core.common.search.IndexationEngineImpl;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
-import fr.mgargadennec.blossom.simple_module_generator.ClassGenerator;
+import fr.mgargadennec.blossom.core.common.utils.privilege.Privilege;
+import fr.mgargadennec.blossom.core.common.utils.privilege.SimplePrivilege;
 import fr.mgargadennec.blossom.simple_module_generator.EntityField;
 import fr.mgargadennec.blossom.simple_module_generator.GeneratorUtils;
 import fr.mgargadennec.blossom.simple_module_generator.Parameters;
@@ -123,13 +124,6 @@ public class ConfigurationGenerator implements ClassGenerator {
         .arg(parameters.getEntityNameLowerUnderscore()+"s")
         .arg(searchEngineBeanObjectMapper));
 
-//      JMethod controllerBean = definedClass.method(JMod.PUBLIC, controllerClass, controllerClass.name());
-//      controllerBean.annotate(Bean.class);
-//      JVar controllerBeanService = controllerBean.param(serviceClass, "service");
-//      JVar controllerBeanSearchEngine = controllerBean.param(codeModel.ref(SearchEngineImpl.class).narrow(dtoClass), "searchEngine");
-//      controllerBean.body()._return(JExpr._new(controllerClass).arg(controllerBeanService).arg(controllerBeanSearchEngine));
-
-
       JMethod moduleMenuItemBean = definedClass.method(JMod.PUBLIC,MenuItem.class, "moduleMenuItem");
       moduleMenuItemBean.annotate(Bean.class);
       moduleMenuItemBean.annotate(ConditionalOnMissingBean.class).param("name","moduleMenuItem");
@@ -141,8 +135,24 @@ public class ConfigurationGenerator implements ClassGenerator {
         .invoke("icon").arg("fa fa-puzzle-piece")
         .invoke("link").arg("/blossom/modules")
         .invoke("leaf").arg(false)
+        .invoke("order").arg(Integer.MAX_VALUE - 1)
         .invoke("build"));
 
+      JMethod readPrivilegeBean = definedClass.method(JMod.PUBLIC, Privilege.class, parameters.getEntityName()+"ReadPrivilegePlugin");
+      readPrivilegeBean.annotate(Bean.class);
+      readPrivilegeBean.body()._return(JExpr._new(codeModel.ref(SimplePrivilege.class)).arg("modules").arg(parameters.getEntityNameLowerUnderscore()+"s").arg("read"));
+
+      JMethod writePrivilegeBean = definedClass.method(JMod.PUBLIC, Privilege.class, parameters.getEntityNameLowerUnderscore()+"WritePrivilegePlugin");
+      writePrivilegeBean.annotate(Bean.class);
+      writePrivilegeBean.body()._return(JExpr._new(codeModel.ref(SimplePrivilege.class)).arg("modules").arg(parameters.getEntityNameLowerUnderscore()+"s").arg("write"));
+
+      JMethod createPrivilegeBean = definedClass.method(JMod.PUBLIC, Privilege.class, parameters.getEntityName()+"CreatePrivilegePlugin");
+      createPrivilegeBean.annotate(Bean.class);
+      createPrivilegeBean.body()._return(JExpr._new(codeModel.ref(SimplePrivilege.class)).arg("modules").arg(parameters.getEntityNameLowerUnderscore()+"s").arg("create"));
+
+      JMethod deletePrivilegeBean = definedClass.method(JMod.PUBLIC, Privilege.class, parameters.getEntityName()+"DeletePrivilegePlugin");
+      deletePrivilegeBean.annotate(Bean.class);
+      deletePrivilegeBean.body()._return(JExpr._new(codeModel.ref(SimplePrivilege.class)).arg("modules").arg(parameters.getEntityNameLowerUnderscore()+"s").arg("delete"));
 
       JMethod menuItemBean = definedClass.method(JMod.PUBLIC, MenuItem.class, parameters.getEntityName()+"MenuItem");
       menuItemBean.annotate(Bean.class);
@@ -150,12 +160,15 @@ public class ConfigurationGenerator implements ClassGenerator {
       JVar parentMenu = menuItemBean.param(MenuItem.class ,"parentMenu");
       parentMenu.annotate(Qualifier.class).param("value", "moduleMenuItem");
       menuItemBean.body()._return(JExpr.ref(builder2)
-        .invoke("key").arg(parameters.getEntityName())
+        .invoke("key").arg(parameters.getEntityNameLowerUnderscore()+"s")
         .invoke("label").arg("menu."+parameters.getEntityNameLowerUnderscore()).arg(true)
         .invoke("icon").arg("fa fa-question")
         .invoke("link").arg("/blossom/modules/" + parameters.getEntityNameLowerUnderscore()+"s")
         .invoke("parent").arg(parentMenu)
+        .invoke("privilege").arg(JExpr.invoke(readPrivilegeBean))
         .invoke("build"));
+
+
 
       return definedClass;
     } catch (Exception e) {

@@ -1,10 +1,9 @@
-package fr.mgargadennec.blossom.simple_module_generator.generator;
+package fr.mgargadennec.blossom.simple_module_generator.classes;
 
 import com.helger.jcodemodel.EClassType;
 import com.helger.jcodemodel.JCodeModel;
 import com.helger.jcodemodel.JDefinedClass;
 import fr.mgargadennec.blossom.core.common.dao.CrudDao;
-import fr.mgargadennec.blossom.simple_module_generator.ClassGenerator;
 import fr.mgargadennec.blossom.simple_module_generator.GeneratorUtils;
 import fr.mgargadennec.blossom.simple_module_generator.Parameters;
 

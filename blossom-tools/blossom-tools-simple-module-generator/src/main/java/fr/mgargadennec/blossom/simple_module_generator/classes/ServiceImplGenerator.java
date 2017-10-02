@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.simple_module_generator.generator;
+package fr.mgargadennec.blossom.simple_module_generator.classes;
 
 import com.helger.jcodemodel.JBlock;
 import com.helger.jcodemodel.JCodeModel;
@@ -10,7 +10,6 @@ import com.helger.jcodemodel.JVar;
 import fr.mgargadennec.blossom.core.common.event.CreatedEvent;
 import fr.mgargadennec.blossom.core.common.event.UpdatedEvent;
 import fr.mgargadennec.blossom.core.common.service.GenericCrudServiceImpl;
-import fr.mgargadennec.blossom.simple_module_generator.ClassGenerator;
 import fr.mgargadennec.blossom.simple_module_generator.EntityField;
 import fr.mgargadennec.blossom.simple_module_generator.GeneratorUtils;
 import fr.mgargadennec.blossom.simple_module_generator.Parameters;

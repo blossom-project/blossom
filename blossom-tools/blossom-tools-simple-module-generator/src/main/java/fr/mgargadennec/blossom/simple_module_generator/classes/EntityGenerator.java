@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.simple_module_generator.generator;
+package fr.mgargadennec.blossom.simple_module_generator.classes;
 
 import com.helger.jcodemodel.JAnnotationUse;
 import com.helger.jcodemodel.JCodeModel;
@@ -9,7 +9,6 @@ import com.helger.jcodemodel.JMethod;
 import com.helger.jcodemodel.JMod;
 import com.helger.jcodemodel.JVar;
 import fr.mgargadennec.blossom.core.common.entity.AbstractEntity;
-import fr.mgargadennec.blossom.simple_module_generator.ClassGenerator;
 import fr.mgargadennec.blossom.simple_module_generator.EntityField;
 import fr.mgargadennec.blossom.simple_module_generator.GeneratorUtils;
 import fr.mgargadennec.blossom.simple_module_generator.Parameters;

@@ -1,12 +1,12 @@
-package fr.mgargadennec.blossom.simple_module_generator.generator;
+package fr.mgargadennec.blossom.simple_module_generator.classes;
 
 import com.helger.jcodemodel.EClassType;
 import com.helger.jcodemodel.JCodeModel;
 import com.helger.jcodemodel.JDefinedClass;
 import fr.mgargadennec.blossom.core.common.repository.CrudRepository;
-import fr.mgargadennec.blossom.simple_module_generator.ClassGenerator;
 import fr.mgargadennec.blossom.simple_module_generator.GeneratorUtils;
 import fr.mgargadennec.blossom.simple_module_generator.Parameters;
+import org.springframework.stereotype.Repository;
 
 public class RepositoryGenerator implements ClassGenerator {
 
@@ -23,6 +23,7 @@ public class RepositoryGenerator implements ClassGenerator {
         ._class(GeneratorUtils.getRepositoryFullyQualifiedClassName(parameters),
           EClassType.INTERFACE);
       definedClass._extends(codeModel.ref(CrudRepository.class).narrow(poClass));
+      definedClass.annotate(Repository.class);
 
       return definedClass;
 

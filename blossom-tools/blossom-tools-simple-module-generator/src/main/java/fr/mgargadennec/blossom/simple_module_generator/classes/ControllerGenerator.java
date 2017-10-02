@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.simple_module_generator.generator;
+package fr.mgargadennec.blossom.simple_module_generator.classes;
 
 import com.google.common.base.Strings;
 import com.helger.jcodemodel.JBlock;
@@ -11,7 +11,6 @@ import com.helger.jcodemodel.JMethod;
 import com.helger.jcodemodel.JMod;
 import com.helger.jcodemodel.JVar;
 import fr.mgargadennec.blossom.core.common.search.SearchEngineImpl;
-import fr.mgargadennec.blossom.simple_module_generator.ClassGenerator;
 import fr.mgargadennec.blossom.simple_module_generator.GeneratorUtils;
 import fr.mgargadennec.blossom.simple_module_generator.Parameters;
 import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
@@ -82,7 +81,7 @@ public class ControllerGenerator implements ClassGenerator {
     JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "getPage");
     method.annotate(GetMapping.class);
     method.annotate(PreAuthorize.class).param("value",
-      "hasAuthority('module:" + parameters.getEntityNameLowerUnderscore() + ":read')");
+      "hasAuthority('modules:" + parameters.getEntityNameLowerUnderscore() + "s:read')");
 
     JVar query = method.param(String.class, "q");
     query.annotate(RequestParam.class).param("value", "q").param("required", false);
@@ -107,7 +106,7 @@ public class ControllerGenerator implements ClassGenerator {
     body.add(model.invoke("addAttribute").arg("q").arg(query));
 
     body._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(
-      parameters.getEntityNameLowerUnderscore() + "s" + "/" + parameters
+      "modules/"+parameters.getEntityNameLowerUnderscore() + "s" + "/" + parameters
         .getEntityNameLowerUnderscore() + "s").arg(model.invoke("asMap")));
 
     return method;

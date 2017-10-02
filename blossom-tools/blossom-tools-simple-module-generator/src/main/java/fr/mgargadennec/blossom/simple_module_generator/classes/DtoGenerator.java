@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.simple_module_generator.generator;
+package fr.mgargadennec.blossom.simple_module_generator.classes;
 
 import com.helger.jcodemodel.JCodeModel;
 import com.helger.jcodemodel.JDefinedClass;
@@ -7,25 +7,23 @@ import com.helger.jcodemodel.JFieldVar;
 import com.helger.jcodemodel.JMethod;
 import com.helger.jcodemodel.JMod;
 import com.helger.jcodemodel.JVar;
-import fr.mgargadennec.blossom.simple_module_generator.ClassGenerator;
+import fr.mgargadennec.blossom.core.common.dto.AbstractDTO;
 import fr.mgargadennec.blossom.simple_module_generator.EntityField;
 import fr.mgargadennec.blossom.simple_module_generator.GeneratorUtils;
 import fr.mgargadennec.blossom.simple_module_generator.Parameters;
-import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.NotBlank;
 
-public class CreateFormGenerator implements ClassGenerator {
+public class DtoGenerator implements ClassGenerator {
 
   @Override
   public JDefinedClass generate(Parameters parameters, JCodeModel codeModel) {
     try {
-      JDefinedClass definedClass = codeModel._class(GeneratorUtils.getCreateFormFullyQualifiedClassName(parameters));
+
+      JDefinedClass definedClass = codeModel._class(GeneratorUtils.getDtoFullyQualifiedClassName(parameters));
+      definedClass._extends(AbstractDTO.class);
 
       // Fields
       for (EntityField field : parameters.getFields()) {
-        if(field.isRequiredCreate()) {
-          addField(parameters, codeModel, definedClass, field);
-        }
+        addField(codeModel, definedClass, field);
       }
 
       return definedClass;
@@ -35,17 +33,9 @@ public class CreateFormGenerator implements ClassGenerator {
     }
   }
 
-  private void addField(Parameters parameters, JCodeModel codeModel, JDefinedClass definedClass, EntityField field) {
+  private void addField(JCodeModel codeModel, JDefinedClass definedClass, EntityField field) {
     // Field
     JFieldVar fieldVar = definedClass.field(JMod.PRIVATE, codeModel.ref(field.getClassName()), field.getName());
-    if(!field.isNullable()){
-      String message = "{"+parameters.getEntityNameLowerUnderscore()+"s."+parameters.getEntityNameLowerUnderscore()+".validation."+field.getName()+".NotNull.message"+"}";
-      fieldVar.annotate(NotNull.class).param("message", message);
-    }
-    if(!field.isNotBlank()){
-      String message = "{"+parameters.getEntityNameLowerUnderscore()+"s."+parameters.getEntityNameLowerUnderscore()+".validation."+field.getName()+".NotBlank.message"+"}";
-      fieldVar.annotate(NotBlank.class).param("message", message);
-    }
 
     // Getter
     JMethod getter = definedClass.method(JMod.PUBLIC, fieldVar.type(), field.getGetterName());
