@@ -121,9 +121,9 @@ public class BlossomToolsSimpleModuleGenerator {
     Path messageRoot = resourceRoot.resolve("messages");
     Files.createDirectories(messageRoot);
 
-    new MessagePropertiesGenerator().generate(messageRoot.resolve(parameters.getEntityNameLowerHyphen()+".properties"), params);
-    new MessagePropertiesGenerator().generate(messageRoot.resolve(parameters.getEntityNameLowerHyphen()+"_fr.properties"), params);
-    new MessagePropertiesGenerator().generate(messageRoot.resolve(parameters.getEntityNameLowerHyphen()+"_en.properties"), params);
+    new MessagePropertiesGenerator().generate(messageRoot.resolve(parameters.getEntityNameLowerHyphen()+".properties"), parameters,params);
+    new MessagePropertiesGenerator().generate(messageRoot.resolve(parameters.getEntityNameLowerHyphen()+"_fr.properties"), parameters,params);
+    new MessagePropertiesGenerator().generate(messageRoot.resolve(parameters.getEntityNameLowerHyphen()+"_en.properties"), parameters,params);
   }
 
   private void mavenBuild(Path directory, Boolean skipTests) {
