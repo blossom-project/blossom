@@ -1,3 +1,4 @@
+
 <#import "/spring.ftl" as spring>
 <#import "/utils/privilege.ftl" as privilege>
 
@@ -21,32 +22,30 @@
           Blossom
         </div>
       </li>
-      <#list menu.items() as menuItem>
-        <#if !(menuItem.privilege()?has_content) || privilege.hasOne(currentUser, menuItem.privilege())>
-          <li data-menuId="${menuItem.key()}" <#if currentMenu?seq_contains(menuItem.key())>class="active"</#if>>
-            <#if menuItem.link()??><a href="${menuItem.link()}"></#if>
-            <#if menuItem.icon()??><i class="${menuItem.icon()}"></i></#if>
-            <span class="nav-label"><@spring.messageText menuItem.label() menuItem.label()/></span>
-            <#if menuItem.items()?size gt 0>
-              <span class="fa arrow"></span>
-            </#if>
-            <#if menuItem.link??></a></#if>
-            <#if menuItem.items()?size gt 0>
-              <ul class="nav nav-second-level collapse">
-                <#list menuItem.items() as subMenuItem>
-                  <#if !(subMenuItem.privilege()?has_content) || privilege.hasOne(currentUser, subMenuItem.privilege())>
-                  <li data-menuId="${subMenuItem.key()}" <#if currentMenu?seq_contains(subMenuItem.key())>class="active"</#if>>
-                    <#if subMenuItem.link()??><a href="${subMenuItem.link()}"></#if>
-                    <#if subMenuItem.icon()??><i class="${subMenuItem.icon()}"></i></#if>
-                    <span class="nav-label"><@spring.messageText subMenuItem.label() subMenuItem.label()/></span>
-                    <#if subMenuItem.link??></a></#if>
-                  </li>
-                  </#if>
-                </#list>
-              </ul>
-            </#if>
-          </li>
-        </#if>
+      <#list menu.filteredItems(currentUser) as menuItem>
+        <li data-menuId="${menuItem.key()}" <#if currentMenu?seq_contains(menuItem.key())>class="active"</#if>>
+          <#if menuItem.link()??><a href="${menuItem.link()}"></#if>
+          <#if menuItem.icon()??><i class="${menuItem.icon()}"></i></#if>
+          <span class="nav-label"><@spring.messageText menuItem.label() menuItem.label()/></span>
+          <#if menuItem.items()?size gt 0>
+            <span class="fa arrow"></span>
+          </#if>
+          <#if menuItem.link??></a></#if>
+          <#if menuItem.filteredItems(currentUser)?size gt 0>
+            <ul class="nav nav-second-level collapse">
+              <#list menuItem.items() as subMenuItem>
+                <#if !(subMenuItem.privilege()?has_content) || privilege.hasOne(currentUser, subMenuItem.privilege())>
+                <li data-menuId="${subMenuItem.key()}" <#if currentMenu?seq_contains(subMenuItem.key())>class="active"</#if>>
+                  <#if subMenuItem.link()??><a href="${subMenuItem.link()}"></#if>
+                  <#if subMenuItem.icon()??><i class="${subMenuItem.icon()}"></i></#if>
+                  <span class="nav-label"><@spring.messageText subMenuItem.label() subMenuItem.label()/></span>
+                  <#if subMenuItem.link??></a></#if>
+                </li>
+                </#if>
+              </#list>
+            </ul>
+          </#if>
+        </li>
       </#list>
     </ul>
   </div>

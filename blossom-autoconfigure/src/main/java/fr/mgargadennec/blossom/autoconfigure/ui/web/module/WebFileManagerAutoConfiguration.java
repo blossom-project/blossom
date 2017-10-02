@@ -34,12 +34,17 @@ public class WebFileManagerAutoConfiguration {
   @Order(3)
   @ConditionalOnMissingBean(name = "contentMenuItem")
   public MenuItem contentMenuItem(MenuItemBuilder builder) {
-    return builder.key("content").label("menu.content", true).icon("fa fa-book").link("/blossom/content").build();
+    return builder
+      .key("content")
+      .label("menu.content", true)
+      .icon("fa fa-book")
+      .link("/blossom/content")
+      .leaf(false)
+      .build();
   }
 
   @Bean
-  public MenuItem contentFileManagerMenuItem(MenuItemBuilder builder,
-      @Qualifier("contentMenuItem") MenuItem contentMenuItem) {
+  public MenuItem contentFileManagerMenuItem(MenuItemBuilder builder, @Qualifier("contentMenuItem") MenuItem contentMenuItem) {
     return builder
       .key("filemanager")
       .label("menu.content.filemanager", true)

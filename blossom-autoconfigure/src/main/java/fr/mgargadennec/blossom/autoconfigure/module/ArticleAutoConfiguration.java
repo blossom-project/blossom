@@ -64,8 +64,7 @@ public class ArticleAutoConfiguration {
     }
 
     @Bean
-    public SearchEngineImpl<ArticleDTO> articleSearchEngine(Client client, BulkProcessor bulkProcessor,
-                                                      ObjectMapper objectMapper) {
+    public SearchEngineImpl<ArticleDTO> articleSearchEngine(Client client, ObjectMapper objectMapper) {
         return new SearchEngineImpl<>(ArticleDTO.class, client, Lists.newArrayList("name"),
                 "articles", objectMapper);
     }

@@ -2,28 +2,25 @@ package fr.mgargadennec.blossom.ui.web.system.dashboard;
 
 import fr.mgargadennec.blossom.ui.menu.OpenedMenu;
 import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.HealthEndpoint;
 import org.springframework.boot.actuate.endpoint.MetricsEndpoint;
 import org.springframework.boot.actuate.health.Health;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
  */
 @BlossomController("/system/dashboard")
 @OpenedMenu("dashboard")
+@PreAuthorize("hasAuthority('system:dashboard:manager')")
 public class DashboardController {
   private final static Logger logger = LoggerFactory.getLogger(DashboardController.class);
 

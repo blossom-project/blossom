@@ -3,7 +3,6 @@
 <#import "/utils/table.ftl" as table>
 <#import "/utils/privilege.ftl" as privilege>
 
-
 <@master.default currentUser=currentUser>
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-8">
