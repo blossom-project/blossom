@@ -5,7 +5,7 @@ jdk:
 sudo: false # faster builds
 
 after_success:
-  - mvn clean cobertura:cobertura coveralls:report
+  - mvn clean test jacoco:report coveralls:report
 
 notifications:
     slack: blossomproject:bYfwSdHMQ8ji0svj00r5cvDp
