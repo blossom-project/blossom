@@ -1,6 +1,7 @@
 #Configuration du contexte root
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 fr.mgargadennec.blossom.autoconfigure.core.CommonAutoConfiguration,\
+fr.mgargadennec.blossom.autoconfigure.core.LiquibaseAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.IndexationEngineAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.UserAutoConfiguration,\
 fr.mgargadennec.blossom.autoconfigure.core.GroupAutoConfiguration,\
