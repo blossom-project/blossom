@@ -8,7 +8,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="bo_group")
+@Table(name="blossom_group")
 public class Group extends AbstractEntity {
 
     @Column(name = "name", nullable = false, unique = true)

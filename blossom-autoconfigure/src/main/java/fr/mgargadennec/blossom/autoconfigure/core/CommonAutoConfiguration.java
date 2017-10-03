@@ -53,7 +53,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaAuditing
 @PropertySource({
   "classpath:/freemarker.properties",
-  "classpath:/elasticsearch.properties"})
+  "classpath:/elasticsearch.properties",
+  "classpath:/jpa.properties"})
 @EnableTransactionManagement
 public class CommonAutoConfiguration {
 
@@ -156,4 +157,5 @@ public class CommonAutoConfiguration {
       return username;
     }
   }
+
 }

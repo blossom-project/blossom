@@ -25,7 +25,7 @@ import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Created by Maël Gargadennnec on 14/06/2017.
@@ -42,6 +42,7 @@ public class ProjectGenerator {
 
     appendPom(projectConfiguration, zos);
     appendMain(projectConfiguration, zos);
+    appendProperties(projectConfiguration, zos);
 
     zos.close();
   }
@@ -139,7 +140,7 @@ public class ProjectGenerator {
     JCodeModel jc = new JCodeModel();
     JDefinedClass clazz = jc._class(projectConfiguration.getPackageName() + ".Application");
 
-    clazz.annotate(EnableAutoConfiguration.class);
+    clazz.annotate(SpringBootApplication.class);
     clazz.annotate(jc.ref("fr.mgargadennec.blossom.autoconfigure.EnableBlossom"));
 
     JMethod main = clazz.method(JMod.PUBLIC | JMod.FINAL | JMod.STATIC, jc.VOID, "main");
@@ -149,6 +150,12 @@ public class ProjectGenerator {
 
     jc.build(new CustomZipCodeWriter(zos));
   }
+
+  private void appendProperties(ProjectConfiguration projectConfiguration, ZipOutputStream zos) throws IOException {
+    ZipEntry e = new ZipEntry("src/main/resources/application.properties");
+    zos.putNextEntry(e);
+  }
+
 
 
   private static class CustomZipCodeWriter extends CodeWriter {

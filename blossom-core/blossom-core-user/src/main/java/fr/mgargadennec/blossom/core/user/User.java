@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.Locale;
 
-@Entity @Table(name = "bo_user")
+@Entity @Table(name = "blossom_user")
 public class User extends AbstractEntity {
 
   @Column(name = "identifier", nullable = true, unique = true)

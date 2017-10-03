@@ -11,7 +11,7 @@ import javax.persistence.Table;
  * Created by Maël Gargadennnec on 22/05/2017.
  */
 @Entity
-@Table(name = "bo_file_content")
+@Table(name = "blossom_file_content")
 public class FileContent extends AbstractEntity {
 
   @Column(name = "file_id")

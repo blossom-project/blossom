@@ -54,18 +54,18 @@ public abstract class AbstractDTOMapper<E extends AbstractEntity, D extends Abst
 
   protected void mapEntityCommonFields(D dto, E entity) {
     dto.setId(entity.getId());
-    dto.setDateCreation(entity.getDateCreation());
-    dto.setDateModification(entity.getDateModification());
-    dto.setUserCreation(entity.getUserCreation());
-    dto.setUserModification(entity.getUserModification());
+    dto.setCreationDate(entity.getCreationDate());
+    dto.setModificationDate(entity.getModificationDate());
+    dto.setCreationUser(entity.getCreationUser());
+    dto.setModificationUser(entity.getModificationUser());
   }
 
   protected void mapDtoCommonFields(E entity, D dto) {
     entity.setId(dto.getId());
-    entity.setDateCreation(dto.getDateCreation());
-    entity.setDateModification(dto.getDateModification());
-    entity.setUserCreation(dto.getUserCreation());
-    entity.setUserModification(dto.getUserModification());
+    entity.setCreationDate(dto.getCreationDate());
+    entity.setModificationDate(dto.getModificationDate());
+    entity.setCreationUser(dto.getCreationUser());
+    entity.setModificationUser(dto.getModificationUser());
   }
 
   @Override

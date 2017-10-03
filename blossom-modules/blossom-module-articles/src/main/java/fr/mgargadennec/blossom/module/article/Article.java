@@ -2,12 +2,12 @@
 package fr.mgargadennec.blossom.module.article;
 
 import fr.mgargadennec.blossom.core.common.entity.AbstractEntity;
-
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
-@Table(name = "bo_article")
+@Table(name = "blossom_article")
 public class Article extends AbstractEntity {
 
   @Column(name = "name", nullable = false)
