@@ -1,0 +1,54 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <changeSet id="blossom_core_role_create_table" author="mgargadennec">
+
+    <createTable tableName="blossom_role">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true" nullable="false" unique="true"/>
+      </column>
+
+      <column name="name" type="varchar(100)">
+        <constraints nullable="true"/>
+      </column>
+
+      <column name="description" type="clob">
+        <constraints nullable="true"/>
+      </column>
+
+      <column name="creation_date" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="creation_user" type="varchar(25)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="modification_date" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="modification_user" type="varchar(25)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="blossom_role_privileges">
+      <column name="id" type="bigint">
+        <constraints foreignKeyName="fk_role_id"/>
+      </column>
+
+      <column name="name" type="varchar(100)">
+        <constraints nullable="true"/>
+      </column>
+
+      <column name="privilege" type="varchar(100)">
+        <constraints nullable="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>

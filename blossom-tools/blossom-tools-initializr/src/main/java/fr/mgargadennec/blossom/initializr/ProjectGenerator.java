@@ -23,30 +23,50 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.apache.tomcat.util.http.fileupload.util.Streams;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * Created by Maël Gargadennnec on 14/06/2017.
  */
 public class ProjectGenerator {
-  private final Initializr initializr;
 
-  public ProjectGenerator(Initializr initializr) {
+  private final Initializr initializr;
+  private final ResourceLoader resourceLoader;
+
+  public ProjectGenerator(Initializr initializr, ResourceLoader resourceLoader) {
     this.initializr = initializr;
+    this.resourceLoader = resourceLoader;
   }
 
-  public void generateProject(ProjectConfiguration projectConfiguration, OutputStream os) throws Exception {
+  public void generateProject(ProjectConfiguration projectConfiguration, OutputStream os)
+    throws Exception {
     ZipOutputStream zos = new ZipOutputStream(os);
 
     appendPom(projectConfiguration, zos);
     appendMain(projectConfiguration, zos);
+    appendProperties(projectConfiguration, zos);
+    appendChangeLog(projectConfiguration, zos);
 
     zos.close();
   }
 
-  private void appendPom(ProjectConfiguration projectConfiguration, ZipOutputStream zos) throws IOException {
+  private void appendChangeLog(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
+    throws IOException {
+    Resource resource = this.resourceLoader
+      .getResource("classpath:/changelog/db.changelog-master.yaml");
+
+    ZipEntry e = new ZipEntry("src/main/resources/db/changelog/db.changelog-master.yaml");
+    zos.putNextEntry(e);
+    Streams.copy(resource.getInputStream(), zos, false);
+  }
+
+  private void appendPom(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
+    throws IOException {
     Version version = initializr.findVersion(projectConfiguration.getVersion()).get();
 
     Model model = new Model();
@@ -120,7 +140,6 @@ public class ProjectGenerator {
 
     build.addPlugin(queryDSLPlugin);
 
-
     Plugin plugin = new Plugin();
     plugin.setGroupId("org.springframework.boot");
     plugin.setArtifactId("spring-boot-maven-plugin");
@@ -128,30 +147,39 @@ public class ProjectGenerator {
 
     model.setBuild(build);
 
-
     ZipEntry e = new ZipEntry("pom.xml");
     zos.putNextEntry(e);
     new MavenXpp3Writer().write(zos, model);
   }
 
 
-  private void appendMain(ProjectConfiguration projectConfiguration, ZipOutputStream zos) throws IOException, JClassAlreadyExistsException {
+  private void appendMain(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
+    throws IOException, JClassAlreadyExistsException {
     JCodeModel jc = new JCodeModel();
     JDefinedClass clazz = jc._class(projectConfiguration.getPackageName() + ".Application");
 
-    clazz.annotate(EnableAutoConfiguration.class);
+    clazz.annotate(SpringBootApplication.class);
     clazz.annotate(jc.ref("fr.mgargadennec.blossom.autoconfigure.EnableBlossom"));
 
     JMethod main = clazz.method(JMod.PUBLIC | JMod.FINAL | JMod.STATIC, jc.VOID, "main");
     JVar varargs = main.varParam(jc.ref(String.class), "args");
 
-    main.body().add(jc._ref(SpringApplication.class).boxify().staticInvoke("run").arg(clazz.dotclass()).arg(varargs));
+    main.body().add(
+      jc._ref(SpringApplication.class).boxify().staticInvoke("run").arg(clazz.dotclass())
+        .arg(varargs));
 
     jc.build(new CustomZipCodeWriter(zos));
   }
 
+  private void appendProperties(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
+    throws IOException {
+    ZipEntry e = new ZipEntry("src/main/resources/application.properties");
+    zos.putNextEntry(e);
+  }
+
 
   private static class CustomZipCodeWriter extends CodeWriter {
+
     /**
      * @param target Zip file will be written to this stream.
      */
@@ -170,7 +198,9 @@ public class ProjectGenerator {
 
     public OutputStream openBinary(JPackage pkg, String fileName) throws IOException {
       String name = fileName;
-      if (!pkg.isUnnamed()) name = "src/main/java/"+toDirName(pkg) + name;
+      if (!pkg.isUnnamed()) {
+        name = "src/main/java/" + toDirName(pkg) + name;
+      }
 
       zip.putNextEntry(new ZipEntry(name));
       return filter;

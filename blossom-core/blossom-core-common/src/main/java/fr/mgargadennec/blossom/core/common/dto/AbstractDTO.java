@@ -9,11 +9,11 @@ public abstract class AbstractDTO {
   @JsonSerialize(using = ToStringSerializer.class)
   private Long id;
 
-  private Date dateCreation;
-  private String userCreation;
+  private Date creationDate;
+  private String creationUser;
 
-  private Date dateModification;
-  private String userModification;
+  private Date modificationDate;
+  private String modificationUser;
 
   public Long getId() {
     return id;
@@ -23,36 +23,36 @@ public abstract class AbstractDTO {
     this.id = id;
   }
 
-  public Date getDateCreation() {
-    return dateCreation;
+  public Date getCreationDate() {
+    return creationDate;
   }
 
-  public void setDateCreation(Date dateCreation) {
-    this.dateCreation = dateCreation;
+  public void setCreationDate(Date creationDate) {
+    this.creationDate = creationDate;
   }
 
-  public String getUserCreation() {
-    return userCreation;
+  public String getCreationUser() {
+    return creationUser;
   }
 
-  public void setUserCreation(String userCreation) {
-    this.userCreation = userCreation;
+  public void setCreationUser(String creationUser) {
+    this.creationUser = creationUser;
   }
 
-  public Date getDateModification() {
-    return dateModification;
+  public Date getModificationDate() {
+    return modificationDate;
   }
 
-  public void setDateModification(Date dateModification) {
-    this.dateModification = dateModification;
+  public void setModificationDate(Date modificationDate) {
+    this.modificationDate = modificationDate;
   }
 
-  public String getUserModification() {
-    return userModification;
+  public String getModificationUser() {
+    return modificationUser;
   }
 
-  public void setUserModification(String userModification) {
-    this.userModification = userModification;
+  public void setModificationUser(String modificationUser) {
+    this.modificationUser = modificationUser;
   }
 
   @Override

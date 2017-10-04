@@ -1,47 +1,26 @@
 package fr.mgargadennec.blossom.core.common.entity;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
 public abstract class AbstractAssociationEntity<A extends AbstractEntity, B extends AbstractEntity> extends AbstractEntity {
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @Fetch(FetchMode.JOIN)
-    private A a;
+    public abstract A getA();
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @Fetch(FetchMode.JOIN)
-    private B b;
+    public abstract void setA(A a);
 
-    public A getA() {
-        return a;
-    }
+    public abstract B getB();
 
-    public void setA(A a) {
-        this.a = a;
-    }
-
-    public B getB() {
-        return b;
-    }
-
-    public void setB(B b) {
-        this.b = b;
-    }
+    public abstract void setB(B b);
 
     @Override
     public String toString() {
         return "AbstractAssociationEntity{" +
-                "a=" + a +
-                ", b=" + b +
+                "a=" + getA() +
+                ", b=" + getB() +
                 '}';
     }
 }

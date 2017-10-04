@@ -49,7 +49,7 @@ public class DataConfiguration {
   @Bean
   public CommandLineRunner clr(UserService service, DataFactory df, Random random) {
     return args -> {
-      IntStream.range(0, 15).mapToObj(i -> {
+      IntStream.range(0, 5).mapToObj(i -> {
         UserDTO user = new UserDTO();
         user.setIdentifier("Identifier-" + i);
         user.setPasswordHash("Password-" + i);
@@ -71,7 +71,7 @@ public class DataConfiguration {
   @Bean
   public CommandLineRunner clrGroup(GroupService service, DataFactory df) {
     return args -> {
-      IntStream.range(0, 10).mapToObj(i -> {
+      IntStream.range(0, 5).mapToObj(i -> {
         GroupDTO group = new GroupDTO();
         group.setName("Name-" + i);
         group.setDescription(
@@ -87,7 +87,7 @@ public class DataConfiguration {
     @Qualifier(PluginConstants.PLUGIN_PRIVILEGES)
       PluginRegistry<Privilege, String> privilegesRegistry) {
     return args -> {
-      IntStream.range(0, 10).mapToObj(i -> {
+      IntStream.range(0, 5).mapToObj(i -> {
         Role role = new Role();
         role.setName("Name-" + i);
         role.setDescription(

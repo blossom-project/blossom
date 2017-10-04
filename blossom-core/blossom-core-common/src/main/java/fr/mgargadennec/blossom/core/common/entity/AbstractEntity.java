@@ -19,23 +19,23 @@ public abstract class AbstractEntity implements Serializable {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "date_creation", updatable = false)
+  @Column(name = "creation_date", updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
   @CreatedDate
-  private Date dateCreation;
+  private Date creationDate;
 
-  @Column(name = "user_creation", updatable = false)
+  @Column(name = "creation_user", updatable = false)
   @CreatedBy
-  private String userCreation;
+  private String creationUser;
 
-  @Column(name = "date_modification")
+  @Column(name = "modification_date")
   @Temporal(TemporalType.TIMESTAMP)
   @LastModifiedDate
-  private Date dateModification;
+  private Date modificationDate;
 
-  @Column(name = "user_modification")
+  @Column(name = "modification_user")
   @LastModifiedBy
-  private String userModification;
+  private String modificationUser;
 
   @PrePersist
   public void ensureId() {
@@ -52,36 +52,36 @@ public abstract class AbstractEntity implements Serializable {
     this.id = id;
   }
 
-  public Date getDateCreation() {
-    return this.dateCreation;
+  public Date getCreationDate() {
+    return creationDate;
   }
 
-  public void setDateCreation(Date dateCreation) {
-    this.dateCreation = dateCreation;
+  public void setCreationDate(Date creationDate) {
+    this.creationDate = creationDate;
   }
 
-  public Date getDateModification() {
-    return this.dateModification;
+  public String getCreationUser() {
+    return creationUser;
   }
 
-  public void setDateModification(Date dateModification) {
-    this.dateModification = dateModification;
+  public void setCreationUser(String creationUser) {
+    this.creationUser = creationUser;
   }
 
-  public String getUserCreation() {
-    return this.userCreation;
+  public Date getModificationDate() {
+    return modificationDate;
   }
 
-  public void setUserCreation(String userCreation) {
-    this.userCreation = userCreation;
+  public void setModificationDate(Date modificationDate) {
+    this.modificationDate = modificationDate;
   }
 
-  public String getUserModification() {
-    return this.userModification;
+  public String getModificationUser() {
+    return modificationUser;
   }
 
-  public void setUserModification(String userModification) {
-    this.userModification = userModification;
+  public void setModificationUser(String modificationUser) {
+    this.modificationUser = modificationUser;
   }
 
   @Override

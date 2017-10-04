@@ -2,15 +2,17 @@ package fr.mgargadennec.blossom.core.role;
 
 import fr.mgargadennec.blossom.core.common.entity.AbstractEntity;
 import java.util.List;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "bo_role")
+@Table(name = "blossom_role")
 public class Role extends AbstractEntity {
 
   @Column(name = "name", nullable = false, unique = true)
@@ -21,6 +23,8 @@ public class Role extends AbstractEntity {
   private String description;
 
   @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+  @CollectionTable(name="blossom_role_privileges", joinColumns = @JoinColumn(name="id", referencedColumnName = "id"))
+  @Column(name="privilege")
   private List<String> privileges;
 
   public String getName() {

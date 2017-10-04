@@ -26,6 +26,7 @@
     <quartz.version>2.3.0</quartz.version>
     <caffeine.version>2.5.0</caffeine.version>
     <bouncycastle.version>1.46</bouncycastle.version>
+    <liquibase.version>3.5.3</liquibase.version>
   </properties>
 
   <dependencyManagement>
@@ -64,6 +65,11 @@
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcmail-jdk16</artifactId>
         <version>${bouncycastle.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-core</artifactId>
+        <version>${liquibase.version}</version>
       </dependency>
 
     </dependencies>

@@ -1,0 +1,40 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <changeSet id="blossom_core_association_user_role_create_table" author="mgargadennec">
+
+    <createTable tableName="blossom_association_user_role">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true" nullable="false" unique="true"/>
+      </column>
+
+      <column name="user_id" type="bigint">
+        <constraints foreignKeyName="fk_association_user_role_user_id" referencedTableName="blossom_user" referencedColumnNames="id"/>
+      </column>
+
+      <column name="role_id" type="bigint">
+        <constraints foreignKeyName="fk_association_user_role_role_id" referencedTableName="blossom_role" referencedColumnNames="id"/>
+      </column>
+
+      <column name="creation_date" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="creation_user" type="varchar(25)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="modification_date" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="modification_user" type="varchar(25)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>
