@@ -28,7 +28,7 @@
         "label":"users.user.properties.lastname",
         "link":"/blossom/administration/users/{id}"
       },
-      "dateModification": {
+      "modificationDate": {
         "label":"list.modification.date.head",
         "type":"datetime"
       }
