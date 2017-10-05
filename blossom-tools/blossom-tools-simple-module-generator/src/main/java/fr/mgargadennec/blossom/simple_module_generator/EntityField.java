@@ -17,6 +17,8 @@ public class EntityField {
   // Class informations
   private String className;
   private String temporalType;
+  private String jdbcType;
+  private boolean lob;
 
   // Functionnality
   private boolean searchable;
@@ -30,7 +32,7 @@ public class EntityField {
   private EntityField(String name, String className, boolean searchable, boolean requiredCreate,
     boolean possibleUpdate, boolean nullable, boolean notBlank,
     String defaultValue,
-    Integer maxLength, String temporalType) {
+    Integer maxLength, String temporalType, String jdbcType, boolean lob) {
     this.name = name;
     this.className = className;
     this.tableName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, name);
@@ -44,6 +46,8 @@ public class EntityField {
     this.defaultValue = defaultValue;
     this.maxLength = maxLength;
     this.temporalType = temporalType;
+    this.jdbcType = jdbcType;
+    this.lob = lob;
   }
 
   public static EntityField readParametersInput(Scanner scanner) {
@@ -61,10 +65,13 @@ public class EntityField {
     System.out.println("6. java.sql.Timestamp");
     System.out.println("7. java.sql.Date");
     System.out.println("8. java.sql.Time");
+    System.out.println("9. byte[]");
 
     String classType = null;
     String temporalType = null;
     Integer maxSize = null;
+    String jdbcType = null;
+    boolean isLob = false;
 
     System.out.print("Choose a classtype from above propositions : \t");
     int entityClassType = scanner.nextInt();
@@ -82,20 +89,32 @@ public class EntityField {
           maxSize = scanner.nextInt();
           scanner.nextLine(); // throw away the \n not consumed by
           // nextInt()
+          jdbcType = "varchar(" + maxSize + ")";
+        } else {
+          System.out.print("Is the field a CLOB (long text)? [Y/n] \t");
+          isLob = !scanner.nextLine().toLowerCase().trim().startsWith("y");
+          if (isLob) {
+            jdbcType = "clob";
+          } else {
+            jdbcType = "varchar(255)";
+          }
         }
 
         System.out.print("Can the field be blank ? [Y/n] \t");
-        notBlank = scanner.nextLine().toLowerCase().trim().startsWith("y");
+        notBlank = !scanner.nextLine().toLowerCase().trim().startsWith("y");
 
         break;
       case 2:
         classType = "java.lang.Long";
+        jdbcType = "long";
         break;
       case 3:
         classType = "java.lang.Integer";
+        jdbcType = "integer";
         break;
       case 4:
         classType = "java.lang.Boolean";
+        jdbcType = "boolean";
         break;
       case 5:
         classType = "java.util.Date";
@@ -111,12 +130,15 @@ public class EntityField {
         switch (temporalTypeChoice) {
           case 1:
             temporalType = "TIMESTAMP";
+            jdbcType = "timestamp";
             break;
           case 2:
             temporalType = "DATE";
+            jdbcType = "date";
             break;
           case 3:
             temporalType = "TIME";
+            jdbcType = "time";
             break;
           default:
             break;
@@ -124,14 +146,21 @@ public class EntityField {
         break;
       case 6:
         classType = "java.sql.Timestamp";
+        jdbcType = "timestamp";
         break;
       case 7:
         classType = "java.sql.Date";
+        jdbcType = "date";
         break;
       case 8:
         classType = "java.sql.Time";
+        jdbcType = "time";
         break;
-
+      case 9:
+        classType = "byte[]";
+        jdbcType = "blob";
+        isLob = true;
+        break;
       default:
         break;
     }
@@ -160,15 +189,15 @@ public class EntityField {
 
     return new EntityField(fieldName, classType, searchable, requiredCreate, possibleUpdate,
       nullable, notBlank, defaultValue, maxSize,
-      temporalType);
+      temporalType, jdbcType, isLob);
   }
 
   public static List<EntityField> defaultFields() {
-
     return Lists.newArrayList(
-      new EntityField("name", "java.lang.String", true, true, true, false, true, null, 50, null),
+      new EntityField("name", "java.lang.String", true, true, true, false, true, null, 50, null,
+        "varchar(100)", false),
       new EntityField("description", "java.lang.String", true, true, true, true, false, null, null,
-        null));
+        null, "clob", true));
   }
 
   public String getName() {
@@ -225,5 +254,13 @@ public class EntityField {
 
   public boolean isPossibleUpdate() {
     return possibleUpdate;
+  }
+
+  public String getJdbcType() {
+    return jdbcType;
+  }
+
+  public boolean isLob() {
+    return lob;
   }
 }

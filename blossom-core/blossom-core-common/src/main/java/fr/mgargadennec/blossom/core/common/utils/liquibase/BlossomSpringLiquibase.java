@@ -37,21 +37,24 @@ public class BlossomSpringLiquibase extends SpringLiquibase {
     public Set<String> list(String relativeTo, String path, boolean includeFiles,
       boolean includeDirectories, boolean recursive) throws IOException {
       Set<String> returnSet = new HashSet<String>();
+      if(path.startsWith("classpath*:")) {
+        String tempFile = FilenameUtils.concat(FilenameUtils.getFullPath(relativeTo), path);
 
-      String tempFile = FilenameUtils.concat(FilenameUtils.getFullPath(relativeTo), path);
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        List<String> resources = Lists
+          .newArrayList(resolver.getResources(tempFile + "*.xml")).stream()
+          .sorted(Comparator.comparing(Resource::getFilename))
+          .map(resource -> "classpath:db/changelog/blossom/" + resource.getFilename())
+          .collect(Collectors.toList());
 
-      PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-      List<String> resources = Lists
-        .newArrayList(resolver.getResources(tempFile + "*.xml")).stream()
-        .sorted(Comparator.comparing(Resource::getFilename))
-        .map(resource -> "classpath:db/changelog/blossom/" + resource.getFilename())
-        .collect(Collectors.toList());
+        for (String res : resources) {
+          returnSet.add(res);
+        }
 
-      for (String res : resources) {
-        returnSet.add(res);
+        return returnSet;
+      }else{
+        return super.list(relativeTo,path,includeFiles,includeDirectories,recursive);
       }
-
-      return returnSet;
     }
   }
 }

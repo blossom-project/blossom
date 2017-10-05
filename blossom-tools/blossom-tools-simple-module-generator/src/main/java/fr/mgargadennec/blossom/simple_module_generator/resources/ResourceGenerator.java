@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.simple_module_generator.views;
+package fr.mgargadennec.blossom.simple_module_generator.resources;
 
 import fr.mgargadennec.blossom.simple_module_generator.Parameters;
 import java.nio.file.Path;

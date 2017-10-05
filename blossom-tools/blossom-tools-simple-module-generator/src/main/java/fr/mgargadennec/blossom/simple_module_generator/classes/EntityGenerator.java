@@ -14,6 +14,7 @@ import fr.mgargadennec.blossom.simple_module_generator.GeneratorUtils;
 import fr.mgargadennec.blossom.simple_module_generator.Parameters;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,7 +34,7 @@ public class EntityGenerator implements ClassGenerator {
 
       // Table name annotation
       JAnnotationUse tableAnnotation = definedClass.annotate(Table.class);
-      tableAnnotation.param("name", parameters.getEntityNameUpperUnderscore());
+      tableAnnotation.param("name", parameters.getEntityNameLowerUnderscore());
 
       // Fields
       for (EntityField field : parameters.getFields()) {
@@ -56,6 +57,10 @@ public class EntityGenerator implements ClassGenerator {
 
     if (field.getMaxLength() != null) {
       columnAnnotation.param("length", field.getMaxLength());
+    }
+
+    if(field.isLob()){
+      fieldVar.annotate(Lob.class);
     }
 
     if (field.getTemporalType() != null) {

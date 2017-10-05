@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.simple_module_generator.views;
+package fr.mgargadennec.blossom.simple_module_generator.resources;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
