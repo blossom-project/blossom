@@ -15,8 +15,9 @@ import fr.mgargadennec.blossom.simple_module_generator.classes.RepositoryGenerat
 import fr.mgargadennec.blossom.simple_module_generator.classes.ServiceGenerator;
 import fr.mgargadennec.blossom.simple_module_generator.classes.ServiceImplGenerator;
 import fr.mgargadennec.blossom.simple_module_generator.classes.UpdateFormGenerator;
-import fr.mgargadennec.blossom.simple_module_generator.views.MessagePropertiesGenerator;
-import fr.mgargadennec.blossom.simple_module_generator.views.ListViewGenerator;
+import fr.mgargadennec.blossom.simple_module_generator.resources.ChangelogGenerator;
+import fr.mgargadennec.blossom.simple_module_generator.resources.ListViewGenerator;
+import fr.mgargadennec.blossom.simple_module_generator.resources.MessagePropertiesGenerator;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -124,6 +125,12 @@ public class BlossomToolsSimpleModuleGenerator {
     new MessagePropertiesGenerator().generate(messageRoot.resolve(parameters.getEntityNameLowerHyphen()+".properties"), parameters,params);
     new MessagePropertiesGenerator().generate(messageRoot.resolve(parameters.getEntityNameLowerHyphen()+"_fr.properties"), parameters,params);
     new MessagePropertiesGenerator().generate(messageRoot.resolve(parameters.getEntityNameLowerHyphen()+"_en.properties"), parameters,params);
+
+
+    Path changelogRoot = resourceRoot.resolve("db").resolve("changelog").resolve("generated");
+    Files.createDirectories(changelogRoot);
+
+    new ChangelogGenerator().generate(changelogRoot.resolve("4_db.changelog_blossom_generated_"+parameters.getEntityNameLowerUnderscore()+".xml"), parameters,params);
   }
 
   private void mavenBuild(Path directory, Boolean skipTests) {

@@ -35,7 +35,7 @@
         <div class="file-name">
           <a href="/files/${file.id?c}" target="_blank">${file.name}</a>
           <br/>
-          <small>Added: ${file.dateCreation?datetime}</small>
+          <small>Added: ${file.creationDate?datetime}</small>
         </div>
       </div>
     </div>

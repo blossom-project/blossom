@@ -52,17 +52,17 @@
           "analyzer": "suggest",
           "search_analyzer": "default"
         },
-        "dateCreation": {
+        "creationDate": {
           "type": "long"
         },
-        "dateModification": {
+        "modificationDate": {
           "type": "long"
         },
-        "userCreation": {
+        "creationUser": {
           "type": "string",
           "index": "not_analyzed"
         },
-        "userModification": {
+        "modificationUser": {
           "type": "string",
           "index": "not_analyzed"
         }

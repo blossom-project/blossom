@@ -22,7 +22,7 @@
         "label":"roles.role.properties.name",
         "link":"/blossom/administration/roles/{id}"
       },
-      "dateModification": {
+      "modificationDate": {
         "label":"list.modification.date.head",
         "type":"datetime"
       }

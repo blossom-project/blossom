@@ -79,12 +79,6 @@
         "company": {
           "type": "string"
         },
-        "dateCreation": {
-          "type": "long"
-        },
-        "dateModification": {
-          "type": "long"
-        },
         "description": {
           "type": "string"
         },
@@ -100,11 +94,19 @@
         "phone": {
           "type": "string"
         },
-        "userCreation": {
-          "type": "string"
+        "creationDate": {
+          "type": "long"
         },
-        "userModification": {
-          "type": "string"
+        "modificationDate": {
+          "type": "long"
+        },
+        "creationUser": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "modificationUser": {
+          "type": "string",
+          "index": "not_analyzed"
         }
       }
     }

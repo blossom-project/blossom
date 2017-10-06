@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.simple_module_generator.views;
+package fr.mgargadennec.blossom.simple_module_generator.resources;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -11,15 +11,15 @@ import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class ListViewGenerator implements ResourceGenerator{
+public class CreateViewGenerator implements ResourceGenerator{
 
   @Override
   public void generate(Path path, Parameters parameters, Map<String, String> params) {
     try {
       params.put("ENTITY_COLUMNS", "\"name\": { \"label\":\""+parameters.getEntityNameLowerUnderscore()+"s"+"."+parameters.getEntityNameLowerUnderscore()+".properties.name\", \"sortable\":true, \"link\":\""+params.get("LINK_ITEM")+"\"},\n"
-        + "  \"dateModification\": {\"label\":\"list.modification.date.head\", \"sortable\":true, \"type\":\"datetime\"}");
+        + "  \"modificationDate\": {\"label\":\"list.modification.date.head\", \"sortable\":true, \"type\":\"datetime\"}");
 
-      URL url = Resources.getResource("list.ftl");
+      URL url = Resources.getResource("create.ftl");
       String content = Resources.toString(url, Charsets.UTF_8);
 
       for(Entry<String,String> entry : params.entrySet()){

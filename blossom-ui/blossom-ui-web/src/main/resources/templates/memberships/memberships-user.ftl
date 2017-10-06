@@ -22,7 +22,7 @@
         "label":"groups.group.properties.name",
         "link":"/blossom/administration/groups/{id}"
       },
-      "dateModification": {
+      "modificationDate": {
         "label":"list.modification.date.head",
         "type":"datetime"
       }

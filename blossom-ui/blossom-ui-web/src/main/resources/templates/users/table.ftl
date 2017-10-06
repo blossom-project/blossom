@@ -15,7 +15,7 @@
   "email": {"label":"users.user.properties.email", "sortable":true},
   "phone": {"label":"users.user.properties.phone", "sortable":false},
   "lastConnection": {"label":"users.user.properties.lastConnection", "sortable":true, "type":"datetime"},
-  "dateModification": {"label":"list.modification.date.head", "sortable":true, "type":"datetime"}
+  "modificationDate": {"label":"list.modification.date.head", "sortable":true, "type":"datetime"}
   }
   filters=[]
   searchable=true
