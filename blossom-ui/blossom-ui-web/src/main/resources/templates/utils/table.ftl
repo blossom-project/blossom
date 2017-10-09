@@ -124,7 +124,7 @@
             <span class="input-group-btn">
                         <button type="button"
                                 class="btn btn-sm btn-primary table-search"
-                                onclick="var value = $(this).closest('.input-group').children('input.table-search').first().val();window.location.href = $.updateQueryStringParameter(window.location.href,'q',value);">
+                                onclick="var value = $(this).closest('.input-group').children('input.table-search').first().val();var resetPage = $.updateQueryStringParameter(window.location.href,'page',0);window.location.href = $.updateQueryStringParameter(resetPage,'q',value);">
                             <i class="fa fa-search"></i>
                         </button>
                       </span>
