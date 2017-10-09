@@ -6,6 +6,7 @@ It comes with several modules and tools made to ease and speed up your developme
 ## Quick start
 
 Sadly, there is no quick start yet :'-(
+
 You must clone the repository, build, install it manually, then you can use the project generator to start your first project with Blossom.
 
 1. git clone https://github.com/mgargadennec/blossom.git
