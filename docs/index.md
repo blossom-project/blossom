@@ -16,6 +16,25 @@ You must clone the repository, build, install it manually, then you can use the 
 5. Go to localhost:8090
 6. Choose your modules and generate your project !
 
+## How-to
+
+### Menu
+#### Add a new menu entry
+#### Add a new menu subentry
+#### Open a specific menu on a page
+#### Ordering menus
+
+### Scheduling
+#### Configuring the scheduler
+#### Add a scheduled task
+
+### Adding an entity
+#### Manually create an entity
+#### Index and search an entity
+#### Generate a (simple) entity
+
+### Adding an association between two entities
+#### Manually create an association
 
 ## Features
 
