@@ -30,6 +30,12 @@
       <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>fr.mgargadennec.blossom</groupId>
+      <artifactId>blossom-module-bpmn</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
 
 </project>

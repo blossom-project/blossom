@@ -31,6 +31,20 @@
                 <td>
                 ${key}
                 </td>
+
+                <td>
+                  <#assign details = health.getDetails()[key].getDetails()/>
+                  <#if details??>
+                    <i class="fa fa-question-circle text-navy"
+                       data-toggle="popover"
+                       data-trigger="hover"
+                       data-html="true"
+                       data-container="body"
+                       data-placement="auto"
+                       data-content="<ul class='unstyled'><#list details?keys as detailKey><li><div><strong>${detailKey} :</strong> ${details[detailKey]}</li></#list></div></ul>">
+                    </i>
+                  </#if>
+                </td>
             </tr>
             </#list>
             </tbody>
@@ -40,6 +54,7 @@
 
 <script>
     $(document).ready(function(){
-        $("#status .ibox-tools .label").text(moment.duration(${uptime?c}).humanize());
+      $("#status .ibox-tools .label").text(moment.duration(${uptime?c}).humanize());
+      $("#status [data-toggle='popover']").popover();
     });
 </script>

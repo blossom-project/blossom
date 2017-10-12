@@ -24,7 +24,7 @@ public class WebSystemLoggersAutoConfiguration {
     return builder.key("loggerManager")
       .label("menu.system.loggers", true)
       .link("/blossom/system/loggers")
-      .order(4)
+      .order(5)
       .icon("fa fa-pencil")
       .privilege(loggersPrivilegePlugin())
       .parent(systemMenuItem)
