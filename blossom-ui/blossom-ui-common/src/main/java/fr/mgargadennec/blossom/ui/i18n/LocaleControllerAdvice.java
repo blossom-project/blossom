@@ -1,12 +1,13 @@
 package fr.mgargadennec.blossom.ui.i18n;
 
+import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.Locale;
 import java.util.Set;
 
-@ControllerAdvice
+@ControllerAdvice(annotations = BlossomController.class)
 public class LocaleControllerAdvice {
   private final Set<Locale> locales;
 
