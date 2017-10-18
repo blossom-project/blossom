@@ -1,12 +1,13 @@
 package fr.mgargadennec.blossom.ui.menu;
 
+import fr.mgargadennec.blossom.ui.stereotype.BlossomController;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  * Created by Maël Gargadennnec on 05/05/2017.
  */
-@ControllerAdvice
+@ControllerAdvice(annotations = BlossomController.class)
 public class MenuControllerAdvice {
   private final Menu menu;
 
