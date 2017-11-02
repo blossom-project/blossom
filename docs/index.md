@@ -31,18 +31,22 @@ privilege() set the right the logged user should have to see the menu
 order() allow to sort the menu entries. (values ranging from Integer.MIN_VALUE to Integer.MAX_VALUE)
 leaf() indicates that the menu is a leaf in the hierarchy. If a non-leaf menu has no submenu, it'll not be displayed.
 
-    @Bean
-    public MenuItem testMenuItem(MenuItemBuilder builder) {
-        return builder.key("testMenu").label("menu.test", true).icon("fa fa-photo").link("/blossom/test").build();
-    }
+```java
+@Bean
+public MenuItem testMenuItem(MenuItemBuilder builder) {
+    return builder.key("testMenu").label("menu.test", true).icon("fa fa-photo").link("/blossom/test").build();
+}
+```
 
 #### Add a new menu subentry
 To add a submenu entry, use the same process than to add a menu, but set the parent property by injecting the parent MenuItem using the @Qualifier annotation.
 
-    @Bean
-    public MenuItem testSubMenuItem(MenuItemBuilder builder, @Qualifier("testMenuItem") MenuItem testMenuItem) {
-        return builder.key("testSubMenu").label("menu.test.submenu", true).link("/blossom/test/submenu").icon("fa fa-photo").parent(testMenuItem).build();
-    }
+```java
+@Bean
+public MenuItem testSubMenuItem(MenuItemBuilder builder, @Qualifier("testMenuItem") MenuItem testMenuItem) {
+    return builder.key("testSubMenu").label("menu.test.submenu", true).link("/blossom/test/submenu").icon("fa fa-photo").parent(testMenuItem).build();
+}
+```
 
 #### Open a specific menu on a page
 #### Ordering menus
@@ -69,9 +73,11 @@ You can then connect with the default user and password : system / system.
 
 This default user can be configured with the following properties :
 
-    blossom.security.default.account.enabled=true
-    blossom.security.default.account.identifier=system
-    blossom.security.default.account.password=system
+```ini
+blossom.security.default.account.enabled=true
+blossom.security.default.account.identifier=system
+blossom.security.default.account.password=system
+```
 
 ### Security
 
