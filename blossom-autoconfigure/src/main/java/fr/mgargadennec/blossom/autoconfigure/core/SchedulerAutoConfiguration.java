@@ -87,33 +87,4 @@ public class SchedulerAutoConfiguration {
     return propertiesFactoryBean.getObject();
   }
 
-  public static SimpleTriggerFactoryBean createFireOnceTrigger(JobDetail jobDetail) {
-    SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-    factoryBean.setJobDetail(jobDetail);
-    factoryBean.setStartDelay(0L);
-    factoryBean.setRepeatCount(0);
-    factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
-    return factoryBean;
-  }
-
-  public static SimpleTriggerFactoryBean createSimpleTrigger(JobDetail jobDetail, long pollFrequencyMs) {
-    SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-    factoryBean.setJobDetail(jobDetail);
-    factoryBean.setStartDelay(0L);
-    factoryBean.setRepeatInterval(pollFrequencyMs);
-    factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
-    // in case of misfire, ignore all missed triggers and continue :
-    factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
-    return factoryBean;
-  }
-
-  // Use this method for creating cron triggers instead of simple triggers:
-  public static CronTriggerFactoryBean createCronTrigger(JobDetail jobDetail, String cronExpression) {
-    CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
-    factoryBean.setJobDetail(jobDetail);
-    factoryBean.setCronExpression(cronExpression);
-    factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
-    return factoryBean;
-  }
-
 }

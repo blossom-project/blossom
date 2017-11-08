@@ -37,7 +37,6 @@ public class ActuatorAutoConfiguration {
   }
 
   @Bean
-  @ConditionalOnBean(value=ElasticsearchTraceRepository.class)
   public TraceStatisticsEndpoint traceStatisticsEndpoint(
     ElasticsearchTraceRepository traceRepository) {
     return new TraceStatisticsEndpoint(traceRepository);
