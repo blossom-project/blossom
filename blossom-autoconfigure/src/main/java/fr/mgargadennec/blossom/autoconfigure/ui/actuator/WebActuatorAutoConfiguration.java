@@ -1,5 +1,7 @@
 package fr.mgargadennec.blossom.autoconfigure.ui.actuator;
 
+import fr.mgargadennec.blossom.autoconfigure.core.ActuatorAutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,7 @@ import fr.mgargadennec.blossom.core.common.actuator.TraceStatisticsMvcEndpoint;
  */
 @Configuration
 @PropertySource("classpath:/actuator.properties")
+@AutoConfigureAfter(ActuatorAutoConfiguration.class)
 public class WebActuatorAutoConfiguration {
 
   @Bean

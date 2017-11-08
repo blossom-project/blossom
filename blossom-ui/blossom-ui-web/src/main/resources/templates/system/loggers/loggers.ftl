@@ -2,6 +2,7 @@
 <#import "/master/master.ftl" as master>
 
 <@master.default currentUser=currentUser>
+
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-8">
     <h2>
@@ -22,76 +23,128 @@
   </div>
 </div>
 
-<div class="wrapper wrapper-content scheduler">
-  <div class="ibox float-e-margins">
-    <div class="ibox-content">
-      <div class="row">
-        <div class="col-sm-9 m-b-xs">
-        </div>
-        <div class="col-sm-3">
-          <div class="input-group">
-            <input type="text"
-                   placeholder="<@spring.message "list.searchbar.placeholder"/>"
-                   class="table-search input-sm form-control"
-                   onkeyup="var which = event.which || event.keyCode;if(which === 13) {$(this).closest('.input-group').find('button.table-search').first().click();}"
-              <#if q?has_content> value="${q}"</#if>
-            />
 
-            <span class="input-group-btn">
-              <button type="button"
-                      class="btn btn-sm btn-primary table-search"
-                      onclick="var value = $(this).closest('.input-group').children('input.table-search').first().val();window.location.href = $.updateQueryStringParameter(window.location.href,'q',value);">
-                  <i class="fa fa-search"></i>
-              </button>
-            </span>
+<div class="wrapper wrapper-content scheduler">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content sk-loading">
+          <div class="sk-spinner sk-spinner-wave">
+            <div class="sk-rect1"></div>
+            <div class="sk-rect2"></div>
+            <div class="sk-rect3"></div>
+            <div class="sk-rect4"></div>
+            <div class="sk-rect5"></div>
           </div>
+
+          <div class="row">
+            <div class="col-sm-12">
+              <form class="form form-horizontal">
+                <div class="form-group">
+                  <input id="loggers-filter"
+                         type="text"
+                         placeholder="<@spring.message "list.searchbar.placeholder"/>"
+                         class="input-sm form-control"
+                  />
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div id="loggers-tree"></div>
+
         </div>
       </div>
+    </div>
 
-      <table class="table table-stripped">
-        <thead>
-        <tr>
-          <th>Name</th>
-          <th>Level</th>
-        </tr>
-        </thead>
-        <tbody>
-          <#list loggers.loggers?keys as name>
-          <tr>
-            <td>
-            ${name}
-            </td>
-            <td>
-              <#list loggers.levels as level>
-                <#assign levelClass = "btn-default"/>
-                <#if level == 'OFF' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "bg-black active"/>
-                <#elseif level == 'ERROR' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-danger active"/>
-                <#elseif level == 'WARN' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-warning active"/>
-                <#elseif level == 'INFO' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-info active"/>
-                <#elseif level == 'DEBUG' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-success active"/>
-                <#elseif level == 'TRACE' && loggers.loggers[name].effectiveLevel==level>  <#assign levelClass = "btn-primary active"/>
-                </#if>
-                <button class="btn btn-rounded btn-xs ${levelClass}" data-action="changeLogLevel" data-logger="${name}"
-                        data-loglevel="${level}">${level}</button>
-              </#list>
-            </td>
-          </tr>
-          </#list>
-        </tbody>
-      </table>
+    <div class="col-sm-6">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content sk-loading">
+          <div class="sk-spinner sk-spinner-wave">
+            <div class="sk-rect1"></div>
+            <div class="sk-rect2"></div>
+            <div class="sk-rect3"></div>
+            <div class="sk-rect4"></div>
+            <div class="sk-rect5"></div>
+          </div>
+          <div id="loggers-detail" style="min-height:100px;"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  $(document).ready(function () {
-    $("[data-action='changeLogLevel']").click(function (e) {
-      var logger = $(this).data("logger");
-      var loglevel = $(this).data("loglevel");
 
-      $.post("loggers/" + logger + "/" + loglevel, function () {
-        window.location.reload(true);
+  var colors = {
+    'OFF' : "text-muted",
+    'ERROR' : "text-danger text-",
+    'WARN' : "text-warning",
+    'INFO' : "text-info",
+    'DEBUG' : "text-success",
+    'TRACE' : "text-navy"
+  };
+
+  var enrich = function(node){
+    node.li_attr = {class: colors[node.data]};
+    $.each(node.children, function(index,node){
+      enrich(node);
+    });
+  };
+
+  var changeLogLevel = function(logger, level){
+    $.post("loggers/"+logger+"/"+level, function(){
+      $.get("loggers/tree", function (data) {
+        enrich(data);
+        $('#loggers-tree').jstree(true).settings.core.data = [data];
+        $('#loggers-tree').jstree(true).refresh();
+        $('#loggers-tree').jstree("select_node", logger);
       });
+    });
+  };
+
+  $(document).ready(function () {
+    $.get("loggers/tree", function (data) {
+
+      enrich(data);
+
+      $('#loggers-tree').closest(".ibox-content").removeClass("sk-loading");
+
+      $('#loggers-tree').jstree({
+        'core': {
+          'data': [data],
+          'multiple':false
+        },
+        'plugins': ["search", "types", "stackedicon"],
+        'search': {
+          'show_only_matches': true,
+          'show_only_matches_children': true,
+          'close_opened_onclear': false
+        },
+        'types': {
+          'default' : {
+            'icon' : "fa fa-pencil"
+          }
+        }
+      }).on("select_node.jstree", function(event, node) {
+        $('#loggers-detail').closest(".ibox-content").addClass("sk-loading")
+        $('#loggers-detail').load("loggers/"+node.node.id, function(){
+          $('#loggers-detail').closest(".ibox-content").removeClass("sk-loading");
+        });
+      }).on('ready.jstree', function(e, data) {
+        $(this).jstree("select_node", 'ROOT');
+      });
+    });
+
+    var to = false;
+    $('#loggers-filter').keyup(function () {
+      if (to) {
+        clearTimeout(to);
+      }
+      to = setTimeout(function () {
+        var v = $('#loggers-filter').val();
+        $('#loggers-tree').jstree(true).search(v);
+      }, 250);
     });
   });
 </script>
