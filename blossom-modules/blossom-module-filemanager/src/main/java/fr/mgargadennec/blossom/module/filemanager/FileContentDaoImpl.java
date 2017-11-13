@@ -32,6 +32,6 @@ public class FileContentDaoImpl implements FileContentDao {
 
   @Override
   public InputStream read(Long fileId) throws SQLException {
-    return new ByteArrayInputStream(this.repository.findOne(QFileContent.fileContent.fileId.eq(fileId)).getData());
+    return new ByteArrayInputStream(this.repository.findOne(fileId).getData());
   }
 }
