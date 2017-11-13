@@ -78,7 +78,6 @@
       </column>
     </createTable>
 
-
     <createTable tableName="blossom_file_content">
       <column name="id" type="bigint">
         <constraints primaryKey="true" nullable="false" unique="true"/>
@@ -88,7 +87,7 @@
         <constraints nullable="false" foreignKeyName="fk_blossom_file_content_file_id" referencedTableName="blossom_file" referencedColumnNames="id"/>
       </column>
 
-      <column name="data" type="blob">
+      <column name="data" type="longblob">
         <constraints nullable="false"/>
       </column>
 
