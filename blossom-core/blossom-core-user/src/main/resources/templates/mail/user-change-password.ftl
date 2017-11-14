@@ -23,11 +23,6 @@
               <table cellpadding="0" cellspacing="0">
                 <tbody>
                 <tr>
-                  <td>
-                    <img class="img-responsive" src="${basePath}/mail/header.jpg">
-                  </td>
-                </tr>
-                <tr>
                   <td class="content-block">
                     <#assign name=user.firstname+' '+user.lastname/>
                     <h3>${message("change.password.title")} ${name} !</h3>
