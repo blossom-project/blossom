@@ -181,6 +181,27 @@ blossom.security.default.account.password=system
 ### Plugin system
 
 ### Indexation and Search
+Blossom provides utility classes to deal with indexation and search powered by Elasticsearch.
+The elasticsearch version currently is 2.4.5.
+
+#### Elasticsearch Client configuration
+Blossom relies on spring-boot-starter-data-elasticsearch to create the Elasticsearch Client.
+By default, an embedded node will be started, and a client on that node provided.
+You can connect to a standalone Elasticsearch installation by setting the properties below in your application.properties file.
+
+```ini
+# ELASTICSEARCH (ElasticsearchProperties)
+spring.data.elasticsearch.cluster-name=elasticsearch # Elasticsearch cluster name.
+spring.data.elasticsearch.cluster-nodes= # Comma-separated list of cluster node addresses.
+spring.data.elasticsearch.properties.*= # Additional properties used to configure the client.
+spring.data.elasticsearch.repositories.enabled=true # Enable Elasticsearch repositories.
+```
+
+#### Creating an indexation engine
+
+#### Creating a search engine
+
+
 
 ### Bean Validation
 
