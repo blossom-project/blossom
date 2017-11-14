@@ -25,7 +25,7 @@ public class WebSystemCachesAutoConfiguration {
       .label("menu.system.caches", true)
       .link("/blossom/system/caches")
       .icon("fa fa-magnet")
-      .order(3)
+      .order(2)
       .privilege(cacheManagerPrivilegePlugin())
       .parent(systemMenuItem)
       .build();

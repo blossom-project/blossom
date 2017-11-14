@@ -30,7 +30,7 @@ public class WebSystemBPMNAutoConfiguration {
       .label("menu.system.bpmn", true)
       .link("/blossom/system/bpmn")
       .icon("fa fa-sitemap")
-      .order(4)
+      .order(6)
       .privilege(bpmnManagerPrivilegePlugin())
       .parent(systemMenuItem)
       .build();

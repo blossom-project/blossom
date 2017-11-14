@@ -26,7 +26,7 @@ public class WebSystemSchedulerAutoConfiguration {
       .key("schedulerManager")
       .label("menu.system.scheduler", true)
       .link("/blossom/system/scheduler")
-      .order(2)
+      .order(1)
       .icon("fa fa-calendar")
       .privilege(schedulerPrivilegePlugin())
       .parent(systemMenuItem).build();

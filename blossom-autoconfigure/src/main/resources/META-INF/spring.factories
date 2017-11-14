@@ -26,6 +26,7 @@ fr.blossom.autoconfigure.ui.web.administration.WebAdministrationResponsabilityAu
 fr.blossom.autoconfigure.ui.web.administration.WebAdministrationMembershipAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.system.WebSystemDashboardAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.system.WebSystemSchedulerAutoConfiguration,\
+fr.blossom.autoconfigure.ui.web.system.WebSystemLiquibaseAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.system.WebSystemCachesAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.system.WebSystemLoggersAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.system.WebSystemSessionsAutoConfiguration,\

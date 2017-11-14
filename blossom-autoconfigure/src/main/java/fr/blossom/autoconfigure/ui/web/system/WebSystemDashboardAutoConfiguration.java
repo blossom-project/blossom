@@ -26,7 +26,7 @@ public class WebSystemDashboardAutoConfiguration {
       .key("dashboard")
       .label("menu.system.dashboard", true)
       .link("/blossom/system/dashboard")
-      .order(1)
+      .order(0)
       .icon("fa fa-bar-chart")
       .parent(systemMenuItem)
       .privilege(dashboardPrivilegePlugin())
@@ -37,6 +37,7 @@ public class WebSystemDashboardAutoConfiguration {
   public DashboardController dashboardController(HealthEndpoint healthEndpoint, MetricsEndpoint metricsEndpoint) {
     return new DashboardController(healthEndpoint, metricsEndpoint);
   }
+
   @Bean
   public Privilege dashboardPrivilegePlugin() {
     return new SimplePrivilege("system","dashboard", "manager");
