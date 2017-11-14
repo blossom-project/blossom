@@ -1,9 +1,9 @@
-package fr.mgargadennec.blossom.integration;
+package fr.blossom.sample;
 
-import fr.mgargadennec.blossom.autoconfigure.EnableBlossom;
-import fr.mgargadennec.blossom.core.user.UserRepository;
-import fr.mgargadennec.blossom.integration.dataset.DataGenerator;
-import fr.mgargadennec.blossom.integration.dataset.UserDataGenerator;
+import fr.blossom.autoconfigure.EnableBlossom;
+import fr.blossom.core.user.UserRepository;
+import fr.blossom.sample.dataset.DataGenerator;
+import fr.blossom.sample.dataset.UserDataGenerator;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

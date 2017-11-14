@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.core.user;
+package fr.blossom.core.user;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

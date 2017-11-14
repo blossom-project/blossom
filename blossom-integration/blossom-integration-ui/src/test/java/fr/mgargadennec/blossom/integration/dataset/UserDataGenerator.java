@@ -1,8 +1,8 @@
-package fr.mgargadennec.blossom.integration.dataset;
+package fr.blossom.sample.dataset;
 
-import fr.mgargadennec.blossom.core.user.User;
-import fr.mgargadennec.blossom.core.user.UserRepository;
-import fr.mgargadennec.blossom.integration.builder.UserBuilder;
+import fr.blossom.core.user.User;
+import fr.blossom.core.user.UserRepository;
+import fr.blossom.sample.builder.UserBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**

@@ -1,12 +1,12 @@
-package fr.mgargadennec.blossom.integration;
+package fr.blossom.sample;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import fr.mgargadennec.blossom.core.user.User;
-import fr.mgargadennec.blossom.core.user.UserRepository;
-import fr.mgargadennec.blossom.integration.builder.UserBuilder;
-import fr.mgargadennec.blossom.integration.utils.CucumberUtils;
+import fr.blossom.core.user.User;
+import fr.blossom.core.user.UserRepository;
+import fr.blossom.sample.builder.UserBuilder;
+import fr.blossom.sample.utils.CucumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.openqa.selenium.By;

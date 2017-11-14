@@ -12,7 +12,7 @@ initializr:
         - name: Blossom Core
           id: blossom-starter-basic
           description: Blossom basic starter (no web interface)
-          groupId: fr.mgargadennec.blossom
+          groupId: fr.blossom
           artifactId: blossom-starter-basic
 
     - name: Interfaces
@@ -21,12 +21,12 @@ initializr:
         - name: Blossom UI Web
           id: blossom-starter-ui-web
           description: Blossom UI Web starter (Back-office)
-          groupId: fr.mgargadennec.blossom
+          groupId: fr.blossom
           artifactId: blossom-starter-ui-web
         - name: Blossom UI Api
           id: blossom-starter-ui-api
           description: Blossom UI Api starter (Back-office)
-          groupId: fr.mgargadennec.blossom
+          groupId: fr.blossom
           artifactId: blossom-starter-ui-api
     - name: Miscellanous
       description: Blossom modules to add some functionnality in your application !
@@ -34,10 +34,10 @@ initializr:
         - name: Blossom File Manager
           id: blossom-starter-filemanager
           description: File storing and serving feature and tools
-          groupId: fr.mgargadennec.blossom
+          groupId: fr.blossom
           artifactId: blossom-starter-filemanager
         - name: Blossom Articles
           id: blossom-starter-articles
           description: Richtext articles and front serving
-          groupId: fr.mgargadennec.blossom
+          groupId: fr.blossom
           artifactId: blossom-starter-articles

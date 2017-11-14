@@ -1,6 +1,6 @@
-package fr.mgargadennec.blossom.integration.builder;
+package fr.blossom.sample.builder;
 
-import fr.mgargadennec.blossom.core.user.User;
+import fr.blossom.core.user.User;
 
 import java.util.Date;
 import java.util.Locale;

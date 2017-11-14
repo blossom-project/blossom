@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.integration;
+package fr.blossom.sample;
 
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

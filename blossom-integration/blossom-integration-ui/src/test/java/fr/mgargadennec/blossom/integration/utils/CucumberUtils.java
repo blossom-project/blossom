@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.integration.utils;
+package fr.blossom.sample.utils;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
