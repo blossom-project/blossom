@@ -1,0 +1,14 @@
+${AnsiColor.BRIGHT_GREEN}
+88          88
+88          88
+88          88
+88,dPPYba,  88  ,adPPYba,  ,adPPYba, ,adPPYba,  ,adPPYba,  88,dPYba,,adPYba,
+88P'    "8a 88 a8"     "8a I8[    "" I8[    "" a8"     "8a 88P'   "88"    "8a
+88       d8 88 8b       d8  `"Y8ba,   `"Y8ba,  8b       d8 88      88      88
+88b,   ,a8" 88 "8a,   ,a8" aa    ]8I aa    ]8I "8a,   ,a8" 88      88      88
+8Y"Ybbd8"'  88  `"YbbdP"'  `"YbbdP"' `"YbbdP"'  `"YbbdP"'  88      88      88
+${AnsiStyle.NORMAL}
+  Application : ${application.title}
+  Version : ${application.version}
+  Spring-boot version : ${spring-boot.version}
+

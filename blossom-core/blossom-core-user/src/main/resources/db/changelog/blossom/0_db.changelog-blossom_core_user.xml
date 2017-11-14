@@ -46,26 +46,21 @@
       <column name="function" type="varchar(50)">
         <constraints nullable="true"/>
       </column>
-      <column name="avatar" type="blob">
+      <column name="avatar" type="longblob">
         <constraints nullable="true"/>
       </column>
       <column name="locale" type="varchar(10)">
         <constraints nullable="false"/>
       </column>
-
-
       <column name="creation_date" type="timestamp">
         <constraints nullable="false"/>
       </column>
-
       <column name="creation_user" type="varchar(25)">
         <constraints nullable="false"/>
       </column>
-
       <column name="modification_date" type="timestamp">
         <constraints nullable="false"/>
       </column>
-
       <column name="modification_user" type="varchar(25)">
         <constraints nullable="false"/>
       </column>
