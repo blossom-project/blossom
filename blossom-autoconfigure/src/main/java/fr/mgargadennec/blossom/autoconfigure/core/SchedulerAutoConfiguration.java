@@ -35,21 +35,6 @@ import java.util.Properties;
 public class SchedulerAutoConfiguration {
 
   @Bean
-  public DataSourceInitializer schedulerDatasourceInitializer(DataSource ds, @Value("classpath:quartz_tables.sql") Resource quartzTables) {
-    DataSourceInitializer initializer = new DataSourceInitializer();
-    initializer.setDataSource(ds);
-    initializer.setDatabasePopulator(schedulerDatasourcePopulator(quartzTables));
-    return initializer;
-  }
-
-  @Bean
-  public DatabasePopulator schedulerDatasourcePopulator(Resource quartzTables) {
-    final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-    populator.addScript(quartzTables);
-    return populator;
-  }
-
-  @Bean
   public JobFactory jobFactory(ApplicationContext applicationContext) {
     AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
     jobFactory.setApplicationContext(applicationContext);
@@ -57,9 +42,9 @@ public class SchedulerAutoConfiguration {
   }
 
   @Bean
-  public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory, List<Trigger> triggers) throws IOException {
+  public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory, List<Trigger> triggers, @Value("${blossom.scheduler.name}") String schedulerName) throws IOException {
     SchedulerFactoryBean factory = new SchedulerFactoryBean();
-    factory.setSchedulerName("Default Scheduler");
+    factory.setSchedulerName(schedulerName);
     factory.setOverwriteExistingJobs(true);
     factory.setAutoStartup(true);
     factory.setDataSource(dataSource);
@@ -75,16 +60,16 @@ public class SchedulerAutoConfiguration {
   }
 
   @Bean
-  public ScheduledJobServiceImpl scheduledJobService(Scheduler scheduler) {
-    return new ScheduledJobServiceImpl(scheduler);
-  }
-
-  @Bean
   public Properties quartzProperties() throws IOException {
     PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
     propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
     propertiesFactoryBean.afterPropertiesSet();
     return propertiesFactoryBean.getObject();
+  }
+
+  @Bean
+  public ScheduledJobServiceImpl scheduledJobService(Scheduler scheduler) {
+    return new ScheduledJobServiceImpl(scheduler);
   }
 
 }
