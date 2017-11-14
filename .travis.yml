@@ -5,4 +5,4 @@ jdk:
 sudo: false # faster builds
 
 notifications:
-    slack: blossomproject:bYfwSdHMQ8ji0svj00r5cvDp
+    slack: blossomproject:qUPz65E4R2K8KLnZ1wmVoXKb
