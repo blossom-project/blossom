@@ -4,7 +4,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>fr.mgargadennec.blossom</groupId>
+  <groupId>fr.blossom</groupId>
   <artifactId>blossom-tools-simple-module-generator</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -40,12 +40,12 @@
       <version>22.0</version>
     </dependency>
     <dependency>
-      <groupId>fr.mgargadennec.blossom</groupId>
+      <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-common</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>fr.mgargadennec.blossom</groupId>
+      <groupId>fr.blossom</groupId>
       <artifactId>blossom-ui-common</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>

@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>fr.mgargadennec.blossom</groupId>
+		<groupId>fr.blossom</groupId>
 		<artifactId>blossom-parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../blossom-parent</relativePath>
 	</parent>
 
-	<groupId>fr.mgargadennec.blossom.tools</groupId>
+	<groupId>fr.blossom.tools</groupId>
 	<artifactId>blossom-tools</artifactId>
 	<packaging>pom</packaging>
 

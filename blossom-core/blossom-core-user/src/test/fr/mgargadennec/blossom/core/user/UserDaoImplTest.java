@@ -1,4 +1,4 @@
-package fr.mgargadennec.blossom.core.user;
+package fr.blossom.core.user;
 
 import org.junit.Assert;
 import org.junit.Test;
