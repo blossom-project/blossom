@@ -4,7 +4,7 @@
 <head>
   <meta name="viewport" content="width=device-width">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Actionable emails e.g. reset password</title>
+  <title>${message("activation.title")} ${name}</title>
   <link href="${basePath}/mail/styles.css" media="all" rel="stylesheet" type="text/css">
 </head>
 
@@ -22,11 +22,6 @@
             <td class="content-wrap">
               <table cellpadding="0" cellspacing="0">
                 <tbody>
-                <tr>
-                  <td>
-                    <img class="img-responsive" src="${basePath}/mail/header.jpg">
-                  </td>
-                </tr>
                 <tr>
                   <td class="content-block">
                     <#assign name=user.firstname+' '+user.lastname/>

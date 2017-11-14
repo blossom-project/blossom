@@ -46,7 +46,7 @@ public class MailAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(JavaMailSender.class)
-  public MailSender blossomNoopMailSender(freemarker.template.Configuration freemarkerConfiguration) {
+  public MailSender blossomNoopMailSender() {
     return new NoopMailSenderImpl();
   }
 
