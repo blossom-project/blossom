@@ -26,6 +26,14 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${project.build.directory}/generated-sources</directory>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>com.mysema.maven</groupId>
