@@ -1,15 +1,17 @@
 package fr.blossom.core.common.mapper;
 
-import com.google.common.reflect.TypeToken;
-import fr.blossom.core.common.dto.AbstractDTO;
-import fr.blossom.core.common.entity.AbstractEntity;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.common.reflect.TypeToken;
+
+import fr.blossom.core.common.dto.AbstractDTO;
+import fr.blossom.core.common.entity.AbstractEntity;
 
 public abstract class AbstractDTOMapper<E extends AbstractEntity, D extends AbstractDTO> implements DTOMapper<E, D> {
   private final static Logger LOGGER = LoggerFactory.getLogger(AbstractDTOMapper.class);
