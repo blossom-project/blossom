@@ -10,6 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
 
 import fr.blossom.core.common.event.CreatedEvent;
@@ -30,6 +31,10 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   public UserServiceImpl(UserDao dao, DTOMapper<User, UserDTO> mapper, ApplicationEventPublisher publisher,
       PasswordEncoder passwordEncoder, UserMailService userMailService, Resource defaultAvatar) {
     super(dao, mapper, publisher);
+    Preconditions.checkNotNull(passwordEncoder);
+    Preconditions.checkNotNull(dao);
+    Preconditions.checkNotNull(userMailService);
+    Preconditions.checkNotNull(defaultAvatar);
     this.passwordEncoder = passwordEncoder;
     this.userDao = dao;
     this.userMailService = userMailService;

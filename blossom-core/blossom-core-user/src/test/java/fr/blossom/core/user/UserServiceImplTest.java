@@ -4,7 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.util.Date;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
@@ -20,6 +22,9 @@ import fr.blossom.core.common.event.UpdatedEvent;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   @Mock
   private PasswordEncoder passwordEncoder;
@@ -219,5 +224,34 @@ public class UserServiceImplTest {
     BDDMockito.given(passwordEncoder.encode(BDDMockito.anyString())).willReturn(passwordHash);
 
     Assert.assertEquals(passwordHash, userService.generateRandomPasswordHash());
+  }
+
+  @Test
+  public void test_user_service_impl_nothing_null() throws Exception {
+    new UserServiceImpl(userDao, userMapper, publisher, passwordEncoder, userMailService, defaultAvatar);
+  }
+
+  @Test
+  public void test_user_service_impl_password_encoder_null() throws Exception {
+    thrown.expect(NullPointerException.class);
+    new UserServiceImpl(userDao, userMapper, publisher, null, userMailService, defaultAvatar);
+  }
+
+  @Test
+  public void test_user_service_impl_dao_null() throws Exception {
+    thrown.expect(NullPointerException.class);
+    new UserServiceImpl(null, userMapper, publisher, passwordEncoder, userMailService, defaultAvatar);
+  }
+
+  @Test
+  public void test_user_service_mail_service_null() throws Exception {
+    thrown.expect(NullPointerException.class);
+    new UserServiceImpl(userDao, userMapper, publisher, passwordEncoder, null, defaultAvatar);
+  }
+
+  @Test
+  public void test_user_service_default_avatar_null() throws Exception {
+    thrown.expect(NullPointerException.class);
+    new UserServiceImpl(userDao, userMapper, publisher, passwordEncoder, userMailService, null);
   }
 }
