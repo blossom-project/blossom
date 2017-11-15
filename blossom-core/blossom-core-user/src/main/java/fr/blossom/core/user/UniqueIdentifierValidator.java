@@ -3,7 +3,7 @@ package fr.blossom.core.user;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.assertj.core.util.Preconditions;
+import com.google.common.base.Preconditions;
 
 class UniqueIdentifierValidator implements ConstraintValidator<UniqueIdentifier, String> {
 

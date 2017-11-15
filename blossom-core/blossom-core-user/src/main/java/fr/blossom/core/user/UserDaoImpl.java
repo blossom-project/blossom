@@ -2,9 +2,10 @@ package fr.blossom.core.user;
 
 import java.util.Date;
 
-import org.assertj.core.util.Preconditions;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
+
+import com.google.common.base.Preconditions;
 
 import fr.blossom.core.common.dao.GenericCrudDaoImpl;
 
