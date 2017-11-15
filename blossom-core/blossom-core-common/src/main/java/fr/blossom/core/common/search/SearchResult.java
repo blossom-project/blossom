@@ -9,16 +9,22 @@ import org.springframework.data.domain.Page;
  * Created by Maël Gargadennnec on 23/05/2017.
  */
 public class SearchResult<DTO> {
+  private final long duration;
   private final Page<DTO> page;
   private final List<Aggregation> aggregations;
 
-  public SearchResult(Page<DTO> page) {
-    this(page, Lists.newArrayList());
+  public SearchResult(long duration,Page<DTO> page) {
+    this(duration, page, Lists.newArrayList());
   }
 
-  public SearchResult(Page<DTO> page, List<Aggregation> aggregations) {
+  public SearchResult(long duration, Page<DTO> page, List<Aggregation> aggregations) {
+    this.duration=duration;
     this.page = page;
     this.aggregations = aggregations;
+  }
+
+  public long getDuration() {
+    return duration;
   }
 
   public Page<DTO> getPage() {

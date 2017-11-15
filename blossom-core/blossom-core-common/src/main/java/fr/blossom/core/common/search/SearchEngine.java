@@ -14,6 +14,10 @@ import org.springframework.plugin.core.Plugin;
 @Qualifier(value = PluginConstants.PLUGIN_SEARCH_ENGINE)
 public interface SearchEngine extends Plugin<Class<? extends AbstractDTO>> {
 
+  String getName();
+
+  boolean includeInOmnisearch();
+
   SearchRequestBuilder prepareSearch(String q, Pageable pageable);
 
   SearchRequestBuilder prepareSearch(String q, Pageable pageable, Iterable<QueryBuilder> filters);
@@ -22,6 +26,7 @@ public interface SearchEngine extends Plugin<Class<? extends AbstractDTO>> {
 
   SearchResult<?> parseResults(SearchResponse response, Pageable pageable);
 
+  SearchResult<SummaryDTO> parseSummaryResults(SearchResponse response, Pageable pageable);
 
   SearchResult<?> search(String q, Pageable pageable);
 

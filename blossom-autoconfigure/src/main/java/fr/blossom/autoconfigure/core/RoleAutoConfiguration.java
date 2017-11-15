@@ -3,8 +3,12 @@ package fr.blossom.autoconfigure.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import fr.blossom.core.common.PluginConstants;
+import fr.blossom.core.common.search.IndexationEngineConfiguration;
 import fr.blossom.core.common.search.IndexationEngineImpl;
+import fr.blossom.core.common.search.SearchEngineConfiguration;
 import fr.blossom.core.common.search.SearchEngineImpl;
+import fr.blossom.core.common.search.SummaryDTO;
+import fr.blossom.core.common.search.SummaryDTO.SummaryDTOBuilder;
 import fr.blossom.core.common.utils.privilege.Privilege;
 import fr.blossom.core.role.Role;
 import fr.blossom.core.role.RoleDTO;
@@ -15,6 +19,8 @@ import fr.blossom.core.role.RoleIndexationJob;
 import fr.blossom.core.role.RoleRepository;
 import fr.blossom.core.role.RoleService;
 import fr.blossom.core.role.RoleServiceImpl;
+import fr.blossom.core.user.UserDTO;
+import java.util.function.Function;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
 import org.quartz.JobDetail;
@@ -68,21 +74,79 @@ public class RoleAutoConfiguration {
     return new RoleDTOMapper();
   }
 
+
+  @Bean
+  public IndexationEngineConfiguration<RoleDTO> roleIndexationEngineConfiguration(
+    @Value("classpath:/elasticsearch/roles.json") Resource resource) {
+    return new IndexationEngineConfiguration<RoleDTO>() {
+      @Override
+      public Class<RoleDTO> getSupportedClass() {
+        return RoleDTO.class;
+      }
+
+      @Override
+      public Resource getSource() {
+        return resource;
+      }
+
+      @Override
+      public String getAlias() {
+        return "roles";
+      }
+
+      @Override
+      public Function<RoleDTO, String> getTypeFunction() {
+        return u -> "role";
+      }
+
+      @Override
+      public Function<RoleDTO, SummaryDTO> getSummaryFunction() {
+        return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u)).name(u.getName())
+          .description(u.getDescription()).uri("/blossom/administration/roles/" + u.getId())
+          .build();
+      }
+    };
+  }
+
   @Bean
   public IndexationEngineImpl<RoleDTO> roleIndexationEngine(Client client,
     RoleService roleService,
     BulkProcessor bulkProcessor,
     ObjectMapper objectMapper,
-    @Value("classpath:/elasticsearch/roles.json") Resource resource) {
-    return new IndexationEngineImpl<>(RoleDTO.class, client, resource, "roles", u -> "role",
-      roleService, bulkProcessor, objectMapper);
+    IndexationEngineConfiguration<RoleDTO> roleIndexationEngineConfiguration) {
+    return new IndexationEngineImpl<>(client, roleService, bulkProcessor, objectMapper,
+      roleIndexationEngineConfiguration);
+  }
+
+
+  @Bean
+  public SearchEngineConfiguration<RoleDTO> roleSearchEngineConfiguration() {
+    return new SearchEngineConfiguration<RoleDTO>() {
+      @Override
+      public String getName() {
+        return "menu.administration.roles";
+      }
+
+      @Override
+      public Class<RoleDTO> getSupportedClass() {
+        return RoleDTO.class;
+      }
+
+      @Override
+      public String[] getFields() {
+        return new String[]{"dto.name", "dto.description"};
+      }
+
+      @Override
+      public String getAlias() {
+        return "roles";
+      }
+    };
   }
 
   @Bean
-  public SearchEngineImpl<RoleDTO> roleSearchEngine(Client client, BulkProcessor bulkProcessor,
-    ObjectMapper objectMapper) {
-    return new SearchEngineImpl<>(RoleDTO.class, client, Lists.newArrayList("name", "description"),
-      "roles", objectMapper);
+  public SearchEngineImpl<RoleDTO> roleSearchEngine(Client client, ObjectMapper objectMapper, SearchEngineConfiguration<RoleDTO> roleSearchEngineConfiguration) {
+    return new SearchEngineImpl<>(client, objectMapper, roleSearchEngineConfiguration);
   }
 
 

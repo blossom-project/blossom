@@ -11,14 +11,17 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.ByteSizeUnit;
+import org.elasticsearch.common.unit.ByteSizeValue;
+import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -28,7 +31,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.domain.AuditorAware;
@@ -97,24 +99,30 @@ public class CommonAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(BulkProcessor.class)
-  @Scope(BeanDefinition.SCOPE_PROTOTYPE)
   public BulkProcessor bulkProcessor(Client client) {
     return BulkProcessor.builder(client, new BulkProcessor.Listener() {
+
       @Override
       public void beforeBulk(long executionId, BulkRequest request) {
-
+        logger.info("Before bulk {} with {} actions to execute", executionId, request.numberOfActions());
       }
 
       @Override
       public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-
+        logger.error("Error on bulk {} with {} actions to execute", executionId, request.numberOfActions(), failure);
       }
 
       @Override
       public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+        logger.info("Successful bulk {} with {} actions executed in {} ms.", executionId, request.numberOfActions(), response.getTookInMillis());
 
       }
-    }).build();
+    })
+      .setName("Blossom Bulk Processor")
+      .setBulkActions(500)
+      .setBulkSize(new ByteSizeValue(10, ByteSizeUnit.MB))
+      .setFlushInterval(new TimeValue(30, TimeUnit.SECONDS))
+      .build();
   }
 
   @Bean

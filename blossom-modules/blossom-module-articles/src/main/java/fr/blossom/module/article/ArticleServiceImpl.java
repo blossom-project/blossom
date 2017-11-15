@@ -6,6 +6,7 @@ import fr.blossom.core.common.service.GenericCrudServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
@@ -18,6 +19,7 @@ public class ArticleServiceImpl extends GenericCrudServiceImpl<ArticleDTO, Artic
     }
 
     @Override
+    @Transactional
     public ArticleDTO create(ArticleCreateForm articleCreateForm) throws Exception {
 
         Article articleToCreate = new Article();
@@ -31,6 +33,7 @@ public class ArticleServiceImpl extends GenericCrudServiceImpl<ArticleDTO, Artic
     }
 
     @Override
+    @Transactional
     public ArticleDTO update(Long articleId, ArticleUpdateForm articleUpdateForm) throws Exception {
 
         Article articleToUpdate = new Article();
