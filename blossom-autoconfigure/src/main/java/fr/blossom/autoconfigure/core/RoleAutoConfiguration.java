@@ -124,7 +124,7 @@ public class RoleAutoConfiguration {
     return new SearchEngineConfiguration<RoleDTO>() {
       @Override
       public String getName() {
-        return "roles.label";
+        return "menu.administration.roles";
       }
 
       @Override
@@ -170,7 +170,7 @@ public class RoleAutoConfiguration {
     factoryBean.setName("Role re-indexation");
     factoryBean.setDescription("Periodic re-indexation of all roles of the application");
     factoryBean.setJobDetail(roleIndexationFullJob);
-    factoryBean.setStartDelay(0);
+    factoryBean.setStartDelay((long) 30 * 1000);
     factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
     factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
     factoryBean.setMisfireInstruction(

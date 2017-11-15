@@ -131,7 +131,7 @@ public class UserAutoConfiguration {
     return new SearchEngineConfiguration<UserDTO>() {
       @Override
       public String getName() {
-        return "users.label";
+        return "menu.administration.users";
       }
 
       @Override
@@ -141,8 +141,7 @@ public class UserAutoConfiguration {
 
       @Override
       public String[] getFields() {
-        return new String[]{"dto.identifier", "dto.email", "dto.firstname", "dto.lastname", "dto.company",
-          "dto.function"};
+        return new String[]{"dto.identifier", "dto.email", "dto.firstname", "dto.lastname", "dto.company", "dto.description", "dto.function"};
       }
 
       @Override
@@ -177,7 +176,7 @@ public class UserAutoConfiguration {
     factoryBean.setName("User re-indexation");
     factoryBean.setDescription("Periodic re-indexation of all users of the application");
     factoryBean.setJobDetail(userIndexationFullJob);
-    factoryBean.setStartDelay(0);
+    factoryBean.setStartDelay((long) 30 * 1000);
     factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
     factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
     factoryBean.setMisfireInstruction(

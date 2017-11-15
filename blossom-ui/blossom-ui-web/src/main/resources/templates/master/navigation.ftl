@@ -59,12 +59,10 @@
       <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
 
       <form role="search" class="navbar-form-custom" action="/blossom/search" method="get">
-        <div class="form-group">
+        <div class="form-group text-white">
           <input type="text" name="q" placeholder="<@spring.message "omnisearch.placeholder"/>" class="form-control">
         </div>
       </form>
-
-
 
     </div>
     <ul class="nav navbar-top-links navbar-right">

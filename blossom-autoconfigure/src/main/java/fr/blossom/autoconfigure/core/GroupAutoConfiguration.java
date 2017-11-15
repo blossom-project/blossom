@@ -114,7 +114,7 @@ public class GroupAutoConfiguration {
     return new SearchEngineConfiguration<GroupDTO>() {
       @Override
       public String getName() {
-        return "groups.label";
+        return "menu.administration.groups";
       }
 
       @Override
@@ -160,7 +160,7 @@ public class GroupAutoConfiguration {
     factoryBean.setName("Group re-indexation");
     factoryBean.setDescription("Periodic re-indexation of all groups of the application");
     factoryBean.setJobDetail(groupIndexationFullJob);
-    factoryBean.setStartDelay(0);
+    factoryBean.setStartDelay((long) 30 * 1000);
     factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
     factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
     factoryBean.setMisfireInstruction(
