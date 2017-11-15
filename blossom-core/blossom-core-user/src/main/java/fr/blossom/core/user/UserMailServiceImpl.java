@@ -1,28 +1,29 @@
 package fr.blossom.core.user;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import fr.blossom.core.common.utils.action_token.ActionToken;
-import fr.blossom.core.common.utils.action_token.ActionTokenService;
-import fr.blossom.core.common.utils.mail.MailSender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+
+import fr.blossom.core.common.utils.action_token.ActionToken;
+import fr.blossom.core.common.utils.action_token.ActionTokenService;
+import fr.blossom.core.common.utils.mail.MailSender;
+
 public class UserMailServiceImpl implements UserMailService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(UserMailServiceImpl.class);
 
   private final MailSender mailSender;
   private final ActionTokenService tokenService;
 
   public UserMailServiceImpl(MailSender mailSender, ActionTokenService tokenService) {
+    Preconditions.checkNotNull(mailSender);
+    Preconditions.checkNotNull(tokenService);
     this.mailSender = mailSender;
     this.tokenService = tokenService;
   }
 
-  @Override public void sendAccountCreationEmail(UserDTO user) throws Exception {
+  @Override
+  public void sendAccountCreationEmail(UserDTO user) throws Exception {
     Preconditions.checkNotNull(user);
 
     ActionToken actionToken = new ActionToken();
@@ -37,7 +38,8 @@ public class UserMailServiceImpl implements UserMailService {
     this.mailSender.sendMail("user-activation", ctx, "activation.subject", user.getLocale(), user.getEmail());
   }
 
-  @Override public void sendChangePasswordEmail(UserDTO user) throws Exception {
+  @Override
+  public void sendChangePasswordEmail(UserDTO user) throws Exception {
     Preconditions.checkNotNull(user);
 
     ActionToken actionToken = new ActionToken();

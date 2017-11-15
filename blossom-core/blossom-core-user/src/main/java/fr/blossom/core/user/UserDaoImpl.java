@@ -1,9 +1,12 @@
 package fr.blossom.core.user;
 
-import fr.blossom.core.common.dao.GenericCrudDaoImpl;
 import java.util.Date;
+
+import org.assertj.core.util.Preconditions;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
+
+import fr.blossom.core.common.dao.GenericCrudDaoImpl;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
@@ -14,6 +17,7 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
 
   public UserDaoImpl(UserRepository repository) {
     super(repository);
+    Preconditions.checkNotNull(repository);
     this.userRepository = repository;
   }
 
@@ -40,7 +44,6 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   public User getByEmail(String email) {
     return this.userRepository.findOneByEmail(email).orElse(null);
   }
-
 
   @Override
   @CachePut(key = "#a0+''")
