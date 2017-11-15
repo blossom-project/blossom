@@ -111,7 +111,7 @@ public class ArticleAutoConfiguration {
     return new SearchEngineConfiguration<ArticleDTO>() {
       @Override
       public String getName() {
-        return "articles.label";
+        return "menu.content.articles";
       }
 
       @Override
@@ -156,7 +156,7 @@ public class ArticleAutoConfiguration {
     factoryBean.setName("Article re-indexation");
     factoryBean.setDescription("Periodic re-indexation of all articles of the application");
     factoryBean.setJobDetail(articleIndexationFullJob);
-    factoryBean.setStartDelay(0);
+    factoryBean.setStartDelay((long) 30 * 1000);
     factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
     factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
     factoryBean.setMisfireInstruction(

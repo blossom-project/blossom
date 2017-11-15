@@ -129,7 +129,7 @@ public class FileManagerAutoConfiguration {
     return new SearchEngineConfiguration<FileDTO>() {
       @Override
       public String getName() {
-        return "files.label";
+        return "menu.content.filemanager";
       }
 
       @Override
@@ -145,6 +145,11 @@ public class FileManagerAutoConfiguration {
       @Override
       public String getAlias() {
         return "files";
+      }
+
+      @Override
+      public boolean includeInOmnisearch() {
+        return false;
       }
     };
   }
@@ -175,7 +180,7 @@ public class FileManagerAutoConfiguration {
     factoryBean.setName("File re-indexation");
     factoryBean.setDescription("Periodic re-indexation of all files of the application");
     factoryBean.setJobDetail(fileIndexationFullJob);
-    factoryBean.setStartDelay(0);
+    factoryBean.setStartDelay((long) 30 * 1000);
     factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
     factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
     factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
