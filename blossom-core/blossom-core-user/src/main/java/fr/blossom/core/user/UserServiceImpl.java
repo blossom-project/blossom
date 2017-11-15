@@ -1,5 +1,6 @@
 package fr.blossom.core.user;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
 import fr.blossom.core.common.event.CreatedEvent;
 import fr.blossom.core.common.event.UpdatedEvent;

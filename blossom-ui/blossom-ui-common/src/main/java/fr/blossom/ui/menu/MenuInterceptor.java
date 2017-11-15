@@ -35,17 +35,19 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
       } else if (method.getDeclaringClass().isAnnotationPresent(OpenedMenu.class)) {
         menuId = method.getDeclaringClass().getAnnotation(OpenedMenu.class).value();
       }
-
+      List<String> currentMenu = Lists.newArrayList();
       if (!StringUtils.isEmpty(menuId) && registry.hasPluginFor(menuId)) {
-        List<String> currentMenu = Lists.newArrayList();
+
         MenuItem menuItem = registry.getPluginFor(menuId);
         while (menuItem != null) {
           currentMenu.add(menuItem.key());
           menuItem = menuItem.parent();
         }
-
-        modelAndView.addObject("currentMenu", currentMenu);
+      }else{
+        currentMenu.add("home");
       }
+
+      modelAndView.addObject("currentMenu", currentMenu);
     }
   }
 }

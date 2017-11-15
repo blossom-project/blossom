@@ -58,11 +58,14 @@
     <div class="navbar-header">
       <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
 
-      <form role="search" class="navbar-form-custom" action="search_results.html">
+      <form role="search" class="navbar-form-custom" action="/blossom/search" method="get">
         <div class="form-group">
-          <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+          <input type="text" name="q" placeholder="<@spring.message "omnisearch.placeholder"/>" class="form-control">
         </div>
       </form>
+
+
+
     </div>
     <ul class="nav navbar-top-links navbar-right">
       <li class="dropdown">
@@ -90,23 +93,6 @@
         </a>
       </li>
     </ul>
-
   </nav>
 </div>
-
-<script>
-  $("#top-search").keyup(function() {
-    var that = $(this);
-    var val = $(this).val();
-    if(!val || val.length  == 0){
-      return;
-    }
-
-    delay(function(){
-      $.get("/blossom/_search?q="+val).done(function(data){
-        console.log(data);
-      });
-    }, 1000 );
-  });
-</script>
 </#macro>
