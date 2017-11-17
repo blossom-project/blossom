@@ -1,7 +1,12 @@
 package fr.blossom.autoconfigure.core;
 
 import fr.blossom.core.scheduler.AutowiringSpringBeanJobFactory;
+import fr.blossom.core.scheduler.job.ScheduledJobService;
 import fr.blossom.core.scheduler.job.ScheduledJobServiceImpl;
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
+import javax.sql.DataSource;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
@@ -13,11 +18,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
@@ -60,7 +60,7 @@ public class SchedulerAutoConfiguration {
   }
 
   @Bean
-  public ScheduledJobServiceImpl scheduledJobService(Scheduler scheduler) {
+  public ScheduledJobService scheduledJobService(Scheduler scheduler) {
     return new ScheduledJobServiceImpl(scheduler);
   }
 

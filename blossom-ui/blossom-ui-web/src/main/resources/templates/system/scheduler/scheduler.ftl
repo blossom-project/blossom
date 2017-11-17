@@ -165,6 +165,15 @@
     updateDetailPane(null)
   });
 
+  $(document).on("scheduledTaskExecution", function (event, href) {
+    console.log("scheduledTaskExecution", event);
+    $.post(href, function(data){
+      console.log("executed");
+    })
+  });
+
+
+
   updateTabPane($('.scheduler  li.active a[data-toggle="tab"]'));
 
 </script>

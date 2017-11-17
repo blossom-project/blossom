@@ -68,9 +68,20 @@
             <tr>
               <td>${trigger.name}</td>
               <td><i class="${triggerIcon(trigger)}"></i> ${triggerType(trigger)}</td>
-              <td>${trigger.nextFireTime?datetime}</td>
+              <td>${trigger.nextFireTime?datetime!''}</td>
             </tr>
           </#list>
+          <tr>
+            <td><@spring.message "action.manual"/></td>
+            <td><i class="fa fa-play"></i> <@spring.message "action.manual"/></td>
+            <td>
+              <button class="btn btn-danger btn-xs btn-block"
+                      data-href="/blossom/system/scheduler/${jobInfo.key.group}/${jobInfo.key.name}/_execute"
+                      onclick="$(document).trigger('scheduledTaskExecution',$(this).data('href'));">
+                <@spring.message "now"/>
+              </button>
+            </td>
+          </tr>
           </tbody>
 
           </thead>

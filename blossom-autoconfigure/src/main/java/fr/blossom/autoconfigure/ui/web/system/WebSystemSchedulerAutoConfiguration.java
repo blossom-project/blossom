@@ -2,7 +2,7 @@ package fr.blossom.autoconfigure.ui.web.system;
 
 import fr.blossom.core.common.utils.privilege.Privilege;
 import fr.blossom.core.common.utils.privilege.SimplePrivilege;
-import fr.blossom.core.scheduler.job.ScheduledJobServiceImpl;
+import fr.blossom.core.scheduler.job.ScheduledJobService;
 import fr.blossom.ui.menu.MenuItem;
 import fr.blossom.ui.menu.MenuItemBuilder;
 import fr.blossom.ui.web.system.scheduler.SchedulerController;
@@ -33,7 +33,7 @@ public class WebSystemSchedulerAutoConfiguration {
   }
 
   @Bean
-  public SchedulerController schedulerController(ScheduledJobServiceImpl scheduledJobService) {
+  public SchedulerController schedulerController(ScheduledJobService scheduledJobService) {
     return new SchedulerController(scheduledJobService);
   }
 
