@@ -27,7 +27,6 @@ public class CacheManagerController {
   private final static Logger LOGGER = LoggerFactory.getLogger(CacheManagerController.class);
   private final BlossomCacheManager cacheManager;
 
-
   public CacheManagerController(BlossomCacheManager cacheManager) {
     this.cacheManager = cacheManager;
   }

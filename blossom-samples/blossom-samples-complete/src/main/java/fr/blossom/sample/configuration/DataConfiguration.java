@@ -49,7 +49,7 @@ public class DataConfiguration {
   @Bean
   public CommandLineRunner clr(UserService service, DataFactory df, Random random) {
     return args -> {
-      IntStream.range(0, 5).mapToObj(i -> {
+      IntStream.range(0, 15).mapToObj(i -> {
         UserDTO user = new UserDTO();
         user.setIdentifier("Identifier-" + i);
         user.setPasswordHash("Password-" + i);
@@ -72,7 +72,7 @@ public class DataConfiguration {
   @Bean
   public CommandLineRunner clrGroup(GroupService service, DataFactory df) {
     return args -> {
-      IntStream.range(0, 5).mapToObj(i -> {
+      IntStream.range(0, 15).mapToObj(i -> {
         GroupDTO group = new GroupDTO();
         group.setName("Name-" + i);
         group.setDescription(
@@ -88,7 +88,7 @@ public class DataConfiguration {
     @Qualifier(PluginConstants.PLUGIN_PRIVILEGES)
       PluginRegistry<Privilege, String> privilegesRegistry) {
     return args -> {
-      IntStream.range(0, 5).mapToObj(i -> {
+      IntStream.range(0, 15).mapToObj(i -> {
         Role role = new Role();
         role.setName("Name-" + i);
         role.setDescription(
@@ -140,6 +140,24 @@ public class DataConfiguration {
         userService.getByEmail(user.getEmail());
 
       });
+    };
+  }
+
+  @Bean
+  public CommandLineRunner clrDelete(UserService userService, AssociationUserRoleService service, AssociationUserGroupService service2) {
+    return args -> {
+      UserDTO someUser = userService.getAll(new PageRequest(0, 50)).getContent().get(0);
+
+      service.getAllLeft(someUser).forEach(asso -> {
+        service.dissociate(asso.getA(), asso.getB());
+      });
+
+      service2.getAllLeft(someUser).forEach(asso -> {
+        service2.dissociate(asso.getA(), asso.getB());
+      });
+
+
+      userService.delete(someUser);
     };
   }
 }

@@ -7,19 +7,16 @@ import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.JPQLQuery;
 import fr.blossom.core.common.entity.AbstractEntity;
 import fr.blossom.core.common.repository.CrudRepository;
-import org.springframework.cache.annotation.CacheConfig;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
-
-@CacheConfig(cacheResolver = "blossomCacheResolver")
 public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> implements ReadOnlyDao<ENTITY> {
 
   protected final CrudRepository<ENTITY> repository;
@@ -56,16 +53,19 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   }
 
   @Override
+  @Cacheable(key="'all'")
   public List<ENTITY> getAll() {
     return this.repository.findAll();
   }
 
   @Override
+  @Cacheable
   public List<ENTITY> getAll(List<Long> ids) {
     return this.repository.findAll(ids);
   }
 
   @Override
+  @Cacheable
   public Page<ENTITY> getAll(Pageable pageable) {
     return repository.findAll(pageable);
   }
