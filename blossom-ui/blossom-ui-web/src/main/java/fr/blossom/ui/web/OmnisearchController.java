@@ -1,22 +1,30 @@
 package fr.blossom.ui.web;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.search.SearchEngine;
 import fr.blossom.core.common.search.SearchResult;
+import fr.blossom.core.common.search.SummaryDTO;
 import fr.blossom.ui.stereotype.BlossomController;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import org.elasticsearch.action.search.MultiSearchRequestBuilder;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.plugin.core.PluginRegistry;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 @BlossomController
 public class OmnisearchController {
@@ -30,25 +38,35 @@ public class OmnisearchController {
     this.registry = registry;
   }
 
-  @ResponseBody
-  @GetMapping("/_search")
-  public List<SearchResult<?>> omniSearch(@RequestParam(value = "q") String query) {
-    Pageable pageable = new PageRequest(0, 5);
+  @GetMapping("/search")
+  public ModelAndView omniSearch(
+    @RequestParam(value = "q", defaultValue = "", required = false) String query,
+    @PageableDefault(size = 20) Pageable pageable,
+    Model model) {
     MultiSearchRequestBuilder request = client.prepareMultiSearch();
-    List<SearchEngine> plugins = registry.getPlugins();
+    List<SearchEngine> plugins = registry.getPlugins().stream().filter(SearchEngine::includeInOmnisearch).collect(Collectors.toList());
     plugins.forEach(engine -> request.add(engine.prepareSearch(query, pageable)));
     MultiSearchResponse response = request.get(TimeValue.timeValueSeconds(15));
 
-    // You will get all individual responses from MultiSearchResponse#getResponses()
     int index = 0;
-    List<SearchResult<?>> results = Lists.newArrayList();
-    for (MultiSearchResponse.Item item : response.getResponses()) {
+    Map<String, SearchResult<SummaryDTO>> results = Maps.newHashMap();
+
+    List<MultiSearchResponse.Item> items = Lists.newArrayList(response.getResponses());
+    for (MultiSearchResponse.Item item : items) {
       SearchResponse unitResponse = item.getResponse();
-      SearchResult<?> result = plugins.get(index).parseResults(unitResponse, pageable);
-      results.add(result);
+      SearchEngine searchEngine = plugins.get(index);
+      SearchResult<SummaryDTO> result = searchEngine.parseSummaryResults(unitResponse, pageable);
+      results.put(searchEngine.getName(), result);
       index++;
     }
 
-    return results;
+    model.addAttribute("q", query);
+    model.addAttribute("total", results.values().stream().mapToLong(r -> r.getPage().getTotalElements()).sum());
+    model.addAttribute("duration", results.values().stream().mapToLong(r -> r.getDuration()).max().getAsLong());
+    model.addAttribute("results", results.entrySet().stream()
+      .filter( e -> e.getValue().getPage().getTotalElements()!=0)
+      .sorted( Comparator.comparing((Entry<String, SearchResult<SummaryDTO>> e) -> e.getValue().getPage().getTotalElements()).reversed())
+      .collect(Collectors.toMap(e -> e.getKey(),e -> e.getValue(), (u, v) -> {throw new IllegalStateException(String.format("Duplicate key %s", u));}, LinkedHashMap::new)));
+    return new ModelAndView("omnisearch/omnisearch", model.asMap());
   }
 }

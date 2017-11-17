@@ -1,5 +1,11 @@
 package fr.blossom.autoconfigure.module;
 
+import fr.blossom.core.common.search.IndexationEngineConfiguration;
+import fr.blossom.core.common.search.SearchEngineConfiguration;
+import fr.blossom.core.common.search.SummaryDTO;
+import fr.blossom.core.common.search.SummaryDTO.SummaryDTOBuilder;
+import fr.blossom.module.article.ArticleDTO;
+import java.util.function.Function;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
 import org.quartz.JobDetail;
@@ -83,18 +89,75 @@ public class FileManagerAutoConfiguration {
   }
 
   @Bean
-  public IndexationEngineImpl<FileDTO> fileIndexationEngine(Client client, FileService fileService,
-      BulkProcessor bulkProcessor, ObjectMapper objectMapper,
-      @Value("classpath:/elasticsearch/files.json") Resource resource) {
-    return new IndexationEngineImpl<>(FileDTO.class, client, resource, "files", u -> "file", fileService,
-        bulkProcessor, objectMapper);
+  public IndexationEngineConfiguration<FileDTO> fileIndexationEngineConfiguration(@Value("classpath:/elasticsearch/files.json") Resource resource) {
+    return new IndexationEngineConfiguration<FileDTO>() {
+      @Override
+      public Class<FileDTO> getSupportedClass() {
+        return FileDTO.class;
+      }
+
+      @Override
+      public Resource getSource() {
+        return resource;
+      }
+
+      @Override
+      public String getAlias() {
+        return "files";
+      }
+
+      @Override
+      public Function<FileDTO, String> getTypeFunction() {
+        return u -> "file";
+      }
+
+      @Override
+      public Function<FileDTO, SummaryDTO> getSummaryFunction() {
+        return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u)).name(u.getName()).description(u.getContentType()).uri("/blossom/content/files/"+u.getId()).build();
+      }
+    };
   }
 
   @Bean
-  public SearchEngineImpl<FileDTO> fileSearchEngine(Client client, BulkProcessor bulkProcessor,
-      ObjectMapper objectMapper) {
-    return new SearchEngineImpl<>(FileDTO.class, client, Lists.newArrayList("name", "contentType", "extension"),
-        "files", objectMapper);
+  public IndexationEngineImpl<FileDTO> fileIndexationEngine(Client client, FileService fileService,
+      BulkProcessor bulkProcessor, ObjectMapper objectMapper, IndexationEngineConfiguration<FileDTO> fileIndexationEngineConfiguration) {
+    return new IndexationEngineImpl<>(client,fileService,bulkProcessor,objectMapper,fileIndexationEngineConfiguration);
+  }
+
+  @Bean
+  public SearchEngineConfiguration<FileDTO> fileSearchEngineConfiguration() {
+    return new SearchEngineConfiguration<FileDTO>() {
+      @Override
+      public String getName() {
+        return "menu.content.filemanager";
+      }
+
+      @Override
+      public Class<FileDTO> getSupportedClass() {
+        return FileDTO.class;
+      }
+
+      @Override
+      public String[] getFields() {
+        return new String[]{"dto.name", "dto.contentType", "dto.extension"};
+      }
+
+      @Override
+      public String getAlias() {
+        return "files";
+      }
+
+      @Override
+      public boolean includeInOmnisearch() {
+        return false;
+      }
+    };
+  }
+
+
+  @Bean
+  public SearchEngineImpl<FileDTO> fileSearchEngine(Client client, ObjectMapper objectMapper, SearchEngineConfiguration<FileDTO> fileSearchEngineConfiguration) {
+    return new SearchEngineImpl<>(client, objectMapper, fileSearchEngineConfiguration);
   }
 
   @Bean

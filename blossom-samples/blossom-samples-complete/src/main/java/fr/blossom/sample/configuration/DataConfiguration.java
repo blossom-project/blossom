@@ -62,7 +62,8 @@ public class DataConfiguration {
         user.setCompany(df.getCity());
         user.setLocale(Locale.FRENCH);
         user.setCivility(random.nextBoolean() ? User.Civility.MAN : User.Civility.WOMAN);
-        user.setDescription(df.getRandomText(200, 600));
+        user.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available."
+          + i);
         return user;
       }).forEach(u -> service.create(u));
     };

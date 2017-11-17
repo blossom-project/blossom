@@ -1,22 +1,19 @@
 package fr.blossom.core.user;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.core.io.Resource;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
-
 import fr.blossom.core.common.event.CreatedEvent;
 import fr.blossom.core.common.event.UpdatedEvent;
 import fr.blossom.core.common.mapper.DTOMapper;
 import fr.blossom.core.common.service.GenericCrudServiceImpl;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.io.Resource;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
@@ -28,8 +25,9 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   private final UserMailService userMailService;
   private final Resource defaultAvatar;
 
-  public UserServiceImpl(UserDao dao, DTOMapper<User, UserDTO> mapper, ApplicationEventPublisher publisher,
-      PasswordEncoder passwordEncoder, UserMailService userMailService, Resource defaultAvatar) {
+  public UserServiceImpl(UserDao dao, DTOMapper<User, UserDTO> mapper,
+    ApplicationEventPublisher publisher,
+    PasswordEncoder passwordEncoder, UserMailService userMailService, Resource defaultAvatar) {
     super(dao, mapper, publisher);
     Preconditions.checkNotNull(passwordEncoder);
     Preconditions.checkNotNull(dao);
@@ -106,7 +104,8 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   @Override
   @Transactional
   public UserDTO updatePassword(Long id, String password) {
-    UserDTO user = mapper.mapEntity(this.userDao.updatePassword(id, passwordEncoder.encode(password)));
+    UserDTO user = mapper
+      .mapEntity(this.userDao.updatePassword(id, passwordEncoder.encode(password)));
     this.publisher.publishEvent(new UpdatedEvent<>(this, user));
     return user;
   }
@@ -122,7 +121,8 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   @Override
   @Transactional
   public void askPasswordChange(long userId) throws Exception {
-    UserDTO user = this.updatePassword(userId, passwordEncoder.encode(UUID.randomUUID().toString()));
+    UserDTO user = this
+      .updatePassword(userId, passwordEncoder.encode(UUID.randomUUID().toString()));
     userMailService.sendChangePasswordEmail(user);
   }
 

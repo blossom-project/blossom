@@ -1,10 +1,10 @@
 package fr.blossom.core.common.search;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import fr.blossom.core.common.dto.AbstractDTO;
-import java.io.IOException;
 import java.util.List;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -16,6 +16,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.data.domain.PageImpl;
@@ -24,20 +25,24 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 
 public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
-
-  private final Class<DTO> supportedClass;
   private final Client client;
-  private final String[] fields;
-  private final String alias;
   private final ObjectMapper objectMapper;
+  private final SearchEngineConfiguration<DTO> configuration;
 
-  public SearchEngineImpl(Class<DTO> supportedClass, Client client, List<String> fields,
-    String alias, ObjectMapper objectMapper) {
-    this.supportedClass = supportedClass;
+  public SearchEngineImpl(Client client, ObjectMapper objectMapper, SearchEngineConfiguration<DTO> configuration) {
     this.client = client;
-    this.fields = fields.toArray(new String[fields.size()]);
-    this.alias = alias;
     this.objectMapper = objectMapper;
+    this.configuration = configuration;
+  }
+
+  @Override
+  public String getName() {
+    return this.configuration.getName();
+  }
+
+  @Override
+  public boolean includeInOmnisearch() {
+    return this.configuration.includeInOmnisearch();
   }
 
   public SearchResult<DTO> search(String q, Pageable pageable) {
@@ -75,7 +80,7 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
     Iterable<AggregationBuilder> aggregations) {
 
     QueryBuilder initialQuery;
-    String[] searchableFields = this.fields;
+    String[] searchableFields = this.configuration.getFields();
 
     if (Strings.isNullOrEmpty(q)) {
       initialQuery = QueryBuilders.matchAllQuery();
@@ -94,14 +99,15 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
       }
     }
 
-    SearchRequestBuilder searchRequest = this.client.prepareSearch(this.alias).setQuery(query)
+    SearchRequestBuilder searchRequest = this.client.prepareSearch(this.configuration.getAlias()).setQuery(query)
       .setSize(pageable.getPageSize()).setFrom(pageable.getOffset());
 
     Sort sort = pageable.getSort();
     if (sort != null) {
       for (Order order : pageable.getSort()) {
-        searchRequest.addSort(SortBuilders.fieldSort(order.getProperty())
-          .order(SortOrder.valueOf(order.getDirection().name())));
+        SortBuilder sortBuilder = SortBuilders.fieldSort("dto." + order.getProperty())
+          .order(SortOrder.valueOf(order.getDirection().name()));
+        searchRequest.addSort(sortBuilder);
       }
       searchRequest.addSort(SortBuilders.scoreSort());
     }
@@ -117,30 +123,44 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
 
   @Override
   public SearchResult<DTO> parseResults(SearchResponse searchResponse, Pageable pageable) {
-    List<DTO> resultList = Lists.newArrayList();
+    return this.doParseResults(searchResponse, pageable, "dto", this.configuration.getSupportedClass());
+  }
+
+  @Override
+  public SearchResult<SummaryDTO> parseSummaryResults(SearchResponse searchResponse,
+    Pageable pageable) {
+    return this.doParseResults(searchResponse, pageable, "summary", SummaryDTO.class);
+  }
+
+  private <T> SearchResult<T> doParseResults(SearchResponse searchResponse, Pageable pageable,
+    String field, Class<T> targetClass) {
+    List<T> resultList = Lists.newArrayList();
     for (int i = 0; i < searchResponse.getHits().getHits().length; i++) {
       try {
         SearchHit hit = searchResponse.getHits().getHits()[i];
-        DTO result = this.objectMapper.readValue(hit.getSourceAsString(), this.supportedClass);
+        JsonNode document = this.objectMapper.readTree(hit.getSourceAsString());
+        T result = this.objectMapper.treeToValue(document.get(field), targetClass);
         resultList.add(result);
-      } catch (IOException e) {
+      } catch (Exception e) {
         throw new RuntimeException(
-          "Can't parse hit content into supported class" + this.supportedClass, e);
+          "Can't parse hit content field " + field + " into class" + targetClass, e);
       }
     }
 
     if (searchResponse.getAggregations() != null) {
       return new SearchResult(
+        searchResponse.getTookInMillis(),
         new PageImpl<>(resultList, pageable, searchResponse.getHits().getTotalHits()),
         searchResponse.getAggregations().asList());
     }
     return new SearchResult(
+      searchResponse.getTookInMillis(),
       new PageImpl<>(resultList, pageable, searchResponse.getHits().getTotalHits()));
   }
 
   @Override
   public boolean supports(Class<? extends AbstractDTO> delimiter) {
-    return delimiter.isAssignableFrom(this.supportedClass);
+    return delimiter.isAssignableFrom(this.configuration.getSupportedClass());
   }
 
 }

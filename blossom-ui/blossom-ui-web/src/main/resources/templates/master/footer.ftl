@@ -26,10 +26,6 @@
 <script src="/js/plugins/flot/jquery.flot.symbol.js"></script>
 <script src="/js/plugins/flot/curvedLines.js"></script>
 
-<!-- Peity -->
-<script src="/js/plugins/peity/jquery.peity.min.js"></script>
-<script src="/js/demo/peity-demo.js"></script>
-
 <!-- Custom and plugin javascript -->
 <script src="/js/inspinia.js"></script>
 <script src="/js/plugins/pace/pace.min.js"></script>
