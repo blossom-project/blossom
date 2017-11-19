@@ -61,7 +61,7 @@ public class MailSenderImpl implements MailSender {
       this.javaMailSender.send(mimeMessage);
     } else {
       LOGGER
-        .info("A mail whose subject was {} was not sent because the recipient adresses were filtered by mailfilters {}",
+        .info("A mail with recipient(s) '{}' and subject '{}' was not sent because the recipient adresses were filtered by mailfilters {}",
           Arrays.toString(mailTo), mailSubject, this.filters);
     }
   }
