@@ -4,7 +4,7 @@
 <head>
   <meta name="viewport" content="width=device-width">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>${message("activation.title")} ${name}</title>
+  <title>${message("activation.subject")}</title>
   <link href="${basePath}/mail/styles.css" media="all" rel="stylesheet" type="text/css">
 </head>
 
