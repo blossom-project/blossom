@@ -21,7 +21,7 @@ public class NoopMailSenderImpl implements MailSender {
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String... mailTo) throws Exception {
     if (LOGGER.isInfoEnabled()) {
-      LOGGER.info("A mail whose subject was {} was not sent because no java mail sender is configured {}", Arrays.toString(mailTo), mailSubject);
+      LOGGER.info("A mail with recipient(s) '{}' and subject '{}' was not sent because no java mail sender is configured", Arrays.toString(mailTo), mailSubject);
     }
   }
 }
