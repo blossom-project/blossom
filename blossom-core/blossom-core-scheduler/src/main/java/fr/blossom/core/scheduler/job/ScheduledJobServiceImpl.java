@@ -1,21 +1,26 @@
 package fr.blossom.core.scheduler.job;
 
-import com.google.common.collect.Lists;
-import org.quartz.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.quartz.impl.matchers.GroupMatcher.groupEquals;
 
+import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.quartz.impl.matchers.GroupMatcher.groupEquals;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Maël Gargadennnec on 09/05/2017.
  */
-public class ScheduledJobServiceImpl {
+public class ScheduledJobServiceImpl implements ScheduledJobService {
+
   private final static Logger LOGGER = LoggerFactory.getLogger(ScheduledJobServiceImpl.class);
   private final Scheduler scheduler;
 
@@ -23,6 +28,7 @@ public class ScheduledJobServiceImpl {
     this.scheduler = scheduler;
   }
 
+  @Override
   public void changeState(boolean activate) {
     try {
       if (this.scheduler.isStarted()) {
@@ -38,6 +44,7 @@ public class ScheduledJobServiceImpl {
 
   }
 
+  @Override
   public List<String> getGroups() {
     try {
       return this.scheduler.getJobGroupNames();
@@ -48,7 +55,8 @@ public class ScheduledJobServiceImpl {
   }
 
 
-  public SchedulerInfo getScheduler() {
+  @Override
+  public SchedulerInfo getSchedulerInfo() {
     SchedulerInfo schedulerInfo = new SchedulerInfo();
     try {
       schedulerInfo.setName(this.scheduler.getSchedulerName());
@@ -86,6 +94,7 @@ public class ScheduledJobServiceImpl {
     }).count();
   }
 
+  @Override
   public List<JobInfo> getAll(String groupName) {
     List<JobInfo> jobInfos = Lists.newArrayList();
     try {
@@ -99,11 +108,14 @@ public class ScheduledJobServiceImpl {
     return jobInfos;
   }
 
+  @Override
   public JobInfo getOne(JobKey jobKey) {
     try {
       JobDetail jobDetail = this.scheduler.getJobDetail(jobKey);
       List<? extends Trigger> triggers = this.scheduler.getTriggersOfJob(jobKey);
-      List<JobExecutionContext> jobExecutionContexts = this.scheduler.getCurrentlyExecutingJobs().stream().filter(jec -> jec.getJobDetail().getKey().equals(jobKey)).collect(Collectors.toList());
+      List<JobExecutionContext> jobExecutionContexts = this.scheduler.getCurrentlyExecutingJobs()
+        .stream().filter(jec -> jec.getJobDetail().getKey().equals(jobKey))
+        .collect(Collectors.toList());
 
       JobInfo jobInfo = new JobInfo(jobKey);
       jobInfo.setDetail(jobDetail);
@@ -114,6 +126,15 @@ public class ScheduledJobServiceImpl {
     } catch (SchedulerException e) {
       LOGGER.error("Cannot retrieve job infos for jobKey " + jobKey, e);
       return null;
+    }
+  }
+
+  @Override
+  public void execute(JobKey jobKey) {
+    try {
+      scheduler.triggerJob(jobKey);
+    } catch (SchedulerException e) {
+      LOGGER.error("Cannot execute job for jobKey " + jobKey, e);
     }
   }
 }

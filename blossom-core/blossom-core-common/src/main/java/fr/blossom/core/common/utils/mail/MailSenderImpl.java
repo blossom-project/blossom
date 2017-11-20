@@ -75,9 +75,11 @@ public class MailSenderImpl implements MailSender {
       message.setTo(tos);
       this.javaMailSender.send(mimeMessage);
     } else {
-      LOGGER.info(
-          "A mail with recipient(s) '{}' and subject '{}' was not sent because no java mail sender is configured",
-          Arrays.toString(mailTo), mailSubject, this.filters);
+
+      LOGGER
+          .info(
+              "A mail with recipient(s) '{}' and subject '{}' was not sent because the recipient adresses were filtered by mailfilters {}",
+              Arrays.toString(mailTo), mailSubject, this.filters);
     }
   }
 
