@@ -33,13 +33,7 @@ public class CacheAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean(name = "defaultCacheConfig")
   public CacheConfig defaultCacheConfig() {
-    return CacheConfigBuilder.create(DEFAULT_CACHE_CONFIGURATION)
-      .specification("recordStats,expireAfterWrite=15m").build();
-  }
-
-  @Autowired(required = false)
-  public void test() {
-    LOGGER.info("TEST");
+    return CacheConfigBuilder.create(DEFAULT_CACHE_CONFIGURATION).specification("recordStats").build();
   }
 
   @Configuration

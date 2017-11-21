@@ -39,7 +39,10 @@ public class BlossomCacheManager extends AbstractTransactionSupportingCacheManag
 
   @Override
   protected org.springframework.cache.Cache getMissingCache(String name) {
-    return createBlossomCache(name);
+    if(!name.equals(defaultCacheConfiguration.cacheName())) {
+      return createBlossomCache(name);
+    }
+    return null;
   }
 
   protected org.springframework.cache.Cache createBlossomCache(String name) {

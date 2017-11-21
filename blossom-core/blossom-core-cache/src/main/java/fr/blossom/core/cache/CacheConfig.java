@@ -23,14 +23,19 @@ public interface CacheConfig extends Plugin<String> {
   }
 
   class CacheConfigImpl implements CacheConfig {
+
     private final String cacheName;
     private final String specification;
+    private final Boolean enabled;
     private final String[] linkedCaches;
 
-    private CacheConfigImpl(String cacheName, String specification, String... linkedCaches) {
+    private CacheConfigImpl(String cacheName, String specification, boolean enabled,
+      String... linkedCaches
+    ) {
       this.cacheName = cacheName;
       this.specification = specification;
       this.linkedCaches = linkedCaches;
+      this.enabled = enabled;
     }
 
     @Override
@@ -52,12 +57,18 @@ public interface CacheConfig extends Plugin<String> {
     public String[] linkedCaches() {
       return linkedCaches;
     }
+
+    @Override
+    public Boolean enabled() {
+      return enabled;
+    }
   }
 
   class CacheConfigBuilder {
 
     private final String cacheName;
     private String specification = "";
+    private boolean enabled = true;
     private Set<String> linkedCaches = Sets.newHashSet();
 
     private CacheConfigBuilder(String cacheName) {
@@ -65,12 +76,18 @@ public interface CacheConfig extends Plugin<String> {
     }
 
     public static CacheConfigBuilder create(String cacheName) {
-      Preconditions.checkArgument(!Strings.isNullOrEmpty(cacheName), "Cache name should not be null !");
+      Preconditions
+        .checkArgument(!Strings.isNullOrEmpty(cacheName), "Cache name should not be null !");
       return new CacheConfigBuilder(cacheName);
     }
 
     public CacheConfigBuilder specification(String specification) {
       this.specification = specification;
+      return this;
+    }
+
+    public CacheConfigBuilder enabled(boolean enabled) {
+      this.enabled = enabled;
       return this;
     }
 
@@ -80,7 +97,8 @@ public interface CacheConfig extends Plugin<String> {
     }
 
     public CacheConfig build() {
-      return new CacheConfigImpl(cacheName, specification, linkedCaches.toArray(new String[linkedCaches.size()]));
+      return new CacheConfigImpl(cacheName, specification, enabled,
+        linkedCaches.toArray(new String[linkedCaches.size()]));
     }
   }
 }

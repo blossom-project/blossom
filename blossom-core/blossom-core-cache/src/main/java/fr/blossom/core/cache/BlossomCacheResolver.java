@@ -12,11 +12,9 @@ import org.springframework.cache.interceptor.CacheOperationInvocationContext;
  */
 public class BlossomCacheResolver extends AbstractCacheResolver {
 
-  private final CacheManager cacheManager;
-
   public BlossomCacheResolver(CacheManager cacheManager) {
+    super(cacheManager);
     Preconditions.checkNotNull(cacheManager);
-    this.cacheManager = cacheManager;
   }
 
   @Override

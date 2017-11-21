@@ -37,10 +37,53 @@ public class CacheConfigTest {
     Assert.assertNotNull("Should not be null", cacheConfig);
   }
 
+
+  @Test
+  public void should_be_enabled_by_default(){
+    Assert.assertTrue("Should be enabled", new CacheConfig() {
+      @Override
+      public String cacheName() {
+        return "test";
+      }
+
+      @Override
+      public String specification() {
+        return "";
+      }
+
+      @Override
+      public String[] linkedCaches() {
+        return new String[0];
+      }
+
+      @Override
+      public boolean supports(String delimiter) {
+        return false;
+      }
+    }.enabled());
+  }
+
+  @Test
+  public void should_be_enabled_by_default_builder(){
+    CacheConfig cacheConfig = CacheConfigBuilder.create("test").specification("expireAfterWrites=5m").build();
+    Assert.assertTrue("Should be enabled", cacheConfig.enabled());
+  }
+
+  @Test
+  public void should_be_enabled(){
+    CacheConfig cacheConfig = CacheConfigBuilder.create("test").specification("expireAfterWrites=5m").enabled(true).build();
+    Assert.assertTrue("Should be enabled", cacheConfig.enabled());
+  }
+
+  @Test
+  public void should_be_disabled(){
+    CacheConfig cacheConfig = CacheConfigBuilder.create("test").specification("expireAfterWrites=5m").enabled(false).build();
+    Assert.assertTrue("Should be enabled", !cacheConfig.enabled());
+  }
+
   @Test
   public void should_supports_cache_name(){
     CacheConfig cacheConfig = CacheConfigBuilder.create("test").specification("expireAfterWrites=5m").build();
     Assert.assertTrue("Should support cache name", cacheConfig.supports("test"));
-
   }
 }
