@@ -1,5 +1,7 @@
 package fr.blossom.core.cache;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import fr.blossom.core.common.PluginConstants;
 import java.util.Set;
@@ -9,6 +11,8 @@ import org.springframework.plugin.core.Plugin;
 
 @Qualifier(PluginConstants.PLUGIN_CACHE_CONFIGURATION)
 public interface CacheConfig extends Plugin<String> {
+
+  String cacheName();
 
   String specification();
 
@@ -35,6 +39,11 @@ public interface CacheConfig extends Plugin<String> {
     }
 
     @Override
+    public String cacheName() {
+      return cacheName;
+    }
+
+    @Override
     public String specification() {
       return specification;
     }
@@ -56,6 +65,7 @@ public interface CacheConfig extends Plugin<String> {
     }
 
     public static CacheConfigBuilder create(String cacheName) {
+      Preconditions.checkArgument(!Strings.isNullOrEmpty(cacheName), "Cache name should not be null !");
       return new CacheConfigBuilder(cacheName);
     }
 

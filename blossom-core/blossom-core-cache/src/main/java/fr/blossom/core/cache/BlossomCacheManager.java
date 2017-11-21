@@ -4,8 +4,8 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.transaction.AbstractTransactionSupportingCacheManager;
@@ -21,13 +21,20 @@ public class BlossomCacheManager extends AbstractTransactionSupportingCacheManag
 
   public BlossomCacheManager(PluginRegistry<CacheConfig, String> registry, CacheConfig defaultCacheConfiguration) {
     Preconditions.checkNotNull(registry);
+    Preconditions.checkNotNull(defaultCacheConfiguration);
     this.registry = registry;
     this.defaultCacheConfiguration= defaultCacheConfiguration;
   }
 
   @Override
   protected Collection<? extends org.springframework.cache.Cache> loadCaches() {
-    return Lists.newArrayList();
+    return this.registry.getPlugins().stream().map(cacheConfig -> getMissingCache(cacheConfig.cacheName())).collect(
+      Collectors.toList());
+  }
+
+  @Override
+  public org.springframework.cache.Cache getCache(String name) {
+    return super.getCache(name);
   }
 
   @Override
@@ -38,7 +45,7 @@ public class BlossomCacheManager extends AbstractTransactionSupportingCacheManag
   protected org.springframework.cache.Cache createBlossomCache(String name) {
     CacheConfig config = registry.getPluginFor(name, defaultCacheConfiguration);
 
-    BlossomCache cache = new BlossomCache(name, createNativeBlossomCache(name, config.specification(), config.linkedCaches()));
+    BlossomCache cache = new BlossomCache(name, config, createNativeBlossomCache(name, config.specification(), config.linkedCaches()));
     cache.setEnabled(config.enabled());
     return cache;
   }

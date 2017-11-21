@@ -5,16 +5,18 @@ import java.util.concurrent.Callable;
 import org.springframework.cache.caffeine.CaffeineCache;
 
 public class BlossomCache extends CaffeineCache {
-
+  private final CacheConfig configuration;
   private boolean enabled;
 
-  public BlossomCache(String name, Cache<Object, Object> cache) {
+  public BlossomCache(String name, CacheConfig configuration, Cache<Object, Object> cache) {
     super(name, cache);
+    this.configuration = configuration;
     this.enabled = true;
   }
 
-  public BlossomCache(String name, Cache<Object, Object> cache, boolean allowNullValues) {
+  public BlossomCache(String name, CacheConfig configuration, Cache<Object, Object> cache, boolean allowNullValues) {
     super(name, cache, allowNullValues);
+    this.configuration = configuration;
     this.enabled = true;
   }
 
@@ -52,7 +54,7 @@ public class BlossomCache extends CaffeineCache {
 
   @Override
   public ValueWrapper putIfAbsent(Object key, Object value) {
-    if (!!enabled) {
+    if (!enabled) {
       return null;
     }
     return super.putIfAbsent(key, value);
@@ -79,8 +81,12 @@ public class BlossomCache extends CaffeineCache {
   }
 
   private void updateCacheState() {
-    if(!enabled){
+    if (!enabled) {
       this.clear();
     }
+  }
+
+  public CacheConfig getConfiguration() {
+    return configuration;
   }
 }
