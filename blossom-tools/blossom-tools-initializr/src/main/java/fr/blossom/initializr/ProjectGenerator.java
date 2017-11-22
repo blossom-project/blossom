@@ -83,7 +83,7 @@ public class ProjectGenerator {
     model.setArtifactId(projectConfiguration.getArtifactId());
     model.setVersion(projectConfiguration.getVersion());
 
-    model.setPackaging(PACKAGING_MODE.JAR.getLabel());
+    model.setPackaging(PACKAGING_MODE.JAR.name().toLowerCase());
 
     model.setName(projectConfiguration.getName());
     model.setDescription(projectConfiguration.getDescription());
@@ -104,7 +104,7 @@ public class ProjectGenerator {
         }).collect(Collectors.toList()));
 
     if (PACKAGING_MODE.WAR.equals(projectConfiguration.getPackagingMode())) {
-      model.setPackaging(PACKAGING_MODE.WAR.getLabel());
+      model.setPackaging(PACKAGING_MODE.WAR.name().toLowerCase());
       properties.put("start.class", projectConfiguration.getPackageName() + ".Application");
       org.apache.maven.model.Dependency providedTomcat = new org.apache.maven.model.Dependency();
       providedTomcat.setGroupId("org.springframework.boot");
