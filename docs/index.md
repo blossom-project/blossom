@@ -18,6 +18,12 @@ You must clone the repository, build, install it manually, then you can use the 
 
 ## How-tos
 
+### Deploy Blossom as a war
+Spring boot has a pretty straigthforward documentation for that :
+https://docs.spring.io/spring-boot/docs/current/reference/html/howto-traditional-deployment.html
+As for blossom, there is the possibility to initialize a project with jar or war packaging.
+Juste choose a packaging mode in the select of the initalization page blossom will do the rest.
+
 ### Menu
 #### Add a new menu entry
 To add a new menu entry, juste add a MenuItem bean.
@@ -218,5 +224,7 @@ spring.data.elasticsearch.repositories.enabled=true # Enable Elasticsearch repos
 ### I18n
 
 ### Mails
+
+
 
 
