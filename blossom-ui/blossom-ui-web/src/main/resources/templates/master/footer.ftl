@@ -13,7 +13,6 @@
 <#macro scripts>
 
 <!-- Mainly scripts -->
-<script src="/js/bootstrap.min.js"></script>
 <script src="/js/plugins/metisMenu/jquery.metisMenu.js"></script>
 <script src="/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 
@@ -32,6 +31,8 @@
 
 <!-- jQuery UI -->
 <script src="/js/plugins/jquery-ui/jquery-ui.min.js"></script>
+
+<script src="/js/bootstrap.min.js"></script>
 
 <!-- Jvectormap -->
 <script src="/js/plugins/jvectormap/jquery-jvectormap-2.0.2.min.js"></script>
