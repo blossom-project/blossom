@@ -1,5 +1,6 @@
 package fr.blossom.ui.web.system.cache;
 
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.common.collect.Maps;
 import fr.blossom.core.cache.BlossomCache;
 import fr.blossom.core.cache.BlossomCacheManager;
@@ -41,10 +42,13 @@ public class CacheManagerController {
       .map(n -> (BlossomCache) this.cacheManager.getCache(n))
       .filter(cache -> StringUtils.isEmpty(q) || cache.getName().contains(q))
       .forEach(cache -> {
+        CacheStats stats = cache.getNativeCache().stats();
         Map<String,Object> data = Maps.newHashMap();
         data.put("cache",cache);
-        data.put("stats",cache.getNativeCache().stats());
         data.put("size", cache.getNativeCache().estimatedSize());
+        data.put("hits", stats.hitCount());
+        data.put("misses", stats.missCount());
+        data.put("evictions", stats.evictionCount());
 
         caches.put(cache.getName(), data);
         }

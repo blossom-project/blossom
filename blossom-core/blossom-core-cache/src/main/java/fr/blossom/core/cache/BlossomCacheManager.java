@@ -28,7 +28,9 @@ public class BlossomCacheManager extends AbstractTransactionSupportingCacheManag
 
   @Override
   protected Collection<? extends org.springframework.cache.Cache> loadCaches() {
-    return this.registry.getPlugins().stream().map(cacheConfig -> getMissingCache(cacheConfig.cacheName())).collect(
+    return this.registry.getPlugins().stream()
+      .filter(cacheConfig -> !cacheConfig.cacheName().equals(defaultCacheConfiguration.cacheName()))
+      .map(cacheConfig -> getMissingCache(cacheConfig.cacheName())).collect(
       Collectors.toList());
   }
 

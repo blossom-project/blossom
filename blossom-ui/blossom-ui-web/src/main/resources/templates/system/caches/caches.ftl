@@ -54,24 +54,22 @@
         <thead>
         <tr>
           <th>Name</th>
+          <th>Specification</th>
           <th>Action</th>
           <th>Estimated size</th>
           <th>Hit count</th>
           <th>Miss count</th>
-          <th>Load success</th>
-          <th>Load failures</th>
-          <th>Total load time</th>
           <th>Eviction count</th>
-          <th>Eviction weight</th>
         </tr>
         </thead>
         <tbody>
           <#list caches?keys as cacheKey>
-            <#assign size = caches[cacheKey]["size"] />
-            <#assign stats = caches[cacheKey]["stats"] />
           <tr>
             <td>
-            ${cacheKey}
+              ${cacheKey}
+            </td>
+            <td>
+              ${caches[cacheKey].cache.configuration.specification()!''}
             </td>
             <td>
               <button class="btn btn-xs btn-danger" data-action="emptyCache" data-cache="${cacheKey}"><i class="fa fa-trash"></i></button>
@@ -81,14 +79,10 @@
                 <button class="btn btn-xs btn-primary" data-action="enableCache" data-cache="${cacheKey}"><i class="fa fa-play-circle-o"></i></button>
               </#if>
             </td>
-            <td>${size?c}</td>
-            <td><#if stats??>${stats.hitCount()}</#if></td>
-            <td><#if stats??>${stats.missCount()}</#if></td>
-            <td><#if stats??>${stats.loadSuccessCount()}</#if></td>
-            <td><#if stats??>${stats.loadFailureCount()}</#if></td>
-            <td><#if stats??>${stats.totalLoadTime()}</#if></td>
-            <td><#if stats??>${stats.evictionCount()}</#if></td>
-            <td><#if stats??>${stats.evictionWeight()}</#if></td>
+            <td>${caches[cacheKey]["size"]?c}</td>
+            <td>${caches[cacheKey]["hits"]}</td>
+            <td>${caches[cacheKey]["misses"]}</td>
+            <td>${caches[cacheKey]["evictions"]}</td>
           </tr>
           </#list>
         </tbody>
