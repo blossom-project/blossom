@@ -11,6 +11,7 @@
   Name : <input type="text" name="name" value="${project.name}"/><br/>
   Description : <input type="text" name="description" value="${project.description}"/><br/>
   Package name: <input type="text" name="packageName" value="${project.packageName}"/><br/>
+  Packaging mode: <select name="packagingMode"><#list packagingModes as packagingMode><option value="${packagingMode}">${packagingMode}</option></#list></select><br/>
 
   <button type="submit">
     Generate project

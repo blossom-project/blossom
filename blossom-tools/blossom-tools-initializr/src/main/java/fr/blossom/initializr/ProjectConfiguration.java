@@ -12,6 +12,7 @@ public class ProjectConfiguration {
   private String name = "demo";
   private String description = "Demo project for Blossom";
   private String packageName = "com.example.demo";
+  private PACKAGING_MODE packagingMode = PACKAGING_MODE.JAR;
 
   private String version = "";
   private List<String> dependencies = new ArrayList<>();
@@ -71,4 +72,13 @@ public class ProjectConfiguration {
   public void setDependencies(List<String> dependencies) {
     this.dependencies = dependencies;
   }
+
+  public PACKAGING_MODE getPackagingMode() {
+    return packagingMode;
+  }
+
+  public void setPackagingMode(PACKAGING_MODE packagingMode) {
+    this.packagingMode = packagingMode;
+  }
+
 }
