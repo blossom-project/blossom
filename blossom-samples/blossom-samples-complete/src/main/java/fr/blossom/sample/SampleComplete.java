@@ -16,10 +16,9 @@ import org.springframework.core.annotation.Order;
 @SpringBootApplication
 public class SampleComplete {
 
-    public static void main(String[] args) {
+  public static void main(String[] args) {
         SpringApplication.run(SampleComplete.class, args);
     }
-
 
   @Bean
   @Order(0)

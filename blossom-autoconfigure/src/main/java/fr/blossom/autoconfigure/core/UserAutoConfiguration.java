@@ -2,6 +2,8 @@ package fr.blossom.autoconfigure.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import fr.blossom.core.cache.CacheConfig;
+import fr.blossom.core.cache.CacheConfig.CacheConfigBuilder;
 import fr.blossom.core.common.search.IndexationEngineConfiguration;
 import fr.blossom.core.common.search.IndexationEngineImpl;
 import fr.blossom.core.common.search.SearchEngineConfiguration;
@@ -30,6 +32,7 @@ import org.quartz.SimpleTrigger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -81,6 +84,11 @@ public class UserAutoConfiguration {
     return new UserDTOMapper();
   }
 
+  @Bean
+  @ConditionalOnMissingBean(name = "userDaoCacheConfig")
+  public CacheConfig userDaoCacheConfig(){
+    return CacheConfigBuilder.create(UserDaoImpl.class.getCanonicalName()).specification("expireAfterWrite=15m").build();
+  }
 
   @Bean
   public IndexationEngineConfiguration<UserDTO> userIndexationEngineConfiguration(

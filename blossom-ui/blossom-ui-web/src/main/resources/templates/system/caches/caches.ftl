@@ -54,57 +54,35 @@
         <thead>
         <tr>
           <th>Name</th>
+          <th>Specification</th>
           <th>Action</th>
           <th>Estimated size</th>
           <th>Hit count</th>
           <th>Miss count</th>
-          <th>Load success</th>
-          <th>Load failures</th>
-          <th>Total load time</th>
           <th>Eviction count</th>
-          <th>Eviction weight</th>
         </tr>
         </thead>
         <tbody>
           <#list caches?keys as cacheKey>
           <tr>
             <td>
-            ${cacheKey}
+              ${cacheKey}
             </td>
             <td>
-              <button class="btn btn-xs btn-danger" data-action="emptyCache" data-cache="${cacheKey}"><i
-                class="fa fa-trash"></i></button>
+              ${caches[cacheKey].cache.configuration.specification()!''}
             </td>
             <td>
-            ${caches[cacheKey].size?c}
+              <button class="btn btn-xs btn-danger" data-action="emptyCache" data-cache="${cacheKey}"><i class="fa fa-trash"></i></button>
+              <#if caches[cacheKey].cache.enabled>
+                <button class="btn btn-xs btn-warning" data-action="disableCache" data-cache="${cacheKey}"><i class="fa fa-power-off"></i></button>
+              <#else>
+                <button class="btn btn-xs btn-primary" data-action="enableCache" data-cache="${cacheKey}"><i class="fa fa-play-circle-o"></i></button>
+              </#if>
             </td>
-            <td>
-            ${caches[cacheKey].stats.hitCount()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.missCount()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.loadSuccessCount()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.loadFailureCount()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.totalLoadTime()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.evictionCount()}
-            </td>
-
-            <td>
-            ${caches[cacheKey].stats.evictionWeight()}
-            </td>
+            <td>${caches[cacheKey]["size"]?c}</td>
+            <td>${caches[cacheKey]["hits"]}</td>
+            <td>${caches[cacheKey]["misses"]}</td>
+            <td>${caches[cacheKey]["evictions"]}</td>
           </tr>
           </#list>
         </tbody>
@@ -120,6 +98,22 @@
       var cache = $(this).data("cache");
 
       $.post("caches/" + cache + "/_empty", function () {
+        window.location.reload(true);
+      });
+    });
+
+    $("[data-action='enableCache']").click(function (e) {
+      var cache = $(this).data("cache");
+
+      $.post("caches/" + cache + "/_enable", function () {
+        window.location.reload(true);
+      });
+    });
+
+    $("[data-action='disableCache']").click(function (e) {
+      var cache = $(this).data("cache");
+
+      $.post("caches/" + cache + "/_disable", function () {
         window.location.reload(true);
       });
     });

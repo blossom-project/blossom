@@ -17,4 +17,6 @@ public interface PluginConstants {
 
   String PLUGIN_PRIVILEGES = "privilegesPlugin";
 
+  String PLUGIN_CACHE_CONFIGURATION= "cacheConfigurationPlugin";
+
 }

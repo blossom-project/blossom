@@ -5,9 +5,7 @@ import fr.blossom.core.common.entity.AbstractAssociationEntity;
 import fr.blossom.core.common.entity.AbstractEntity;
 import fr.blossom.core.common.repository.AssociationRepository;
 import java.util.List;
-import org.springframework.cache.annotation.CacheConfig;
 
-@CacheConfig(cacheResolver = "blossomCacheResolver")
 public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B extends AbstractEntity, ASSOCIATION extends AbstractAssociationEntity<A, B>>
   implements AssociationDao<A, B, ASSOCIATION> {
 
@@ -18,7 +16,6 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
   }
 
   @Override
-//  @Caching(evict = {@CacheEvict(key = "'a_'+#a0.id"), @CacheEvict(key = "'b_'+#a1.id")})
   public ASSOCIATION associate(A a, B b) {
     Preconditions.checkNotNull(a);
     Preconditions.checkNotNull(b);
@@ -33,7 +30,6 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
   }
 
   @Override
-//  @Caching(evict = {@CacheEvict(key = "'a_'+#a0.id"), @CacheEvict(key = "'b_'+#a1.id")})
   public void dissociate(A a, B b) {
     Preconditions.checkNotNull(a);
     Preconditions.checkNotNull(b);
@@ -46,19 +42,16 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
   }
 
   @Override
-//  @Cacheable(key = "'b_'+#a0.id")
   public List<ASSOCIATION> getAllA(B b) {
     return this.repository.findAllByB(b);
   }
 
   @Override
-//  @Cacheable(key = "'a_'+#a0.id")
   public List<ASSOCIATION> getAllB(A a) {
     return this.repository.findAllByA(a);
   }
 
   @Override
-//  @Cacheable(key = "''+#a0")
   public ASSOCIATION getOne(long id) {
     return this.repository.findOne(id);
   }

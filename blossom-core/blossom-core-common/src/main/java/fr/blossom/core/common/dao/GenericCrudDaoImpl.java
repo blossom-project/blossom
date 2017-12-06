@@ -2,17 +2,14 @@ package fr.blossom.core.common.dao;
 
 import fr.blossom.core.common.entity.AbstractEntity;
 import fr.blossom.core.common.repository.CrudRepository;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.transaction.annotation.Transactional;
 
-@CacheConfig(cacheResolver = "blossomCacheResolver")
 public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends GenericReadOnlyDaoImpl<ENTITY> implements CrudDao<ENTITY> {
 
     protected GenericCrudDaoImpl(CrudRepository<ENTITY> repository) {
