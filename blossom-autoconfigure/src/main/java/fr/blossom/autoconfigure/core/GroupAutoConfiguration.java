@@ -1,13 +1,15 @@
 package fr.blossom.autoconfigure.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
+import fr.blossom.core.common.PluginConstants;
+import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.search.IndexationEngineConfiguration;
 import fr.blossom.core.common.search.IndexationEngineImpl;
 import fr.blossom.core.common.search.SearchEngineConfiguration;
 import fr.blossom.core.common.search.SearchEngineImpl;
 import fr.blossom.core.common.search.SummaryDTO;
 import fr.blossom.core.common.search.SummaryDTO.SummaryDTOBuilder;
+import fr.blossom.core.common.service.AssociationServicePlugin;
 import fr.blossom.core.group.Group;
 import fr.blossom.core.group.GroupDTO;
 import fr.blossom.core.group.GroupDTOMapper;
@@ -23,6 +25,7 @@ import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -34,6 +37,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
@@ -47,11 +51,15 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 @EntityScan(basePackageClasses = Group.class)
 public class GroupAutoConfiguration {
 
+  @Qualifier(PluginConstants.PLUGIN_ASSOCIATION_SERVICE)
+  @Autowired
+  private PluginRegistry<AssociationServicePlugin,Class<? extends AbstractDTO>> associationServicePlugins;
+
   @Bean
   @ConditionalOnMissingBean(GroupService.class)
   public GroupService groupService(GroupDao groupDao, GroupDTOMapper groupDTOMapper,
     ApplicationEventPublisher eventPublisher) {
-    return new GroupServiceImpl(groupDao, groupDTOMapper, eventPublisher);
+    return new GroupServiceImpl(groupDao, groupDTOMapper, eventPublisher, associationServicePlugins);
   }
 
   @Bean

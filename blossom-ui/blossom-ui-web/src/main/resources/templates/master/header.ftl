@@ -18,6 +18,7 @@
 <link href="/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet">
 <link href="/css/plugins/cropper/cropper.min.css" rel="stylesheet">
 <link href="/css/plugins/dualListbox/bootstrap-duallistbox.min.css" rel="stylesheet">
+<link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
 <link href="/css/animate.css" rel="stylesheet">
 <link href="/css/style.css" rel="stylesheet">
 </#macro>

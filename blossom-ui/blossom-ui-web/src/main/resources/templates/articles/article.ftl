@@ -1,6 +1,8 @@
 <#import "/spring.ftl" as spring>
 <#import "/master/master.ftl" as master>
 <#import "/utils/tabulation.ftl" as tabulation>
+<#import "/utils/privilege.ftl" as privilege>
+<#import "/utils/buttons.ftl" as button>
 
 
 <@master.default currentUser=currentUser>
@@ -21,6 +23,13 @@
         <strong><@spring.message "articles.article.title"/></strong>
       </li>
     </ol>
+  </div>
+  <div class="col-sm-4">
+    <div class="title-action">
+      <@privilege.has currentUser=currentUser privilege="content:articles:delete">
+       <@button.delete id=article.id?c uri='/blossom/content/articles/'+article.id?c+'/_delete'/>
+      </@privilege.has>
+    </div>
   </div>
 </div>
 

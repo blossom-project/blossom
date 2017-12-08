@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
+import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.search.SearchEngineImpl;
 import fr.blossom.core.common.utils.privilege.Privilege;
 import fr.blossom.core.role.RoleCreateForm;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -26,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,6 +37,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -118,9 +122,17 @@ public class RolesController {
 
   @PostMapping("/{id}/_delete")
   @PreAuthorize("hasAuthority('administration:roles:delete')")
-  public String deleteRole(@PathVariable Long id) {
-    this.roleService.delete(this.roleService.getOne(id));
-    return "redirect:..";
+  @ResponseBody
+  public ResponseEntity<Map<Class<? extends AbstractDTO>, Long>> deleteRole(
+    @PathVariable Long id,
+    @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force) {
+    Optional<Map<Class<? extends AbstractDTO>, Long>> result = this.roleService.delete(this.roleService.getOne(id), force);
+
+    if(!result.isPresent() || result.get().isEmpty()){
+      return new ResponseEntity<>(Maps.newHashMap(), HttpStatus.OK);
+    }else{
+      return new ResponseEntity<>(result.get(), HttpStatus.CONFLICT);
+    }
   }
 
   @GetMapping("/{id}/_informations")

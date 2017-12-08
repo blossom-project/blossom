@@ -28,7 +28,7 @@
         <#if jobInfo.previousFireTime??>
           <i class="fa fa-thumbs-up text-success"></i> ${jobInfo.previousFireTime?datetime}
         <#else>
-          <i class="fa fa-thumbs-down text-danger"></i> <@spring.message "scheduler.task.previousFireTime.never"/>
+          <i class="fa fa-thumbs-down text-danger"></i> <@spring.message "never"/>
         </#if>
       </td>
 
@@ -36,7 +36,7 @@
         <#if jobInfo.nextFireTime??>
           <i class="fa fa-calendar text-success"></i> ${jobInfo.nextFireTime?datetime}
         <#else>
-          <i class="fa fa-calendar-times-o text-danger"></i> <@spring.message "scheduler.task.nextFireTime.never"/>
+          <i class="fa fa-calendar-times-o text-danger"></i> <@spring.message "never"/>
         </#if>
       </td>
     </tr>

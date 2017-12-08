@@ -71,6 +71,9 @@
 <!-- Image cropper -->
 <script src="/js/plugins/cropper/cropper.min.js"></script>
 
+<!-- Sweet alert -->
+<script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
+
 <!-- Dual listbox -->
 <script src="/js/plugins/dualListbox/jquery.bootstrap-duallistbox.js"></script>
 

@@ -1,9 +1,10 @@
 package fr.blossom.core.common.service;
 
 import fr.blossom.core.common.dto.AbstractDTO;
-
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public interface CrudService<DTO extends AbstractDTO> extends ReadOnlyService<DTO> {
 
@@ -11,7 +12,11 @@ public interface CrudService<DTO extends AbstractDTO> extends ReadOnlyService<DT
 
   DTO update(long id, DTO toUpdate);
 
-  void delete(DTO toDelete);
+  Map<Class<? extends AbstractDTO>, Long> associations(DTO toDelete);
+
+  Optional<Map<Class<? extends AbstractDTO>, Long>> delete(DTO toDelete);
+
+  Optional<Map<Class<? extends AbstractDTO>, Long>> delete(DTO toDelete, boolean forceAssociationDeletion);
 
   List<DTO> create(Collection<DTO> toCreates);
 

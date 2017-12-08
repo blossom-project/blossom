@@ -1,9 +1,11 @@
 package fr.blossom.core.role;
 
 import com.google.common.collect.Lists;
+import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.event.CreatedEvent;
 import fr.blossom.core.common.event.UpdatedEvent;
 import fr.blossom.core.common.mapper.DTOMapper;
+import fr.blossom.core.common.service.AssociationServicePlugin;
 import fr.blossom.core.common.service.GenericCrudServiceImpl;
 import fr.blossom.core.common.utils.privilege.Privilege;
 import java.util.List;
@@ -24,8 +26,9 @@ public class RoleServiceImpl extends GenericCrudServiceImpl<RoleDTO, Role> imple
 
   public RoleServiceImpl(RoleDao dao, DTOMapper<Role, RoleDTO> mapper,
     PluginRegistry<Privilege, String> privilegesRegistry,
-    ApplicationEventPublisher publisher) {
-    super(dao, mapper, publisher);
+    ApplicationEventPublisher publisher,
+    PluginRegistry<AssociationServicePlugin, Class<? extends AbstractDTO>> associationRegistry) {
+    super(dao, mapper, publisher, associationRegistry);
     this.privilegesRegistry = privilegesRegistry;
   }
 
@@ -38,7 +41,7 @@ public class RoleServiceImpl extends GenericCrudServiceImpl<RoleDTO, Role> imple
     roleToCreate.setDescription(roleCreateForm.getDescription());
     roleToCreate.setPrivileges(Lists.newArrayList());
 
-    RoleDTO savedRole = this.mapper.mapEntity(this.dao.create(roleToCreate));
+    RoleDTO savedRole = this.mapper.mapEntity(this.crudDao.create(roleToCreate));
 
     this.publisher.publishEvent(new CreatedEvent<RoleDTO>(this, savedRole));
 
@@ -53,7 +56,7 @@ public class RoleServiceImpl extends GenericCrudServiceImpl<RoleDTO, Role> imple
     roleToUpdate.setName(roleUpdateForm.getName());
     roleToUpdate.setDescription(roleUpdateForm.getDescription());
 
-    RoleDTO savedRole = this.mapper.mapEntity(this.dao.update(roleId, roleToUpdate));
+    RoleDTO savedRole = this.mapper.mapEntity(this.crudDao.update(roleId, roleToUpdate));
 
     this.publisher.publishEvent(new UpdatedEvent<RoleDTO>(this, savedRole));
 

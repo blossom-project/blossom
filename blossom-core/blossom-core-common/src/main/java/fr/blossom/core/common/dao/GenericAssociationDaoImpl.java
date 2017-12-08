@@ -5,6 +5,7 @@ import fr.blossom.core.common.entity.AbstractAssociationEntity;
 import fr.blossom.core.common.entity.AbstractEntity;
 import fr.blossom.core.common.repository.AssociationRepository;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B extends AbstractEntity, ASSOCIATION extends AbstractAssociationEntity<A, B>>
   implements AssociationDao<A, B, ASSOCIATION> {
@@ -16,6 +17,7 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
   }
 
   @Override
+  @Transactional
   public ASSOCIATION associate(A a, B b) {
     Preconditions.checkNotNull(a);
     Preconditions.checkNotNull(b);
@@ -30,6 +32,7 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
   }
 
   @Override
+  @Transactional
   public void dissociate(A a, B b) {
     Preconditions.checkNotNull(a);
     Preconditions.checkNotNull(b);
@@ -61,5 +64,6 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
     return this.repository.findOneByAAndB(a, b);
   }
 
+  @Transactional
   protected abstract ASSOCIATION create();
 }

@@ -1,8 +1,11 @@
 package fr.blossom.core.user;
 
+import fr.blossom.core.common.dto.AbstractDTO;
+import fr.blossom.core.common.event.CreatedEvent;
+import fr.blossom.core.common.event.UpdatedEvent;
+import fr.blossom.core.common.service.AssociationServicePlugin;
 import java.io.ByteArrayInputStream;
 import java.util.Date;
-
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,10 +18,8 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
+import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import fr.blossom.core.common.event.CreatedEvent;
-import fr.blossom.core.common.event.UpdatedEvent;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
@@ -43,6 +44,8 @@ public class UserServiceImplTest {
 
   @Mock
   private ApplicationEventPublisher publisher;
+  @Mock
+  private PluginRegistry<AssociationServicePlugin, Class<? extends AbstractDTO>> associationRegistry;
 
   @InjectMocks
   @Spy
@@ -228,30 +231,30 @@ public class UserServiceImplTest {
 
   @Test
   public void test_user_service_impl_nothing_null() throws Exception {
-    new UserServiceImpl(userDao, userMapper, publisher, passwordEncoder, userMailService, defaultAvatar);
+    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder, userMailService, defaultAvatar);
   }
 
   @Test
   public void test_user_service_impl_password_encoder_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    new UserServiceImpl(userDao, userMapper, publisher, null, userMailService, defaultAvatar);
+    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, null, userMailService, defaultAvatar);
   }
 
   @Test
   public void test_user_service_impl_dao_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    new UserServiceImpl(null, userMapper, publisher, passwordEncoder, userMailService, defaultAvatar);
+    new UserServiceImpl(null, userMapper, publisher, associationRegistry, passwordEncoder, userMailService, defaultAvatar);
   }
 
   @Test
   public void test_user_service_mail_service_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    new UserServiceImpl(userDao, userMapper, publisher, passwordEncoder, null, defaultAvatar);
+    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder, null, defaultAvatar);
   }
 
   @Test
   public void test_user_service_default_avatar_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    new UserServiceImpl(userDao, userMapper, publisher, passwordEncoder, userMailService, null);
+    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder, userMailService, null);
   }
 }

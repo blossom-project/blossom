@@ -3,6 +3,7 @@ package fr.blossom.autoconfigure.core;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import fr.blossom.core.common.mapper.MapperPlugin;
+import fr.blossom.core.common.service.AssociationServicePlugin;
 import fr.blossom.core.common.service.ReadOnlyServicePlugin;
 import fr.blossom.core.common.utils.action_token.ActionTokenService;
 import fr.blossom.core.common.utils.action_token.ActionTokenServiceImpl;
@@ -51,7 +52,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 @AutoConfigureBefore(ElasticsearchAutoConfiguration.class)
 @EnablePluginRegistries({
-  MapperPlugin.class, ReadOnlyServicePlugin.class, Privilege.class})
+  MapperPlugin.class, ReadOnlyServicePlugin.class, AssociationServicePlugin.class, Privilege.class})
 @EnableJpaAuditing
 @PropertySource({
   "classpath:/freemarker.properties",
@@ -104,17 +105,20 @@ public class CommonAutoConfiguration {
 
       @Override
       public void beforeBulk(long executionId, BulkRequest request) {
-        logger.info("Before bulk {} with {} actions to execute", executionId, request.numberOfActions());
+        logger.info("Before bulk {} with {} actions to execute", executionId,
+          request.numberOfActions());
       }
 
       @Override
       public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-        logger.error("Error on bulk {} with {} actions to execute", executionId, request.numberOfActions(), failure);
+        logger.error("Error on bulk {} with {} actions to execute", executionId,
+          request.numberOfActions(), failure);
       }
 
       @Override
       public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-        logger.info("Successful bulk {} with {} actions executed in {} ms.", executionId, request.numberOfActions(), response.getTookInMillis());
+        logger.info("Successful bulk {} with {} actions executed in {} ms.", executionId,
+          request.numberOfActions(), response.getTookInMillis());
 
       }
     })
@@ -165,5 +169,4 @@ public class CommonAutoConfiguration {
       return username;
     }
   }
-
 }

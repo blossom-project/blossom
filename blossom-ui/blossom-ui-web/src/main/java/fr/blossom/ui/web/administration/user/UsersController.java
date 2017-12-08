@@ -1,6 +1,8 @@
 package fr.blossom.ui.web.administration.user;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.search.SearchEngineImpl;
 import fr.blossom.core.user.User;
 import fr.blossom.core.user.UserCreateForm;
@@ -11,7 +13,9 @@ import fr.blossom.ui.menu.OpenedMenu;
 import fr.blossom.ui.stereotype.BlossomController;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.slf4j.Logger;
@@ -20,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -194,8 +199,16 @@ public class UsersController {
 
   @PostMapping("/{id}/_delete")
   @PreAuthorize("hasAuthority('administration:users:delete')")
-  public String deleteUser(@PathVariable Long id) {
-    this.userService.delete(this.userService.getOne(id));
-    return "redirect:/users";
+  @ResponseBody
+  public ResponseEntity<Map<Class<? extends AbstractDTO>, Long>> deleteUser(
+    @PathVariable Long id,
+    @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force) {
+    Optional<Map<Class<? extends AbstractDTO>, Long>> result = this.userService.delete(this.userService.getOne(id), force);
+
+    if(!result.isPresent() || result.get().isEmpty()){
+      return new ResponseEntity<>(Maps.newHashMap(), HttpStatus.OK);
+    }else{
+      return new ResponseEntity<>(result.get(), HttpStatus.CONFLICT);
+    }
   }
 }

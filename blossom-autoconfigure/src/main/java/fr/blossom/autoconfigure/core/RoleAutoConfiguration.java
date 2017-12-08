@@ -1,14 +1,15 @@
 package fr.blossom.autoconfigure.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import fr.blossom.core.common.PluginConstants;
+import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.search.IndexationEngineConfiguration;
 import fr.blossom.core.common.search.IndexationEngineImpl;
 import fr.blossom.core.common.search.SearchEngineConfiguration;
 import fr.blossom.core.common.search.SearchEngineImpl;
 import fr.blossom.core.common.search.SummaryDTO;
 import fr.blossom.core.common.search.SummaryDTO.SummaryDTOBuilder;
+import fr.blossom.core.common.service.AssociationServicePlugin;
 import fr.blossom.core.common.utils.privilege.Privilege;
 import fr.blossom.core.role.Role;
 import fr.blossom.core.role.RoleDTO;
@@ -19,7 +20,6 @@ import fr.blossom.core.role.RoleIndexationJob;
 import fr.blossom.core.role.RoleRepository;
 import fr.blossom.core.role.RoleService;
 import fr.blossom.core.role.RoleServiceImpl;
-import fr.blossom.core.user.UserDTO;
 import java.util.function.Function;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
@@ -55,11 +55,16 @@ public class RoleAutoConfiguration {
   @Autowired
   private PluginRegistry<Privilege, String> privilegesRegistry;
 
+  @Qualifier(PluginConstants.PLUGIN_ASSOCIATION_SERVICE)
+  @Autowired
+  private PluginRegistry<AssociationServicePlugin, Class<? extends AbstractDTO>> associationServicePlugins;
+
   @Bean
   @ConditionalOnMissingBean(RoleService.class)
   public RoleService roleService(RoleDao roleDao, RoleDTOMapper roleDTOMapper,
     ApplicationEventPublisher eventPublisher) {
-    return new RoleServiceImpl(roleDao, roleDTOMapper, privilegesRegistry, eventPublisher);
+    return new RoleServiceImpl(roleDao, roleDTOMapper, privilegesRegistry, eventPublisher,
+      associationServicePlugins);
   }
 
   @Bean
@@ -101,7 +106,8 @@ public class RoleAutoConfiguration {
 
       @Override
       public Function<RoleDTO, SummaryDTO> getSummaryFunction() {
-        return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u)).name(u.getName())
+        return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u))
+          .name(u.getName())
           .description(u.getDescription()).uri("/blossom/administration/roles/" + u.getId())
           .build();
       }
@@ -145,7 +151,8 @@ public class RoleAutoConfiguration {
   }
 
   @Bean
-  public SearchEngineImpl<RoleDTO> roleSearchEngine(Client client, ObjectMapper objectMapper, SearchEngineConfiguration<RoleDTO> roleSearchEngineConfiguration) {
+  public SearchEngineImpl<RoleDTO> roleSearchEngine(Client client, ObjectMapper objectMapper,
+    SearchEngineConfiguration<RoleDTO> roleSearchEngineConfiguration) {
     return new SearchEngineImpl<>(client, objectMapper, roleSearchEngineConfiguration);
   }
 

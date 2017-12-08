@@ -146,18 +146,18 @@ public class DataConfiguration {
   @Bean
   public CommandLineRunner clrDelete(UserService userService, AssociationUserRoleService service, AssociationUserGroupService service2) {
     return args -> {
-      UserDTO someUser = userService.getAll(new PageRequest(0, 50)).getContent().get(0);
+//      UserDTO someUser = userService.getAll(new PageRequest(0, 50)).getContent().get(0);
 
-      service.getAllLeft(someUser).forEach(asso -> {
-        service.dissociate(asso.getA(), asso.getB());
-      });
+//      service.getAllLeft(someUser).forEach(asso -> {
+//        service.dissociate(asso.getA(), asso.getB());
+//      });
+//
+//      service2.getAllLeft(someUser).forEach(asso -> {
+//        service2.dissociate(asso.getA(), asso.getB());
+//      });
 
-      service2.getAllLeft(someUser).forEach(asso -> {
-        service2.dissociate(asso.getA(), asso.getB());
-      });
 
-
-      userService.delete(someUser);
+//      userService.delete(someUser);
     };
   }
 }

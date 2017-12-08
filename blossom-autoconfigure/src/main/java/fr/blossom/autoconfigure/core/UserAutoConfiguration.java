@@ -1,18 +1,19 @@
 package fr.blossom.autoconfigure.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import fr.blossom.core.cache.CacheConfig;
 import fr.blossom.core.cache.CacheConfig.CacheConfigBuilder;
+import fr.blossom.core.common.PluginConstants;
+import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.search.IndexationEngineConfiguration;
 import fr.blossom.core.common.search.IndexationEngineImpl;
 import fr.blossom.core.common.search.SearchEngineConfiguration;
 import fr.blossom.core.common.search.SearchEngineImpl;
 import fr.blossom.core.common.search.SummaryDTO;
 import fr.blossom.core.common.search.SummaryDTO.SummaryDTOBuilder;
+import fr.blossom.core.common.service.AssociationServicePlugin;
 import fr.blossom.core.common.utils.action_token.ActionTokenService;
 import fr.blossom.core.common.utils.mail.MailSender;
-import fr.blossom.core.group.GroupDTO;
 import fr.blossom.core.user.User;
 import fr.blossom.core.user.UserDTO;
 import fr.blossom.core.user.UserDTOMapper;
@@ -29,10 +30,10 @@ import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -41,6 +42,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,6 +57,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EntityScan(basePackageClasses = User.class)
 public class UserAutoConfiguration {
 
+  @Qualifier(PluginConstants.PLUGIN_ASSOCIATION_SERVICE)
+  @Autowired
+  private PluginRegistry<AssociationServicePlugin, Class<? extends AbstractDTO>> associationServicePlugins;
+
+
   @Bean
   @ConditionalOnMissingBean(UserMailService.class)
   public UserMailService userMailService(MailSender mailSender,
@@ -68,7 +75,7 @@ public class UserAutoConfiguration {
     PasswordEncoder passwordEncoder, UserMailService userMailService,
     ApplicationEventPublisher eventPublisher,
     @Value("classpath:/images/avatar.jpeg") Resource defaultAvatar) {
-    return new UserServiceImpl(userDao, userDTOMapper, eventPublisher, passwordEncoder,
+    return new UserServiceImpl(userDao, userDTOMapper, eventPublisher, associationServicePlugins, passwordEncoder,
       userMailService, defaultAvatar);
   }
 
@@ -86,8 +93,9 @@ public class UserAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(name = "userDaoCacheConfig")
-  public CacheConfig userDaoCacheConfig(){
-    return CacheConfigBuilder.create(UserDaoImpl.class.getCanonicalName()).specification("expireAfterWrite=15m").build();
+  public CacheConfig userDaoCacheConfig() {
+    return CacheConfigBuilder.create(UserDaoImpl.class.getCanonicalName())
+      .specification("expireAfterWrite=15m").build();
   }
 
   @Bean
@@ -149,7 +157,8 @@ public class UserAutoConfiguration {
 
       @Override
       public String[] getFields() {
-        return new String[]{"dto.identifier", "dto.email", "dto.firstname", "dto.lastname", "dto.company", "dto.description", "dto.function"};
+        return new String[]{"dto.identifier", "dto.email", "dto.firstname", "dto.lastname",
+          "dto.company", "dto.description", "dto.function"};
       }
 
       @Override
@@ -160,8 +169,9 @@ public class UserAutoConfiguration {
   }
 
   @Bean
-  public SearchEngineImpl<UserDTO> userSearchEngine(Client client, ObjectMapper objectMapper, SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration) {
-    return new SearchEngineImpl<>(client,objectMapper,userSearchEngineConfiguration);
+  public SearchEngineImpl<UserDTO> userSearchEngine(Client client, ObjectMapper objectMapper,
+    SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration) {
+    return new SearchEngineImpl<>(client, objectMapper, userSearchEngineConfiguration);
   }
 
   @Bean

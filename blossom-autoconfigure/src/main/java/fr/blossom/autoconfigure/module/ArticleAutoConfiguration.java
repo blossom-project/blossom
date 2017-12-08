@@ -1,15 +1,16 @@
 package fr.blossom.autoconfigure.module;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import fr.blossom.autoconfigure.core.CommonAutoConfiguration;
+import fr.blossom.core.common.PluginConstants;
+import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.search.IndexationEngineConfiguration;
 import fr.blossom.core.common.search.IndexationEngineImpl;
 import fr.blossom.core.common.search.SearchEngineConfiguration;
 import fr.blossom.core.common.search.SearchEngineImpl;
 import fr.blossom.core.common.search.SummaryDTO;
 import fr.blossom.core.common.search.SummaryDTO.SummaryDTOBuilder;
-import fr.blossom.core.role.RoleDTO;
+import fr.blossom.core.common.service.AssociationServicePlugin;
 import fr.blossom.module.article.Article;
 import fr.blossom.module.article.ArticleDTO;
 import fr.blossom.module.article.ArticleDTOMapper;
@@ -24,6 +25,7 @@ import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -35,6 +37,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
@@ -48,11 +51,17 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 @EntityScan(basePackageClasses = Article.class)
 public class ArticleAutoConfiguration {
 
+  @Qualifier(PluginConstants.PLUGIN_ASSOCIATION_SERVICE)
+  @Autowired
+  private PluginRegistry<AssociationServicePlugin, Class<? extends AbstractDTO>> associationServicePlugins;
+
+
   @Bean
   @ConditionalOnMissingBean(ArticleService.class)
   public ArticleService articleService(ArticleDao articleDao, ArticleDTOMapper articleDTOMapper,
     ApplicationEventPublisher eventPublisher) {
-    return new ArticleServiceImpl(articleDao, articleDTOMapper, eventPublisher);
+    return new ArticleServiceImpl(articleDao, articleDTOMapper, eventPublisher,
+      associationServicePlugins);
   }
 
   @Bean
@@ -93,7 +102,8 @@ public class ArticleAutoConfiguration {
 
       @Override
       public Function<ArticleDTO, SummaryDTO> getSummaryFunction() {
-        return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u)).name(u.getName()).uri("/blossom/content/articles/"+u.getId()).build();
+        return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u))
+          .name(u.getName()).uri("/blossom/content/articles/" + u.getId()).build();
       }
     };
   }
@@ -103,7 +113,8 @@ public class ArticleAutoConfiguration {
     ArticleService articleService,
     BulkProcessor bulkProcessor, ObjectMapper objectMapper,
     IndexationEngineConfiguration<ArticleDTO> articleIndexationEngineConfiguration) {
-    return new IndexationEngineImpl<>(client, articleService, bulkProcessor, objectMapper, articleIndexationEngineConfiguration);
+    return new IndexationEngineImpl<>(client, articleService, bulkProcessor, objectMapper,
+      articleIndexationEngineConfiguration);
   }
 
   @Bean
@@ -132,7 +143,8 @@ public class ArticleAutoConfiguration {
   }
 
   @Bean
-  public SearchEngineImpl<ArticleDTO> articleSearchEngine(Client client, ObjectMapper objectMapper, SearchEngineConfiguration<ArticleDTO> articleSearchEngineConfiguration) {
+  public SearchEngineImpl<ArticleDTO> articleSearchEngine(Client client, ObjectMapper objectMapper,
+    SearchEngineConfiguration<ArticleDTO> articleSearchEngineConfiguration) {
     return new SearchEngineImpl<>(client, objectMapper, articleSearchEngineConfiguration);
   }
 

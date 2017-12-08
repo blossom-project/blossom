@@ -2,6 +2,8 @@ package fr.blossom.module.filemanager;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import fr.blossom.core.common.dto.AbstractDTO;
+import fr.blossom.core.common.service.AssociationServicePlugin;
 import fr.blossom.core.common.service.GenericCrudServiceImpl;
 import fr.blossom.module.filemanager.digest.DigestUtil;
 import org.bouncycastle.crypto.Digest;
@@ -10,6 +12,7 @@ import org.bouncycastle.crypto.io.DigestInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,8 +28,9 @@ public class FileServiceImpl extends GenericCrudServiceImpl<FileDTO, File> imple
   private final DigestUtil digestUtil;
   private final FileContentDao fileContentDao;
 
-  public FileServiceImpl(FileDao dao, FileDTOMapper mapper, FileContentDao fileContentDao, DigestUtil digestUtil, ApplicationEventPublisher publisher) {
-    super(dao, mapper, publisher);
+  public FileServiceImpl(FileDao dao, FileDTOMapper mapper, FileContentDao fileContentDao, DigestUtil digestUtil, ApplicationEventPublisher publisher,
+    PluginRegistry<AssociationServicePlugin, Class<? extends  AbstractDTO>> associationRegistry) {
+    super(dao, mapper, publisher, associationRegistry);
     this.fileContentDao = fileContentDao;
     this.digestUtil = digestUtil;
   }

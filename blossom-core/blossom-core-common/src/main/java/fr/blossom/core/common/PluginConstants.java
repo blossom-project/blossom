@@ -9,6 +9,8 @@ public interface PluginConstants {
 
   String PLUGIN_SERVICE = "servicePlugin";
 
+  String PLUGIN_ASSOCIATION_SERVICE = "associationServicePlugin";
+
   String PLUGIN_MENU = "menuPlugin";
 
   String PLUGIN_INDEXATION_ENGINE = "indexationEnginePlugin";

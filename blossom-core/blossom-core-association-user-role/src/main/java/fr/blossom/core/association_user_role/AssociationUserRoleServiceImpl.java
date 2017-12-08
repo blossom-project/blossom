@@ -1,5 +1,6 @@
 package fr.blossom.core.association_user_role;
 
+import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.service.GenericAssociationServiceImpl;
 import fr.blossom.core.role.Role;
 import fr.blossom.core.role.RoleDTO;
@@ -20,5 +21,10 @@ public class AssociationUserRoleServiceImpl extends
     AssociationUserRoleDTOMapper mapper, UserDTOMapper aMapper, RoleDTOMapper bMapper,
     ApplicationEventPublisher eventPublisher) {
     super(dao, mapper, aMapper, bMapper, eventPublisher);
+  }
+
+  @Override
+  public boolean supports(Class<? extends AbstractDTO> delimiter) {
+    return delimiter.isAssignableFrom(RoleDTO.class) || delimiter.isAssignableFrom(UserDTO.class);
   }
 }
