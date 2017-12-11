@@ -4,6 +4,7 @@ import fr.blossom.core.common.utils.privilege.Privilege;
 import fr.blossom.core.common.utils.privilege.SimplePrivilege;
 import fr.blossom.ui.menu.MenuItem;
 import fr.blossom.ui.menu.MenuItemBuilder;
+import fr.blossom.ui.security.LoginAttemptsService;
 import fr.blossom.ui.web.system.sessions.SessionController;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -34,8 +35,8 @@ public class WebSystemSessionsAutoConfiguration {
   }
 
   @Bean
-  public SessionController sessionController(SessionRegistry sessionRegistry) {
-    return new SessionController(sessionRegistry);
+  public SessionController sessionController(SessionRegistry sessionRegistry, LoginAttemptsService loginAttemptsService) {
+    return new SessionController(sessionRegistry, loginAttemptsService);
   }
 
   @Bean

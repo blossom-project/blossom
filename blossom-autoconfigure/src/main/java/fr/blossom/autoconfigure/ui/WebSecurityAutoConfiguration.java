@@ -7,7 +7,14 @@ import fr.blossom.core.user.UserService;
 import fr.blossom.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
 import fr.blossom.ui.current_user.CurrentUserDetailsServiceImpl;
 import fr.blossom.ui.current_user.SystemUserDetailsServiceImpl;
+import fr.blossom.ui.security.AuthenticationFailureListener;
+import fr.blossom.ui.security.AuthenticationSuccessListener;
+import fr.blossom.ui.security.CompositeUserDetailsServiceImpl;
+import fr.blossom.ui.security.LimitLoginAuthenticationProvider;
+import fr.blossom.ui.security.LoginAttemptServiceImpl;
+import fr.blossom.ui.security.LoginAttemptsService;
 import fr.blossom.ui.web.utils.session.BlossomSessionRegistryImpl;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -47,21 +54,40 @@ public class WebSecurityAutoConfiguration {
   private static final String BLOSSOM_REMEMBER_ME_COOKIE_NAME = "blossom";
 
   @Bean
+  public LoginAttemptsService loginAttemptsService() {
+    return new LoginAttemptServiceImpl(10);
+  }
+
+  @Bean
+  public AuthenticationFailureListener authenticationFailureListener(
+    LoginAttemptsService loginAttemptService) {
+    return new AuthenticationFailureListener(loginAttemptService);
+  }
+
+  @Bean
+  public AuthenticationSuccessListener authenticationSuccessListener(
+    LoginAttemptsService loginAttemptService) {
+    return new AuthenticationSuccessListener(loginAttemptService);
+  }
+
+  @Bean
   public UserDetailsService dbUserDetailsService(UserService userService,
     AssociationUserRoleService associationUserRoleService) {
     return new CurrentUserDetailsServiceImpl(userService, associationUserRoleService);
   }
 
   @Bean
-  public UserDetailsService systemUserDetailsService(
-    @Qualifier(PluginConstants.PLUGIN_PRIVILEGES)
-      PluginRegistry<Privilege, String> privilegeRegistry,
-    DefaultAccountProperties properties) {
+  public UserDetailsService systemUserDetailsService(@Qualifier(PluginConstants.PLUGIN_PRIVILEGES) PluginRegistry<Privilege, String> privilegeRegistry,
+    DefaultAccountProperties properties, PasswordEncoder passwordEncoder) {
     if (properties.isEnabled()) {
-      return new SystemUserDetailsServiceImpl(privilegeRegistry, properties.getIdentifier(),
-        properties.getPassword());
+      return new SystemUserDetailsServiceImpl(privilegeRegistry, properties.getIdentifier(), passwordEncoder.encode(properties.getPassword()));
     }
     return null;
+  }
+
+  @Bean
+  public UserDetailsService compositeUserDetailsService(List<UserDetailsService> userDetailsServices) {
+    return new CompositeUserDetailsServiceImpl(userDetailsServices.toArray(new UserDetailsService[userDetailsServices.size()]));
   }
 
   @Bean
@@ -70,30 +96,32 @@ public class WebSecurityAutoConfiguration {
     return new LastConnectionUpdateAuthenticationSuccessHandlerImpl(userService);
   }
 
+  @Bean
+  public LimitLoginAuthenticationProvider limitLoginAuthenticationProvider(
+    @Qualifier(value = "compositeUserDetailsService") UserDetailsService compositeUserDetailsService,
+    PasswordEncoder passwordEncoder,
+    LoginAttemptsService loginAttempsService) {
+
+    LimitLoginAuthenticationProvider provider = new LimitLoginAuthenticationProvider(
+      compositeUserDetailsService,
+      loginAttempsService);
+    provider.setPasswordEncoder(passwordEncoder);
+    return provider;
+  }
+
   @Configuration
   @Order(-1)
   public static class GlobalSecurityConfigurerAdapter extends
     GlobalAuthenticationConfigurerAdapter {
 
     @Autowired
-    @Qualifier(value = "dbUserDetailsService")
-    public UserDetailsService dbUserDetailsService;
-
-    @Autowired(required = false)
-    @Qualifier(value = "systemUserDetailsService")
-    public UserDetailsService systemUserDetailsService;
-
-    @Autowired
-    public PasswordEncoder passwordEncoder;
+    public LimitLoginAuthenticationProvider limitLoginAuthenticationProvider;
 
     @Override
     public void init(AuthenticationManagerBuilder auth) throws Exception {
-      if (systemUserDetailsService != null) {
-        auth.userDetailsService(systemUserDetailsService);
-      }
-      auth
-        .userDetailsService(dbUserDetailsService).passwordEncoder(passwordEncoder);
+      auth.authenticationProvider(limitLoginAuthenticationProvider);
     }
+
   }
 
   @Configuration
@@ -153,6 +181,7 @@ public class WebSecurityAutoConfiguration {
     public SessionRegistry blossomSessionRegistry() {
       return new BlossomSessionRegistryImpl(associationUserRoleService);
     }
+
     @Bean
     public static ServletListenerRegistrationBean httpSessionEventPublisher() {
       return new ServletListenerRegistrationBean(new HttpSessionEventPublisher());
