@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,7 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
  */
-@BlossomController("/system/scheduler")
+@BlossomController
+@RequestMapping("/system/scheduler")
 @OpenedMenu("schedulerManager")
 @PreAuthorize("hasAuthority('system:scheduler:manager')")
 public class SchedulerController {
@@ -47,7 +49,8 @@ public class SchedulerController {
   }
 
   @GetMapping("/{group}/{name}")
-  public ModelAndView task(Model model, @PathVariable String group, @PathVariable String name) throws SchedulerException {
+  public ModelAndView task(Model model, @PathVariable String group, @PathVariable String name)
+    throws SchedulerException {
     model.addAttribute("scheduler", this.scheduledJobService.getSchedulerInfo());
     model.addAttribute("jobInfo", this.scheduledJobService.getOne(JobKey.jobKey(name, group)));
     return new ModelAndView("system/scheduler/detail", model.asMap());
@@ -55,13 +58,15 @@ public class SchedulerController {
 
   @PostMapping("/{group}/{name}/_execute")
   @ResponseBody
-  public void executeTask(Model model, @PathVariable String group, @PathVariable String name) throws SchedulerException {
+  public void executeTask(Model model, @PathVariable String group, @PathVariable String name)
+    throws SchedulerException {
     scheduledJobService.execute(JobKey.jobKey(name, group));
   }
 
   @PostMapping("/_changeState")
   @ResponseStatus(HttpStatus.OK)
-  public void scheduler(Model model, @RequestParam("state") boolean state) throws SchedulerException {
+  public void scheduler(Model model, @RequestParam("state") boolean state)
+    throws SchedulerException {
     this.scheduledJobService.changeState(state);
   }
 

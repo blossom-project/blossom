@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -37,7 +38,8 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * Created by Maël Gargadennnec on 05/05/2017.
  */
-@BlossomController("/administration/groups")
+@BlossomController
+@RequestMapping("/administration/groups")
 @OpenedMenu("groups")
 public class GroupsController {
 
@@ -124,11 +126,12 @@ public class GroupsController {
   ResponseEntity<Map<Class<? extends AbstractDTO>, Long>> deleteGroup(
     @PathVariable Long id,
     @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force) {
-    Optional<Map<Class<? extends AbstractDTO>, Long>> result = this.groupService.delete(this.groupService.getOne(id), force);
+    Optional<Map<Class<? extends AbstractDTO>, Long>> result = this.groupService
+      .delete(this.groupService.getOne(id), force);
 
-    if(!result.isPresent() || result.get().isEmpty()){
+    if (!result.isPresent() || result.get().isEmpty()) {
       return new ResponseEntity<>(Maps.newHashMap(), HttpStatus.OK);
-    }else{
+    } else {
       return new ResponseEntity<>(result.get(), HttpStatus.CONFLICT);
     }
   }

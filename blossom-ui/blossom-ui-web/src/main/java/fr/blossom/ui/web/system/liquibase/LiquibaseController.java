@@ -8,12 +8,14 @@ import org.springframework.boot.actuate.endpoint.LiquibaseEndpoint;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
  */
-@BlossomController("/system/liquibase")
+@BlossomController
+@RequestMapping("/system/liquibase")
 @OpenedMenu("liquibase")
 @PreAuthorize("hasAuthority('system:liquibase:manager')")
 public class LiquibaseController {

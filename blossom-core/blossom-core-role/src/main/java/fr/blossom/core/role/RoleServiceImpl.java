@@ -50,7 +50,7 @@ public class RoleServiceImpl extends GenericCrudServiceImpl<RoleDTO, Role> imple
 
   @Override
   @Transactional
-  public RoleDTO update(Long roleId, RoleUpdateForm roleUpdateForm) throws Exception {
+  public RoleDTO update(Long roleId, RoleUpdateForm roleUpdateForm) {
 
     Role roleToUpdate = new Role();
     roleToUpdate.setName(roleUpdateForm.getName());

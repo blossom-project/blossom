@@ -26,7 +26,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.plugin.core.PluginRegistry;
+import whois.wsdl.GetWhoISResponse;
 
 /**
  * Created by Maël Gargadennnec on 09/06/2017.
@@ -144,20 +146,27 @@ public class DataConfiguration {
   }
 
   @Bean
-  public CommandLineRunner clrDelete(UserService userService, AssociationUserRoleService service, AssociationUserGroupService service2) {
+  public Jaxb2Marshaller marshaller() {
+    Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+    marshaller.setContextPath("whois.wsdl");
+    return marshaller;
+  }
+
+  @Bean
+  public WhoIsClient whoIsClient(Jaxb2Marshaller marshaller) {
+    WhoIsClient client = new WhoIsClient();
+    client.setDefaultUri("http://www.webservicex.com/whois.asmx");
+    client.setMarshaller(marshaller);
+    client.setUnmarshaller(marshaller);
+    return client;
+  }
+
+  @Bean
+  public CommandLineRunner clrSoap(final WhoIsClient client){
     return args -> {
-//      UserDTO someUser = userService.getAll(new PageRequest(0, 50)).getContent().get(0);
-
-//      service.getAllLeft(someUser).forEach(asso -> {
-//        service.dissociate(asso.getA(), asso.getB());
-//      });
-//
-//      service2.getAllLeft(someUser).forEach(asso -> {
-//        service2.dissociate(asso.getA(), asso.getB());
-//      });
-
-
-//      userService.delete(someUser);
+      String hostname = "google.com";
+      GetWhoISResponse response = client.getWhoIs(hostname);
+      System.err.println(response.getGetWhoISResult());
     };
   }
 }

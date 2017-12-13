@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>fr.blossom</groupId>
@@ -13,7 +13,9 @@
   <packaging>jar</packaging>
 
   <name>Blossom Sample UI Override</name>
-  <description>Blossom sample application with an example of overriden landing page template for blossom.</description>
+  <description>Blossom sample application with an example of overriden landing page template for
+    blossom.
+  </description>
 
   <dependencies>
     <dependency>
@@ -51,6 +53,10 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.ws</groupId>
+      <artifactId>spring-ws-core</artifactId>
+    </dependency>
   </dependencies>
 
 
@@ -78,6 +84,27 @@
             <version>4.1.4</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <version>0.13.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <schemaLanguage>WSDL</schemaLanguage>
+          <generatePackage>whois.wsdl</generatePackage>
+          <schemas>
+            <schema>
+              <url>http://www.webservicex.net/whois.asmx?WSDL</url>
+            </schema>
+          </schemas>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>

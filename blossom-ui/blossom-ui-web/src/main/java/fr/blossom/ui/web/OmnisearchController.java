@@ -23,10 +23,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @BlossomController
+@RequestMapping("/search")
 public class OmnisearchController {
 
   private final Client client;
@@ -38,7 +40,7 @@ public class OmnisearchController {
     this.registry = registry;
   }
 
-  @GetMapping("/search")
+  @GetMapping
   public ModelAndView omniSearch(
     @RequestParam(value = "q", defaultValue = "", required = false) String query,
     @PageableDefault(size = 20) Pageable pageable,

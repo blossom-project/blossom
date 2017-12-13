@@ -11,7 +11,7 @@ public interface RoleService extends CrudService<RoleDTO> {
 
   RoleDTO create(RoleCreateForm roleCreateForm) throws Exception;
 
-  RoleDTO update(Long roleId, RoleUpdateForm roleUpdateForm) throws Exception;
+  RoleDTO update(Long roleId, RoleUpdateForm roleUpdateForm);
 
   List<Privilege> getAvailablePrivileges();
 }

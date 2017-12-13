@@ -12,15 +12,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by maelg on 10/05/2017.
  */
-@BlossomController("/system/bpmn")
+@BlossomController
+@RequestMapping("/system/bpmn")
 @OpenedMenu("bpmnManager")
 @PreAuthorize("hasAuthority('system:bpmn:manager')")
 public class BPMNManagerController {
+
   private final ProcessEngine processEngine;
 
   private final static Logger LOGGER = LoggerFactory.getLogger(BPMNManagerController.class);
@@ -31,11 +34,14 @@ public class BPMNManagerController {
   }
 
   @GetMapping
-  public ModelAndView bpmn( Model model) {
-    List<ProcessDefinition> processDefinitions = processEngine.getRepositoryService().createProcessDefinitionQuery().latestVersion().list();
-    List<ProcessInstance> instances = processEngine.getRuntimeService().createProcessInstanceQuery().list();
+  public ModelAndView bpmn(Model model) {
+    List<ProcessDefinition> processDefinitions = processEngine.getRepositoryService()
+      .createProcessDefinitionQuery().latestVersion().list();
+    List<ProcessInstance> instances = processEngine.getRuntimeService().createProcessInstanceQuery()
+      .list();
     model.addAttribute("processDefinitions", processDefinitions);
-    model.addAttribute("instances", instances.stream().collect(Collectors.groupingBy(ProcessInstance::getProcessDefinitionId, Collectors.counting())));
+    model.addAttribute("instances", instances.stream().collect(
+      Collectors.groupingBy(ProcessInstance::getProcessDefinitionId, Collectors.counting())));
     return new ModelAndView("system/bpmn/bpmn", model.asMap());
   }
 }

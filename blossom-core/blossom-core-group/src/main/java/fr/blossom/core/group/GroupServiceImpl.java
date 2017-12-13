@@ -43,7 +43,7 @@ public class GroupServiceImpl extends GenericCrudServiceImpl<GroupDTO, Group> im
 
   @Override
   @Transactional
-  public GroupDTO update(Long groupId, GroupUpdateForm groupUpdateForm) throws Exception {
+  public GroupDTO update(Long groupId, GroupUpdateForm groupUpdateForm) {
 
     Group groupToUpdate = new Group();
     groupToUpdate.setName(groupUpdateForm.getName());

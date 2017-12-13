@@ -13,15 +13,18 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
  */
-@BlossomController("/system/dashboard")
+@BlossomController
+@RequestMapping("/system/dashboard")
 @OpenedMenu("dashboard")
 @PreAuthorize("hasAuthority('system:dashboard:manager')")
 public class DashboardController {
+
   private final static Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
   private final HealthEndpoint healthEndpoint;
@@ -66,13 +69,16 @@ public class DashboardController {
 
   public static String humanReadableByteCount(long bytes, boolean si) {
     int unit = si ? 1000 : 1024;
-    if (bytes < unit) return bytes + " B";
+    if (bytes < unit) {
+      return bytes + " B";
+    }
     int exp = (int) (Math.log(bytes) / Math.log(unit));
     String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
     return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
   }
 
   public class MemoryMetrics {
+
     private final JVMMemoryUsage jvm;
     private final MemoryUsage heap;
     private final MemoryUsage nonheap;
@@ -96,6 +102,7 @@ public class DashboardController {
     }
 
     public class JVMMemoryUsage {
+
       private final long total;
       private final long free;
 
@@ -122,6 +129,7 @@ public class DashboardController {
     }
 
     public class MemoryUsage {
+
       private final long init;
       private final long used;
       private final long committed;
@@ -157,6 +165,7 @@ public class DashboardController {
   }
 
   public class JVMMetrics {
+
     private final ClassMetrics classes;
     private final GCMetrics gcs;
     private final ThreadMetrics threads;
@@ -186,6 +195,7 @@ public class DashboardController {
     }
 
     public class ClassMetrics {
+
       private final long total;
       private final long loaded;
       private final long unloaded;
@@ -210,6 +220,7 @@ public class DashboardController {
     }
 
     public class GCMetrics {
+
       private final List<GCMetric> types;
 
       public GCMetrics(Map<String, Object> metrics) {
@@ -217,7 +228,8 @@ public class DashboardController {
           .filter(key -> key.startsWith("gc."))
           .map(key -> key.split("\\.")[1])
           .distinct()
-          .map(gc -> new GCMetric(gc, (Long) metrics.get("gc." + gc + ".count"), (Long) metrics.get("gc." + gc + ".time")))
+          .map(gc -> new GCMetric(gc, (Long) metrics.get("gc." + gc + ".count"),
+            (Long) metrics.get("gc." + gc + ".time")))
           .collect(Collectors.toList());
       }
 
@@ -226,6 +238,7 @@ public class DashboardController {
       }
 
       public class GCMetric {
+
         private final String name;
         private final long count;
         private final long time;
@@ -251,6 +264,7 @@ public class DashboardController {
     }
 
     public class ThreadMetrics {
+
       private final long total;
       private final long totalStarted;
       private final long peak;
@@ -281,6 +295,7 @@ public class DashboardController {
     }
 
     public class ProcessorMetrics {
+
       private final int total;
 
       public ProcessorMetrics(Map<String, Object> metrics) {

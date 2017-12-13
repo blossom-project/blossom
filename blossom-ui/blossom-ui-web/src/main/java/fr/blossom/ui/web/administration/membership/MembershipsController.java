@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-@BlossomController("/administration/memberships")
+@BlossomController
+@RequestMapping("/administration/memberships")
 public class MembershipsController {
 
   private final AssociationUserGroupService associationUserGroupService;
@@ -33,7 +35,7 @@ public class MembershipsController {
   private final GroupService groupService;
 
   public MembershipsController(AssociationUserGroupService associationUserGroupService,
-    UserService userService, GroupService groupService){
+    UserService userService, GroupService groupService) {
     this.associationUserGroupService = associationUserGroupService;
     this.userService = userService;
     this.groupService = groupService;

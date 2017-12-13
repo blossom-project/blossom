@@ -9,5 +9,5 @@ public interface GroupService extends CrudService<GroupDTO> {
 
   GroupDTO create(GroupCreateForm groupCreateForm) throws Exception;
 
-  GroupDTO update(Long groupId, GroupUpdateForm groupUpdateForm) throws Exception;
+  GroupDTO update(Long groupId, GroupUpdateForm groupUpdateForm);
 }
