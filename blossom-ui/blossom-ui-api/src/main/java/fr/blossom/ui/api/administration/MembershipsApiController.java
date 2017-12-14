@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +42,7 @@ public class MembershipsApiController {
 
 
   @GetMapping
+  @PreAuthorize("hasAuthority('administration:memberships:read')")
   public ResponseEntity<List<AssociationUserGroupDTO>> list(
     @RequestParam(value = "userId", required = false, defaultValue = "") Long userId,
     @RequestParam(value = "groupId", required = false, defaultValue = "") Long groupId) {
@@ -63,6 +65,7 @@ public class MembershipsApiController {
   }
 
   @PostMapping
+  @PreAuthorize("hasAuthority('administration:memberships:change')")
   public ResponseEntity<AssociationUserGroupDTO> associate(
     @Valid @RequestBody AssociationUserGroupForm form) {
     UserDTO userDTO = userService.getOne(form.getUserId());
@@ -76,6 +79,7 @@ public class MembershipsApiController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAuthority('administration:memberships:read')")
   public ResponseEntity<AssociationUserGroupDTO> get(@PathVariable Long id) {
     Preconditions.checkArgument(id != null);
     AssociationUserGroupDTO association = associationUserGroupService.getOne(id);
@@ -86,6 +90,7 @@ public class MembershipsApiController {
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasAuthority('administration:memberships:change')")
   public ResponseEntity<Void> dissociate(@PathVariable Long id) {
     Preconditions.checkArgument(id != null);
     AssociationUserGroupDTO association = associationUserGroupService.getOne(id);
@@ -97,6 +102,7 @@ public class MembershipsApiController {
   }
 
   @DeleteMapping
+  @PreAuthorize("hasAuthority('administration:memberships:change')")
   public ResponseEntity<Void> dissociate(@Valid @RequestBody AssociationUserGroupForm form) {
     UserDTO userDTO = userService.getOne(form.getUserId());
     GroupDTO groupDTO = groupService.getOne(form.getGroupId());

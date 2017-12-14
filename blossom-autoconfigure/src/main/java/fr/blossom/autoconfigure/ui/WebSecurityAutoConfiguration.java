@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -142,9 +143,18 @@ public class WebSecurityAutoConfiguration {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-      http.antMatcher("/" + BLOSSOM_API_BASE_PATH + "/**").csrf().disable().authorizeRequests()
+      http.antMatcher("/" + BLOSSOM_API_BASE_PATH + "/**")
+        .csrf()
+        .disable()
+        .authorizeRequests()
         .anyRequest()
-        .fullyAuthenticated().and().httpBasic().and().exceptionHandling().and().sessionManagement()
+        .fullyAuthenticated()
+        .and()
+        .httpBasic()
+        .and()
+        .exceptionHandling()
+        .and()
+        .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
   }

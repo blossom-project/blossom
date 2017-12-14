@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +42,7 @@ public class ResponsabilitiesApiController {
 
 
   @GetMapping
+  @PreAuthorize("hasAuthority('administration:responsabilities:read')")
   public ResponseEntity<List<AssociationUserRoleDTO>> list(
     @RequestParam(value = "userId", required = false, defaultValue = "") Long userId,
     @RequestParam(value = "roleId", required = false, defaultValue = "") Long roleId) {
@@ -63,6 +65,7 @@ public class ResponsabilitiesApiController {
   }
 
   @PostMapping
+  @PreAuthorize("hasAuthority('administration:responsabilities:change')")
   public ResponseEntity<AssociationUserRoleDTO> associate(
     @Valid @RequestBody AssociationUserRoleForm form) {
     UserDTO userDTO = userService.getOne(form.getUserId());
@@ -76,6 +79,7 @@ public class ResponsabilitiesApiController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAuthority('administration:responsabilities:read')")
   public ResponseEntity<AssociationUserRoleDTO> get(@PathVariable Long id) {
     Preconditions.checkArgument(id != null);
     AssociationUserRoleDTO association = associationUserRoleService.getOne(id);
@@ -86,6 +90,7 @@ public class ResponsabilitiesApiController {
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasAuthority('administration:responsabilities:change')")
   public ResponseEntity<Void> dissociate(@PathVariable Long id) {
     Preconditions.checkArgument(id != null);
     AssociationUserRoleDTO association = associationUserRoleService.getOne(id);
@@ -97,6 +102,7 @@ public class ResponsabilitiesApiController {
   }
 
   @DeleteMapping
+  @PreAuthorize("hasAuthority('administration:responsabilities:change')")
   public ResponseEntity<Void> dissociate(@Valid @RequestBody AssociationUserRoleForm form) {
     UserDTO userDTO = userService.getOne(form.getUserId());
     RoleDTO roleDTO = roleService.getOne(form.getRoleId());
