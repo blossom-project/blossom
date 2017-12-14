@@ -81,8 +81,12 @@ public class RolesApiControllerTest {
   public void should_create_with_body() throws Exception {
     RoleCreateForm form = new RoleCreateForm();
     when(service.create(any(RoleCreateForm.class))).thenAnswer(a -> new RoleDTO());
-    controller.create(form);
+    ResponseEntity<RoleDTO> response = controller.create(form);
     verify(service, times(1)).create(eq(form));
+
+    Assert.assertNotNull(response);
+    Assert.assertNotNull(response.getBody());
+    Assert.assertTrue(response.getStatusCode() == HttpStatus.CREATED);
   }
 
   @Test

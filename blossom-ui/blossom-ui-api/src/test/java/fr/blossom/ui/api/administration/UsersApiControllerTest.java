@@ -81,8 +81,11 @@ public class UsersApiControllerTest {
   public void should_create_with_body() throws Exception {
     UserCreateForm form = new UserCreateForm();
     when(service.create(any(UserCreateForm.class))).thenAnswer(a -> new UserDTO());
-    controller.create(form);
+    ResponseEntity<UserDTO> response = controller.create(form);
     verify(service, times(1)).create(eq(form));
+    Assert.assertNotNull(response);
+    Assert.assertNotNull(response.getBody());
+    Assert.assertTrue(response.getStatusCode() == HttpStatus.CREATED);
   }
 
   @Test

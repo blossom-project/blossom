@@ -57,10 +57,10 @@ public class GroupsApiController {
 
   @PostMapping
   @PreAuthorize("hasAuthority('administration:groups:create')")
-  public GroupDTO create(@NotNull @Valid @RequestBody GroupCreateForm groupCreateForm)
+  public ResponseEntity<GroupDTO> create(@NotNull @Valid @RequestBody GroupCreateForm groupCreateForm)
     throws Exception {
     Preconditions.checkArgument(groupCreateForm != null);
-    return groupService.create(groupCreateForm);
+    return new ResponseEntity<>(groupService.create(groupCreateForm), HttpStatus.CREATED);
   }
 
   @GetMapping("/{id}")

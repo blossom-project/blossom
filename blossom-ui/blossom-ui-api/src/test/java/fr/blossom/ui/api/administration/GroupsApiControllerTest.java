@@ -81,8 +81,11 @@ public class GroupsApiControllerTest {
   public void should_create_with_body() throws Exception {
     GroupCreateForm form = new GroupCreateForm();
     when(service.create(any(GroupCreateForm.class))).thenAnswer(a -> new GroupDTO());
-    controller.create(form);
+    ResponseEntity<GroupDTO> response = controller.create(form);
     verify(service, times(1)).create(eq(form));
+    Assert.assertNotNull(response);
+    Assert.assertNotNull(response.getBody());
+    Assert.assertTrue(response.getStatusCode() == HttpStatus.CREATED);
   }
 
   @Test

@@ -48,7 +48,6 @@ public class RolesApiController {
   @PreAuthorize("hasAuthority('administration:roles:read')")
   public Page<RoleDTO> list(
     @RequestParam(value = "q", required = false) String q, @PageableDefault(size = 25) Pageable pageable) {
-
     if (Strings.isNullOrEmpty(q)) {
       return this.roleService.getAll(pageable);
     }
@@ -57,10 +56,10 @@ public class RolesApiController {
 
   @PostMapping
   @PreAuthorize("hasAuthority('administration:roles:create')")
-  public RoleDTO create(@NotNull @Valid @RequestBody RoleCreateForm roleCreateForm)
+  public ResponseEntity<RoleDTO> create(@NotNull @Valid @RequestBody RoleCreateForm roleCreateForm)
     throws Exception {
     Preconditions.checkArgument(roleCreateForm != null);
-    return roleService.create(roleCreateForm);
+    return new ResponseEntity<>(roleService.create(roleCreateForm), HttpStatus.CREATED);
   }
 
   @GetMapping("/{id}")

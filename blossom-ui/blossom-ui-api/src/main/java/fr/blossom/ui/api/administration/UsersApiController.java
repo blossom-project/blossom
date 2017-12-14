@@ -58,10 +58,10 @@ public class UsersApiController {
 
   @PostMapping
   @PreAuthorize("hasAuthority('administration:users:create')")
-  public UserDTO create(@NotNull @Valid @RequestBody UserCreateForm userCreateForm)
+  public ResponseEntity<UserDTO> create(@NotNull @Valid @RequestBody UserCreateForm userCreateForm)
     throws Exception {
     Preconditions.checkArgument(userCreateForm != null);
-    return userService.create(userCreateForm);
+    return new ResponseEntity<>(userService.create(userCreateForm), HttpStatus.CREATED);
   }
 
   @GetMapping("/{id}")
