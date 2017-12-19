@@ -9,7 +9,7 @@ Sadly, there is no quick start yet :'-(
 
 You must clone the repository, build, install it manually, then you can use the project generator to start your first project with Blossom.
 
-1. git clone https://github.com/mgargadennec/blossom.git
+1. git clone https://github.com/blossom-project/blossom.git
 2. cd blossom
 3. mvn clean install
 4. java -jar blossom-tools/blossom-tools-initializr/target/blossom-tools-initializr-0.0.1-SNAPSHOT.jar
@@ -20,7 +20,8 @@ You must clone the repository, build, install it manually, then you can use the 
 
 ### Deploy Blossom as a war
 Spring boot has a pretty straigthforward documentation for that :
-https://docs.spring.io/spring-boot/docs/current/reference/html/howto-traditional-deployment.html
+[https://docs.spring.io/spring-boot/docs/current/reference/html/howto-traditional-deployment.html](https://docs.spring.io/spring-boot/docs/current/reference/html/howto-traditional-deployment.html)
+
 As for blossom, there is the possibility to initialize a project with jar or war packaging.
 Juste choose a packaging mode in the select of the initalization page blossom will do the rest.
 
@@ -122,7 +123,9 @@ They can be named and described.
 Multiple triggers of different types can be configured for each job detail.
 
 The `SimpleTriggerFactoryBean` allows you to define a repeat interval in milliseconds, and a repeat count (possibly indefinitely).
-This trigger can also be used as a "fire once" trigger with a repeat count of zero.
+This trigger can also be used as a "fire once" trigger with a repeat count of zero. 
+(Note: the "fire once" trigger will be stored and not triggered again when the 
+application restarts. See below for on-application-start trigger)
 
 ```java
   @Bean
@@ -153,6 +156,18 @@ The `CronTriggerFactoryBean` allows you to define cron expression to schedule th
     factoryBean.setCronExpression("0/30 * * * * ?");
     factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_IGNORE_MISFIRE_POLICY);
     return factoryBean;
+  }
+```
+
+To run a job on application start:
+
+```java
+  @Bean
+  public CommandLineRunner initJobs(ScheduledJobService service, 
+                                    @Qualifier("sampleJabDetail") JobDetail sampleJobDetail) {
+    return args -> {
+      service.execute(sampleJobDetail.getKey());
+    };
   }
 ```
 
