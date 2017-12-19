@@ -1,14 +1,15 @@
 package fr.blossom.core.user;
 
 import com.google.common.base.Preconditions;
-import com.google.common.io.ByteStreams;
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.event.CreatedEvent;
 import fr.blossom.core.common.event.UpdatedEvent;
 import fr.blossom.core.common.mapper.DTOMapper;
 import fr.blossom.core.common.service.AssociationServicePlugin;
 import fr.blossom.core.common.service.GenericCrudServiceImpl;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,7 +31,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
 
   public UserServiceImpl(UserDao dao, DTOMapper<User, UserDTO> mapper,
     ApplicationEventPublisher publisher,
-    PluginRegistry<AssociationServicePlugin, Class<? extends  AbstractDTO>> associationRegistry,
+    PluginRegistry<AssociationServicePlugin, Class<? extends AbstractDTO>> associationRegistry,
     PasswordEncoder passwordEncoder, UserMailService userMailService, Resource defaultAvatar) {
     super(dao, mapper, publisher, associationRegistry);
     Preconditions.checkNotNull(passwordEncoder);
@@ -141,12 +142,12 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   }
 
   @Override
-  public byte[] loadAvatar(long id) throws IOException {
+  public InputStream loadAvatar(long id) throws IOException {
     User user = this.userDao.getOne(id);
     if (user != null && user.getAvatar() != null) {
-      return user.getAvatar();
+      return new ByteArrayInputStream(user.getAvatar());
     } else {
-      return ByteStreams.toByteArray(defaultAvatar.getInputStream());
+      return defaultAvatar.getInputStream();
     }
   }
 

@@ -28,6 +28,7 @@
     <bouncycastle.version>1.46</bouncycastle.version>
     <liquibase.version>3.5.3</liquibase.version>
     <camunda.version>2.2.0</camunda.version>
+    <tika.version>1.17</tika.version>
   </properties>
 
   <dependencyManagement>
@@ -77,6 +78,12 @@
         <groupId>org.camunda.bpm.extension.springboot</groupId>
         <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
         <version>${camunda.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-core</artifactId>
+        <version>${tika.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

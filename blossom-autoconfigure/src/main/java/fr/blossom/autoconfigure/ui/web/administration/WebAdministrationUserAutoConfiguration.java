@@ -9,6 +9,7 @@ import fr.blossom.core.user.UserService;
 import fr.blossom.ui.menu.MenuItem;
 import fr.blossom.ui.menu.MenuItemBuilder;
 import fr.blossom.ui.web.administration.user.UsersController;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -39,8 +40,8 @@ public class WebAdministrationUserAutoConfiguration {
 
   @Bean
   public UsersController usersController(UserService userService,
-    SearchEngineImpl<UserDTO> searchEngine) {
-    return new UsersController(userService, searchEngine);
+    SearchEngineImpl<UserDTO> searchEngine, Tika tika) {
+    return new UsersController(userService, searchEngine, tika);
   }
 
 

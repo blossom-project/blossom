@@ -12,18 +12,22 @@ import fr.blossom.core.user.UserUpdateForm;
 import fr.blossom.ui.menu.OpenedMenu;
 import fr.blossom.ui.stereotype.BlossomController;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
@@ -51,10 +55,13 @@ public class UsersController {
 
   private final UserService userService;
   private final SearchEngineImpl<UserDTO> searchEngine;
+  private final Tika tika;
 
-  public UsersController(UserService userService, SearchEngineImpl<UserDTO> searchEngine) {
+  public UsersController(UserService userService, SearchEngineImpl<UserDTO> searchEngine,
+    Tika tika) {
     this.userService = userService;
     this.searchEngine = searchEngine;
+    this.tika = tika;
   }
 
   @GetMapping
@@ -170,10 +177,13 @@ public class UsersController {
     return new ModelAndView("users/userinformations-edit", model.asMap());
   }
 
-  @GetMapping(value = "/{id}/avatar", produces = "image/*")
+  @GetMapping(value = "/{id}/avatar")
   @ResponseBody
-  public byte[] displayAvatar(@PathVariable Long id) throws IOException {
-    return this.userService.loadAvatar(id);
+  public ResponseEntity<InputStreamResource> displayAvatar(@PathVariable Long id) throws IOException {
+    InputStream avatar = this.userService.loadAvatar(id);
+    return ResponseEntity.ok()
+      .contentType(MediaType.parseMediaType(this.tika.detect(avatar)))
+      .body(new InputStreamResource(avatar));
   }
 
   @GetMapping("/{id}/_avatar/_edit")

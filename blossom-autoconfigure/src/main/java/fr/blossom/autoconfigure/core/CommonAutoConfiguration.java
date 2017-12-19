@@ -14,6 +14,7 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.apache.tika.Tika;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -168,5 +169,10 @@ public class CommonAutoConfiguration {
       String username = auth.getName();
       return username;
     }
+  }
+
+  @Bean
+  public Tika tika(){
+    return new Tika();
   }
 }
