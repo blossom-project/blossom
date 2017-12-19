@@ -3,6 +3,8 @@ package fr.blossom.core.common.search;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
@@ -39,14 +41,19 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
   private final IndexationEngineConfiguration<DTO> configuration;
 
   private final ObjectMapper objectMapper;
+  private final ObjectWriter objectWriter;
   private final BulkProcessor bulkProcessor;
 
-  public IndexationEngineImpl(Client client, ReadOnlyService<DTO> service, BulkProcessor bulkProcessor, ObjectMapper objectMapper, IndexationEngineConfiguration<DTO> configuration) {
+  public IndexationEngineImpl(Client client, ReadOnlyService<DTO> service,
+    BulkProcessor bulkProcessor, ObjectMapper objectMapper,
+    IndexationEngineConfiguration<DTO> configuration) {
     this.client = client;
     this.service = service;
     this.bulkProcessor = bulkProcessor;
-    this.objectMapper = objectMapper;
     this.configuration = configuration;
+    this.objectMapper = objectMapper;
+    this.objectWriter = objectMapper.writer();
+    this.objectWriter.with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
   }
 
   @Override
@@ -71,7 +78,8 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
       this.bulkProcessor.flush();
       this.switchIndex(newIndexName);
 
-      logger.info("Full indexing of {} {} ended.", pagedDTOs.getTotalElements(), this.configuration.getAlias());
+      logger.info("Full indexing of {} {} ended.", pagedDTOs.getTotalElements(),
+        this.configuration.getAlias());
 
     } catch (Exception e) {
       this.client.admin().indices().prepareDelete(newIndexName).get();
@@ -83,7 +91,8 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
   public void indexOne(long id) {
     if (!existsIndex()) {
       logger
-        .debug("Can't delete {} element with id {} as the index doesn't exist !", this.configuration.getAlias(), id);
+        .debug("Can't delete {} element with id {} as the index doesn't exist !",
+          this.configuration.getAlias(), id);
       return;
     }
 
@@ -106,7 +115,8 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
   public void deleteOne(long id) {
     if (!existsIndex()) {
       logger
-        .debug("Can't delete {} element with id {} as the index doesn't exist !", this.configuration.getAlias(), id);
+        .debug("Can't delete {} element with id {} as the index doesn't exist !",
+          this.configuration.getAlias(), id);
       return;
     }
     try {
@@ -145,9 +155,11 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
 
     if (this.configuration.getSource() != null) {
       try {
-        prepareCreate.setSource(ByteStreams.toByteArray(this.configuration.getSource().getInputStream()));
+        prepareCreate
+          .setSource(ByteStreams.toByteArray(this.configuration.getSource().getInputStream()));
       } catch (IOException e) {
-        logger.error("Can't read index {} configuration file {}", indexName, this.configuration.getSource(), e);
+        logger.error("Can't read index {} configuration file {}", indexName,
+          this.configuration.getSource(), e);
       }
     }
 
@@ -191,19 +203,21 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
     throws JsonProcessingException {
     ObjectNode json = prepareDocument(dto);
     return this.client
-      .prepareUpdate(indexName, this.configuration.getTypeFunction().apply(dto), String.valueOf(dto.getId()))
-      .setDocAsUpsert(true).setDoc(this.objectMapper.writeValueAsString(json));
+      .prepareUpdate(indexName, this.configuration.getTypeFunction().apply(dto),
+        String.valueOf(dto.getId()))
+      .setDocAsUpsert(true).setDoc(this.objectWriter.writeValueAsString(json));
   }
 
   protected ObjectNode prepareDocument(DTO dto) {
-    ObjectNode root = objectMapper.createObjectNode();
+    ObjectNode root = this.objectMapper.createObjectNode();
     root.putPOJO("summary", this.configuration.getSummaryFunction().apply(dto));
     root.set("dto", this.objectMapper.valueToTree(dto));
     return root;
   }
 
   private DeleteRequestBuilder prepareDeleteRequest(String indexName, DTO dto) {
-    return this.client.prepareDelete().setIndex(indexName).setType(this.configuration.getTypeFunction().apply(dto))
+    return this.client.prepareDelete().setIndex(indexName)
+      .setType(this.configuration.getTypeFunction().apply(dto))
       .setId(String.valueOf(dto.getId()));
   }
 

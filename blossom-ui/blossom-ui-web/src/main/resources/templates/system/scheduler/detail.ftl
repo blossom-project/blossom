@@ -68,7 +68,7 @@
             <tr>
               <td>${trigger.name}</td>
               <td><i class="${triggerIcon(trigger)}"></i> ${triggerType(trigger)}</td>
-              <td>${trigger.nextFireTime?datetime!''}</td>
+              <td><#if trigger.nextFireTime??>${trigger.nextFireTime?datetime}</#if></td>
             </tr>
           </#list>
           <tr>

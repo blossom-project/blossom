@@ -28,7 +28,7 @@
       </column>
 
       <column name="modification_date" type="timestamp">
-        <constraints nullable="false"/>
+        <constraints nullable="false" />
       </column>
 
       <column name="modification_user" type="varchar(25)">
