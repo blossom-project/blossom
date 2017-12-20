@@ -12,7 +12,9 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
- * Created by Maël Gargadennnec on 28/06/2017.
+ * Listeners listening to various {@link fr.blossom.core.common.event.Event} and calling IndexationEngine to update the indices.
+ *
+ *  @author Maël Gargadennnec
  */
 public class IndexationEventListeners {
   private final static Logger logger = LoggerFactory.getLogger(IndexationEventListeners.class);

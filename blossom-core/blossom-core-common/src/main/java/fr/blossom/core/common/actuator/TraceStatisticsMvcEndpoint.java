@@ -1,18 +1,19 @@
 package fr.blossom.core.common.actuator;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
-
 /**
- * Created by Maël Gargadennnec on 17/05/2017.
+ * Adapter to expose {@link TraceStatisticsEndpoint} as an {@link org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint}.
+ *
+ * @author Maël Gargadennec
  */
 public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
   private final TraceStatisticsEndpoint endpoint;
@@ -23,6 +24,12 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
   }
 
 
+  /**
+   * Retrieve trace statistics for a given {@link Period}
+   *
+   * @param period a predefined period of time
+   * @return a json-serialized Elasticsearch {@link org.elasticsearch.action.search.SearchResponse} with aggregations
+   */
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public String invoke(@RequestParam(name="period", required = false, defaultValue = "PAST_WEEK") Period period) {
@@ -38,6 +45,9 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
   }
 
 
+  /**
+   * Predefined periods of times with lower and upper boundaries calculated from now.
+   */
   public enum Period {
     PAST_WEEK {
       @Override

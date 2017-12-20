@@ -1,5 +1,6 @@
 package fr.blossom.core.common.dao;
 
+import com.google.common.base.Preconditions;
 import fr.blossom.core.common.entity.AbstractEntity;
 import fr.blossom.core.common.repository.CrudRepository;
 import java.util.Collection;
@@ -10,6 +11,14 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.transaction.annotation.Transactional;
 
+
+/**
+ * Default abstract implementation of {@link CrudDao}.
+ *
+ * @param <ENTITY> the managed {@link AbstractEntity}
+ *
+ * @author Maël Gargadennec
+ */
 public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends
   GenericReadOnlyDaoImpl<ENTITY> implements CrudDao<ENTITY> {
 
@@ -28,6 +37,7 @@ public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends
   @Transactional
   @CacheEvict(key = "#a0.id+''")
   public void delete(ENTITY toDelete) {
+    Preconditions.checkArgument(toDelete.getId() != null);
     this.repository.delete(toDelete.getId());
   }
 
@@ -36,7 +46,12 @@ public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends
   @CachePut(key = "#a0+''")
   public ENTITY update(long id, ENTITY toUpdate) {
     ENTITY entity = this.repository.findOne(id);
+
+    Preconditions.checkArgument(toUpdate != null);
+    Preconditions.checkArgument(entity != null);
+
     ENTITY modifiedEntity = toUpdate;
+
     entity = this.updateEntity(entity, modifiedEntity);
 
     return this.repository.save(entity);

@@ -4,6 +4,13 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+/**
+ * Abstract entity class for representing n-n relationships.<br/>
+ *
+ * @param <A> the first {@code AbstractEntity} type
+ * @param <B> the second {@code AbstractEntity} type
+ * @author Maël Gargadennnec
+ */
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
 public abstract class AbstractAssociationEntity<A extends AbstractEntity, B extends AbstractEntity> extends AbstractEntity {

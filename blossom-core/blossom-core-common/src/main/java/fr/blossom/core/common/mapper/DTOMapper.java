@@ -2,21 +2,56 @@ package fr.blossom.core.common.mapper;
 
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.entity.AbstractEntity;
-import org.springframework.data.domain.Page;
-
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
-public interface DTOMapper<E extends AbstractEntity, D extends AbstractDTO> extends MapperPlugin {
-  D mapEntity(E entity);
+/**
+ * Mapper that transforms a given {@code AbstractEntity} into the corresponding {@code AbstractDTO}?
+ *
+ * @param <ENTITY> the entity class
+ * @param <DTO> the dto class
+ * @author Maël Gargadennnec
+ */
+public interface DTOMapper<ENTITY extends AbstractEntity, DTO extends AbstractDTO> extends
+  MapperPlugin {
 
-  List<D> mapEntities(Collection<E> entities);
+  /**
+   *
+   * @param entity the entity to map/
+   * @return the mapped dto.
+   */
+  DTO mapEntity(ENTITY entity);
 
-  Page<D> mapEntitiesPage(Page<E> entities);
+  ENTITY mapDto(DTO dto);
 
-  E mapDto(D dto);
 
-  List<E> mapDtos(Collection<D> dtos);
+  default List<DTO> mapEntities(Collection<ENTITY> entities) {
+    if (entities == null) {
+      return null;
+    }
+    return entities.stream().map(this::mapEntity).collect(Collectors.toList());
+  }
 
-  Page<E> mapDtosPage(Page<D> dtos);
+  default Page<DTO> mapEntitiesPage(Page<ENTITY> entities) {
+    if (entities == null) {
+      return null;
+    }
+    return entities.map(this::mapEntity);
+  }
+
+  default List<ENTITY> mapDtos(Collection<DTO> dtos) {
+    if (dtos == null) {
+      return null;
+    }
+    return dtos.stream().map(this::mapDto).collect(Collectors.toList());
+  }
+
+  default Page<ENTITY> mapDtosPage(Page<DTO> dtos) {
+    if (dtos == null) {
+      return null;
+    }
+    return dtos.map(this::mapDto);
+  }
 }

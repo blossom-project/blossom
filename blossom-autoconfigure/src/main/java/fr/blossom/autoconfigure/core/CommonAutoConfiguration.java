@@ -120,7 +120,6 @@ public class CommonAutoConfiguration {
       public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
         logger.info("Successful bulk {} with {} actions executed in {} ms.", executionId,
           request.numberOfActions(), response.getTookInMillis());
-
       }
     })
       .setName("Blossom Bulk Processor")

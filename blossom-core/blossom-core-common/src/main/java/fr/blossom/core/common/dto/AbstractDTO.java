@@ -5,6 +5,13 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import java.util.Date;
 
+
+/**
+ * Abstract DTO class for representing a domain entity.<br/>
+ * This class contains only basic technical informations and should be extending for your domain entities.
+ *
+ * @author Maël Gargadennec
+ */
 public abstract class AbstractDTO {
   @JsonSerialize(using = ToStringSerializer.class)
   private Long id;

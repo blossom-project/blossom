@@ -5,13 +5,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.service.ReadOnlyService;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,7 +41,6 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
   private final ReadOnlyService<DTO> service;
   private final IndexationEngineConfiguration<DTO> configuration;
 
-  private final ObjectMapper objectMapper;
   private final ObjectWriter objectWriter;
   private final BulkProcessor bulkProcessor;
 
@@ -51,8 +51,9 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
     this.service = service;
     this.bulkProcessor = bulkProcessor;
     this.configuration = configuration;
-    this.objectMapper = objectMapper;
-    this.objectWriter = objectMapper.writer().with(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    this.objectWriter = objectMapper.writer(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+        SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS,
+        SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
   }
 
   @Override
@@ -200,17 +201,17 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
 
   private UpdateRequestBuilder prepareIndexRequest(String indexName, DTO dto)
     throws JsonProcessingException {
-    ObjectNode json = prepareDocument(dto);
+    Map<String,Object> json = prepareDocument(dto);
     return this.client
       .prepareUpdate(indexName, this.configuration.getTypeFunction().apply(dto),
         String.valueOf(dto.getId()))
       .setDocAsUpsert(true).setDoc(this.objectWriter.writeValueAsString(json));
   }
 
-  protected ObjectNode prepareDocument(DTO dto) {
-    ObjectNode root = this.objectMapper.createObjectNode();
-    root.putPOJO("summary", this.configuration.getSummaryFunction().apply(dto));
-    root.set("dto", this.objectMapper.valueToTree(dto));
+  protected Map<String,Object> prepareDocument(DTO dto) {
+    Map<String,Object> root = Maps.newHashMap();
+    root.put("summary", this.configuration.getSummaryFunction().apply(dto));
+    root.put("dto", dto);
     return root;
   }
 

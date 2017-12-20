@@ -8,10 +8,16 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
 
+/**
+ * Base repository to manage any {@code AbstractEntity}
+ *
+ * @param <ENTITY> the managed {@code AbstractEntity}
+ * @author Maël Gargadennnec
+ */
 @NoRepositoryBean
-public interface CrudRepository<T extends AbstractEntity> extends JpaRepository<T, Long>, QueryDslPredicateExecutor<T> {
+public interface CrudRepository<ENTITY extends AbstractEntity> extends JpaRepository<ENTITY, Long>, QueryDslPredicateExecutor<ENTITY> {
 
     @Override
-    List<T> findAll(Predicate predicate);
+    List<ENTITY> findAll(Predicate predicate);
 
 }
