@@ -1,10 +1,12 @@
 package fr.blossom.ui.security;
 
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -12,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthenticationFailureListenerTest {
@@ -38,15 +41,24 @@ public class AuthenticationFailureListenerTest {
   }
 
   @Test
-  @Ignore
   public void should_receive_event() throws Exception {
-    Authentication authentication = mock(Authentication.class);
-    when(authentication.getName()).thenReturn("identifier");
+    String principal = "principal";
+    String remoteAddress = "remoteAddress";
+    WebAuthenticationDetails details = mock(WebAuthenticationDetails.class);
+    when(details.getSessionId()).thenReturn("sessionId");
+    when(details.getRemoteAddress()).thenReturn(remoteAddress);
 
-    AuthenticationFailureBadCredentialsEvent event = mock(AuthenticationFailureBadCredentialsEvent.class);
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getPrincipal()).thenReturn(principal);
+    when(authentication.getDetails()).thenReturn(details);
+
+    AuthenticationFailureBadCredentialsEvent event = mock(
+      AuthenticationFailureBadCredentialsEvent.class);
     when(event.getAuthentication()).thenReturn(authentication);
 
     this.listener.onApplicationEvent(event);
+
+    verify(this.loginAttemptService, times(1)).failAttempt(eq(principal), eq(remoteAddress));
   }
 
 }

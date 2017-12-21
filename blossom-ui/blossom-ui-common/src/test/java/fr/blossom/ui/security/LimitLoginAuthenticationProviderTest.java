@@ -39,7 +39,7 @@ public class LimitLoginAuthenticationProviderTest {
   }
 
   @Test
-  public void should_be_blocked(){
+  public void should_be_blocked() {
     thrown.expect(LockedException.class);
 
     String principal = "username";
@@ -51,14 +51,14 @@ public class LimitLoginAuthenticationProviderTest {
     when(details.getSessionId()).thenReturn(sessionId);
     when(details.getRemoteAddress()).thenReturn(remoteAddress);
 
-    UsernamePasswordAuthenticationToken authentication = mock(UsernamePasswordAuthenticationToken.class);
+    UsernamePasswordAuthenticationToken authentication = mock(
+      UsernamePasswordAuthenticationToken.class);
     when(authentication.getName()).thenReturn(principal);
     when(authentication.getPrincipal()).thenReturn(principal);
     when(authentication.getCredentials()).thenReturn(credential);
     when(authentication.getDetails()).thenReturn(details);
 
-
-    when(loginAttemptsService.isBlocked(anyString(),anyString())).thenReturn(true);
+    when(loginAttemptsService.isBlocked(anyString(), anyString())).thenReturn(true);
     this.authProvider.authenticate(authentication);
   }
 
@@ -73,15 +73,43 @@ public class LimitLoginAuthenticationProviderTest {
     when(details.getSessionId()).thenReturn(sessionId);
     when(details.getRemoteAddress()).thenReturn(remoteAddress);
 
-    UsernamePasswordAuthenticationToken authentication = mock(UsernamePasswordAuthenticationToken.class);
+    UsernamePasswordAuthenticationToken authentication = mock(
+      UsernamePasswordAuthenticationToken.class);
     when(authentication.getName()).thenReturn(principal);
     when(authentication.getPrincipal()).thenReturn(principal);
     when(authentication.getCredentials()).thenReturn(credential);
     when(authentication.getDetails()).thenReturn(details);
 
-    when(this.userDetailsService.loadUserByUsername(eq(principal))).thenReturn(new CurrentUserBuilder().identifier(principal).passwordHash(credential).toCurrentUser());
+    when(this.userDetailsService.loadUserByUsername(eq(principal))).thenReturn(
+      new CurrentUserBuilder().identifier(principal).passwordHash(credential).toCurrentUser());
 
     this.authProvider.authenticate(authentication);
+  }
+
+
+  @Test
+  public void should_good_credentials() throws Exception {
+    String principal = "username";
+    String credential = "password";
+    String sessionId = "sessionId";
+    String remoteAddress = "remoteAddress";
+
+    WebAuthenticationDetails details = mock(WebAuthenticationDetails.class);
+    when(details.getSessionId()).thenReturn(sessionId);
+    when(details.getRemoteAddress()).thenReturn(remoteAddress);
+
+    UsernamePasswordAuthenticationToken authentication = mock(
+      UsernamePasswordAuthenticationToken.class);
+    when(authentication.getName()).thenReturn(principal);
+    when(authentication.getPrincipal()).thenReturn(principal);
+    when(authentication.getCredentials()).thenReturn(credential);
+    when(authentication.getDetails()).thenReturn(details);
+
+    when(this.userDetailsService.loadUserByUsername(eq(principal))).thenReturn(
+      new CurrentUserBuilder().identifier(principal).passwordHash(credential).toCurrentUser());
+
+    this.authProvider.authenticate(authentication);
+    verify(this.loginAttemptsService, times(1)).successfulAttempt(eq(principal), eq(remoteAddress));
   }
 
   @Test
@@ -97,18 +125,20 @@ public class LimitLoginAuthenticationProviderTest {
     when(details.getSessionId()).thenReturn(sessionId);
     when(details.getRemoteAddress()).thenReturn(remoteAddress);
 
-    UsernamePasswordAuthenticationToken authentication = mock(UsernamePasswordAuthenticationToken.class);
+    UsernamePasswordAuthenticationToken authentication = mock(
+      UsernamePasswordAuthenticationToken.class);
     when(authentication.getName()).thenReturn(principal);
     when(authentication.getPrincipal()).thenReturn(principal);
     when(authentication.getCredentials()).thenReturn("bad_credential");
     when(authentication.getDetails()).thenReturn(details);
 
-    when(this.userDetailsService.loadUserByUsername(eq(principal))).thenReturn(new CurrentUserBuilder().identifier(principal).passwordHash(credential).toCurrentUser());
+    when(this.userDetailsService.loadUserByUsername(eq(principal))).thenReturn(
+      new CurrentUserBuilder().identifier(principal).passwordHash(credential).toCurrentUser());
 
     try {
       this.authProvider.authenticate(authentication);
-    }catch(BadCredentialsException e){
-      verify(this.loginAttemptsService,times(1)).failAttempt(eq(principal), eq(remoteAddress));
+    } catch (BadCredentialsException e) {
+      verify(this.loginAttemptsService, times(1)).failAttempt(eq(principal), eq(remoteAddress));
       throw e;
     }
   }
