@@ -1,5 +1,6 @@
 package fr.blossom.ui.i18n;
 
+import com.google.common.base.Preconditions;
 import fr.blossom.ui.stereotype.BlossomController;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,6 +13,7 @@ public class LocaleControllerAdvice {
   private final Set<Locale> locales;
 
   public LocaleControllerAdvice(Set<Locale> locales) {
+    Preconditions.checkArgument(locales!=null && !locales.isEmpty());
     this.locales = locales;
   }
 
