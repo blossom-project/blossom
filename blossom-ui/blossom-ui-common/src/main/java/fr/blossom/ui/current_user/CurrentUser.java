@@ -5,6 +5,7 @@ import java.util.Set;
 import org.springframework.security.core.authority.AuthorityUtils;
 
 public class CurrentUser extends org.springframework.security.core.userdetails.User {
+
   private static final long serialVersionUID = 1L;
   private UserDTO user;
 
@@ -40,6 +41,7 @@ public class CurrentUser extends org.springframework.security.core.userdetails.U
 
   @Override
   public String toString() {
-    return "CurrentUser{" + "user=" + this.user + "} " + super.toString();
+    return "CurrentUser{" + "user=" + this.user + ", privileges=" + this.getAuthorities() + "} "
+      + super.toString();
   }
 }

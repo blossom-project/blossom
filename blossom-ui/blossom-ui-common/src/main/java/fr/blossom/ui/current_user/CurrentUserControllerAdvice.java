@@ -10,7 +10,7 @@ public class CurrentUserControllerAdvice {
 
   @ModelAttribute("currentUser")
   public CurrentUser getCurrentUser(Authentication authentication) {
-    return (authentication == null) ? null : (CurrentUser) authentication.getPrincipal();
+    return (authentication == null || authentication.getPrincipal()==null || !(authentication.getPrincipal() instanceof CurrentUser)) ? null : (CurrentUser) authentication.getPrincipal();
   }
 
 }

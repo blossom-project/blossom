@@ -51,7 +51,7 @@ public class AuthenticationSuccessListenerTest {
     when(details.getRemoteAddress()).thenReturn(remoteAddress);
 
     Authentication authentication = mock(Authentication.class);
-    when(authentication.getPrincipal()).thenReturn(new CurrentUserBuilder().identifier(principal).passwordHash(credential).toCurrentUser());
+    when(authentication.getPrincipal()).thenReturn(new CurrentUserBuilder().identifier(principal).passwordHash(credential).addPrivilege("testPrivilege").toCurrentUser());
     when(authentication.getDetails()).thenReturn(details);
 
     AuthenticationSuccessEvent event = mock(AuthenticationSuccessEvent.class);

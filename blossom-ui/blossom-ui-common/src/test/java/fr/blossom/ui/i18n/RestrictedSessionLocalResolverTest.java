@@ -64,6 +64,20 @@ public class RestrictedSessionLocalResolverTest {
   }
 
   @Test
+  public void should_change_to_unavailable_locale_find_closest() throws Exception {
+    HttpSession session = mock(HttpSession.class);
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getSession()).thenReturn(session);
+
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    Locale locale = Locale.CANADA;
+
+    this.resolver.setLocale(request, response, locale);
+    verify(this.resolver, times(1))
+      .doSetLocale(eq(request), eq(response), eq(Locale.ENGLISH));
+  }
+
+  @Test
   public void should_change_to_unavailable_locale_without_default() throws Exception {
     HttpSession session = mock(HttpSession.class);
     HttpServletRequest request = mock(HttpServletRequest.class);
