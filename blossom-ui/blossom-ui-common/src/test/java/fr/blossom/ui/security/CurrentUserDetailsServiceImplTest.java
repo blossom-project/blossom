@@ -1,4 +1,4 @@
-package fr.blossom.ui.current_user;
+package fr.blossom.ui.security;
 
 import static org.mockito.Matchers.any;
 
@@ -6,6 +6,8 @@ import com.google.common.collect.Lists;
 import fr.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.blossom.core.user.UserDTO;
 import fr.blossom.core.user.UserService;
+import fr.blossom.ui.current_user.CurrentUser;
+import fr.blossom.ui.current_user.UserDTOBuilder;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;

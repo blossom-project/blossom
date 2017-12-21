@@ -43,14 +43,10 @@ public class MenuItemBuilder {
   /**
    * Mandatory identifier for the constructed {@link MenuItem}
    *
-   * @param key the unique identifier of the constructed {@code MenuItem}. If a {@code MenuItem}
-   * already exists with this key, throws an {@code IllegalStateException}
+   * @param key the unique identifier of the constructed {@code MenuItem}
    * @return {@literal this}
    */
   public MenuItemBuilder key(String key) {
-    if (this.registry.hasPluginFor(key)) {
-      throw new IllegalStateException("A MenuItem already exists with this identifier");
-    }
     this.key = key;
     return this;
   }

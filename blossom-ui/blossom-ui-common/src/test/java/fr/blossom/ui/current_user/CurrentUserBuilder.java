@@ -29,6 +29,7 @@ public class CurrentUserBuilder {
             user = new UserDTO();
             user.setIdentifier(identifier);
             user.setPasswordHash(passwordHash);
+            user.setActivated(true);
         }
 
         CurrentUser currentUser = new CurrentUser(user);

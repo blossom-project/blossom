@@ -1,9 +1,10 @@
-package fr.blossom.ui.current_user;
+package fr.blossom.ui.security;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import fr.blossom.core.common.utils.privilege.Privilege;
 import fr.blossom.core.user.UserDTO;
+import fr.blossom.ui.current_user.CurrentUser;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;

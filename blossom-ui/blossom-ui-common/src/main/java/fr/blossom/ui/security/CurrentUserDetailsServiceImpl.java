@@ -1,9 +1,10 @@
-package fr.blossom.ui.current_user;
+package fr.blossom.ui.security;
 
 import fr.blossom.core.association_user_role.AssociationUserRoleDTO;
 import fr.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.blossom.core.user.UserDTO;
 import fr.blossom.core.user.UserService;
+import fr.blossom.ui.current_user.CurrentUser;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

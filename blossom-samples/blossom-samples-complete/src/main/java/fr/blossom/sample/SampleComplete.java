@@ -22,12 +22,12 @@ public class SampleComplete {
 
   @Bean
   @Order(0)
-  public MenuItem testMenuItem(MenuItemBuilder builder) {
-    return builder.key("test").label("menu.test").icon("fa fa-photo").link("/blossom/test").build();
+  public MenuItem testMenuItem(MenuItemBuilder menuItemBuilder) {
+    return menuItemBuilder.key("test").label("menu.test").icon("fa fa-photo").link("/blossom/test").build();
   }
 
   @Bean
-  public MenuItem testManagerMenuItem(MenuItemBuilder builder, @Qualifier("testMenuItem") MenuItem testMenuItem) {
-    return builder.key("pouet").label("menu.test.pouet").link("/blossom/test/pouet").icon("fa fa-photo").order(0).parent(testMenuItem).build();
+  public MenuItem testManagerMenuItem(MenuItemBuilder menuItemBuilder, @Qualifier("testMenuItem") MenuItem testMenuItem) {
+    return menuItemBuilder.key("pouet").label("menu.test.pouet").link("/blossom/test/pouet").icon("fa fa-photo").order(0).parent(testMenuItem).build();
   }
 }

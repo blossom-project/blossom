@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -61,14 +60,6 @@ public class MenuItemBuilderTest {
   public void should_build_key_null() {
     thrown.expect(IllegalStateException.class);
     new MenuItemBuilder(this.registry, 0).key(null).build();
-  }
-
-
-  @Test
-  public void should_build_key_already_in_use() {
-    thrown.expect(IllegalStateException.class);
-    when(this.registry.hasPluginFor(anyString())).thenReturn(true);
-    new MenuItemBuilder(registry, 0).key("any").build();
   }
 
   @Test

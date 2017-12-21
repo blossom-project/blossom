@@ -45,8 +45,8 @@ public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
 
   @Bean
   @Order(0)
-  public MenuItem homeMenuItem(MenuItemBuilder builder) {
-    return builder
+  public MenuItem homeMenuItem(MenuItemBuilder menuItemBuilder) {
+    return menuItemBuilder
       .key("home")
       .label("menu.home")
       .icon("fa fa-home")
@@ -57,8 +57,8 @@ public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
 
   @Bean
   @Order(0)
-  public MenuItem administrationMenuItem(MenuItemBuilder builder) {
-    return builder.key("administration")
+  public MenuItem administrationMenuItem(MenuItemBuilder menuItemBuilder) {
+    return menuItemBuilder.key("administration")
       .label("menu.administration")
       .icon("glyphicon glyphicon-list-alt")
       .link("/blossom/administration")
@@ -69,8 +69,8 @@ public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
 
   @Bean
   @Order(0)
-  public MenuItem systemMenuItem(MenuItemBuilder builder) {
-    return builder
+  public MenuItem systemMenuItem(MenuItemBuilder menuItemBuilder) {
+    return menuItemBuilder
       .key("system")
       .label("menu.system")
       .icon("fa fa-cogs")
