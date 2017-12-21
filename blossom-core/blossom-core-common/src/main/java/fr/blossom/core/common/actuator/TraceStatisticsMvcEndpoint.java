@@ -23,7 +23,6 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
     this.endpoint = endpoint;
   }
 
-
   /**
    * Retrieve trace statistics for a given {@link Period}
    *

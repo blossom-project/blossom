@@ -40,7 +40,7 @@ public interface AssociationDao<A extends AbstractEntity, B extends AbstractEnti
   /**
    * Retrieve a {@code List} of all {@code A}/{@code B} associations for a given {@code B} element
    *
-   * @param b an {@code AbstractEntity} of parametrized type {@code B}
+   * @param b an {@code AbstractEntity} of parametrized type {@code B}. If null, throws an {@code IllegalArgumentException}.
    * @return the list of all available associations to {@code A} elements
    */
   List<ASSOCIATION> getAllA(B b);
@@ -48,7 +48,7 @@ public interface AssociationDao<A extends AbstractEntity, B extends AbstractEnti
   /**
    * Retrieve a {@code List} of all {@code A}/{@code B} associations for a given {@code A} element
    *
-   * @param a an {@code AbstractEntity} of parametrized type {@code A}
+   * @param a an {@code AbstractEntity} of parametrized type {@code A}. If null, throws an {@code IllegalArgumentException}.
    * @return the list of all available associations to {@code B} elements
    */
   List<ASSOCIATION> getAllB(A a);
@@ -64,8 +64,8 @@ public interface AssociationDao<A extends AbstractEntity, B extends AbstractEnti
   /**
    * Get an {@code A}/{@code B} association by its associated entities.
    *
-   * @param a an {@code AbstractEntity} of parametrized type {@code A}
-   * @param b an {@code AbstractEntity} of parametrized type {@code B}
+   * @param a an {@code AbstractEntity} of parametrized type {@code A}. If null, throws an {@code IllegalArgumentException}.
+   * @param b an {@code AbstractEntity} of parametrized type {@code B}. If null, throws an {@code IllegalArgumentException}.
    * @return the association, or {@literal null} if not found
    */
   ASSOCIATION getOne(A a, B b);

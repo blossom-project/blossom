@@ -78,13 +78,17 @@ public class ElasticsearchTraceRepositoryImpl implements ElasticsearchTraceRepos
    */
   @Override
   public List<Trace> findAll() {
-    SearchResponse response = client.prepareSearch(index).setQuery(QueryBuilders.matchAllQuery())
-      .setSize(100).addSort(TIMESTAMP_FIELD, SortOrder.DESC).get();
+    SearchResponse response = client.prepareSearch(index)
+      .setQuery(QueryBuilders.matchAllQuery())
+      .setSize(100)
+      .addSort(TIMESTAMP_FIELD, SortOrder.DESC)
+      .get();
 
-    return Stream.of(response.getHits().getHits()).map(hit -> {
-      Map<String, Object> source = hit.getSource();
-      return new Trace(new Date((Long) source.get(TIMESTAMP_FIELD)), source);
-    }).collect(Collectors.toList());
+    return Stream.of(response.getHits().getHits())
+      .map(hit -> {
+        Map<String, Object> source = hit.getSource();
+        return new Trace(new Date((Long) source.get(TIMESTAMP_FIELD)), source);
+      }).collect(Collectors.toList());
   }
 
   /**
@@ -95,24 +99,31 @@ public class ElasticsearchTraceRepositoryImpl implements ElasticsearchTraceRepos
   @Override
   public void add(Map<String, Object> traceInfo) {
     String path = (String) traceInfo.get("path");
+    if (Strings.isNullOrEmpty(path)) {
+      return;
+    }
+
     boolean ignore = ignoredPatterns.stream().anyMatch(pattern -> pattern.matcher(path).matches());
     if (!ignore) {
-
-      traceInfo.put(TIMESTAMP_FIELD, Instant.now().toEpochMilli());
-
-      this.client.prepareIndex(index, index).setSource(traceInfo)
-        .execute(new ActionListener<IndexResponse>() {
-          @Override
-          public void onResponse(IndexResponse indexResponse) {
-            logger.trace("Indexed trace into elasticsearch {}", traceInfo);
-          }
-
-          @Override
-          public void onFailure(Throwable throwable) {
-            logger.error("Indexed trace into elasticsearch {} {}", traceInfo, throwable);
-          }
-        });
+      indexTrace(traceInfo);
     }
+  }
+
+  void indexTrace(Map<String, Object> traceInfo) {
+    traceInfo.put(TIMESTAMP_FIELD, Instant.now().toEpochMilli());
+
+    this.client.prepareIndex(index, index).setSource(traceInfo)
+      .execute(new ActionListener<IndexResponse>() {
+        @Override
+        public void onResponse(IndexResponse indexResponse) {
+          logger.trace("Indexed trace into elasticsearch {}", traceInfo);
+        }
+
+        @Override
+        public void onFailure(Throwable throwable) {
+          logger.error("Indexed trace into elasticsearch {} {}", traceInfo, throwable);
+        }
+      });
   }
 
   @Override

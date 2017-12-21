@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @param <A> the first {@code AbstractEntity} type
  * @param <B> the second {@code AbstractEntity} type
  * @param <ASSOCIATION> the {@code AbstractAssociationEntity} type.
- *
  * @author Maël Gargadennec
  */
 public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B extends AbstractEntity, ASSOCIATION extends AbstractAssociationEntity<A, B>>
@@ -23,6 +22,7 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
   private final AssociationRepository<A, B, ASSOCIATION> repository;
 
   protected GenericAssociationDaoImpl(AssociationRepository<A, B, ASSOCIATION> repository) {
+    Preconditions.checkNotNull(repository);
     this.repository = repository;
   }
 
@@ -46,8 +46,8 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
   @Override
   @Transactional
   public void dissociate(A a, B b) {
-    Preconditions.checkNotNull(a);
-    Preconditions.checkNotNull(b);
+    Preconditions.checkArgument(a != null);
+    Preconditions.checkArgument(b != null);
 
     ASSOCIATION association = repository.findOneByAAndB(a, b);
     if (association != null) {
@@ -57,11 +57,13 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
 
   @Override
   public List<ASSOCIATION> getAllA(B b) {
+    Preconditions.checkArgument(b != null);
     return this.repository.findAllByB(b);
   }
 
   @Override
   public List<ASSOCIATION> getAllB(A a) {
+    Preconditions.checkArgument(a != null);
     return this.repository.findAllByA(a);
   }
 
@@ -72,6 +74,8 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
 
   @Override
   public ASSOCIATION getOne(A a, B b) {
+    Preconditions.checkArgument(a != null);
+    Preconditions.checkArgument(b != null);
     return this.repository.findOneByAAndB(a, b);
   }
 
