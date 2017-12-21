@@ -15,7 +15,6 @@ public class MenuItemImpl implements MenuItem {
   private final String key;
   private final String icon;
   private final String label;
-  private final boolean i18n;
   private final String link;
   private final int order;
   private final String privilege;
@@ -23,13 +22,12 @@ public class MenuItemImpl implements MenuItem {
   private final MenuItem parent;
 
   MenuItemImpl(PluginRegistry<MenuItem, String> registry, String key, String icon,
-    String label, boolean i18n, String link, int order, String privilege, boolean leaf,
+    String label, String link, int order, String privilege, boolean leaf,
     MenuItem parent) {
     this.registry = registry;
     this.key = key;
     this.icon = icon;
     this.label = label;
-    this.i18n = i18n;
     this.link = link;
     this.order = order;
     this.privilege = privilege;
@@ -51,11 +49,6 @@ public class MenuItemImpl implements MenuItem {
   @Override
   public String label() {
     return label;
-  }
-
-  @Override
-  public boolean i18n() {
-    return i18n;
   }
 
   @Override

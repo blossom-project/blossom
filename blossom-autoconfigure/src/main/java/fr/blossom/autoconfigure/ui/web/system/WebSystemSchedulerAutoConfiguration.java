@@ -24,7 +24,7 @@ public class WebSystemSchedulerAutoConfiguration {
     @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
     return builder
       .key("schedulerManager")
-      .label("menu.system.scheduler", true)
+      .label("menu.system.scheduler")
       .link("/blossom/system/scheduler")
       .order(1)
       .icon("fa fa-calendar")

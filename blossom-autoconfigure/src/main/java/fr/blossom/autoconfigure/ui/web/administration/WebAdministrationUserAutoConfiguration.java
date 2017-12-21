@@ -29,7 +29,7 @@ public class WebAdministrationUserAutoConfiguration {
     @Qualifier("administrationMenuItem") MenuItem administrationMenuItem) {
     return builder
       .key("users")
-      .label("menu.administration.users", true)
+      .label("menu.administration.users")
       .link("/blossom/administration/users")
       .icon("fa fa-user")
       .order(1)

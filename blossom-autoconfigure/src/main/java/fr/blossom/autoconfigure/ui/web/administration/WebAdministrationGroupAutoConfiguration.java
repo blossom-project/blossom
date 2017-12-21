@@ -28,7 +28,7 @@ public class WebAdministrationGroupAutoConfiguration {
     @Qualifier("administrationMenuItem") MenuItem administrationMenuItem) {
     return builder
       .key("groups")
-      .label("menu.administration.groups", true)
+      .label("menu.administration.groups")
       .link("/blossom/administration/groups")
       .icon("fa fa-users")
       .order(2)

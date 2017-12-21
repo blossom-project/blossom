@@ -27,7 +27,7 @@ public class WebSystemBPMNAutoConfiguration {
   public MenuItem systemBPMNMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
     return builder
       .key("bpmnManager")
-      .label("menu.system.bpmn", true)
+      .label("menu.system.bpmn")
       .link("/blossom/system/bpmn")
       .icon("fa fa-sitemap")
       .order(6)

@@ -22,7 +22,7 @@ public class WebSystemLoggersAutoConfiguration {
   public MenuItem systemLoggerManagerMenuItem(MenuItemBuilder builder,
     @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
     return builder.key("loggerManager")
-      .label("menu.system.loggers", true)
+      .label("menu.system.loggers")
       .link("/blossom/system/loggers")
       .order(3)
       .icon("fa fa-pencil")

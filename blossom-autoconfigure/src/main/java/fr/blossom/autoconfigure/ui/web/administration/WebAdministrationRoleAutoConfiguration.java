@@ -29,7 +29,7 @@ public class WebAdministrationRoleAutoConfiguration {
       @Qualifier("administrationMenuItem") MenuItem administrationMenuItem) {
     return builder
       .key("roles")
-      .label("menu.administration.roles", true)
+      .label("menu.administration.roles")
       .link("/blossom/administration/roles")
       .icon("fa fa-key")
       .privilege(rolesReadPrivilegePlugin())

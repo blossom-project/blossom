@@ -22,7 +22,7 @@ public class WebSystemCachesAutoConfiguration {
   public MenuItem systemCacheMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
     return builder
       .key("cacheManager")
-      .label("menu.system.caches", true)
+      .label("menu.system.caches")
       .link("/blossom/system/caches")
       .icon("fa fa-magnet")
       .order(2)

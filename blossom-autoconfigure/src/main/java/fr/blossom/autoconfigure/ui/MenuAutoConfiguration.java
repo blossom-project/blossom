@@ -48,7 +48,7 @@ public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
   public MenuItem homeMenuItem(MenuItemBuilder builder) {
     return builder
       .key("home")
-      .label("menu.home", true)
+      .label("menu.home")
       .icon("fa fa-home")
       .link("/blossom")
       .order(Integer.MIN_VALUE)
@@ -59,7 +59,7 @@ public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
   @Order(0)
   public MenuItem administrationMenuItem(MenuItemBuilder builder) {
     return builder.key("administration")
-      .label("menu.administration", true)
+      .label("menu.administration")
       .icon("glyphicon glyphicon-list-alt")
       .link("/blossom/administration")
       .leaf(false)
@@ -72,7 +72,7 @@ public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
   public MenuItem systemMenuItem(MenuItemBuilder builder) {
     return builder
       .key("system")
-      .label("menu.system", true)
+      .label("menu.system")
       .icon("fa fa-cogs")
       .link("/blossom/system")
       .leaf(false)

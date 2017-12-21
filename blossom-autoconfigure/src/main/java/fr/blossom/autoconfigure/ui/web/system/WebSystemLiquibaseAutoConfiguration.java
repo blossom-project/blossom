@@ -31,7 +31,7 @@ public class WebSystemLiquibaseAutoConfiguration {
   public MenuItem systemLiquibaseMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
     return builder
       .key("liquibase")
-      .label("menu.system.liquibase", true)
+      .label("menu.system.liquibase")
       .link("/blossom/system/liquibase")
       .order(4)
       .icon("fa fa-flask")

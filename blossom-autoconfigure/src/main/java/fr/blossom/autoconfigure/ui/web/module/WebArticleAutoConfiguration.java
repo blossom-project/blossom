@@ -32,7 +32,7 @@ public class WebArticleAutoConfiguration {
   public MenuItem contentMenuItem(MenuItemBuilder builder) {
     return builder
       .key("content")
-      .label("menu.content", true)
+      .label("menu.content")
       .icon("fa fa-book")
       .link("/blossom/content")
       .leaf(false)
@@ -44,7 +44,7 @@ public class WebArticleAutoConfiguration {
     @Qualifier("contentMenuItem") MenuItem contentMenuItem) {
     return builder
       .key("articles")
-      .label("menu.content.articles", true)
+      .label("menu.content.articles")
       .link("/blossom/content/articles")
       .icon("fa fa-pencil")
       .order(0)

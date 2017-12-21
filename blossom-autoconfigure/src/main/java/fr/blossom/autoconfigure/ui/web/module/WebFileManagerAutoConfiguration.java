@@ -36,7 +36,7 @@ public class WebFileManagerAutoConfiguration {
   public MenuItem contentMenuItem(MenuItemBuilder builder) {
     return builder
       .key("content")
-      .label("menu.content", true)
+      .label("menu.content")
       .icon("fa fa-book")
       .link("/blossom/content")
       .leaf(false)
@@ -47,7 +47,7 @@ public class WebFileManagerAutoConfiguration {
   public MenuItem contentFileManagerMenuItem(MenuItemBuilder builder, @Qualifier("contentMenuItem") MenuItem contentMenuItem) {
     return builder
       .key("filemanager")
-      .label("menu.content.filemanager", true)
+      .label("menu.content.filemanager")
       .link("/blossom/content/filemanager")
       .icon("fa fa-photo")
       .order(0)

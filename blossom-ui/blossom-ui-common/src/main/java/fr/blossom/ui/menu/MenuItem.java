@@ -14,8 +14,6 @@ public interface MenuItem extends MenuItemPlugin {
 
   String label();
 
-  boolean i18n();
-
   String link();
 
   int level();

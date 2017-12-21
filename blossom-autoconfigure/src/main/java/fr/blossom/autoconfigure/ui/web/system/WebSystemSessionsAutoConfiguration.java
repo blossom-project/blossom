@@ -25,7 +25,7 @@ public class WebSystemSessionsAutoConfiguration {
   public MenuItem systemSessionMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
     return builder
       .key("sessions")
-      .label("menu.system.sessions", true)
+      .label("menu.system.sessions")
       .link("/blossom/system/sessions")
       .order(5)
       .icon("fa fa-plug")

@@ -24,7 +24,7 @@ public class WebSystemDashboardAutoConfiguration {
   public MenuItem systemDashboardMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
     return builder
       .key("dashboard")
-      .label("menu.system.dashboard", true)
+      .label("menu.system.dashboard")
       .link("/blossom/system/dashboard")
       .order(0)
       .icon("fa fa-bar-chart")
