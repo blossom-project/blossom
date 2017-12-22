@@ -1,5 +1,6 @@
 package fr.blossom.ui.menu;
 
+import com.google.common.base.Preconditions;
 import fr.blossom.ui.current_user.CurrentUser;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -24,6 +25,9 @@ public class MenuItemImpl implements MenuItem {
   MenuItemImpl(PluginRegistry<MenuItem, String> registry, String key, String icon,
     String label, String link, int order, String privilege, boolean leaf,
     MenuItem parent) {
+    Preconditions.checkArgument(registry != null);
+    Preconditions.checkArgument(key != null);
+    Preconditions.checkArgument(label != null);
     this.registry = registry;
     this.key = key;
     this.icon = icon;
@@ -93,7 +97,8 @@ public class MenuItemImpl implements MenuItem {
   public Collection<MenuItem> filteredItems(CurrentUser currentUser) {
     return this.registry.getPlugins().stream()
       .filter(item -> item.parent() != null && item.parent().key().equals(this.key))
-      .filter(item-> Strings.isNullOrEmpty(item.privilege()) || currentUser.hasPrivilege(item.privilege()))
+      .filter(item -> Strings.isNullOrEmpty(item.privilege()) || currentUser
+        .hasPrivilege(item.privilege()))
       .filter(item -> item.leaf() || !item.filteredItems(currentUser).isEmpty())
       .sorted((e1, e2) -> new Integer(e1.order()).compareTo(e2.order()))
       .collect(Collectors.toList());

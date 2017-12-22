@@ -1,5 +1,6 @@
 package fr.blossom.ui.web;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import fr.blossom.core.common.dto.AbstractDTO;
@@ -45,8 +46,12 @@ public class OmnisearchController {
     @RequestParam(value = "q", defaultValue = "", required = false) String query,
     @PageableDefault(size = 20) Pageable pageable,
     Model model) {
+    List<SearchEngine> plugins = filteredPlugins();
+    if(plugins.isEmpty()){
+      return new ModelAndView("omnisearch/omnisearch", model.asMap());
+    }
+
     MultiSearchRequestBuilder request = client.prepareMultiSearch();
-    List<SearchEngine> plugins = registry.getPlugins().stream().filter(SearchEngine::includeInOmnisearch).collect(Collectors.toList());
     plugins.forEach(engine -> request.add(engine.prepareSearch(query, pageable)));
     MultiSearchResponse response = request.get(TimeValue.timeValueSeconds(15));
 
@@ -63,12 +68,24 @@ public class OmnisearchController {
     }
 
     model.addAttribute("q", query);
-    model.addAttribute("total", results.values().stream().mapToLong(r -> r.getPage().getTotalElements()).sum());
-    model.addAttribute("duration", results.values().stream().mapToLong(r -> r.getDuration()).max().getAsLong());
+    model.addAttribute("total",
+      results.values().stream().mapToLong(r -> r.getPage().getTotalElements()).sum());
+    model.addAttribute("duration",
+      results.values().stream().mapToLong(r -> r.getDuration()).max().getAsLong());
     model.addAttribute("results", results.entrySet().stream()
-      .filter( e -> e.getValue().getPage().getTotalElements()!=0)
-      .sorted( Comparator.comparing((Entry<String, SearchResult<SummaryDTO>> e) -> e.getValue().getPage().getTotalElements()).reversed())
-      .collect(Collectors.toMap(e -> e.getKey(),e -> e.getValue(), (u, v) -> {throw new IllegalStateException(String.format("Duplicate key %s", u));}, LinkedHashMap::new)));
+      .filter(e -> e.getValue().getPage().getTotalElements() != 0)
+      .sorted(Comparator.comparing(
+        (Entry<String, SearchResult<SummaryDTO>> e) -> e.getValue().getPage().getTotalElements())
+        .reversed())
+      .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue(), (u, v) -> {
+        throw new IllegalStateException(String.format("Duplicate key %s", u));
+      }, LinkedHashMap::new)));
+
     return new ModelAndView("omnisearch/omnisearch", model.asMap());
+  }
+
+  @VisibleForTesting
+  List<SearchEngine> filteredPlugins() {
+    return registry.getPlugins().stream().filter(SearchEngine::includeInOmnisearch).collect(Collectors.toList());
   }
 }
