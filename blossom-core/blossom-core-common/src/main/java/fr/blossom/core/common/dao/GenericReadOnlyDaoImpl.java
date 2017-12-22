@@ -16,7 +16,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.Querydsl;
-import org.springframework.util.Assert;
 
 /**
  * Default abstract implementation of {@link ReadOnlyDao}.
@@ -42,17 +41,17 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
 
   @PostConstruct
   public void validate() {
-    Assert.notNull(entityManager, "EntityManager must not be null!");
-    Assert.notNull(querydsl, "Querydsl must not be null!");
+    Preconditions.checkState(entityManager != null, "EntityManager must not be null!");
+    Preconditions.checkState(querydsl != null, "Querydsl must not be null!");
   }
 
   @PersistenceContext
   public void setEntityManager(EntityManager entityManager) {
-    assert entityManager != null;
+    Preconditions.checkArgument(entityManager != null);
+    this.entityManager = entityManager;
 
     PathBuilder<?> builder = new PathBuilderFactory().create(type.getRawType());
     this.querydsl = new Querydsl(entityManager, builder);
-    this.entityManager = entityManager;
   }
 
   @Override

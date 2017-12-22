@@ -29,6 +29,7 @@
     <liquibase.version>3.5.3</liquibase.version>
     <camunda.version>2.2.0</camunda.version>
     <tika.version>1.17</tika.version>
+    <powermock.version>1.7.3</powermock.version>
   </properties>
 
   <dependencyManagement>
@@ -84,6 +85,17 @@
         <groupId>org.apache.tika</groupId>
         <artifactId>tika-core</artifactId>
         <version>${tika.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-module-junit4</artifactId>
+        <version>${powermock.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-mockito</artifactId>
+        <version>${powermock.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

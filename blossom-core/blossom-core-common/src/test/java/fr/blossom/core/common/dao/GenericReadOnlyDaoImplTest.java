@@ -2,26 +2,32 @@ package fr.blossom.core.common.dao;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import com.google.common.collect.Lists;
 import fr.blossom.core.common.entity.AbstractEntity;
 import fr.blossom.core.common.repository.CrudRepository;
 import java.util.List;
+import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.provider.PersistenceProvider;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({PersistenceProvider.class})
 public class GenericReadOnlyDaoImplTest {
 
   @Rule
@@ -33,6 +39,45 @@ public class GenericReadOnlyDaoImplTest {
   public void setUp() throws Exception {
     this.repository = mock(CrudRepository.class);
     this.dao = new TestGenericReadOnlyDaoImpl(this.repository);
+    mockStatic(PersistenceProvider.class);
+  }
+
+  @Test
+  public void should_set_entity_manager_null() {
+    thrown.expect(IllegalArgumentException.class);
+    this.dao.setEntityManager(null);
+  }
+
+  @Test
+  public void should_set_entity_manager() {
+    EntityManager entityManager = mock(EntityManager.class);
+    given(PersistenceProvider.fromEntityManager(entityManager))
+      .willReturn(mock(PersistenceProvider.class));
+    this.dao.setEntityManager(entityManager);
+  }
+
+  @Test
+  public void should_validate_not_prepare() {
+    thrown.expect(IllegalStateException.class);
+    this.dao.validate();
+  }
+
+  @Test
+  public void should_validate() {
+    EntityManager entityManager = mock(EntityManager.class);
+    given(PersistenceProvider.fromEntityManager(entityManager)).willReturn(mock(PersistenceProvider.class));
+    this.dao.setEntityManager(entityManager);
+    this.dao.validate();
+  }
+
+  @Test
+  public void should_get_querydsl() {
+    EntityManager entityManager = mock(EntityManager.class);
+    given(PersistenceProvider.fromEntityManager(entityManager)).willReturn(mock(PersistenceProvider.class));
+    this.dao.setEntityManager(entityManager);
+    this.dao.validate();
+
+    assertNotNull(this.dao.getQuerydsl());
   }
 
   @Test
@@ -69,7 +114,8 @@ public class GenericReadOnlyDaoImplTest {
   @Test
   public void should_get_page() {
     Pageable pageable = new PageRequest(0, 20);
-    when(this.repository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(Lists.newArrayList()));
+    when(this.repository.findAll(any(Pageable.class)))
+      .thenReturn(new PageImpl<>(Lists.newArrayList()));
     Page<ENTITY> page = this.dao.getAll(pageable);
     assertNotNull(page);
   }
@@ -85,14 +131,14 @@ public class GenericReadOnlyDaoImplTest {
     this.dao.getAll(Lists.newArrayList());
   }
 
-  private static class TestGenericReadOnlyDaoImpl extends GenericReadOnlyDaoImpl<ENTITY> {
+  public static class TestGenericReadOnlyDaoImpl extends GenericReadOnlyDaoImpl<ENTITY> {
 
-    TestGenericReadOnlyDaoImpl(CrudRepository<ENTITY> repository) {
+    public TestGenericReadOnlyDaoImpl(CrudRepository<ENTITY> repository) {
       super(repository);
     }
   }
 
-  private static class ENTITY extends AbstractEntity {
+  public static class ENTITY extends AbstractEntity {
 
   }
 }
