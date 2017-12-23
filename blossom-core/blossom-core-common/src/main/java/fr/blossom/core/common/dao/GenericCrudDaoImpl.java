@@ -28,14 +28,14 @@ public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends
   @Transactional
   @CacheEvict(key = "#a0.id+''")
   public void delete(ENTITY toDelete) {
-    this.repository.delete(toDelete.getId());
+    this.repository.deleteById(toDelete.getId());
   }
 
   @Override
   @Transactional
   @CachePut(key = "#a0+''")
   public ENTITY update(long id, ENTITY toUpdate) {
-    ENTITY entity = this.repository.findOne(id);
+    ENTITY entity = this.repository.findById(id).orElse(null);
     ENTITY modifiedEntity = toUpdate;
     entity = this.updateEntity(entity, modifiedEntity);
 
@@ -46,18 +46,18 @@ public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends
   @Transactional
   @CacheEvict(allEntries = true)
   public List<ENTITY> create(Collection<ENTITY> toCreates) {
-    return this.repository.save(toCreates);
+    return this.repository.saveAll(toCreates);
   }
 
   @Override
   @Transactional
   public List<ENTITY> update(Map<Long, ENTITY> toUpdates) {
-    List<ENTITY> entities = this.repository.findAll(toUpdates.keySet())
+    List<ENTITY> entities = this.repository.findAllById(toUpdates.keySet())
       .stream()
       .filter(dbEntity -> toUpdates.containsKey(dbEntity.getId()))
       .map(dbEntity -> this.updateEntity(dbEntity, toUpdates.get(dbEntity.getId())))
       .collect(Collectors.toList());
-    return this.repository.save(entities);
+    return this.repository.saveAll(entities);
   }
 
   protected abstract ENTITY updateEntity(ENTITY originalEntity, ENTITY modifiedEntity);

@@ -56,7 +56,7 @@ public abstract class GenericAssociationDaoImpl<A extends AbstractEntity, B exte
 
   @Override
   public ASSOCIATION getOne(long id) {
-    return this.repository.findOne(id);
+    return this.repository.findById(id).orElse(null);
   }
 
   @Override

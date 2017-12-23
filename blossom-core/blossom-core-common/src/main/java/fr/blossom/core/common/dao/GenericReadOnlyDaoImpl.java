@@ -49,7 +49,7 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   @Override
   @Cacheable(key = "#a0+''")
   public ENTITY getOne(long id) {
-    return this.repository.findOne(id);
+    return this.repository.findById(id).orElse(null);
   }
 
   @Override
@@ -61,7 +61,7 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   @Override
   @Cacheable
   public List<ENTITY> getAll(List<Long> ids) {
-    return this.repository.findAll(ids);
+    return this.repository.findAllById(ids);
   }
 
   @Override

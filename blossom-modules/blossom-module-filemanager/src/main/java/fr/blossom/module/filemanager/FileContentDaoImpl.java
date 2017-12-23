@@ -4,6 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -32,6 +33,6 @@ public class FileContentDaoImpl implements FileContentDao {
 
   @Override
   public InputStream read(Long fileId) throws SQLException {
-    return new ByteArrayInputStream(this.repository.findOne(QFileContent.fileContent.fileId.eq(fileId)).getData());
+    return new ByteArrayInputStream(this.repository.findOne(QFileContent.fileContent.fileId.eq(fileId)).orElseThrow(FileNotFoundException::new).getData());
   }
 }

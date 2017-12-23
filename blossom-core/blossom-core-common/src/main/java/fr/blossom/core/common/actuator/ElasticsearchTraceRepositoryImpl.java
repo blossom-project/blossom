@@ -60,8 +60,8 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryTraceRepository im
                 }
 
                 @Override
-                public void onFailure(Throwable throwable) {
-                    logger.error("Indexed trace into elasticsearch {} {}", traceInfo, throwable);
+                public void onFailure(Exception e) {
+                    logger.error("Error on indexing trace into elasticsearch {} {}", traceInfo, e);
                 }
             });
         }
@@ -93,7 +93,7 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryTraceRepository im
                 .addAggregation(AggregationBuilders.terms("response_content_type_stats").field("headers.response.Content-Type"))
                 .addAggregation(AggregationBuilders.terms("top_uris").field("path").order(Terms.Order.aggregation("_count",false)).size(10))
                 .addAggregation(AggregationBuilders.terms("flop_uris").field("path").order(Terms.Order.aggregation("_count",true)).size(10))
-                .addAggregation(AggregationBuilders.dateHistogram("request_histogram").field("timestamp").interval(new DateHistogramInterval(precision)).subAggregation(AggregationBuilders.terms("methods").field("method")));
+                .addAggregation(AggregationBuilders.dateHistogram("request_histogram").field("timestamp").dateHistogramInterval(new DateHistogramInterval(precision)).subAggregation(AggregationBuilders.terms("methods").field("method")));
         SearchResponse response = request.execute().actionGet();
 
         return response;

@@ -11,10 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
@@ -62,7 +59,6 @@ public class UserServiceImplTest {
   @Test
   public void test_get_by_email_optional_not_present() {
     BDDMockito.given(userDao.getByEmail(BDDMockito.any(String.class))).willReturn(null);
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(null);
 
     Assert.assertFalse(userService.getByEmail("any").isPresent());
   }
@@ -78,7 +74,6 @@ public class UserServiceImplTest {
   @Test
   public void test_get_by_identifier_optional_not_present() {
     BDDMockito.given(userDao.getByIdentifier(BDDMockito.any(String.class))).willReturn(null);
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(null);
 
     Assert.assertFalse(userService.getByIdentifier("any").isPresent());
   }
@@ -93,7 +88,6 @@ public class UserServiceImplTest {
   @Test
   public void test_get_by_id_optional_not_present() {
     BDDMockito.given(userDao.getOne(BDDMockito.anyLong())).willReturn(null);
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(null);
 
     Assert.assertFalse(userService.getById(123456789l).isPresent());
   }
@@ -163,9 +157,8 @@ public class UserServiceImplTest {
 
   @Test
   public void test_ask_password_change() throws Exception {
-    UserDTO userToUpdate = new UserDTO();
-    BDDMockito.doReturn(userToUpdate).when(userService).updatePassword(BDDMockito.anyLong(), BDDMockito.anyString());
-
+    BDDMockito.doReturn("password").when(passwordEncoder).encode(Mockito.anyString());
+    BDDMockito.doReturn(new UserDTO()).when(userService).updatePassword(BDDMockito.anyLong(), BDDMockito.anyString());
     userService.askPasswordChange(123456789L);
     BDDMockito.verify(userMailService, BDDMockito.times(1)).sendChangePasswordEmail(BDDMockito.any(UserDTO.class));
   }
