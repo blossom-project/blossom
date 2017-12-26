@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -256,8 +257,10 @@ public class ActionTokenServiceImplTest {
     String action = "test";
     Long timestamp = LocalDateTime.now().minusHours(1).toInstant(ZoneOffset.UTC).toEpochMilli();
 
-    ActionToken token = service
-      .decryptTokenFromString(userId + "|" + action + "|" + timestamp + "|");
+    when(this.tokenService.verifyToken(anyString())).thenAnswer(
+      arg -> new DefaultToken(arg.getArgumentAt(0, String.class), System.currentTimeMillis(),
+        arg.getArgumentAt(0, String.class)));
+    ActionToken token = service.decryptToken(userId + "|" + action + "|" + timestamp + "|");
 
     assertNotNull(token);
     assertEquals(token.getUserId(), userId);
