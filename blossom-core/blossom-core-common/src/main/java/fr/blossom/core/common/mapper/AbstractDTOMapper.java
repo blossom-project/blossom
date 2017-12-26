@@ -1,5 +1,6 @@
 package fr.blossom.core.common.mapper;
 
+import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.entity.AbstractEntity;
@@ -25,6 +26,8 @@ public abstract class AbstractDTOMapper<ENTITY extends AbstractEntity, DTO exten
   }
 
   protected void mapEntityCommonFields(DTO dto, ENTITY entity) {
+    Preconditions.checkArgument(dto != null);
+    Preconditions.checkArgument(entity != null);
     dto.setId(entity.getId());
     dto.setCreationDate(entity.getCreationDate());
     dto.setModificationDate(entity.getModificationDate());
@@ -33,6 +36,8 @@ public abstract class AbstractDTOMapper<ENTITY extends AbstractEntity, DTO exten
   }
 
   protected void mapDtoCommonFields(ENTITY entity, DTO dto) {
+    Preconditions.checkArgument(dto != null);
+    Preconditions.checkArgument(entity != null);
     entity.setId(dto.getId());
     entity.setCreationDate(dto.getCreationDate());
     entity.setModificationDate(dto.getModificationDate());

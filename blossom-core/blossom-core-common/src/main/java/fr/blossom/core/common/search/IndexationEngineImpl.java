@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
@@ -52,8 +53,8 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
     this.bulkProcessor = bulkProcessor;
     this.configuration = configuration;
     this.objectWriter = objectMapper.writer(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-        SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS,
-        SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
+      SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS,
+      SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
   }
 
   @Override
@@ -144,11 +145,13 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
     }
   }
 
-  private boolean existsIndex() {
+  @VisibleForTesting
+  protected boolean existsIndex() {
     return !getIndicesFromAliasName().isEmpty();
   }
 
-  private String createIndex() {
+  @VisibleForTesting
+  protected String createIndex() {
     final String indexName = this.configuration.getAlias() + "_" + System.currentTimeMillis();
     CreateIndexRequestBuilder prepareCreate = this.client.admin().indices()
       .prepareCreate(indexName);
@@ -189,7 +192,8 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
     }
   }
 
-  Set<String> getIndicesFromAliasName() {
+  @VisibleForTesting
+  protected Set<String> getIndicesFromAliasName() {
     IndicesAdminClient iac = this.client.admin().indices();
     ImmutableOpenMap<String, List<AliasMetaData>> map = iac
       .getAliases(new GetAliasesRequest(this.configuration.getAlias())).actionGet().getAliases();
@@ -201,15 +205,15 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
 
   private UpdateRequestBuilder prepareIndexRequest(String indexName, DTO dto)
     throws JsonProcessingException {
-    Map<String,Object> json = prepareDocument(dto);
+    Map<String, Object> json = prepareDocument(dto);
     return this.client
       .prepareUpdate(indexName, this.configuration.getTypeFunction().apply(dto),
         String.valueOf(dto.getId()))
       .setDocAsUpsert(true).setDoc(this.objectWriter.writeValueAsString(json));
   }
 
-  protected Map<String,Object> prepareDocument(DTO dto) {
-    Map<String,Object> root = Maps.newHashMap();
+  protected Map<String, Object> prepareDocument(DTO dto) {
+    Map<String, Object> root = Maps.newHashMap();
     root.put("summary", this.configuration.getSummaryFunction().apply(dto));
     root.put("dto", dto);
     return root;

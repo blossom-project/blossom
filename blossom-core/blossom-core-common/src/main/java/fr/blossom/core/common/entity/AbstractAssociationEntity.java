@@ -22,12 +22,4 @@ public abstract class AbstractAssociationEntity<A extends AbstractEntity, B exte
     public abstract B getB();
 
     public abstract void setB(B b);
-
-    @Override
-    public String toString() {
-        return "AbstractAssociationEntity{" +
-                "a=" + getA() +
-                ", b=" + getB() +
-                '}';
-    }
 }
