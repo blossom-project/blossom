@@ -4,7 +4,7 @@
 
 <@table.pagetable
   page=roles
-  label='roles.label'
+  label='roles.label.capitalized'
   iconPath='fa fa-key'
   columns= {
   "name": {"label":"roles.role.properties.name", "sortable":true, "link":"/blossom/administration/roles/{id}"},
