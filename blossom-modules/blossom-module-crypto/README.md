@@ -7,7 +7,7 @@ simply retrieve the data store safely.
 
 There are two types of tokens :
 - Secret tokens, in which the data can only be retrieved with the
-corresponding secret
+corresponding secret.
 - Signed tokens, in which the data may or may not be publicly readable,
 but is signed to verify its origin.
 
@@ -17,22 +17,27 @@ desired.
 
 # Usage
 
-Default token service is a secret token service using Spring's 
-BouncyCastleAesGcmBytesEncryptor : AES-256 AES/GCM/NoPadding encryption.
+StatelessSecretTokenService is a secret token service using Spring's 
+BouncyCastleAesGcmBytesEncryptor : AES-256 AES/GCM/NoPadding encryption at the
+time of writing.
 
 The secret is generated on bean instantiation, which means by default tokens
 can't be shared between instances or survive server restarts. To provide a
 persistent token, define in configuration:
 
+```ini
+my.secret=<your secret here>
+```
+
 ```java
 @Configuration
-public class BlossomConfiguration {
+public class MyCustomBlossomCryptoConfiguration {
     
     @Bean
     public TokenService getTokenService(
             TokenServiceFactory factory,
             @Value("${my.secret}") String secret) {
-        return factory.secretTokenFactory(secret);
+        return factory.statelessSecretTokenService(secret);
     }
     
 }
