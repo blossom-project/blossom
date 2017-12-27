@@ -34,9 +34,26 @@ public class RestrictedSessionLocalResolver extends SessionLocaleResolver {
       if (getDefaultLocale() != null) {
         doSetLocale(request, response, getDefaultLocale());
       } else {
-        doSetLocale(request,response, availableLocales.iterator().next());
+        doSetLocale(request, response, availableLocales.iterator().next());
       }
     }
+  }
+
+  @Override
+  protected Locale determineDefaultLocale(HttpServletRequest request) {
+    Locale requestLocale = request.getLocale();
+    if (requestLocale != null) {
+      if (availableLocales.contains(requestLocale)) {
+        return requestLocale;
+      } else {
+        Optional<Locale> closest = availableLocales.stream()
+          .filter(aLocale -> aLocale.getLanguage().equals(requestLocale.getLanguage())).findFirst();
+        if (closest.isPresent()) {
+          return closest.get();
+        }
+      }
+    }
+    return super.determineDefaultLocale(request);
   }
 
   void doSetLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
