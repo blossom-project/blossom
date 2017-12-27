@@ -4,7 +4,7 @@
 
 <@table.pagetable
   page=groups
-  label='groups.label'
+  label='groups.label.capitalized'
   iconPath='fa fa-group'
   columns= {
   "name": {"label":"groups.group.properties.name", "sortable":true, "link":"/blossom/administration/groups/{id}"},

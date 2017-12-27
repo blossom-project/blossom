@@ -4,7 +4,7 @@
 
 <@table.pagetable
   page=articles
-  label='articles.label'
+  label='articles.label.capitalized'
   iconPath='fa fa-pencil'
   columns= {
   "name": { "label":"articles.article.properties.name", "sortable":true, "link":"/blossom/content/articles/{id}"},

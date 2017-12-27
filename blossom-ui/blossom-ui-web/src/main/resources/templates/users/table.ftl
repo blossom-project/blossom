@@ -4,7 +4,7 @@
 
 <@table.pagetable
   page=users
-  label='users.label'
+  label='users.label.capitalized'
   iconPath='fa fa-user'
   columns= {
   "firstname": {"label":"users.user.properties.firstname", "sortable":true, "link":"/blossom/administration/users/{id}"},
