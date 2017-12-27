@@ -10,9 +10,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.token.TokenService;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-@Configuration("BlossomCryptoAutoconfiguration")
+@Configuration("BlossomCryptoAutoConfiguration")
 @AutoConfigureBefore(CommonAutoConfiguration.class)
 @EntityScan(basePackageClasses = TokenServiceFactory.class)
 @ConditionalOnClass({TokenServiceFactory.class})
@@ -21,7 +22,11 @@ public class CryptoAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean(SecureRandom.class)
   public SecureRandom secureRandom() {
-    return new SecureRandom();
+    try {
+      return SecureRandom.getInstance("SHA1PRNG");
+    } catch (NoSuchAlgorithmException e) {
+      throw new RuntimeException("Can't find the SHA1PRNG algorithm for generating random numbers", e);
+    }
   }
 
   @Bean
