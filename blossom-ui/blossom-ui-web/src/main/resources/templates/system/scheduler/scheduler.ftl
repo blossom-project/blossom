@@ -31,7 +31,7 @@
                 <div class="col-lg-12">
                   <div>
                     <h2 class="no-margins">
-                    ${scheduler.name}
+                      <@spring.messageText "scheduler."+scheduler.name scheduler.name/>
                       <span class="small pull-right">
                         <div class="switch">
                                 <div class="onoffswitch">
@@ -46,8 +46,8 @@
                     </h2>
                     <p><strong><i class="fa fa-clock-o"></i> ${scheduler.start?datetime}</strong></p>
                     <small>
-                      There are <b>${scheduler.jobs} jobs</b> and <b>${scheduler.triggers} triggers</b> that are executed by a pool
-                      of <b>${scheduler.poolsize} threads</b>.
+                      <#assign detailsArgs = ["${scheduler.jobs?c}", "${scheduler.triggers?c}", "${scheduler.poolsize?c}"]/>
+                      <@spring.messageArgs "scheduler.details" detailsArgs/>
                     </small>
                   </div>
                 </div>
@@ -63,7 +63,7 @@
                      data-scheduler-group="${group}"
                      data-href="/blossom/system/scheduler/${group}"
                      data-target="#${group}">
-                  ${group}
+                    <@spring.messageText "scheduler.group."+group group/>
                   </a>
                 </li>
               </#list>

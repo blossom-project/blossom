@@ -1,6 +1,8 @@
+<#import "/spring.ftl" as spring>
+
 <div id="jvm" class="ibox float-e-margins">
   <div class="ibox-title">
-    <h5>JVM</h5>
+    <h5><@spring.message "dashboard.jvm.status"/></h5>
   </div>
   <div class="ibox-content">
     <div class="sk-spinner sk-spinner-wave">
@@ -13,18 +15,18 @@
 
     <div class="row">
       <div class="col-xs-12">
-        <h3>Classes</h3>
+        <h3><@spring.message "dashboard.jvm.classes"/></h3>
         <table class="table table-stripped small">
           <thead>
           <tr>
             <th>
-              Total
+            <@spring.message "dashboard.jvm.classes.total"/>
             </th>
             <th>
-              Loaded
+            <@spring.message "dashboard.jvm.classes.loaded"/>
             </th>
             <th>
-              Unloaded
+            <@spring.message "dashboard.jvm.classes.unloaded"/>
             </th>
           </tr>
           </thead>
@@ -44,18 +46,18 @@
         </table>
       </div>
       <div class="col-xs-12">
-        <h3>GC</h3>
+        <h3><@spring.message "dashboard.jvm.gc"/></h3>
         <table class="table table-stripped small">
           <thead>
           <tr>
             <th>
-              Name
+            <@spring.message "dashboard.jvm.gc.name"/>
             </th>
             <th>
-              Count
+            <@spring.message "dashboard.jvm.gc.count"/>
             </th>
             <th>
-              Time
+            <@spring.message "dashboard.jvm.gc.time"/>
             </th>
           </tr>
           </thead>
@@ -79,21 +81,21 @@
     </div>
     <div class="row">
       <div class="col-xs-12">
-        <h3>Threads</h3>
+        <h3><@spring.message "dashboard.jvm.threads"/></h3>
         <table class="table table-stripped small">
           <thead>
           <tr>
             <th>
-              Total
+            <@spring.message "dashboard.jvm.threads.total"/>
             </th>
             <th>
-              Total started
+            <@spring.message "dashboard.jvm.threads.started"/>
             </th>
             <th>
-              Peak
+            <@spring.message "dashboard.jvm.threads.peak"/>
             </th>
             <th>
-              Daemons
+            <@spring.message "dashboard.jvm.threads.daemons"/>
             </th>
           </tr>
           </thead>
@@ -117,12 +119,12 @@
       </div>
 
       <div class="col-xs-12">
-        <h3>Processors</h3>
+        <h3><@spring.message "dashboard.jvm.processors"/></h3>
         <table class="table table-stripped small">
           <thead>
           <tr>
             <th>
-              Total
+              <@spring.message "dashboard.jvm.processors.total"/>
             </th>
           </tr>
           </thead>

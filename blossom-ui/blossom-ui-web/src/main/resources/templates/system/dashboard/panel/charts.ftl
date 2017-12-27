@@ -1,23 +1,23 @@
+<#import "/spring.ftl" as spring>
+
 <div class="row">
   <div class="col-lg-12">
     <div class="ibox float-e-margins">
       <div class="ibox-content text-center" style="position: relative">
         <p>
-          <a class="btn btn-primary btn-xs btn-rounded" data-toggle="period" data-period="PAST_WEEK">Past week</a>
-          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_5_DAYS">Past 5 days</a>
-          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_3_DAYS">Past 3 days</a>
-          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_2_DAYS">Past 2 days</a>
-          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="YESTERDAY">Yesterday</a>
-          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="TODAY">Today</a>
+          <a class="btn btn-primary btn-xs btn-rounded" data-toggle="period" data-period="PAST_WEEK"><@spring.message "dashboard.charts.period.PAST_WEEK"/></a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_5_DAYS"><@spring.message "dashboard.charts.period.PAST_5_DAYS"/></a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_3_DAYS"><@spring.message "dashboard.charts.period.PAST_3_DAYS"/></a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_2_DAYS"><@spring.message "dashboard.charts.period.PAST_2_DAYS"/></a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="YESTERDAY"><@spring.message "dashboard.charts.period.YESTERDAY"/></a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="TODAY"><@spring.message "dashboard.charts.period.TODAY"/></a>
           <br/>
-          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_24_HOURS">Past 24h</a>
-          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_12_HOURS">Past 12h</a>
-          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_6_HOURS">Past 6h</a>
-          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_HOUR">Past hour</a>
-          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_30_MINUTES">Past 30
-            minutes</a>
-          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_5_MINUTES">Past 5
-            minutes</a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_24_HOURS"><@spring.message "dashboard.charts.period.PAST_24_HOURS"/></a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_12_HOURS"><@spring.message "dashboard.charts.period.PAST_12_HOURS"/></a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_6_HOURS"><@spring.message "dashboard.charts.period.PAST_6_HOURS"/></a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_HOUR"><@spring.message "dashboard.charts.period.PAST_HOUR"/></a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_30_MINUTES"><@spring.message "dashboard.charts.period.PAST_30_MINUTES"/></a>
+          <a class="btn btn-default btn-xs btn-rounded" data-toggle="period" data-period="PAST_5_MINUTES"><@spring.message "dashboard.charts.period.PAST_5_MINUTES"/></a>
         </p>
       </div>
     </div>
@@ -28,7 +28,7 @@
   <div class="col-lg-12">
     <div id="requests" class="ibox float-e-margins">
       <div class="ibox-title">
-        <h5>Requests</h5>
+        <h5><@spring.message "dashboard.charts.request"/></h5>
       </div>
       <div class="ibox-content" style="position: relative">
         <div class="sk-spinner sk-spinner-wave">
@@ -48,7 +48,7 @@
   <div class="col-lg-4">
     <div id="response_status" class="ibox float-e-margins">
       <div class="ibox-title">
-        <h5>Response status</h5>
+        <h5><@spring.message "dashboard.charts.response_status"/></h5>
       </div>
       <div class="ibox-content">
         <div class="sk-spinner sk-spinner-wave">
@@ -65,7 +65,7 @@
   <div class="col-lg-4">
     <div id="response_time" class="ibox float-e-margins">
       <div class="ibox-title">
-        <h5>Response time</h5>
+        <h5><@spring.message "dashboard.charts.response_time"/></h5>
       </div>
       <div class="ibox-content">
         <div class="sk-spinner sk-spinner-wave">
@@ -82,7 +82,7 @@
   <div class="col-lg-4">
     <div id="response_content_type" class="ibox float-e-margins">
       <div class="ibox-title">
-        <h5>Response content types</h5>
+        <h5><@spring.message "dashboard.charts.response_content_type"/></h5>
       </div>
       <div class="ibox-content">
         <div class="sk-spinner sk-spinner-wave">
@@ -101,7 +101,7 @@
   <div class="col-lg-6">
     <div id="top_uris" class="ibox float-e-margins">
       <div class="ibox-title">
-        <h5>Top URIs</h5>
+        <h5><@spring.message "dashboard.charts.top_uris"/></h5>
       </div>
       <div class="ibox-content">
         <div class="sk-spinner sk-spinner-wave">
@@ -114,8 +114,8 @@
         <table class="table table-responsive table-stripped">
           <thead>
           <tr>
-            <th>URI</th>
-            <th>Count</th>
+            <th><@spring.message "dashboard.charts.top_uris.uri"/></th>
+            <th><@spring.message "dashboard.charts.top_uris.count"/></th>
           </tr>
           </thead>
           <tbody>
@@ -127,7 +127,7 @@
   <div class="col-lg-6">
     <div id="flop_uris" class="ibox float-e-margins">
       <div class="ibox-title">
-        <h5>Flop URIs</h5>
+        <h5><@spring.message "dashboard.charts.flop_uris"/></h5>
       </div>
       <div class="ibox-content">
         <div class="sk-spinner sk-spinner-wave">
@@ -141,8 +141,8 @@
         <table class="table table-responsive table-stripped">
           <thead>
           <tr>
-            <th>URI</th>
-            <th>Count</th>
+            <th><@spring.message "dashboard.charts.flop_uris.uri"/></th>
+            <th><@spring.message "dashboard.charts.flop_uris.count"/></th>
           </tr>
           </thead>
           <tbody>

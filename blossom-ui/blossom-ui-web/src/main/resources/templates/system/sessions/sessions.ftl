@@ -27,15 +27,15 @@
   <div class="col-xs-12 col-md-6">
     <div class="ibox float-e-margins">
       <div class="ibox-title">
-        <h5>Active sessions</h5>
+        <h5><@spring.message "sessions.properties.active_sessions"/></h5>
       </div>
       <div class="ibox-content">
 
         <table class="table table-stripped">
           <thead>
           <tr>
-            <th>Name</th>
-            <th>Sessions</th>
+            <th><@spring.message "sessions.properties.name"/></th>
+            <th><@spring.message "sessions.properties.sessions"/></th>
           </tr>
           </thead>
           <tbody>
@@ -84,16 +84,16 @@
   <div class="col-xs-12 col-md-6">
     <div class="ibox float-e-margins">
       <div class="ibox-title">
-        <h5>Failed login attempts</h5>
+        <h5><@spring.message "sessions.properties.failed_login_attemps"/></h5>
       </div>
       <div class="ibox-content">
 
         <table class="table table-stripped">
           <thead>
           <tr>
-            <th>Identifier</th>
-            <th>IP</th>
-            <th>Attemps</th>
+            <th><@spring.message "sessions.properties.identifier"/></th>
+            <th><@spring.message "sessions.properties.ip_address"/></th>
+            <th><@spring.message "sessions.properties.attempts"/></th>
           </tr>
           </thead>
           <tbody>

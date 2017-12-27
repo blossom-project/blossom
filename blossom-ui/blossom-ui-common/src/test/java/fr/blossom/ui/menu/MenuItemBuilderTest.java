@@ -154,7 +154,7 @@ public class MenuItemBuilderTest {
       .key("test").label("test")
       .build();
     assertNotNull(menuItem.order());
-    assertEquals(Integer.MIN_VALUE, menuItem.order());
+    assertEquals(Integer.MAX_VALUE, menuItem.order());
   }
 
 

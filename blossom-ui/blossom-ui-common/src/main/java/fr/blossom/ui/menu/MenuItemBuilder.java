@@ -21,7 +21,7 @@ public class MenuItemBuilder {
   private String link;
   private String privilege;
   private MenuItem parent;
-  private int order = Integer.MIN_VALUE;
+  private int order = Integer.MAX_VALUE;
   private boolean leaf = true;
 
   /**

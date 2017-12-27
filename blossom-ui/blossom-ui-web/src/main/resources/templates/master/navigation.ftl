@@ -87,7 +87,7 @@
       </li>
       <li>
         <a href="/blossom/logout">
-          <i class="fa fa-sign-out"></i> Log out
+          <i class="fa fa-sign-out"></i> <@spring.message "login.logout"/>
         </a>
       </li>
     </ul>
