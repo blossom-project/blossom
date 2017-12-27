@@ -34,8 +34,7 @@ public class LimitLoginAuthenticationProviderTest {
   public void setUp() throws Exception {
     this.userDetailsService = mock(UserDetailsService.class);
     this.loginAttemptsService = mock(LoginAttemptsService.class);
-    this.authProvider = new LimitLoginAuthenticationProvider(this.userDetailsService,
-      this.loginAttemptsService);
+    this.authProvider = new LimitLoginAuthenticationProvider(this.userDetailsService, this.loginAttemptsService);
   }
 
   @Test

@@ -5,14 +5,14 @@ import fr.blossom.core.common.PluginConstants;
 import fr.blossom.core.common.utils.privilege.Privilege;
 import fr.blossom.core.user.UserService;
 import fr.blossom.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
-import fr.blossom.ui.security.CurrentUserDetailsServiceImpl;
-import fr.blossom.ui.security.SystemUserDetailsServiceImpl;
 import fr.blossom.ui.security.AuthenticationFailureListener;
 import fr.blossom.ui.security.AuthenticationSuccessListener;
 import fr.blossom.ui.security.CompositeUserDetailsServiceImpl;
+import fr.blossom.ui.security.CurrentUserDetailsServiceImpl;
 import fr.blossom.ui.security.LimitLoginAuthenticationProvider;
 import fr.blossom.ui.security.LoginAttemptServiceImpl;
 import fr.blossom.ui.security.LoginAttemptsService;
+import fr.blossom.ui.security.SystemUserDetailsServiceImpl;
 import fr.blossom.ui.web.utils.session.BlossomSessionRegistryImpl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,17 +77,21 @@ public class WebSecurityAutoConfiguration {
   }
 
   @Bean
-  public UserDetailsService systemUserDetailsService(@Qualifier(PluginConstants.PLUGIN_PRIVILEGES) PluginRegistry<Privilege, String> privilegeRegistry,
+  public UserDetailsService systemUserDetailsService(
+    @Qualifier(PluginConstants.PLUGIN_PRIVILEGES) PluginRegistry<Privilege, String> privilegeRegistry,
     DefaultAccountProperties properties, PasswordEncoder passwordEncoder) {
     if (properties.isEnabled()) {
-      return new SystemUserDetailsServiceImpl(privilegeRegistry, properties.getIdentifier(), passwordEncoder.encode(properties.getPassword()));
+      return new SystemUserDetailsServiceImpl(privilegeRegistry, properties.getIdentifier(),
+        passwordEncoder.encode(properties.getPassword()));
     }
     return null;
   }
 
   @Bean
-  public UserDetailsService compositeUserDetailsService(List<UserDetailsService> userDetailsServices) {
-    return new CompositeUserDetailsServiceImpl(userDetailsServices.toArray(new UserDetailsService[userDetailsServices.size()]));
+  public UserDetailsService compositeUserDetailsService(
+    List<UserDetailsService> userDetailsServices) {
+    return new CompositeUserDetailsServiceImpl(
+      userDetailsServices.toArray(new UserDetailsService[userDetailsServices.size()]));
   }
 
   @Bean
@@ -103,8 +107,7 @@ public class WebSecurityAutoConfiguration {
     LoginAttemptsService loginAttempsService) {
 
     LimitLoginAuthenticationProvider provider = new LimitLoginAuthenticationProvider(
-      compositeUserDetailsService,
-      loginAttempsService);
+      compositeUserDetailsService, loginAttempsService);
     provider.setPasswordEncoder(passwordEncoder);
     return provider;
   }
