@@ -1,29 +1,28 @@
-package fr.blossom.crypto.token;
+package fr.blossom.core.crypto.token;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.core.token.Token;
 
-import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
-import java.util.Base64;
-
-import static org.junit.Assert.*;
-
 @RunWith(MockitoJUnitRunner.class)
 public class StatelessSecretTokenServiceTest {
 
-  private TokenServiceFactory tokenServiceFactory;
   private StatelessSecretTokenService statelessSecretTokenService;
   private String testData;
 
   @Before
   public void setUp() {
-    tokenServiceFactory = new TokenServiceFactory(new SecureRandom());
-    statelessSecretTokenService = new StatelessSecretTokenService(tokenServiceFactory.generateSecret());
-    testData = tokenServiceFactory.generateSecret(); // Here the "secret" is used as random data to encrypt/decrypt
+    this.testData = "testSecret";
+    this.statelessSecretTokenService = new StatelessSecretTokenService(this.testData);
   }
 
   @Test(expected = Exception.class)
@@ -33,22 +32,27 @@ public class StatelessSecretTokenServiceTest {
 
   @Test
   public void should_encrypt_bytes_not_return_null() {
-    String token = statelessSecretTokenService.cryptBytes(testData.getBytes(StandardCharsets.UTF_8));
+    String token = statelessSecretTokenService
+      .cryptBytes(testData.getBytes(StandardCharsets.UTF_8));
     assertNotNull(token);
   }
 
   @Test
   public void should_encrypt_bytes_not_contain_unencrypted_data() {
-    String token = statelessSecretTokenService.cryptBytes(testData.getBytes(StandardCharsets.UTF_8));
+    String token = statelessSecretTokenService
+      .cryptBytes(testData.getBytes(StandardCharsets.UTF_8));
     assertNotEquals(token, testData);
     assertFalse(token.contains(testData));
-    assertFalse(token.contains(Base64.getEncoder().encodeToString(testData.getBytes(StandardCharsets.UTF_8))));
+    assertFalse(token
+      .contains(Base64.getEncoder().encodeToString(testData.getBytes(StandardCharsets.UTF_8))));
   }
 
   @Test
   public void should_decrypt_bytes_return_original_data() {
-    String token = statelessSecretTokenService.cryptBytes(testData.getBytes(StandardCharsets.UTF_8));
-    assertEquals(testData, new String(statelessSecretTokenService.decryptBytes(token), StandardCharsets.UTF_8));
+    String token = statelessSecretTokenService
+      .cryptBytes(testData.getBytes(StandardCharsets.UTF_8));
+    assertEquals(testData,
+      new String(statelessSecretTokenService.decryptBytes(token), StandardCharsets.UTF_8));
   }
 
   @Test

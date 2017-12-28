@@ -25,5 +25,6 @@
     <module>blossom-core-scheduler</module>
     <module>blossom-core-cache</module>
     <module>blossom-core-validation</module>
+    <module>blossom-core-crypto</module>
   </modules>
 </project>

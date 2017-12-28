@@ -19,7 +19,6 @@
     <module>blossom-module-bpmn</module>
     <module>blossom-module-filemanager</module>
     <module>blossom-module-articles</module>
-    <module>blossom-module-crypto</module>
   </modules>
 
 </project>

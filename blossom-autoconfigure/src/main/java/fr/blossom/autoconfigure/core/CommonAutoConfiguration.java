@@ -67,23 +67,12 @@ public class CommonAutoConfiguration {
   private final static Logger logger = LoggerFactory.getLogger(CommonAutoConfiguration.class);
 
   @Bean
-  @ConditionalOnMissingBean(SecureRandom.class)
-  public SecureRandom secureRandom() {
-    try {
-      return SecureRandom.getInstance("SHA1PRNG");
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException("Can't find the SHA1PRNG algorithm for generating random numbers",
-        e);
-    }
-  }
-
-  @Bean
   @ConditionalOnMissingBean(TokenService.class)
-  public KeyBasedPersistenceTokenService keyBasedPersistenceTokenService() {
+  public KeyBasedPersistenceTokenService keyBasedPersistenceTokenService(SecureRandom secureRandom) {
     KeyBasedPersistenceTokenService keyBasedPersistenceTokenService = new KeyBasedPersistenceTokenService();
-    keyBasedPersistenceTokenService.setServerInteger(secureRandom().nextInt());
-    keyBasedPersistenceTokenService.setServerSecret(secureRandom().nextLong() + "");
-    keyBasedPersistenceTokenService.setSecureRandom(secureRandom());
+    keyBasedPersistenceTokenService.setServerInteger(secureRandom.nextInt());
+    keyBasedPersistenceTokenService.setServerSecret(secureRandom.nextLong() + "");
+    keyBasedPersistenceTokenService.setSecureRandom(secureRandom);
 
     return keyBasedPersistenceTokenService;
   }
@@ -97,8 +86,8 @@ public class CommonAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(PasswordEncoder.class)
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder(10, secureRandom());
+  public PasswordEncoder passwordEncoder(SecureRandom secureRandom) {
+    return new BCryptPasswordEncoder(10, secureRandom);
   }
 
   @Bean

@@ -21,24 +21,10 @@ StatelessSecretTokenService is a secret token service using Spring's
 BouncyCastleAesGcmBytesEncryptor : AES-256 AES/GCM/NoPadding encryption at the
 time of writing.
 
-By default the secret is generated on bean instantiation, which means tokens
+By default the secret is generated randomly on bean instantiation, which means tokens
 can't be shared between instances or survive application restarts. To provide a
 persistent token, define in configuration:
 
 ```ini
-my.secret=<your secret here>
-```
-
-```java
-@Configuration
-public class MyCustomBlossomCryptoConfiguration {
-    
-    @Bean
-    public TokenService getTokenService(
-            TokenServiceFactory factory,
-            @Value("${my.secret}") String secret) {
-        return factory.statelessSecretTokenService(secret);
-    }
-    
-}
+blossom.crypto.secret=<your secret here>
 ```

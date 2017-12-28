@@ -1,5 +1,10 @@
-package fr.blossom.crypto.token;
+package fr.blossom.core.crypto.token;
 
+import com.google.common.base.Preconditions;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Date;
 import org.springframework.security.core.token.DefaultToken;
 import org.springframework.security.core.token.Token;
 import org.springframework.security.core.token.TokenService;
@@ -7,20 +12,12 @@ import org.springframework.security.crypto.encrypt.BouncyCastleAesGcmBytesEncryp
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Date;
-
 public class StatelessSecretTokenService implements TokenService {
 
   private final String secret;
 
   public StatelessSecretTokenService(String secret) {
-    if (secret == null) {
-      throw new IllegalArgumentException("secret can't be null");
-    }
-
+    Preconditions.checkArgument(secret != null, "Provided secret can't be null");
     this.secret = secret;
   }
 
@@ -28,9 +25,7 @@ public class StatelessSecretTokenService implements TokenService {
   public Token allocateToken(String extendedInformation) {
     Date createdAt = new Date();
     String fullInformation = Long.toString(createdAt.getTime()) + ":" + extendedInformation;
-
     String key = cryptBytes(fullInformation.getBytes(StandardCharsets.UTF_8));
-
     return new DefaultToken(key, createdAt.getTime(), extendedInformation);
   }
 
@@ -40,7 +35,8 @@ public class StatelessSecretTokenService implements TokenService {
     String[] informationParts = fullInformation.split(":");
 
     Date createdAt = new Date(Long.parseLong(informationParts[0]));
-    String extendedInformation = String.join(":", Arrays.copyOfRange(informationParts, 1, informationParts.length));
+    String extendedInformation = String
+      .join(":", Arrays.copyOfRange(informationParts, 1, informationParts.length));
 
     return new DefaultToken(key, createdAt.getTime(), extendedInformation);
   }
@@ -51,7 +47,7 @@ public class StatelessSecretTokenService implements TokenService {
    * @param data A byte array to turn into a token
    * @return A reversible token that contains the data
    */
-  public String cryptBytes(byte[] data) {
+  protected String cryptBytes(byte[] data) {
     final String salt = KeyGenerators.string().generateKey();
 
     BytesEncryptor encryptor = new BouncyCastleAesGcmBytesEncryptor(secret, salt);
@@ -66,11 +62,11 @@ public class StatelessSecretTokenService implements TokenService {
    *
    * @param token A token (key) obtained from this TokenService
    * @return The original data as a byte array
-   * @throws NullPointerException           if token is null
-   * @throws IllegalStateException          if data cannot be decrypted using this instance's secret
+   * @throws NullPointerException if token is null
+   * @throws IllegalStateException if data cannot be decrypted using this instance's secret
    * @throws ArrayIndexOutOfBoundsException if token is malformed
    */
-  public byte[] decryptBytes(String token) {
+  protected byte[] decryptBytes(String token) {
     String[] parts = token.split("\\.");
     String salt = parts[0];
     String encrypted = parts[1];
