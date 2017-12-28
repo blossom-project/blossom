@@ -12,6 +12,12 @@ import org.springframework.security.crypto.encrypt.BouncyCastleAesGcmBytesEncryp
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 
+/**
+ * An implementation of {@link TokenService} that generates an AES 256 crypted token with a secret.
+ *
+ * @author Raphaël Lejolivet
+ *
+ */
 public class StatelessSecretTokenService implements TokenService {
 
   private final String secret;
