@@ -1,8 +1,11 @@
 package fr.blossom.autoconfigure.core;
 
 import fr.blossom.core.scheduler.AutowiringSpringBeanJobFactory;
+import fr.blossom.core.scheduler.history.TriggerHistoryDao;
+import fr.blossom.core.scheduler.history.TriggerHistoryDaoImpl;
 import fr.blossom.core.scheduler.job.ScheduledJobService;
 import fr.blossom.core.scheduler.job.ScheduledJobServiceImpl;
+import fr.blossom.core.scheduler.listener.GlobalTriggerListener;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -17,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
@@ -34,7 +38,20 @@ public class SchedulerAutoConfiguration {
   }
 
   @Bean
-  public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory, List<Trigger> triggers, @Value("${blossom.scheduler.name}") String schedulerName) throws IOException {
+  public TriggerHistoryDao triggerHistoryDao(JdbcTemplate jdbcTemplate) {
+    return new TriggerHistoryDaoImpl(jdbcTemplate);
+  }
+
+  @Bean
+  public GlobalTriggerListener globalTriggerListener(TriggerHistoryDao triggerHistoryDao) {
+    return new GlobalTriggerListener(triggerHistoryDao);
+  }
+
+
+  @Bean
+  public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory,
+    List<Trigger> triggers, @Value("${blossom.scheduler.name}") String schedulerName,
+    GlobalTriggerListener globalTriggerListener) throws IOException {
     SchedulerFactoryBean factory = new SchedulerFactoryBean();
     factory.setSchedulerName(schedulerName);
     factory.setOverwriteExistingJobs(true);
@@ -42,6 +59,7 @@ public class SchedulerAutoConfiguration {
     factory.setDataSource(dataSource);
     factory.setJobFactory(jobFactory);
     factory.setQuartzProperties(quartzProperties());
+    factory.setGlobalTriggerListeners(globalTriggerListener);
 
     // Here we will set all the trigger beans we have defined.
     if (triggers != null && !triggers.isEmpty()) {
@@ -60,8 +78,9 @@ public class SchedulerAutoConfiguration {
   }
 
   @Bean
-  public ScheduledJobService scheduledJobService(Scheduler scheduler) {
-    return new ScheduledJobServiceImpl(scheduler);
+  public ScheduledJobService scheduledJobService(Scheduler scheduler,
+    TriggerHistoryDao triggerHistoryDao) {
+    return new ScheduledJobServiceImpl(scheduler, triggerHistoryDao);
   }
 
 }

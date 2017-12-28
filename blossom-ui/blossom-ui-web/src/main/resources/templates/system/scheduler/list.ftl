@@ -38,10 +38,14 @@
       </td>
 
       <td class="project-lastExecution">
-        <#if jobInfo.previousFireTime??>
-          <i class="fa fa-thumbs-up text-success"></i> ${jobInfo.previousFireTime?datetime}
+        <#if jobInfo.lastExecutedTrigger??>
+          <i class="fa fa-thumbs-up text-success"></i> ${jobInfo.lastExecutedTrigger.startTime?datetime}
         <#else>
-          <i class="fa fa-thumbs-down text-danger"></i> <@spring.message "never"/>
+          <#if jobInfo.previousFireTime??>
+            <i class="fa fa-thumbs-up text-success"></i> ${jobInfo.previousFireTime?datetime}
+          <#else>
+            <i class="fa fa-thumbs-down text-danger"></i> <@spring.message "never"/>
+          </#if>
         </#if>
       </td>
 

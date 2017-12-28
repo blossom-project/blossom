@@ -1,0 +1,66 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+  <changeSet id="blossom_core_scheduler_create_table_trigger_history" author="mgargadennec">
+
+    <createTable tableName="qrtz_trigger_history">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true" nullable="false" unique="true"/>
+      </column>
+
+      <column name="trigger_name" type="varchar(200)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="trigger_group" type="varchar(200)">
+        <constraints nullable="true"/>
+      </column>
+
+      <column name="job_name" type="varchar(200)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="job_group" type="varchar(200)">
+        <constraints nullable="true"/>
+      </column>
+
+      <column name="fire_instance_id" type="varchar(200)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="start_time" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="end_time" type="timestamp">
+        <constraints nullable="true"/>
+      </column>
+
+      <column name="creation_date" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="creation_user" type="varchar(25)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="modification_date" type="timestamp">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="modification_user" type="varchar(25)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex indexName="index_trigger_history_job"
+      tableName="qrtz_trigger_history">
+      <column name="job_group" type="varchar(200)"/>
+      <column name="job_name" type="varchar(200)"/>
+    </createIndex>
+  </changeSet>
+</databaseChangeLog>
