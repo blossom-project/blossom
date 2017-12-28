@@ -8,12 +8,6 @@ import fr.blossom.core.common.service.ReadOnlyServicePlugin;
 import fr.blossom.core.common.utils.action_token.ActionTokenService;
 import fr.blossom.core.common.utils.action_token.ActionTokenServiceImpl;
 import fr.blossom.core.common.utils.privilege.Privilege;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.apache.tika.Tika;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -42,9 +36,17 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
@@ -76,7 +78,7 @@ public class CommonAutoConfiguration {
   }
 
   @Bean
-  @ConditionalOnMissingBean(KeyBasedPersistenceTokenService.class)
+  @ConditionalOnMissingBean(TokenService.class)
   public KeyBasedPersistenceTokenService keyBasedPersistenceTokenService() {
     KeyBasedPersistenceTokenService keyBasedPersistenceTokenService = new KeyBasedPersistenceTokenService();
     keyBasedPersistenceTokenService.setServerInteger(secureRandom().nextInt());
@@ -88,9 +90,9 @@ public class CommonAutoConfiguration {
 
   @Bean
   @ConditionalOnClass(ActionTokenService.class)
-  public ActionTokenService actionTokenService(
-    KeyBasedPersistenceTokenService keyBasedPersistenceTokenService) {
-    return new ActionTokenServiceImpl(keyBasedPersistenceTokenService);
+  public ActionTokenService defaultActionTokenService(
+    TokenService tokenService) {
+    return new ActionTokenServiceImpl(tokenService);
   }
 
   @Bean
