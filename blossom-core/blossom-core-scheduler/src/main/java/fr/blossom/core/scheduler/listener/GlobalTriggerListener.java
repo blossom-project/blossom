@@ -40,9 +40,11 @@ public class GlobalTriggerListener implements TriggerListener {
 
   @Override
   public void triggerFired(Trigger trigger, JobExecutionContext context) {
-    logger.info("Trigger fired with id {} for triggerKey ({} - {}) for jobKey ({} - {})",
-      context.getFireInstanceId(), trigger.getKey().getGroup(), trigger.getKey().getName(),
-      trigger.getJobKey().getGroup(), trigger.getJobKey().getName());
+    if(logger.isDebugEnabled()){
+      logger.debug("Trigger fired with id {} for triggerKey ({} - {}) for jobKey ({} - {})",
+        context.getFireInstanceId(), trigger.getKey().getGroup(), trigger.getKey().getName(),
+        trigger.getJobKey().getGroup(), trigger.getJobKey().getName());
+    }
 
     TriggerHistory history = new TriggerHistory();
     history.ensureId();
@@ -58,10 +60,12 @@ public class GlobalTriggerListener implements TriggerListener {
   @Override
   public void triggerComplete(Trigger trigger, JobExecutionContext context,
     CompletedExecutionInstruction triggerInstructionCode) {
-    logger
-      .info("Trigger completed with id {} for triggerKey ({} - {}) for jobKey ({} - {})",
-        context.getFireInstanceId(), trigger.getKey().getGroup(), trigger.getKey().getName(),
-        trigger.getJobKey().getGroup(), trigger.getJobKey().getName());
+    if(logger.isDebugEnabled()) {
+      logger
+        .debug("Trigger completed with id {} for triggerKey ({} - {}) for jobKey ({} - {})",
+          context.getFireInstanceId(), trigger.getKey().getGroup(), trigger.getKey().getName(),
+          trigger.getJobKey().getGroup(), trigger.getJobKey().getName());
+    }
 
     String fireInstanceId = context.getFireInstanceId();
     triggerHistoryDao.updateEndDate(fireInstanceId);
