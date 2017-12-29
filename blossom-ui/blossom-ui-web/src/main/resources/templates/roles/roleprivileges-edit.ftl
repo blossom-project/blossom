@@ -16,22 +16,22 @@
 
   <#list privileges?keys as namespace>
     <div>
-      <h3 class="text-capitalize">${namespace}</h3>
+      <h3>
+        <@spring.messageText "right."+namespace namespace/>
+      </h3>
       <div class="row">
         <#list privileges[namespace]?keys as feature>
           <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 feature-${feature}">
             <div class="form-group">
               <div class="col-sm-12">
-                <h5 class="text-capitalize">
-                  ${feature}
+                <h5>
+                  <@spring.messageText "right."+namespace+"."+feature feature/>
                 </h5>
-
                 <#list privileges[namespace][feature] as privilege>
                   <div class="m-l-md">
                     <label>
-                      <input type="checkbox" value="${privilege.privilege()}" name="privileges"
-                             <#if rolePrivilegeUpdateForm.privileges?seq_contains(privilege.privilege())>checked="checked"</#if>>
-                    ${privilege.right()}
+                      <input type="checkbox" value="${privilege.privilege()}" name="privileges" <#if rolePrivilegeUpdateForm.privileges?seq_contains(privilege.privilege())>checked="checked"</#if>>
+                      <@spring.messageText "right."+namespace+"."+feature+"."+privilege.right() privilege.right() />
                     </label>
                   </div>
                 </#list>

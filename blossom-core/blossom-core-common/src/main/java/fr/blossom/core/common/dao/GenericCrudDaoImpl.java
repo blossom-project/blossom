@@ -49,7 +49,8 @@ public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends
     Preconditions.checkArgument(toUpdate != null);
     ENTITY entity = this.repository.findOne(id);
     Preconditions.checkArgument(entity != null);
-    Preconditions.checkArgument(entity.getId() == toUpdate.getId());
+    Preconditions.checkArgument(entity.getId() != null);
+    Preconditions.checkArgument(entity.getId().equals(toUpdate.getId()));
 
     ENTITY modifiedEntity = toUpdate;
     entity = this.updateEntity(entity, modifiedEntity);
