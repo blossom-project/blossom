@@ -1,5 +1,6 @@
 package fr.blossom.core.scheduler.history;
 
+import com.google.common.collect.Lists;
 import java.sql.Timestamp;
 import java.util.List;
 import org.quartz.JobKey;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 public class TriggerHistoryDaoImpl implements TriggerHistoryDao {
+
   private final static Logger logger = LoggerFactory.getLogger(TriggerHistoryDaoImpl.class);
 
   private final static String TABLE_NAME = "qrtz_trigger_history";
@@ -30,30 +32,44 @@ public class TriggerHistoryDaoImpl implements TriggerHistoryDao {
     return triggerHistory;
   };
   private final JdbcTemplate jdbcTemplate;
+  private final Integer maxHistorySize;
 
-  public TriggerHistoryDaoImpl(JdbcTemplate jdbcTemplate) {
+  public TriggerHistoryDaoImpl(JdbcTemplate jdbcTemplate, Integer maxHistorySize) {
     this.jdbcTemplate = jdbcTemplate;
+    this.maxHistorySize = maxHistorySize;
   }
 
   @Override
-  public TriggerHistory getLastForJob(JobKey jobKey) {
+  public List<TriggerHistory> getJobHistory(JobKey jobKey) {
+    List<TriggerHistory> history = null;
     try {
-      List<TriggerHistory> history = jdbcTemplate.query(
+      List<TriggerHistory> histories = jdbcTemplate.query(
         "select * from " + TABLE_NAME
           + " where job_group=? and job_name=? order by start_time desc",
         new Object[]{jobKey.getGroup(), jobKey.getName()},
         mapper);
 
-      if(history.isEmpty()){
-        return null;
+      if (histories.isEmpty()) {
+        return Lists.newArrayList();
       }
-      return history.get(0);
 
-    }catch(Exception e){
-      logger.error("Cannot get last TriggerHistory",e);
-      return null;
+      if (histories.size() > this.maxHistorySize) {
+        this.cleanHistory(jobKey, histories.get(this.maxHistorySize).getStartTime());
+        history = histories.subList(0, this.maxHistorySize);
+      } else {
+        history = histories;
+      }
+      return history;
+    } catch (Exception e) {
+      logger.error("Cannot get last TriggerHistory", e);
+      return history;
     }
+  }
 
+  private void cleanHistory(JobKey jobKey, Timestamp olderThan) {
+    this.jdbcTemplate
+      .update("DELETE FROM " + TABLE_NAME + " WHERE job_group=? and job_name=? and start_time <= ?",
+        jobKey.getGroup(), jobKey.getName(), olderThan);
   }
 
   @Override

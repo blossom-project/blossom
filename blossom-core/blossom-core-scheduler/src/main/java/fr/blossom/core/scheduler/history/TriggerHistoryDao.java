@@ -1,10 +1,11 @@
 package fr.blossom.core.scheduler.history;
 
+import java.util.List;
 import org.quartz.JobKey;
 
 public interface TriggerHistoryDao {
 
-  TriggerHistory getLastForJob(JobKey jobKey);
+  List<TriggerHistory> getJobHistory(JobKey jobKey);
 
   void create(TriggerHistory triggerHistory);
 

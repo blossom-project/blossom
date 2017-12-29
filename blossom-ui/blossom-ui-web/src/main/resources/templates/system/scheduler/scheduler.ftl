@@ -1,5 +1,6 @@
 <#import "/spring.ftl" as spring>
 <#import "/master/master.ftl" as master>
+<#import "/utils/notification.ftl" as notification>
 
 
 <@master.default currentUser=currentUser>
@@ -165,10 +166,11 @@
     updateDetailPane(null)
   });
 
-  $(document).on("scheduledTaskExecution", function (event, href) {
-    console.log("scheduledTaskExecution", event);
-    $.post(href, function(data){
-      console.log("executed");
+  $(document).on("scheduledTaskExecution", function (event, executeNowHref, refreshHref) {
+    console.log(event, executeNowHref, refreshHref);
+    $.post(executeNowHref, function(data){
+      <@notification.success message="scheduler.execution.manual.message"/>
+      $(document).trigger("scheduledTaskSelected", refreshHref);
     })
   });
 

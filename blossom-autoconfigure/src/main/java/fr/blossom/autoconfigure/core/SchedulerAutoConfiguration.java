@@ -39,7 +39,7 @@ public class SchedulerAutoConfiguration {
 
   @Bean
   public TriggerHistoryDao triggerHistoryDao(JdbcTemplate jdbcTemplate) {
-    return new TriggerHistoryDaoImpl(jdbcTemplate);
+    return new TriggerHistoryDaoImpl(jdbcTemplate, 10);
   }
 
   @Bean

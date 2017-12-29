@@ -71,11 +71,12 @@
       <div class="col-lg-12">
         <table class="table table-striped">
           <thead>
-          <tr>
-            <th><@spring.message "scheduler.triggers.name"/></th>
-            <th><@spring.message "scheduler.triggers.type"/></th>
-            <th><@spring.message "scheduler.triggers.next_fire"/></th>
-          </tr>
+            <tr>
+              <th><@spring.message "scheduler.triggers.name"/></th>
+              <th><@spring.message "scheduler.triggers.type"/></th>
+              <th><@spring.message "scheduler.triggers.next_fire"/></th>
+            </tr>
+          </thead>
           <tbody>
           <#list jobInfo.triggers as trigger>
             <tr>
@@ -89,15 +90,40 @@
             <td><i class="fa fa-play"></i> <@spring.message "action.manual"/></td>
             <td>
               <button class="btn btn-danger btn-xs btn-block"
-                      data-href="/blossom/system/scheduler/${jobInfo.key.group}/${jobInfo.key.name}/_execute"
-                      onclick="$(document).trigger('scheduledTaskExecution',$(this).data('href'));">
+                      data-refresh-href="/blossom/system/scheduler/${jobInfo.key.group}/${jobInfo.key.name}"
+                      data-execute-now-href="/blossom/system/scheduler/${jobInfo.key.group}/${jobInfo.key.name}/_execute"
+                      onclick="$(document).trigger('scheduledTaskExecution', [$(this).data('execute-now-href'), $(this).data('refresh-href')]);">
                 <@spring.message "now"/>
               </button>
             </td>
           </tr>
           </tbody>
+        </table>
+      </div>
+    </div>
 
+    <br/>
+    <strong class="m-t-lg"><@spring.message "scheduler.history.title"/></strong>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th><@spring.message "scheduler.trigger.title"/></th>
+            <th><@spring.message "scheduler.history.start_time"/></th>
+            <th><@spring.message "scheduler.history.end_time"/></th>
+          </tr>
           </thead>
+          <tbody>
+            <#list jobInfo.history as history>
+              <tr>
+                <td><@spring.messageText "scheduler.trigger.name."+history.triggerKey.name history.triggerKey.name/></td>
+                <td><#if history.startTime??>${history.startTime?datetime}</#if></td>
+                <td><#if history.endTime??>${history.endTime?datetime}</#if></td>
+              </tr>
+            </#list>
+          </tbody>
         </table>
       </div>
     </div>

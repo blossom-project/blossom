@@ -2,7 +2,9 @@ package fr.blossom.core.scheduler.job;
 
 import static org.quartz.impl.matchers.GroupMatcher.groupEquals;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import fr.blossom.core.scheduler.history.TriggerHistory;
 import fr.blossom.core.scheduler.history.TriggerHistoryDao;
 import java.util.List;
 import java.util.Set;
@@ -123,8 +125,11 @@ public class ScheduledJobServiceImpl implements ScheduledJobService {
       JobInfo jobInfo = new JobInfo(jobKey);
       jobInfo.setDetail(jobDetail);
       jobInfo.setTriggers(triggers);
-      jobInfo.setLastExecutedTrigger(triggerHistoryDao.getLastForJob(jobKey));
       jobInfo.setJobExecutionContexts(jobExecutionContexts);
+
+      List<TriggerHistory> triggerHistories = triggerHistoryDao.getJobHistory(jobKey);
+      jobInfo.setLastExecutedTrigger(Iterables.getFirst(triggerHistories, null));
+      jobInfo.setHistory(triggerHistories);
 
       return jobInfo;
     } catch (SchedulerException e) {

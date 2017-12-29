@@ -16,6 +16,7 @@ public class JobInfo {
   private JobKey key;
   private JobDetail detail;
   private TriggerHistory lastExecutedTrigger;
+  private List<TriggerHistory> history;
   private List<? extends Trigger> triggers;
   private List<JobExecutionContext> jobExecutionContexts;
 
@@ -41,6 +42,14 @@ public class JobInfo {
 
   public void setLastExecutedTrigger(TriggerHistory lastExecutedTrigger) {
     this.lastExecutedTrigger = lastExecutedTrigger;
+  }
+
+  public List<TriggerHistory> getHistory() {
+    return history;
+  }
+
+  public void setHistory(List<TriggerHistory> history) {
+    this.history = history;
   }
 
   public List<? extends Trigger> getTriggers() {
