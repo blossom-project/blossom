@@ -38,7 +38,7 @@
                 <li data-menuId="${subMenuItem.key()}" <#if currentMenu?seq_contains(subMenuItem.key())>class="active"</#if>>
                   <#if subMenuItem.link()??><a href="${subMenuItem.link()}"></#if>
                   <#if subMenuItem.icon()??><i class="${subMenuItem.icon()}"></i></#if>
-                  <span class="nav-label"><@spring.messageText subMenuItem.label() subMenuItem.label()/></span>
+                  <@spring.messageText subMenuItem.label() subMenuItem.label()/>
                   <#if subMenuItem.link??></a></#if>
                 </li>
                 </#if>
