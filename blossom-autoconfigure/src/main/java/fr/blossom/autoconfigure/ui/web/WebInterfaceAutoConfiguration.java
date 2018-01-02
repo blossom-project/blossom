@@ -14,6 +14,7 @@ import fr.blossom.ui.web.ErrorControllerAdvice;
 import fr.blossom.ui.web.HomeController;
 import fr.blossom.ui.web.LoginController;
 import fr.blossom.ui.web.OmnisearchController;
+import fr.blossom.ui.web.StatusController;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.endpoint.HealthEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +46,11 @@ public class WebInterfaceAutoConfiguration {
   @Bean
   public HomeController homeController() {
     return new HomeController();
+  }
+
+  @Bean
+  public StatusController statusController(HealthEndpoint healthEndpoint) {
+    return new StatusController(healthEndpoint);
   }
 
   @Bean
