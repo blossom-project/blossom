@@ -144,7 +144,7 @@ public class UsersController {
     if (user == null) {
       throw new NoSuchElementException(String.format("User=%s not found", id));
     }
-    return this.updateUserInformationView(new UserUpdateForm(user), user, model);
+    return this.updateUserInformationView(new UserUpdateForm(user), user, model, Optional.empty());
   }
 
   @PostMapping("/{id}/_informations/_edit")
@@ -158,7 +158,8 @@ public class UsersController {
     }
 
     if (bindingResult.hasErrors()) {
-      return this.updateUserInformationView(userUpdateForm, user, model);
+      return this
+        .updateUserInformationView(userUpdateForm, user, model, Optional.of(HttpStatus.CONFLICT));
     }
 
     UserDTO updatedUser = this.userService.update(id, userUpdateForm);
@@ -170,16 +171,19 @@ public class UsersController {
   }
 
   private ModelAndView updateUserInformationView(UserUpdateForm userUpdateForm, UserDTO user,
-    Model model) {
+    Model model, Optional<HttpStatus> status) {
     model.addAttribute("userUpdateForm", userUpdateForm);
     model.addAttribute("user", user);
     model.addAttribute("civilities", User.Civility.values());
-    return new ModelAndView("users/userinformations-edit", model.asMap());
+    ModelAndView modelAndView = new ModelAndView("users/userinformations-edit", model.asMap());
+    modelAndView.setStatus(status.orElse(HttpStatus.OK));
+    return modelAndView;
   }
 
   @GetMapping(value = "/{id}/avatar")
   @ResponseBody
-  public ResponseEntity<InputStreamResource> displayAvatar(@PathVariable Long id) throws IOException {
+  public ResponseEntity<InputStreamResource> displayAvatar(@PathVariable Long id)
+    throws IOException {
     InputStream avatar = this.userService.loadAvatar(id);
     return ResponseEntity.ok()
       .contentType(MediaType.parseMediaType(this.tika.detect(avatar)))
@@ -215,11 +219,12 @@ public class UsersController {
   public ResponseEntity<Map<Class<? extends AbstractDTO>, Long>> deleteUser(
     @PathVariable Long id,
     @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force) {
-    Optional<Map<Class<? extends AbstractDTO>, Long>> result = this.userService.delete(this.userService.getOne(id), force);
+    Optional<Map<Class<? extends AbstractDTO>, Long>> result = this.userService
+      .delete(this.userService.getOne(id), force);
 
-    if(!result.isPresent() || result.get().isEmpty()){
+    if (!result.isPresent() || result.get().isEmpty()) {
       return new ResponseEntity<>(Maps.newHashMap(), HttpStatus.OK);
-    }else{
+    } else {
       return new ResponseEntity<>(result.get(), HttpStatus.CONFLICT);
     }
   }

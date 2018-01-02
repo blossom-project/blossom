@@ -2,12 +2,13 @@ package fr.blossom.core.role;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+
+@UniqueRoleName
 public class RoleCreateForm {
 
   @NotBlank(message = "{roles.role.validation.name.NotBlank.message}")
   private String name = "";
 
-  @NotBlank(message = "{roles.role.validation.description.NotBlank.message}")
   private String description = "";
 
   public String getName() {

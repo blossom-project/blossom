@@ -1,35 +1,34 @@
-package fr.blossom.core.user;
+package fr.blossom.core.group;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import java.util.Optional;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import com.google.common.base.Preconditions;
 import org.apache.commons.lang.reflect.FieldUtils;
 
-class UniqueIdentifierValidator implements ConstraintValidator<UniqueIdentifier, Object> {
+class UniqueGroupNameValidator implements ConstraintValidator<UniqueGroupName, Object> {
 
-  private UserRepository userRepository;
+  private GroupRepository groupRepository;
   private String field;
   private String idField;
 
-  public UniqueIdentifierValidator(UserRepository userRepository) {
-    Preconditions.checkNotNull(userRepository);
-    this.userRepository = userRepository;
+  public UniqueGroupNameValidator(GroupRepository groupRepository) {
+    Preconditions.checkNotNull(groupRepository);
+    this.groupRepository = groupRepository;
   }
 
-  public void initialize(UniqueIdentifier constraint) {
+  public void initialize(UniqueGroupName constraint) {
     this.field = constraint.field();
     this.idField = constraint.idField();
   }
 
-  public boolean isValid(Object target, ConstraintValidatorContext context) {
+  public boolean isValid(final Object target, ConstraintValidatorContext context) {
     try {
       Long id = Strings.isNullOrEmpty(idField) ? null : (Long) FieldUtils.readField(target, idField, true);
       String name = (String) FieldUtils.readField(target, field, true);
-      Optional<User> user = userRepository.findOneByIdentifier(name);
-      if (user.isPresent() && (id == null || !user.get().getId().equals(id))) {
+      Optional<Group> group = groupRepository.findOneByName(name);
+      if (group.isPresent() && (id == null || !group.get().getId().equals(id))) {
         return false;
       }
       return true;
@@ -37,5 +36,4 @@ class UniqueIdentifierValidator implements ConstraintValidator<UniqueIdentifier,
     }
     return false;
   }
-
 }

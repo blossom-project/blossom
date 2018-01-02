@@ -2,21 +2,34 @@ package fr.blossom.core.role;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+
+@UniqueRoleName(idField = "id")
 public class RoleUpdateForm {
+
+  private Long id;
+
+  @NotBlank(message = "{roles.role.validation.name.NotBlank.message}")
+  private String name = "";
+
+  private String description = "";
+
 
   public RoleUpdateForm() {
   }
 
   public RoleUpdateForm(RoleDTO role) {
+    this.id = role.getId();
     this.name = role.getName();
     this.description = role.getDescription();
   }
 
-  @NotBlank(message = "{roles.role.validation.name.NotBlank.message}")
-  private String name = "";
+  public Long getId() {
+    return id;
+  }
 
-  @NotBlank(message = "{roles.role.validation.description.NotBlank.message}")
-  private String description = "";
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public String getName() {
     return name;

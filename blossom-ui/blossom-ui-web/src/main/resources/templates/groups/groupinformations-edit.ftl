@@ -14,6 +14,16 @@
       <div class="sk-rect5"></div>
     </div>
 
+      <input type="hidden" value="${groupUpdateForm.id?c}"/>
+
+      <@spring.bind "groupUpdateForm"/>
+      <#if spring.status.error>
+        <p class="alert alert-danger">
+          <#list spring.status.errorMessages as error>
+          ${error}<#if !error?is_last><br/></#if>
+          </#list>
+        </p>
+      </#if>
 
       <@spring.bind "groupUpdateForm.name"/>
       <div class="form-group <#if spring.status.error>has-error</#if>">
@@ -61,9 +71,15 @@
     var edit = $(targetSelector).data("edit");
     var form = $(targetSelector + ' > form');
 
-    $.post(edit, form.serialize()).done(function (responseText, textStatus, jqXHR) {
-      $(targetSelector).html(responseText);
+    $.post(edit, form.serialize())
+    .done(function(data, textStatus, jqXHR){
+      $(targetSelector).html(data);
       <@notification.success message="updated"/>
+    })
+    .fail(function( jqXHR, textStatus, errorThrown){
+      $(targetSelector).html(jqXHR.responseText);
+      <@notification.error message="errored"/>
+    }).always(function(){
       $(targetSelector+ ' > .ibox-content').removeClass("sk-loading");
     });
   };

@@ -21,7 +21,6 @@ public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Obje
 
       return valueValue== null && confirmationValue== null || valueValue!= null && valueValue.equals(confirmationValue);
     } catch (final Exception ignore) {
-      // ignore
     } return true;
   }
 

@@ -4,12 +4,12 @@ import java.util.Locale;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+@UniqueGroupName
 public class GroupCreateForm {
 
   @NotBlank(message = "{groups.group.validation.name.NotBlank.message}")
   private String name = "";
 
-  @NotBlank(message = "{groups.group.validation.description.NotBlank.message}")
   private String description = "";
 
   private Locale locale = Locale.ENGLISH;

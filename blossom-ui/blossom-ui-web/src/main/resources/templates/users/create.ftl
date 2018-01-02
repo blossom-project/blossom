@@ -30,6 +30,15 @@
     <div class="ibox">
       <div class="ibox-content">
 
+        <@spring.bind "userCreateForm"/>
+        <#if spring.status.error>
+          <p class="alert alert-danger">
+            <#list spring.status.errorMessages as error>
+            ${error}<#if !error?is_last><br/></#if>
+            </#list>
+          </p>
+        </#if>
+
         <@spring.bind "userCreateForm.firstname"/>
         <div class="form-group <#if spring.status.error>has-error</#if>">
           <label class="col-sm-2 control-label"><@spring.message "users.user.properties.firstname"/></label>

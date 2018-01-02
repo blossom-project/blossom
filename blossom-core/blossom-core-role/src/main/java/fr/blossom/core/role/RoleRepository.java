@@ -1,6 +1,7 @@
 package fr.blossom.core.role;
 
 import fr.blossom.core.common.repository.CrudRepository;
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -8,4 +9,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface RoleRepository extends CrudRepository<Role> {
+
+  Optional<Role> findOneByName(String name);
+
 }

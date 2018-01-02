@@ -1,35 +1,34 @@
-package fr.blossom.core.user;
+package fr.blossom.core.role;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import java.util.Optional;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import com.google.common.base.Preconditions;
 import org.apache.commons.lang.reflect.FieldUtils;
 
-class UniqueIdentifierValidator implements ConstraintValidator<UniqueIdentifier, Object> {
+class UniqueRoleNameValidator implements ConstraintValidator<UniqueRoleName, Object> {
 
-  private UserRepository userRepository;
+  private RoleRepository roleRepository;
   private String field;
   private String idField;
 
-  public UniqueIdentifierValidator(UserRepository userRepository) {
-    Preconditions.checkNotNull(userRepository);
-    this.userRepository = userRepository;
+  public UniqueRoleNameValidator(RoleRepository roleRepository) {
+    Preconditions.checkNotNull(roleRepository);
+    this.roleRepository = roleRepository;
   }
 
-  public void initialize(UniqueIdentifier constraint) {
+  public void initialize(UniqueRoleName constraint) {
     this.field = constraint.field();
     this.idField = constraint.idField();
   }
 
-  public boolean isValid(Object target, ConstraintValidatorContext context) {
+  public boolean isValid(final Object target, ConstraintValidatorContext context) {
     try {
       Long id = Strings.isNullOrEmpty(idField) ? null : (Long) FieldUtils.readField(target, idField, true);
       String name = (String) FieldUtils.readField(target, field, true);
-      Optional<User> user = userRepository.findOneByIdentifier(name);
-      if (user.isPresent() && (id == null || !user.get().getId().equals(id))) {
+      Optional<Role> group = roleRepository.findOneByName(name);
+      if (group.isPresent() && (id == null || !group.get().getId().equals(id))) {
         return false;
       }
       return true;
@@ -37,5 +36,4 @@ class UniqueIdentifierValidator implements ConstraintValidator<UniqueIdentifier,
     }
     return false;
   }
-
 }

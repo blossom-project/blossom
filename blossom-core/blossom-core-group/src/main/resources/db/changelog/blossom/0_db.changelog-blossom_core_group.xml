@@ -12,7 +12,7 @@
       </column>
 
       <column name="name" type="varchar(100)">
-        <constraints nullable="true"/>
+        <constraints nullable="false" unique="true"/>
       </column>
 
       <column name="description" type="clob">

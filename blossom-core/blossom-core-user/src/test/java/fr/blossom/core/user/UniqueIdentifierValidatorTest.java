@@ -1,8 +1,11 @@
 package fr.blossom.core.user;
 
+import java.lang.annotation.Annotation;
 import java.util.Optional;
 
+import javax.validation.Payload;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -26,11 +29,48 @@ public class UniqueIdentifierValidatorTest {
   @InjectMocks
   private UniqueIdentifierValidator validator;
 
+  @Before
+  public void setUp() throws Exception {
+    UniqueIdentifier constraint = new UniqueIdentifier() {
+      @Override
+      public String message() {
+        return null;
+      }
+
+      @Override
+      public Class<?>[] groups() {
+        return new Class[0];
+      }
+
+      @Override
+      public String idField() {
+        return "";
+      }
+
+      @Override
+      public String field() {
+        return "identifier";
+      }
+
+      @Override
+      public Class<? extends Payload>[] payload() {
+        return new Class[0];
+      }
+
+      @Override
+      public Class<? extends Annotation> annotationType() {
+        return UniqueEmail.class;
+      }
+    };
+    this.validator.initialize(constraint);
+  }
+
   @Test
   public void test_is_valid_not_null_and_not_present_should_return_true() throws Exception {
     BDDMockito.given(userRepository.findOneByIdentifier(BDDMockito.anyString())).willReturn(Optional.ofNullable(null));
-    Assert.assertTrue(validator.isValid("any", null));
-
+    UserCreateForm form = new UserCreateForm();
+    form.setIdentifier("test");
+    Assert.assertTrue(validator.isValid(form, null));
   }
 
   @Test

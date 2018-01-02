@@ -8,24 +8,11 @@ import org.hibernate.validator.constraints.NotBlank;
 /**
  * Created by Maël Gargadennnec on 13/06/2017.
  */
+
+@UniqueEmail(idField = "id")
 public class UserUpdateForm {
 
-  public UserUpdateForm() {
-  }
-
-  public UserUpdateForm(UserDTO user) {
-    this.activated = user.isActivated();
-    this.firstname = user.getFirstname();
-    this.lastname = user.getLastname();
-    this.description = user.getDescription();
-    this.civility = user.getCivility();
-    this.company = user.getCompany();
-    this.function = user.getFunction();
-    this.email = user.getEmail();
-    this.phone = user.getPhone();
-  }
-
-  private boolean activated;
+  private Long id;
 
   @NotBlank(message = "{users.user.validation.firstname.NotBlank.message}")
   private String firstname = "";
@@ -44,6 +31,31 @@ public class UserUpdateForm {
   private String phone;
   private String company;
   private String function;
+  private boolean activated;
+
+  public UserUpdateForm() {
+  }
+
+  public UserUpdateForm(UserDTO user) {
+    this.id = user.getId();
+    this.activated = user.isActivated();
+    this.firstname = user.getFirstname();
+    this.lastname = user.getLastname();
+    this.description = user.getDescription();
+    this.civility = user.getCivility();
+    this.company = user.getCompany();
+    this.function = user.getFunction();
+    this.email = user.getEmail();
+    this.phone = user.getPhone();
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public String getFirstname() {
     return firstname;
