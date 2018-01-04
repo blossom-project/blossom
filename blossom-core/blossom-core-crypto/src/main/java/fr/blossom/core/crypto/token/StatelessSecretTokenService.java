@@ -58,7 +58,7 @@ public class StatelessSecretTokenService implements TokenService {
 
     BytesEncryptor encryptor = new BouncyCastleAesGcmBytesEncryptor(secret, salt);
 
-    String encrypted = Base64.getEncoder().encodeToString(encryptor.encrypt(data));
+    String encrypted = Base64.getUrlEncoder().encodeToString(encryptor.encrypt(data));
 
     return salt + "." + encrypted;
   }
@@ -79,6 +79,6 @@ public class StatelessSecretTokenService implements TokenService {
 
     BytesEncryptor decryptor = new BouncyCastleAesGcmBytesEncryptor(secret, salt);
 
-    return decryptor.decrypt(Base64.getDecoder().decode(encrypted));
+    return decryptor.decrypt(Base64.getUrlDecoder().decode(encrypted));
   }
 }

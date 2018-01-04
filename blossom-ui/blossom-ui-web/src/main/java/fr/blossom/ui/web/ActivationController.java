@@ -45,6 +45,7 @@ public class ActivationController {
     try {
       actionToken = this.tokenService.decryptToken(token);
     } catch (Exception e) {
+      LOGGER.error("Cannot decrypt action token", e);
       return "redirect:/blossom";
     }
     if (actionToken.isValid() && actionToken.getAction().equals(UserService.USER_ACTIVATION)) {

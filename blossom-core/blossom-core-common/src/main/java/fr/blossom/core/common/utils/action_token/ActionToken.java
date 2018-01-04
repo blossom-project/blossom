@@ -8,7 +8,6 @@ public class ActionToken {
   private Long userId;
   private String action;
   private LocalDateTime expirationDate;
-  private boolean isValid;
   private Map<String, String> additionalParameters;
 
   public Long getUserId() {
