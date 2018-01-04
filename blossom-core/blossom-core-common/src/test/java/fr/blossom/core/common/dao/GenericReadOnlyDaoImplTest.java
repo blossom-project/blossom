@@ -2,6 +2,7 @@ package fr.blossom.core.common.dao;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -127,8 +128,10 @@ public class GenericReadOnlyDaoImplTest {
 
   @Test
   public void should_get_all_by_ids_empty_list() {
-    thrown.expect(IllegalArgumentException.class);
-    this.dao.getAll(Lists.newArrayList());
+    List<ENTITY> entities = this.dao.getAll(Lists.newArrayList());
+    assertNotNull(entities);
+    assertTrue(entities.isEmpty());
+
   }
 
   public static class TestGenericReadOnlyDaoImpl extends GenericReadOnlyDaoImpl<ENTITY> {

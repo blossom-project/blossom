@@ -1,6 +1,7 @@
 package fr.blossom.core.common.dao;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -69,7 +70,10 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   @Override
   @Cacheable
   public List<ENTITY> getAll(List<Long> ids) {
-    Preconditions.checkArgument(!ids.isEmpty());
+    Preconditions.checkArgument(ids != null);
+    if (ids.isEmpty()) {
+      return Lists.newArrayList();
+    }
     return this.repository.findAll(ids);
   }
 
