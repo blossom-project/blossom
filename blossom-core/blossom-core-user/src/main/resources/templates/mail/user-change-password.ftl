@@ -40,7 +40,7 @@
                 </tr>
                 <tr>
                   <td class="content-block aligncenter">
-                    <a href="${basePath}/blossom/public/activate?token=${token}&lang=${lang}" class="btn-primary">
+                    <a href="${basePath}/blossom/public/change_password?token=${token}&lang=${lang}" class="btn-primary">
                       ${message("change.password.content.action")}
                     </a>
                   </td>
