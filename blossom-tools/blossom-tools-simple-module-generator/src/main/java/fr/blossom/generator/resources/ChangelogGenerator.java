@@ -1,0 +1,69 @@
+package fr.blossom.generator.resources;
+
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
+import fr.blossom.generator.configuration.model.Field;
+import fr.blossom.generator.configuration.model.Settings;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.Map;
+import java.util.Map.Entry;
+
+public class ChangelogGenerator implements ResourceGenerator {
+
+  @Override
+  public void generate(Settings settings, Map<String, String> params) {
+    try {
+      URL url = Resources.getResource("changelog.xml");
+      String content = Resources.toString(url, Charsets.UTF_8);
+
+      Map<String, String> customParams = buildCustomParameters(settings, params);
+
+      for (Entry<String, String> entry : customParams.entrySet()) {
+        content = content.replaceAll("%%" + entry.getKey() + "%%", entry.getValue());
+      }
+
+      Path changelogRoot = settings.getResourcePath().resolve("db").resolve("changelog").resolve("generated");
+      Files.createDirectories(changelogRoot);
+
+      Files.write(changelogRoot.resolve("4_db.changelog_blossom_generated_"+settings.getEntityNameLowerUnderscore()+".xml"), content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private Map<String, String> buildCustomParameters(Settings settings,
+    Map<String, String> params) {
+
+    Map<String, String> customParams = Maps.newHashMap(params);
+    customParams.put("TABLE_NAME", settings.getEntityNameLowerUnderscore());
+    customParams.put("TABLE_FIELDS", buildFields(settings));
+
+    return customParams;
+  }
+
+  private String buildFields(Settings settings) {
+    StringBuilder builder = new StringBuilder();
+
+    for (Field field : settings.getFields()) {
+      builder.append("<column name=\"");
+      builder.append(field.getColumnName().toLowerCase());
+      builder.append("\" type=\"");
+      builder.append(field.getJdbcType());
+      builder.append("\">\n\t<constraints ");
+
+      builder.append("nullable=\"");
+      builder.append(field.isNullable());
+      builder.append("\"");
+
+      builder.append("/>\n</column>");
+    }
+
+    return builder.toString();
+  }
+}
