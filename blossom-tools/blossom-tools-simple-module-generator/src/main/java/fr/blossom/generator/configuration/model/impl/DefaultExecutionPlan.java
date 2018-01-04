@@ -1,8 +1,10 @@
-package fr.blossom.generator.configuration.model;
+package fr.blossom.generator.configuration.model.impl;
 
 import com.google.common.collect.Maps;
 import com.helger.jcodemodel.JCodeModel;
 import fr.blossom.generator.classes.ClassGenerator;
+import fr.blossom.generator.configuration.model.ExecutionPlan;
+import fr.blossom.generator.configuration.model.Settings;
 import fr.blossom.generator.resources.ResourceGenerator;
 import java.io.IOException;
 import java.util.List;

@@ -16,7 +16,7 @@ import fr.blossom.generator.classes.RepositoryGenerator;
 import fr.blossom.generator.classes.ServiceGenerator;
 import fr.blossom.generator.classes.ServiceImplGenerator;
 import fr.blossom.generator.classes.UpdateFormGenerator;
-import fr.blossom.generator.configuration.model.DefaultExecutionPlan;
+import fr.blossom.generator.configuration.model.impl.DefaultExecutionPlan;
 import fr.blossom.generator.configuration.model.ExecutionPlan;
 import java.util.List;
 

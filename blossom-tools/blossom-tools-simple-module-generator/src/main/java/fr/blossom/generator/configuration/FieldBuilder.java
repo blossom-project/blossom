@@ -7,8 +7,8 @@ public abstract class FieldBuilder<T extends FieldBuilder<T>> {
   private final FieldsBuilder parent;
   protected final String name;
   protected String columnName;
-  protected final Class<?> className;
-  protected final String jdbcType;
+  protected Class<?> className;
+  protected String jdbcType;
   protected boolean required;
   protected boolean updatable;
   protected boolean nullable;

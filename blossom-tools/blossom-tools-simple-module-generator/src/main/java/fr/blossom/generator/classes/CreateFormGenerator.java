@@ -8,8 +8,9 @@ import com.helger.jcodemodel.JMethod;
 import com.helger.jcodemodel.JMod;
 import com.helger.jcodemodel.JVar;
 import fr.blossom.generator.configuration.model.Field;
-import fr.blossom.generator.utils.GeneratorUtils;
 import fr.blossom.generator.configuration.model.Settings;
+import fr.blossom.generator.configuration.model.StringField;
+import fr.blossom.generator.utils.GeneratorUtils;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -51,11 +52,14 @@ public class CreateFormGenerator implements ClassGenerator {
         + "}";
       fieldVar.annotate(NotNull.class).param("message", message);
     }
-    if (!field.isNotBlank()) {
-      String message = "{" + settings.getEntityNameLowerUnderscore() + "s." + settings
-        .getEntityNameLowerUnderscore() + ".validation." + field.getName() + ".NotBlank.message"
-        + "}";
-      fieldVar.annotate(NotBlank.class).param("message", message);
+
+    if (field instanceof StringField) {
+      if (!((StringField) field).isNotBlank()) {
+        String message = "{" + settings.getEntityNameLowerUnderscore() + "s." + settings
+          .getEntityNameLowerUnderscore() + ".validation." + field.getName() + ".NotBlank.message"
+          + "}";
+        fieldVar.annotate(NotBlank.class).param("message", message);
+      }
     }
 
     // Getter

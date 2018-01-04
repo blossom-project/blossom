@@ -1,7 +1,7 @@
 package fr.blossom.generator.configuration;
 
-import com.google.common.base.CaseFormat;
 import fr.blossom.generator.configuration.model.Field;
+import fr.blossom.generator.configuration.model.impl.StringField;
 
 public class StringFieldBuilder extends FieldBuilder<StringFieldBuilder> {
 
@@ -15,6 +15,7 @@ public class StringFieldBuilder extends FieldBuilder<StringFieldBuilder> {
 
   public StringFieldBuilder maxLength(Integer maxLength) {
     this.maxLength = maxLength;
+    this.jdbcType = "varchar(" + maxLength + ")";
     return this;
   }
 
@@ -25,86 +26,13 @@ public class StringFieldBuilder extends FieldBuilder<StringFieldBuilder> {
 
   public StringFieldBuilder isLob(boolean isLob) {
     this.isLob = isLob;
+    this.jdbcType = "clob";
     return this;
   }
 
   @Override
   Field build() {
-    return new Field() {
-      @Override
-      public String getName() {
-        return name;
-      }
-
-      @Override
-      public String getColumnName() {
-        return columnName!=null ? columnName : name;
-      }
-
-      @Override
-      public String getGetterName() {
-        return "get" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, name);
-      }
-
-      @Override
-      public String getSetterName() {
-        return "set" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, name);
-      }
-
-      @Override
-      public Class<?> getClassName() {
-        return className;
-      }
-
-      @Override
-      public String getTemporalType() {
-        return null;
-      }
-
-      @Override
-      public boolean isSearchable() {
-        return searchable;
-      }
-
-      @Override
-      public boolean isNullable() {
-        return nullable;
-      }
-
-      @Override
-      public boolean isNotBlank() {
-        return notBlank;
-      }
-
-      @Override
-      public Integer getMaxLength() {
-        return maxLength;
-      }
-
-      @Override
-      public String getDefaultValue() {
-        return defaultValue;
-      }
-
-      @Override
-      public boolean isRequiredCreate() {
-        return required;
-      }
-
-      @Override
-      public boolean isPossibleUpdate() {
-        return updatable;
-      }
-
-      @Override
-      public String getJdbcType() {
-        return jdbcType;
-      }
-
-      @Override
-      public boolean isLob() {
-        return isLob;
-      }
-    };
+    return new StringField(name, columnName, className, jdbcType, required, updatable, nullable,
+      defaultValue, searchable, notBlank, maxLength, isLob);
   }
 }

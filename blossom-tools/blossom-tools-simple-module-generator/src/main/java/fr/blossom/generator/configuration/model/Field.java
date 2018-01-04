@@ -12,15 +12,9 @@ public interface Field {
 
   Class getClassName();
 
-  String getTemporalType();
-
   boolean isSearchable();
 
   boolean isNullable();
-
-  boolean isNotBlank();
-
-  Integer getMaxLength();
 
   String getDefaultValue();
 
@@ -30,5 +24,4 @@ public interface Field {
 
   String getJdbcType();
 
-  boolean isLob();
 }

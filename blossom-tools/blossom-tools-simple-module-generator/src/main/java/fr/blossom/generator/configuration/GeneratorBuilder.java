@@ -1,6 +1,6 @@
 package fr.blossom.generator.configuration;
 
-import fr.blossom.generator.configuration.model.DefaultGenerator;
+import fr.blossom.generator.configuration.model.impl.DefaultGenerator;
 import fr.blossom.generator.configuration.model.ExecutionPlan;
 import fr.blossom.generator.configuration.model.Generator;
 import fr.blossom.generator.configuration.model.Settings;

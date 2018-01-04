@@ -10,14 +10,15 @@ import com.helger.jcodemodel.JMod;
 import com.helger.jcodemodel.JVar;
 import fr.blossom.core.common.entity.AbstractEntity;
 import fr.blossom.generator.configuration.model.Field;
-import fr.blossom.generator.utils.GeneratorUtils;
 import fr.blossom.generator.configuration.model.Settings;
+import fr.blossom.generator.configuration.model.StringField;
+import fr.blossom.generator.configuration.model.TemporalField;
+import fr.blossom.generator.utils.GeneratorUtils;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 public class EntityGenerator implements ClassGenerator {
 
@@ -53,24 +54,27 @@ public class EntityGenerator implements ClassGenerator {
     }
   }
 
-
   private void addField(JCodeModel codeModel, JDefinedClass definedClass, Field field) {
     // Field
-    JFieldVar fieldVar = definedClass.field(JMod.PRIVATE, codeModel.ref(field.getClassName()), field.getName());
+    JFieldVar fieldVar = definedClass
+      .field(JMod.PRIVATE, codeModel.ref(field.getClassName()), field.getName());
     JAnnotationUse columnAnnotation = fieldVar.annotate(Column.class);
     columnAnnotation.param("name", field.getColumnName());
 
-    if (field.getMaxLength() != null) {
-      columnAnnotation.param("length", field.getMaxLength());
-    }
+    if (field instanceof StringField) {
+      if (((StringField) field).getMaxLength() != null) {
+        columnAnnotation.param("length", ((StringField) field).getMaxLength());
+      }
 
-    if(field.isLob()){
-      fieldVar.annotate(Lob.class);
+      if (((StringField) field).isLob()) {
+        fieldVar.annotate(Lob.class);
+      }
     }
-
-    if (field.getTemporalType() != null) {
-      JAnnotationUse temporalTypeAnnotation = fieldVar.annotate(Temporal.class);
-      temporalTypeAnnotation.param("value", codeModel.ref(TemporalType.class).staticRef(field.getTemporalType()));
+    if (field instanceof TemporalField) {
+      if (((TemporalField) field).getTemporalType() != null) {
+        JAnnotationUse temporalTypeAnnotation = fieldVar.annotate(Temporal.class);
+        temporalTypeAnnotation.param("value", ((TemporalField) field).getTemporalType());
+      }
     }
 
     // Getter
