@@ -78,7 +78,6 @@ public class ActivationController {
 
       if (user.isPresent()) {
         UpdatePasswordForm updatePasswordForm = new UpdatePasswordForm();
-        updatePasswordForm.setToken(token);
 
         return new ModelAndView("activation/change-password", "updatePasswordForm", updatePasswordForm);
       }
