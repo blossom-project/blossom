@@ -1,7 +1,7 @@
 package fr.blossom.core.scheduler.history;
 
-import com.google.common.collect.Lists;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import org.quartz.JobKey;
 import org.quartz.TriggerKey;
@@ -26,9 +26,9 @@ public class TriggerHistoryDaoImpl implements TriggerHistoryDao {
     triggerHistory.setStartTime(rs.getTimestamp("start_time"));
     triggerHistory.setEndTime(rs.getTimestamp("end_time"));
     triggerHistory
-      .setJobKey(new JobKey(rs.getString("job_group"), rs.getString("job_name")));
+      .setJobKey(new JobKey(rs.getString("job_name"), rs.getString("job_group")));
     triggerHistory
-      .setTriggerKey(new TriggerKey(rs.getString("trigger_group"), rs.getString("trigger_name")));
+      .setTriggerKey(new TriggerKey(rs.getString("trigger_name"), rs.getString("trigger_group")));
     return triggerHistory;
   };
   private final JdbcTemplate jdbcTemplate;
@@ -50,7 +50,7 @@ public class TriggerHistoryDaoImpl implements TriggerHistoryDao {
         mapper);
 
       if (histories.isEmpty()) {
-        return Lists.newArrayList();
+        return new ArrayList<>();
       }
 
       if (histories.size() > this.maxHistorySize) {
