@@ -6,7 +6,9 @@ import fr.blossom.core.user.UserDTO;
 import fr.blossom.core.user.UserService;
 import fr.blossom.core.validation.FieldMatch;
 import fr.blossom.ui.stereotype.BlossomController;
-import java.time.LocalDateTime;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
@@ -56,7 +58,7 @@ public class ActivationController {
 
         ActionToken passwordResetToken = new ActionToken();
         passwordResetToken.setAction(UserService.USER_RESET_PASSWORD);
-        passwordResetToken.setExpirationDate(LocalDateTime.now().plusMinutes(30));
+        passwordResetToken.setExpirationDate(Instant.now().plus(30, ChronoUnit.MINUTES));
         passwordResetToken.setUserId(userId);
 
         return "redirect:/blossom/public/change_password?token=" + this.tokenService.generateToken(passwordResetToken);

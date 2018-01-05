@@ -1,13 +1,13 @@
 package fr.blossom.core.common.utils.action_token;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Map;
 
 public class ActionToken {
 
   private Long userId;
   private String action;
-  private LocalDateTime expirationDate;
+  private Instant expirationDate;
   private Map<String, String> additionalParameters;
 
   public Long getUserId() {
@@ -26,16 +26,16 @@ public class ActionToken {
     this.action = action;
   }
 
-  public LocalDateTime getExpirationDate() {
+  public Instant getExpirationDate() {
     return expirationDate;
   }
 
-  public void setExpirationDate(LocalDateTime endOfValidityDate) {
+  public void setExpirationDate(Instant endOfValidityDate) {
     this.expirationDate = endOfValidityDate;
   }
 
   public boolean isValid() {
-    return expirationDate.isAfter(LocalDateTime.now());
+    return expirationDate.isAfter(Instant.now());
   }
 
   public Map<String, String> getAdditionalParameters() {

@@ -1,6 +1,7 @@
 package fr.blossom.core.user;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
@@ -29,7 +30,7 @@ public class UserMailServiceImpl implements UserMailService {
     ActionToken actionToken = new ActionToken();
     actionToken.setAction(UserService.USER_ACTIVATION);
     actionToken.setUserId(user.getId());
-    actionToken.setExpirationDate(LocalDateTime.now().plusDays(3));
+    actionToken.setExpirationDate(Instant.now().plus(3, ChronoUnit.DAYS));
 
     Map<String, Object> ctx = Maps.newHashMap();
     ctx.put("user", user);
@@ -45,7 +46,7 @@ public class UserMailServiceImpl implements UserMailService {
     ActionToken actionToken = new ActionToken();
     actionToken.setAction(UserService.USER_RESET_PASSWORD);
     actionToken.setUserId(user.getId());
-    actionToken.setExpirationDate(LocalDateTime.now().plusHours(3));
+    actionToken.setExpirationDate(Instant.now().plus(3, ChronoUnit.HOURS));
 
     Map<String, Object> ctx = Maps.newHashMap();
     ctx.put("user", user);
