@@ -52,6 +52,11 @@ public abstract class FieldBuilder<T extends FieldBuilder<T>> {
     return (T) this;
   }
 
+  public T overrideJdbcType(String jdbcType) {
+    this.jdbcType = jdbcType;
+    return (T) this;
+  }
+
   public FieldsBuilder and() {
     return parent;
   }

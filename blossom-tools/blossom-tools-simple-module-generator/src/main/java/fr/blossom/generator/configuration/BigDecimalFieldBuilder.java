@@ -1,13 +1,22 @@
 package fr.blossom.generator.configuration;
 
+import com.google.common.base.Preconditions;
 import fr.blossom.generator.configuration.model.Field;
 import fr.blossom.generator.configuration.model.impl.DefaultField;
 import java.math.BigDecimal;
 
 public class BigDecimalFieldBuilder extends FieldBuilder<BigDecimalFieldBuilder> {
 
-  BigDecimalFieldBuilder(FieldsBuilder parent, String name) {
-    super(parent, name, BigDecimal.class, "decimal");
+  private final Integer precision;
+  private final Integer fractionalPrecision;
+
+  BigDecimalFieldBuilder(FieldsBuilder parent, String name, Integer precision,
+    Integer fractionalPrecision) {
+    super(parent, name, BigDecimal.class, "decimal(" + precision + "," + fractionalPrecision + ")");
+    Preconditions.checkState(precision > 0);
+    Preconditions.checkState(precision >= fractionalPrecision);
+    this.precision = precision;
+    this.fractionalPrecision = fractionalPrecision;
   }
 
   @Override

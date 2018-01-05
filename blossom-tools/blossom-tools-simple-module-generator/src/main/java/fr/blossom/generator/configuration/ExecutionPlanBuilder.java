@@ -56,7 +56,7 @@ public class ExecutionPlanBuilder {
   }
 
   public ExecutionPlanBuilder allResources() {
-    return this.messagesPropertiesGenerator().changelogGenerator();
+    return this.messagesPropertiesGenerator().changelogGenerator().listViewGenerator();
   }
 
   public ExecutionPlanBuilder entity() {

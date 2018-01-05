@@ -24,6 +24,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -44,7 +45,8 @@ public class ControllerGenerator implements ClassGenerator {
     try {
       JDefinedClass definedClass = codeModel
         ._class(GeneratorUtils.getControllerFullyQualifiedClassName(settings));
-      definedClass.annotate(BlossomController.class)
+      definedClass.annotate(BlossomController.class);
+      definedClass.annotate(RequestMapping.class)
         .param("value", "/modules/" + settings.getEntityNameLowerUnderscore() + "s");
       definedClass.annotate(OpenedMenu.class)
         .param("value", settings.getEntityNameLowerUnderscore() + "s");

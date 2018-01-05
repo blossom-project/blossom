@@ -38,6 +38,12 @@ public class FieldsBuilder {
     return field;
   }
 
+  public TemporalFieldBuilder _localDateTime(String name, TemporalType temporalType) {
+    TemporalFieldBuilder field = new TemporalFieldBuilder(this, name, temporalType);
+    fields.add(field);
+    return field;
+  }
+
   public BooleanFieldBuilder _boolean(String name) {
     BooleanFieldBuilder field = new BooleanFieldBuilder(this, name);
     fields.add(field);
@@ -56,14 +62,9 @@ public class FieldsBuilder {
     return field;
   }
 
-  public BigDecimalFieldBuilder _bigDecimal(String name) {
-    BigDecimalFieldBuilder field = new BigDecimalFieldBuilder(this, name);
-    fields.add(field);
-    return field;
-  }
-
-  public FloatFieldBuilder _float(String name) {
-    FloatFieldBuilder field = new FloatFieldBuilder(this, name);
+  public BigDecimalFieldBuilder _bigDecimal(String name, Integer precision, Integer fractionalPrecision) {
+    BigDecimalFieldBuilder field = new BigDecimalFieldBuilder(this, name, precision,
+      fractionalPrecision);
     fields.add(field);
     return field;
   }

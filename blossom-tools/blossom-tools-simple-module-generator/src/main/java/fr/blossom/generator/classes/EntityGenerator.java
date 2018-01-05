@@ -13,6 +13,7 @@ import fr.blossom.generator.configuration.model.Field;
 import fr.blossom.generator.configuration.model.Settings;
 import fr.blossom.generator.configuration.model.StringField;
 import fr.blossom.generator.configuration.model.TemporalField;
+import fr.blossom.generator.configuration.model.impl.BlobField;
 import fr.blossom.generator.utils.GeneratorUtils;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,7 +60,9 @@ public class EntityGenerator implements ClassGenerator {
     JFieldVar fieldVar = definedClass
       .field(JMod.PRIVATE, codeModel.ref(field.getClassName()), field.getName());
     JAnnotationUse columnAnnotation = fieldVar.annotate(Column.class);
-    columnAnnotation.param("name", field.getColumnName());
+    columnAnnotation.param("name", field.getColumnName().toLowerCase());
+
+
 
     if (field instanceof StringField) {
       if (((StringField) field).getMaxLength() != null) {
@@ -70,11 +73,16 @@ public class EntityGenerator implements ClassGenerator {
         fieldVar.annotate(Lob.class);
       }
     }
+
     if (field instanceof TemporalField) {
       if (((TemporalField) field).getTemporalType() != null) {
         JAnnotationUse temporalTypeAnnotation = fieldVar.annotate(Temporal.class);
         temporalTypeAnnotation.param("value", ((TemporalField) field).getTemporalType());
       }
+    }
+
+    if(field instanceof BlobField){
+      fieldVar.annotate(Lob.class);
     }
 
     // Getter

@@ -4,15 +4,12 @@ import com.google.common.base.Preconditions;
 import fr.blossom.generator.configuration.model.Field;
 import fr.blossom.generator.configuration.model.impl.TemporalField;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Date;
 import javax.persistence.TemporalType;
 
 public class TemporalFieldBuilder extends FieldBuilder<TemporalFieldBuilder> {
 
-  private final TemporalType temporalType;
+  private TemporalType temporalType;
 
   TemporalFieldBuilder(FieldsBuilder parent, String name, TemporalType temporalType) {
     super(parent, name, String.class, "date");
@@ -20,28 +17,23 @@ public class TemporalFieldBuilder extends FieldBuilder<TemporalFieldBuilder> {
     switch (temporalType) {
       case DATE:
         this.jdbcType = "date";
-        this.className = LocalDate.class;
+        this.className = Date.class;
         break;
       case TIME:
         this.jdbcType = "time";
-        this.className = LocalTime.class;
+        this.className = Date.class;
         break;
       case TIMESTAMP:
         this.jdbcType = "timestamp";
-        this.className = Timestamp.class;
+        this.className = Date.class;
         break;
     }
   }
 
-  public TemporalFieldBuilder asLocalDateTime() {
+  public TemporalFieldBuilder asTimestamp() {
     Preconditions.checkState(this.temporalType.equals(TemporalType.TIMESTAMP));
-    this.className = LocalDateTime.class;
-    return this;
-  }
-
-  public TemporalFieldBuilder asDate() {
-    Preconditions.checkState(this.temporalType.equals(TemporalType.TIMESTAMP));
-    this.className = Date.class;
+    this.className = Timestamp.class;
+    this.temporalType = null;
     return this;
   }
 
