@@ -33,43 +33,43 @@ public class DefaultField implements Field {
     return name;
   }
 
-  public String getColumnName(){
+  public String getColumnName() {
     return columnName != null ? columnName : name;
   }
 
-  public String getGetterName(){
-    return  "get"+ CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, name);
+  public String getGetterName() {
+    return "get" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, name);
   }
 
-  public String getSetterName(){
-    return  "set"+ CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, name);
+  public String getSetterName() {
+    return "set" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, name);
   }
 
-  public Class getClassName(){
+  public Class getClassName() {
     return className;
   }
 
-  public boolean isSearchable(){
+  public boolean isSearchable() {
     return searchable;
   }
 
-  public boolean isNullable(){
+  public boolean isNullable() {
     return nullable;
   }
 
-  public String getDefaultValue(){
+  public String getDefaultValue() {
     return defaultValue;
   }
 
-  public boolean isRequiredCreate(){
+  public boolean isRequiredCreate() {
     return required;
   }
 
-  public boolean isPossibleUpdate(){
+  public boolean isPossibleUpdate() {
     return updatable;
   }
 
-  public String getJdbcType(){
+  public String getJdbcType() {
     return jdbcType;
   }
 }

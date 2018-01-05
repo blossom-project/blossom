@@ -14,6 +14,11 @@ import java.util.Map.Entry;
 public class MessagePropertiesGenerator implements ResourceGenerator {
 
   @Override
+  public void prepare(Settings settings) {
+
+  }
+
+  @Override
   public void generate(Settings settings, Map<String, String> params) {
     try {
       URL url = Resources.getResource("messages.properties");

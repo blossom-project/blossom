@@ -16,8 +16,13 @@ import fr.blossom.generator.classes.RepositoryGenerator;
 import fr.blossom.generator.classes.ServiceGenerator;
 import fr.blossom.generator.classes.ServiceImplGenerator;
 import fr.blossom.generator.classes.UpdateFormGenerator;
-import fr.blossom.generator.configuration.model.impl.DefaultExecutionPlan;
 import fr.blossom.generator.configuration.model.ExecutionPlan;
+import fr.blossom.generator.configuration.model.impl.DefaultExecutionPlan;
+import fr.blossom.generator.resources.ChangelogGenerator;
+import fr.blossom.generator.resources.CreateViewGenerator;
+import fr.blossom.generator.resources.ListViewGenerator;
+import fr.blossom.generator.resources.MessagePropertiesGenerator;
+import fr.blossom.generator.resources.ResourceGenerator;
 import java.util.List;
 
 public class ExecutionPlanBuilder {
@@ -37,12 +42,21 @@ public class ExecutionPlanBuilder {
   private ControllerGenerator controllerGenerator;
   private ConfigurationGenerator configurationGenerator;
 
+  private ChangelogGenerator changelogGenerator;
+  private MessagePropertiesGenerator messagesPropertiesGenerator;
+  private ListViewGenerator listViewGenerator;
+  private CreateViewGenerator createViewGenerator;
+
   ExecutionPlanBuilder(GeneratorBuilder parent) {
     this.parent = parent;
   }
 
-  public ExecutionPlanBuilder all() {
+  public ExecutionPlanBuilder allClasses() {
     return this.entity().repository().dao().dto().mapper().service().controller().configuration();
+  }
+
+  public ExecutionPlanBuilder allResources() {
+    return this.messagesPropertiesGenerator().changelogGenerator();
   }
 
   public ExecutionPlanBuilder entity() {
@@ -89,6 +103,22 @@ public class ExecutionPlanBuilder {
     return this;
   }
 
+  public ExecutionPlanBuilder changelogGenerator() {
+    this.changelogGenerator = new ChangelogGenerator();
+    return this;
+  }
+
+  public ExecutionPlanBuilder messagesPropertiesGenerator() {
+    this.messagesPropertiesGenerator = new MessagePropertiesGenerator();
+    return this;
+  }
+
+  public ExecutionPlanBuilder listViewGenerator() {
+    this.listViewGenerator = new ListViewGenerator();
+    return this;
+  }
+
+
   public ExecutionPlan build() {
     List<ClassGenerator> classGenerators = Lists
       .newArrayList(entityGenerator, repositoryGenerator, daoGenerator, daoImplGenerator,
@@ -96,6 +126,10 @@ public class ExecutionPlanBuilder {
         serviceImplGenerator, controllerGenerator, configurationGenerator);
     Iterables.removeIf(classGenerators, Predicates.isNull());
 
-    return new DefaultExecutionPlan(classGenerators, Lists.newArrayList());
+    List<ResourceGenerator> resourceGenerators = Lists
+      .newArrayList(changelogGenerator, messagesPropertiesGenerator, listViewGenerator);
+    Iterables.removeIf(resourceGenerators, Predicates.isNull());
+
+    return new DefaultExecutionPlan(classGenerators, resourceGenerators);
   }
 }

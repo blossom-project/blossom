@@ -14,6 +14,11 @@ import java.util.Map.Entry;
 public class ListViewGenerator implements ResourceGenerator {
 
   @Override
+  public void prepare(Settings settings) {
+
+  }
+
+  @Override
   public void generate(Settings settings, Map<String, String> params) {
     try {
       params.put("ENTITY_COLUMNS",
@@ -33,7 +38,8 @@ public class ListViewGenerator implements ResourceGenerator {
         .resolve(settings.getEntityNameLowerUnderscore() + "s");
       Files.createDirectories(templateRoot);
 
-      Files.write(templateRoot.resolve(settings.getEntityNameLowerUnderscore()+"s.ftl"), content.getBytes(), StandardOpenOption.CREATE,
+      Files.write(templateRoot.resolve(settings.getEntityNameLowerUnderscore() + "s.ftl"),
+        content.getBytes(), StandardOpenOption.CREATE,
         StandardOpenOption.TRUNCATE_EXISTING);
 
       System.out.println(content);

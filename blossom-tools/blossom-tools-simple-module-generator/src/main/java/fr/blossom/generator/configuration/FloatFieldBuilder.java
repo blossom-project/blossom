@@ -3,10 +3,10 @@ package fr.blossom.generator.configuration;
 import fr.blossom.generator.configuration.model.Field;
 import fr.blossom.generator.configuration.model.impl.DefaultField;
 
-public class IntegerFieldBuilder extends FieldBuilder<IntegerFieldBuilder> {
+public class FloatFieldBuilder extends FieldBuilder<FloatFieldBuilder> {
 
-  IntegerFieldBuilder(FieldsBuilder parent, String name) {
-    super(parent, name, Integer.class, "integer");
+  FloatFieldBuilder(FieldsBuilder parent, String name) {
+    super(parent, name, Float.class, "real");
   }
 
   @Override

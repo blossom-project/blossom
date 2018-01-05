@@ -12,7 +12,7 @@ public class TemporalField extends DefaultField implements
     boolean searchable, TemporalType temporalType) {
     super(name, columnName, className, jdbcType, required, updatable, nullable, defaultValue,
       searchable);
-    this.temporalType=temporalType;
+    this.temporalType = temporalType;
   }
 
   @Override

@@ -5,5 +5,8 @@ import java.util.Map;
 
 public interface ResourceGenerator {
 
+  void prepare(Settings settings);
+
   void generate(Settings settings, Map<String, String> params);
+
 }

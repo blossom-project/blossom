@@ -30,10 +30,26 @@ public class DefaultExecutionPlan implements ExecutionPlan {
       g.generate(settings, jCodeModel);
     });
 
-    Map<String, String> parameters = Maps.newHashMap();
-    resourceGenerators.stream().forEach(g -> g.generate(settings, parameters));
-
     jCodeModel.build(settings.getSrcPath().toFile());
+
+    Map<String, String> parameters = Maps.newHashMap();
+    parameters.put("ENTITY_NAME", settings.getEntityNameLowerUnderscore());
+    parameters.put("ENTITY_NAME_PLURAL", settings.getEntityNameLowerUnderscore() + "s");
+    parameters
+      .put("PRIVILEGE_CREATE", "modules:" + settings.getEntityNameLowerUnderscore() + "s:create");
+    parameters
+      .put("LINK_ITEMS", "/blossom/modules/" + settings.getEntityNameLowerUnderscore() + "s");
+    parameters.put("LINK_CREATE",
+      "/blossom/modules/" + settings.getEntityNameLowerUnderscore() + "s/_create");
+    parameters
+      .put("LINK_ITEM", "/blossom/modules/" + settings.getEntityNameLowerUnderscore() + "s/{id}");
+    parameters.put("ICON_PATH", "fa fa-question");
+
+    resourceGenerators.stream().forEach(g -> {
+      g.prepare(settings);
+      g.generate(settings, parameters);
+    });
+
 
   }
 }

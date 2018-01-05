@@ -4,7 +4,7 @@ import fr.blossom.generator.configuration.GeneratorBuilder;
 import java.io.IOException;
 import javax.persistence.TemporalType;
 
-public class TestMain {
+public class Example {
 
   public static void main(String[] args) throws IOException {
 
@@ -26,9 +26,12 @@ public class TestMain {
       .and()._boolean("bool").requiredCreate(true).updatable(true)
       .and()._integer("integer").requiredCreate(true).updatable(true)
       .and()._long("_long").requiredCreate(true).updatable(true)
-      .and()._blob("blob").requiredCreate(true);
+      .and()._blob("blob").requiredCreate(true)
+      .and()._blob("blobl2").updatable(true)
+      .and()._bigDecimal("bigDecimal").nullable(true)
+      .and()._float("_float").nullable(true);
 
-    builder.executionPlan().all();
+    builder.executionPlan().allClasses().allResources();
 
     builder.build().generate();
 

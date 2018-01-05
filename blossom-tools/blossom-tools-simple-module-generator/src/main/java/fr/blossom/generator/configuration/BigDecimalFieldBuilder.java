@@ -2,11 +2,12 @@ package fr.blossom.generator.configuration;
 
 import fr.blossom.generator.configuration.model.Field;
 import fr.blossom.generator.configuration.model.impl.DefaultField;
+import java.math.BigDecimal;
 
-public class IntegerFieldBuilder extends FieldBuilder<IntegerFieldBuilder> {
+public class BigDecimalFieldBuilder extends FieldBuilder<BigDecimalFieldBuilder> {
 
-  IntegerFieldBuilder(FieldsBuilder parent, String name) {
-    super(parent, name, Integer.class, "integer");
+  BigDecimalFieldBuilder(FieldsBuilder parent, String name) {
+    super(parent, name, BigDecimal.class, "decimal");
   }
 
   @Override

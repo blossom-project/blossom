@@ -15,6 +15,21 @@ import java.util.Map.Entry;
 
 public class ChangelogGenerator implements ResourceGenerator {
 
+  private Path changelogDir;
+  private Path fullChangelogPath;
+
+  @Override
+  public void prepare(Settings settings) {
+
+    try {
+      changelogDir = settings.getResourcePath().resolve("db").resolve("changelog").resolve("generated");
+      Files.createDirectories(changelogDir);
+      fullChangelogPath = changelogDir.resolve("4_db.changelog_blossom_generated_" + settings.getEntityNameLowerUnderscore() + ".xml");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   @Override
   public void generate(Settings settings, Map<String, String> params) {
     try {
@@ -26,14 +41,9 @@ public class ChangelogGenerator implements ResourceGenerator {
       for (Entry<String, String> entry : customParams.entrySet()) {
         content = content.replaceAll("%%" + entry.getKey() + "%%", entry.getValue());
       }
-
-      Path changelogRoot = settings.getResourcePath().resolve("db").resolve("changelog").resolve("generated");
-      Files.createDirectories(changelogRoot);
-
-      Files.write(changelogRoot.resolve("4_db.changelog_blossom_generated_"+settings.getEntityNameLowerUnderscore()+".xml"), content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-
+      Files.write(fullChangelogPath, content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
   }
 

@@ -18,9 +18,11 @@ public class FieldsBuilder {
 
   public FieldsBuilder defaultFields() {
     return
-      this._string("name").searchable(true).requiredCreate(true).updatable(true).nullable(false).notBlank(true).defaultValue(null).maxLength(50)
+      this._string("name").searchable(true).requiredCreate(true).updatable(true).nullable(false)
+        .notBlank(true).defaultValue(null).maxLength(50)
         .and()
-        ._string("description").searchable(true).requiredCreate(true).updatable(true).nullable(false).notBlank(false).isLob(true).defaultValue(null)
+        ._string("description").searchable(true).requiredCreate(true).updatable(true)
+        .nullable(false).notBlank(false).isLob(true).defaultValue(null)
         .and();
   }
 
@@ -53,6 +55,19 @@ public class FieldsBuilder {
     fields.add(field);
     return field;
   }
+
+  public BigDecimalFieldBuilder _bigDecimal(String name) {
+    BigDecimalFieldBuilder field = new BigDecimalFieldBuilder(this, name);
+    fields.add(field);
+    return field;
+  }
+
+  public FloatFieldBuilder _float(String name) {
+    FloatFieldBuilder field = new FloatFieldBuilder(this, name);
+    fields.add(field);
+    return field;
+  }
+
   public BlobFieldBuilder _blob(String name) {
     BlobFieldBuilder field = new BlobFieldBuilder(this, name);
     fields.add(field);

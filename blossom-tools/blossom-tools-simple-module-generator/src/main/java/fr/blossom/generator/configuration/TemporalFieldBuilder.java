@@ -35,13 +35,13 @@ public class TemporalFieldBuilder extends FieldBuilder<TemporalFieldBuilder> {
 
   public TemporalFieldBuilder asLocalDateTime() {
     Preconditions.checkState(this.temporalType.equals(TemporalType.TIMESTAMP));
-    this.className= LocalDateTime.class;
+    this.className = LocalDateTime.class;
     return this;
   }
 
   public TemporalFieldBuilder asDate() {
     Preconditions.checkState(this.temporalType.equals(TemporalType.TIMESTAMP));
-    this.className= Date.class;
+    this.className = Date.class;
     return this;
   }
 
