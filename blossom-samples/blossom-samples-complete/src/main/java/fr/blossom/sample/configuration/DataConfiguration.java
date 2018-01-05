@@ -26,9 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.plugin.core.PluginRegistry;
-import whois.wsdl.GetWhoISResponse;
 
 /**
  * Created by Maël Gargadennnec on 09/06/2017.
@@ -64,8 +62,9 @@ public class DataConfiguration {
         user.setCompany(df.getCity());
         user.setLocale(Locale.FRENCH);
         user.setCivility(random.nextBoolean() ? User.Civility.MAN : User.Civility.WOMAN);
-        user.setDescription("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available."
-          + i);
+        user.setDescription(
+          "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form Ipsum available."
+            + i);
         return user;
       }).forEach(u -> service.create(u));
     };
@@ -142,31 +141,6 @@ public class DataConfiguration {
         userService.getByEmail(user.getEmail());
 
       });
-    };
-  }
-
-  @Bean
-  public Jaxb2Marshaller marshaller() {
-    Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-    marshaller.setContextPath("whois.wsdl");
-    return marshaller;
-  }
-
-  @Bean
-  public WhoIsClient whoIsClient(Jaxb2Marshaller marshaller) {
-    WhoIsClient client = new WhoIsClient();
-    client.setDefaultUri("http://www.webservicex.com/whois.asmx");
-    client.setMarshaller(marshaller);
-    client.setUnmarshaller(marshaller);
-    return client;
-  }
-
-  @Bean
-  public CommandLineRunner clrSoap(final WhoIsClient client){
-    return args -> {
-      String hostname = "google.com";
-      GetWhoISResponse response = client.getWhoIs(hostname);
-      System.err.println(response.getGetWhoISResult());
     };
   }
 }
