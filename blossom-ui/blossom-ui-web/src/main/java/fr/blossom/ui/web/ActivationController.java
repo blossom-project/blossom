@@ -19,11 +19,6 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @BlossomController
@@ -50,21 +45,12 @@ public class ActivationController {
       return "redirect:/blossom";
     }
     if (actionToken.isValid() && actionToken.getAction().equals(UserService.USER_ACTIVATION)) {
-      Optional<UserDTO> user = this.userService.getById(actionToken.getUserId());
+      Optional<UserDTO> user = this.userService.getByActionToken(actionToken);
       if (user.isPresent()) {
         Long userId = user.get().getId();
         this.userService.updateActivation(userId, true);
 
-        ActionToken passwordResetToken = new ActionToken();
-        passwordResetToken.setAction(UserService.USER_RESET_PASSWORD);
-        passwordResetToken.setExpirationDate(Instant.now().plus(30, ChronoUnit.MINUTES));
-        passwordResetToken.setUserId(userId);
-
-        Map<String, String> additionalParameters = new HashMap<>();
-        additionalParameters.put("creationDate", Long.toString(Instant.now().toEpochMilli()));
-        actionToken.setAdditionalParameters(additionalParameters);
-
-        return "redirect:/blossom/public/change_password?token=" + this.tokenService.generateToken(passwordResetToken);
+        return "redirect:/blossom/public/change_password?token=" + userService.generatePasswordResetToken(user.get());
       }
     }
     return "redirect:/blossom";

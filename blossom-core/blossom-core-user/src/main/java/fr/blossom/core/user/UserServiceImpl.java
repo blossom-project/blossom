@@ -105,7 +105,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
     UserDTO userDTO = optionalUserDTO.get();
     Date creationDate = new Date(Long.parseLong(actionToken.getAdditionalParameters().get(creationDateParameter)));
 
-    if (creationDate.before(userDTO.getLastConnection())) {
+    if (userDTO.getLastConnection() != null && creationDate.before(userDTO.getLastConnection())) {
       return Optional.empty();
     }
 
@@ -199,8 +199,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
     return tokenService.generateToken(actionToken);
   }
 
-  @VisibleForTesting
-  protected String generatePasswordResetToken(UserDTO user) {
+  public String generatePasswordResetToken(UserDTO user) {
     ActionToken actionToken = new ActionToken();
     actionToken.setAction(UserService.USER_RESET_PASSWORD);
     actionToken.setUserId(user.getId());

@@ -47,4 +47,11 @@ public interface UserService extends CrudService<UserDTO> {
 
   InputStream loadAvatar(long id) throws IOException;
 
+  /**
+   * Generate a valid password reset token for a user
+   * @param userDTO User which password should be reset with this token
+   * @return A valid password reset token
+   */
+  String generatePasswordResetToken(UserDTO userDTO);
+
 }
