@@ -1,6 +1,7 @@
 package fr.blossom.core.user;
 
 import fr.blossom.core.common.service.CrudService;
+import fr.blossom.core.common.utils.action_token.ActionToken;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +22,16 @@ public interface UserService extends CrudService<UserDTO> {
   Optional<UserDTO> getByEmail(String email);
 
   Optional<UserDTO> getById(Long id);
+
+  /**
+   * Return the user (if any) identified by an ActionToken produced by this service.
+   * Since these ActionToken are made to activate/retrieve a user password, they are
+   * invalidated once the user manages to login once.
+   *
+   * @param actionToken Action token obtained by email sent by this service
+   * @return optional UserDTO, present if the actionToken was obtained after the last user login
+   */
+  Optional<UserDTO> getByActionToken(ActionToken actionToken);
 
   UserDTO update(Long userId, UserUpdateForm userUpdateForm);
 

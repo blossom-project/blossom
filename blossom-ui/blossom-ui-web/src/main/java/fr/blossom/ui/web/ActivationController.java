@@ -6,26 +6,25 @@ import fr.blossom.core.user.UserDTO;
 import fr.blossom.core.user.UserService;
 import fr.blossom.core.validation.FieldMatch;
 import fr.blossom.ui.stereotype.BlossomController;
-
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @BlossomController
 @RequestMapping("/public")
@@ -61,6 +60,10 @@ public class ActivationController {
         passwordResetToken.setExpirationDate(Instant.now().plus(30, ChronoUnit.MINUTES));
         passwordResetToken.setUserId(userId);
 
+        Map<String, String> additionalParameters = new HashMap<>();
+        additionalParameters.put("creationDate", Long.toString(Instant.now().toEpochMilli()));
+        actionToken.setAdditionalParameters(additionalParameters);
+
         return "redirect:/blossom/public/change_password?token=" + this.tokenService.generateToken(passwordResetToken);
       }
     }
@@ -76,7 +79,7 @@ public class ActivationController {
       return new ModelAndView(new RedirectView("/blossom"));
     }
     if (actionToken.isValid() && actionToken.getAction().equals(UserService.USER_RESET_PASSWORD)) {
-      Optional<UserDTO> user = this.userService.getById(actionToken.getUserId());
+      Optional<UserDTO> user = this.userService.getByActionToken(actionToken);
 
       if (user.isPresent()) {
         UpdatePasswordForm updatePasswordForm = new UpdatePasswordForm();
@@ -101,7 +104,7 @@ public class ActivationController {
     }
 
     if (actionToken.isValid() && actionToken.getAction().equals(UserService.USER_RESET_PASSWORD)) {
-      Optional<UserDTO> user = this.userService.getById(actionToken.getUserId());
+      Optional<UserDTO> user = this.userService.getByActionToken(actionToken);
 
       if (user.isPresent()) {
         this.userService.updatePassword(user.get().getId(), updatePasswordForm.getPassword());
@@ -141,8 +144,8 @@ public class ActivationController {
     @NotEmpty
     private String token;
 
-    @NotEmpty(message="{change.password.validation.NotEmpty.message}")
-    @Size(min=8, message="{change.password.validation.Size.message}")
+    @NotEmpty(message = "{change.password.validation.NotEmpty.message}")
+    @Size(min = 8, message = "{change.password.validation.Size.message}")
     @Pattern.List({
       @Pattern(regexp = "(?=.*[0-9]).+", message = "{change.password.validation.Pattern.digit.message}"),
       @Pattern(regexp = "(?=.*[a-z]).+", message = "{change.password.validation.Pattern.lowercase.message}"),
@@ -178,8 +181,8 @@ public class ActivationController {
   }
 
   public static class AskPasswordForm {
-    @NotEmpty(message="{ask.password.validation.NotEmpty.message}")
-    private String loginOrEmail ="";
+    @NotEmpty(message = "{ask.password.validation.NotEmpty.message}")
+    private String loginOrEmail = "";
 
     public String getLoginOrEmail() {
       return loginOrEmail;

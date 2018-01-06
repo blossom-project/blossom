@@ -25,19 +25,14 @@ public class UserMailServiceImplTest {
   @Mock
   private MailSender mailSender;
 
-  @Mock
-  private ActionTokenService tokenService;
-
   @Spy
   @InjectMocks
   private UserMailServiceImpl userMailService;
 
   @Test
-  public void test_send_change_password_email_user_not_null() throws Exception {
+  public void test_send_change_password_email_user_not_null_token_not_null() throws Exception {
 
-    BDDMockito.given(tokenService.generateToken(BDDMockito.any(ActionToken.class))).willReturn("any");
-
-    userMailService.sendChangePasswordEmail(new UserDTO());
+    userMailService.sendChangePasswordEmail(new UserDTO(), "token !");
 
     BDDMockito.verify(mailSender, BDDMockito.times(1)).sendMail(BDDMockito.anyString(), BDDMockito.any(),
         BDDMockito.anyString(), BDDMockito.any(Locale.class), BDDMockito.anyString());
@@ -46,15 +41,19 @@ public class UserMailServiceImplTest {
   @Test
   public void test_send_change_password_email_user_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    userMailService.sendChangePasswordEmail(null);
+    userMailService.sendChangePasswordEmail(null, "token !");
   }
 
   @Test
-  public void test_send_account_creation_email_user_not_null() throws Exception {
+  public void test_send_change_password_email_token_null() throws Exception {
+    thrown.expect(NullPointerException.class);
+    userMailService.sendChangePasswordEmail(new UserDTO(), null);
+  }
 
-    BDDMockito.given(tokenService.generateToken(BDDMockito.any(ActionToken.class))).willReturn("any");
+  @Test
+  public void test_send_account_creation_email_user_not_null_token_not_null() throws Exception {
 
-    userMailService.sendAccountCreationEmail(new UserDTO());
+    userMailService.sendAccountCreationEmail(new UserDTO(), "token !");
 
     BDDMockito.verify(mailSender, BDDMockito.times(1)).sendMail(BDDMockito.anyString(), BDDMockito.any(),
         BDDMockito.anyString(), BDDMockito.any(Locale.class), BDDMockito.anyString());
@@ -63,24 +62,24 @@ public class UserMailServiceImplTest {
   @Test
   public void test_send_account_creation_email_user_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    userMailService.sendAccountCreationEmail(null);
+    userMailService.sendAccountCreationEmail(null, "token !");
+  }
+
+  @Test
+  public void test_send_account_creation_email_token_null() throws Exception {
+    thrown.expect(NullPointerException.class);
+    userMailService.sendAccountCreationEmail(new UserDTO(), null);
   }
 
   @Test
   public void test_user_mail_service_impl_nothing_null() throws Exception {
-    new UserMailServiceImpl(mailSender, tokenService);
+    new UserMailServiceImpl(mailSender);
   }
 
   @Test
   public void test_user_mail_service_impl_user_mail_service_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    new UserMailServiceImpl(null, tokenService);
-  }
-
-  @Test
-  public void test_user_mail_service_impl_token_service_null() throws Exception {
-    thrown.expect(NullPointerException.class);
-    new UserMailServiceImpl(mailSender, null);
+    new UserMailServiceImpl(null);
   }
 
 }
