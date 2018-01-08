@@ -1,4 +1,4 @@
-package fr.blossom.core.association_user_group;
+package fr.blossom.core.association_user_role;
 
 
 import static org.junit.Assert.assertNotNull;
@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AssociationUserGroupDaoImplTest {
+public class AssociationUserRoleDaoImplTest {
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -20,19 +20,19 @@ public class AssociationUserGroupDaoImplTest {
   @Test
   public void should_create_fail_on_null_repository() {
     thrown.expect(NullPointerException.class);
-    new AssociationUserGroupDaoImpl(null);
+    new AssociationUserRoleDaoImpl(null);
   }
 
   @Test
   public void should_create_with_repository() {
-    new AssociationUserGroupDaoImpl(mock(AssociationUserGroupRepository.class));
+    new AssociationUserRoleDaoImpl(mock(AssociationUserRoleRepository.class));
   }
 
   @Test
   public void should_create_new_association() {
-    AssociationUserGroupDaoImpl dao =new AssociationUserGroupDaoImpl(mock(AssociationUserGroupRepository.class));
-    AssociationUserGroup association = dao.create();
+    AssociationUserRoleDaoImpl dao =new AssociationUserRoleDaoImpl(mock(AssociationUserRoleRepository.class));
+    AssociationUserRole association = dao.create();
     assertNotNull(association);
-    assertTrue(association instanceof  AssociationUserGroup);
+    assertTrue(association instanceof  AssociationUserRole);
   }
 }

@@ -1,5 +1,6 @@
 package fr.blossom.core.common.service;
 
+import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import fr.blossom.core.common.dao.AssociationDao;
 import fr.blossom.core.common.dto.AbstractAssociationDTO;
@@ -39,6 +40,11 @@ public abstract class GenericAssociationServiceImpl<
   protected GenericAssociationServiceImpl(AssociationDao<A_ENTITY, B_ENTITY, ENTITY> dao,
     DTOMapper<ENTITY, DTO> mapper, DTOMapper<A_ENTITY, A> aMapper, DTOMapper<B_ENTITY, B> bMapper,
     ApplicationEventPublisher eventPublisher) {
+    Preconditions.checkNotNull(dao);
+    Preconditions.checkNotNull(mapper);
+    Preconditions.checkNotNull(aMapper);
+    Preconditions.checkNotNull(bMapper);
+    Preconditions.checkNotNull(eventPublisher);
     this.dao = dao;
     this.mapper = mapper;
     this.aMapper = aMapper;

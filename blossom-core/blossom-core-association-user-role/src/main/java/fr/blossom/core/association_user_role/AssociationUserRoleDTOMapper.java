@@ -1,5 +1,6 @@
 package fr.blossom.core.association_user_role;
 
+import com.google.common.base.Preconditions;
 import fr.blossom.core.common.mapper.AbstractDTOMapper;
 import fr.blossom.core.role.RoleDTOMapper;
 import fr.blossom.core.user.UserDTOMapper;
@@ -8,9 +9,11 @@ public class AssociationUserRoleDTOMapper extends AbstractDTOMapper<AssociationU
     private final UserDTOMapper userMapper;
     private final RoleDTOMapper roleMapper;
 
-    public AssociationUserRoleDTOMapper(UserDTOMapper userMapper, RoleDTOMapper groupMapper) {
+    public AssociationUserRoleDTOMapper(UserDTOMapper userMapper, RoleDTOMapper roleMapper) {
+      Preconditions.checkNotNull(userMapper);
+      Preconditions.checkNotNull(roleMapper);
         this.userMapper = userMapper;
-        this.roleMapper = groupMapper;
+        this.roleMapper = roleMapper;
     }
 
     @Override

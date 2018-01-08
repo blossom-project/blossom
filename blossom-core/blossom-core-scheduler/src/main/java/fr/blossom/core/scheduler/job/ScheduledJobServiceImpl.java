@@ -2,6 +2,7 @@ package fr.blossom.core.scheduler.job;
 
 import static org.quartz.impl.matchers.GroupMatcher.groupEquals;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import fr.blossom.core.scheduler.history.TriggerHistory;
@@ -29,6 +30,8 @@ public class ScheduledJobServiceImpl implements ScheduledJobService {
   private final TriggerHistoryDao triggerHistoryDao;
 
   public ScheduledJobServiceImpl(Scheduler scheduler, TriggerHistoryDao triggerHistoryDao) {
+    Preconditions.checkNotNull(scheduler);
+    Preconditions.checkNotNull(triggerHistoryDao);
     this.scheduler = scheduler;
     this.triggerHistoryDao = triggerHistoryDao;
   }
@@ -46,7 +49,6 @@ public class ScheduledJobServiceImpl implements ScheduledJobService {
     } catch (SchedulerException e) {
       LOGGER.error("Cannot change scheduler state", e);
     }
-
   }
 
   @Override
@@ -64,13 +66,13 @@ public class ScheduledJobServiceImpl implements ScheduledJobService {
   public SchedulerInfo getSchedulerInfo() {
     SchedulerInfo schedulerInfo = new SchedulerInfo();
     try {
-      schedulerInfo.setName(this.scheduler.getSchedulerName());
+      schedulerInfo.setName(this.scheduler.getMetaData().getSchedulerName());
       schedulerInfo.setStart(this.scheduler.getMetaData().getRunningSince());
       schedulerInfo.setPoolsize(this.scheduler.getMetaData().getThreadPoolSize());
-      schedulerInfo.setStarted(this.scheduler.isStarted());
-      schedulerInfo.setStandBy(this.scheduler.isInStandbyMode());
-      schedulerInfo.setJobs(this.computeJobs());
-      schedulerInfo.setTriggers(this.getTriggers());
+      schedulerInfo.setStarted(this.scheduler.getMetaData().isStarted());
+      schedulerInfo.setStandBy(this.scheduler.getMetaData().isInStandbyMode());
+      schedulerInfo.setJobs(this.computeJobCount());
+      schedulerInfo.setTriggers(this.computeTriggerCount());
     } catch (SchedulerException e) {
       LOGGER.error("Cannot retrieve scheduler info.", e);
     }
@@ -79,38 +81,22 @@ public class ScheduledJobServiceImpl implements ScheduledJobService {
 
   }
 
-  private long getTriggers() throws SchedulerException {
-    return this.scheduler.getTriggerGroupNames().stream().flatMap(groupName -> {
-      try {
-        return this.scheduler.getTriggerKeys(groupEquals(groupName)).stream();
-      } catch (SchedulerException e) {
-        return Stream.of();
-      }
-    }).count();
-  }
-
-  private long computeJobs() throws SchedulerException {
-    return this.scheduler.getJobGroupNames().stream().flatMap(groupName -> {
-      try {
-        return this.scheduler.getJobKeys(groupEquals(groupName)).stream();
-      } catch (SchedulerException e) {
-        return Stream.of();
-      }
-    }).count();
-  }
-
   @Override
   public List<JobInfo> getAll(String groupName) {
-    List<JobInfo> jobInfos = Lists.newArrayList();
     try {
+      List<JobInfo> jobInfos = Lists.newArrayList();
       Set<JobKey> jobKeys = this.scheduler.getJobKeys(groupEquals(groupName));
       for (JobKey jobKey : jobKeys) {
-        jobInfos.add(this.getOne(jobKey));
+        JobInfo jobInfo = this.getOne(jobKey);
+        if (jobInfo != null) {
+          jobInfos.add(jobInfo);
+        }
       }
+      return jobInfos;
     } catch (SchedulerException e) {
       LOGGER.error("Cannot retrieve job infos for groupName " + groupName, e);
+      return Lists.newArrayList();
     }
-    return jobInfos;
   }
 
   @Override
@@ -146,6 +132,37 @@ public class ScheduledJobServiceImpl implements ScheduledJobService {
       LOGGER.error("Cannot execute job for jobKey " + jobKey, e);
     }
   }
+
+  protected long computeTriggerCount() {
+    try {
+      return this.scheduler.getTriggerGroupNames().stream().flatMap(groupName -> {
+        try {
+          return this.scheduler.getTriggerKeys(groupEquals(groupName)).stream();
+        } catch (SchedulerException e) {
+          return Stream.of();
+        }
+      }).count();
+    } catch (SchedulerException e) {
+      LOGGER.error("Cannot count triggers", e);
+      return 0;
+    }
+  }
+
+  protected long computeJobCount() {
+    try {
+      return this.scheduler.getJobGroupNames().stream().flatMap(groupName -> {
+        try {
+          return this.scheduler.getJobKeys(groupEquals(groupName)).stream();
+        } catch (SchedulerException e) {
+          return Stream.of();
+        }
+      }).count();
+    } catch (SchedulerException e) {
+      LOGGER.error("Cannot count jobs", e);
+      return 0;
+    }
+  }
+
 }
 
 

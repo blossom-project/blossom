@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
 public class GlobalTriggerListener implements TriggerListener {
 
   private final static Logger logger = LoggerFactory.getLogger(GlobalTriggerListener.class);
-  private final static String NAME = "GlobalTriggerListener";
+  protected final static String NAME = "GlobalTriggerListener";
   private final TriggerHistoryDao triggerHistoryDao;
 
   public GlobalTriggerListener(TriggerHistoryDao triggerHistoryDao) {
-    Preconditions.checkArgument(triggerHistoryDao != null);
+    Preconditions.checkNotNull(triggerHistoryDao);
     this.triggerHistoryDao = triggerHistoryDao;
   }
 
