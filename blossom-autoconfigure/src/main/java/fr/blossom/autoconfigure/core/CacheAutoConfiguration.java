@@ -30,7 +30,7 @@ public class CacheAutoConfiguration {
   private final static Logger LOGGER = LoggerFactory.getLogger(CacheAutoConfiguration.class);
   private final static String DEFAULT_CACHE_CONFIGURATION = "default";
 
-  @Bean
+  @Bean("defaultCacheConfig")
   @ConditionalOnMissingBean(name = "defaultCacheConfig")
   public CacheConfig defaultCacheConfig() {
     return CacheConfigBuilder.create(DEFAULT_CACHE_CONFIGURATION).specification("recordStats").build();
@@ -49,8 +49,8 @@ public class CacheAutoConfiguration {
     }
 
     @Bean
-    public CacheManager blossomCacheManager() {
-      return new BlossomCacheManager(registry, registry.getPluginFor(DEFAULT_CACHE_CONFIGURATION));
+    public CacheManager blossomCacheManager(@Qualifier("defaultCacheConfig") CacheConfig defaultCacheConfig) {
+      return new BlossomCacheManager(registry, defaultCacheConfig);
     }
 
     @Configuration
