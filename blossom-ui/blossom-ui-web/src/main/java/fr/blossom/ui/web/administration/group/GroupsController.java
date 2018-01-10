@@ -154,7 +154,7 @@ public class GroupsController {
     if (group == null) {
       throw new NoSuchElementException(String.format("Group=%s not found", id));
     }
-    return this.updateGroupInformationView(new GroupUpdateForm(group), model);
+    return this.updateGroupInformationView(new GroupUpdateForm(group), model, Optional.empty());
   }
 
   @PostMapping("/{id}/_informations/_edit")
@@ -163,7 +163,7 @@ public class GroupsController {
     @Valid @ModelAttribute("groupUpdateForm") GroupUpdateForm groupUpdateForm,
     BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
-      return this.updateGroupInformationView(groupUpdateForm, model);
+      return this.updateGroupInformationView(groupUpdateForm, model, Optional.of(HttpStatus.CONFLICT));
     }
 
     GroupDTO group = this.groupService.getOne(id);
@@ -181,8 +181,10 @@ public class GroupsController {
     return new ModelAndView("groups/groupinformations", "group", group);
   }
 
-  private ModelAndView updateGroupInformationView(GroupUpdateForm groupUpdateForm, Model model) {
-    return new ModelAndView("groups/groupinformations-edit", "groupUpdateForm", groupUpdateForm);
+  private ModelAndView updateGroupInformationView(GroupUpdateForm groupUpdateForm, Model model, Optional<HttpStatus> status) {
+    ModelAndView modelAndView= new ModelAndView("groups/groupinformations-edit", "groupUpdateForm", groupUpdateForm);
+    modelAndView.setStatus(status.orElse(HttpStatus.OK));
+    return modelAndView;
   }
 
 }

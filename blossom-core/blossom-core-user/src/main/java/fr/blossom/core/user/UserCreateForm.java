@@ -8,6 +8,8 @@ import org.hibernate.validator.constraints.NotBlank;
 /**
  * Created by Maël Gargadennnec on 13/06/2017.
  */
+@UniqueIdentifier
+@UniqueEmail
 public class UserCreateForm {
 
   @NotBlank(message = "{users.user.validation.firstname.NotBlank.message}")
@@ -20,12 +22,10 @@ public class UserCreateForm {
   private User.Civility civility = User.Civility.UNKNOWN;
 
   @NotBlank(message = "{users.user.validation.identifier.NotBlank.message}")
-  @UniqueIdentifier
   private String identifier = "";
 
   @NotBlank(message = "{users.user.validation.email.NotBlank.message}")
   @Email(message = "{users.user.validation.email.Email.message}")
-  @UniqueEmail
   private String email = "";
 
   @NotNull

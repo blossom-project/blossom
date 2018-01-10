@@ -1,19 +1,51 @@
 package fr.blossom.core.common.dao;
 
 import fr.blossom.core.common.entity.AbstractEntity;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
+/**
+ * Basic DAO interface for an {@code AbstractEntity} for read-only operations only.
+ * @author Maël Gargadennec
+ */
 public interface ReadOnlyDao<ENTITY extends AbstractEntity> {
 
-    List<ENTITY> getAll();
+  /**
+   * Retrieves the complete {@code List} of entities from the underlying datasource.<br/>
+   *
+   * Be careful : don't use this method on large datasets ! Use {@link ReadOnlyDao#getAll(Pageable
+   * pageable)} instead.
+   *
+   * @return the complete list of entities
+   */
+  List<ENTITY> getAll();
 
-    Page<ENTITY> getAll(Pageable pageable);
+  /**
+   * Retrieves a paginated subset of the entities from the underlying datasource
+   *
+   * @param pageable a spring data {@link Pageable}. Throws an {@code IllegalArgumentException} if
+   * null.
+   * @return the asked {@link Page} of entities
+   */
+  Page<ENTITY> getAll(Pageable pageable);
 
-    List<ENTITY> getAll(List<Long> ids);
+  /**
+   * Retrieves an id-filtered subset of the entities from the underlying datasource
+   *
+   * @param ids the list of entities ids you want to retrieve
+   * @return the complete list of entities
+   */
+  List<ENTITY> getAll(List<Long> ids);
 
-    ENTITY getOne(long id);
+  /**
+   * Retrieves a single entity
+   *
+   * Be careful : don't use this method on large datasets ! Use {@link ReadOnlyDao#getAll(Pageable
+   * pageable)} instead.
+   *
+   * @return the complete list of entities
+   */
+  ENTITY getOne(long id);
 
 }

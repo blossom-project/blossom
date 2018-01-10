@@ -21,26 +21,26 @@ import org.springframework.security.core.session.SessionRegistry;
 @ConditionalOnClass(SessionController.class)
 public class WebSystemSessionsAutoConfiguration {
 
-  @Bean
-  public MenuItem systemSessionMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
-    return builder
-      .key("sessions")
-      .label("menu.system.sessions", true)
-      .link("/blossom/system/sessions")
-      .order(5)
-      .icon("fa fa-plug")
-      .parent(systemMenuItem)
-      .privilege(sessionsPrivilegePlugin())
-      .build();
-  }
+    @Bean
+    public MenuItem systemSessionMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
+        return builder
+                .key("sessions")
+                .label("menu.system.sessions")
+                .link("/blossom/system/sessions")
+                .order(5)
+                .icon("fa fa-plug")
+                .parent(systemMenuItem)
+                .privilege(sessionsPrivilegePlugin())
+                .build();
+    }
 
-  @Bean
-  public SessionController sessionController(SessionRegistry sessionRegistry, LoginAttemptsService loginAttemptsService) {
-    return new SessionController(sessionRegistry, loginAttemptsService);
-  }
+    @Bean
+    public SessionController sessionController(SessionRegistry sessionRegistry, LoginAttemptsService loginAttemptsService) {
+        return new SessionController(sessionRegistry, loginAttemptsService);
+    }
 
-  @Bean
-  public Privilege sessionsPrivilegePlugin() {
-    return new SimplePrivilege("system","sessions", "manager");
-  }
+    @Bean
+    public Privilege sessionsPrivilegePlugin() {
+        return new SimplePrivilege("system", "sessions", "manager");
+    }
 }

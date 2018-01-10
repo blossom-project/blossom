@@ -1,5 +1,6 @@
 package fr.blossom.core.scheduler.job;
 
+import fr.blossom.core.scheduler.history.TriggerHistory;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
@@ -14,6 +15,8 @@ import java.util.List;
 public class JobInfo {
   private JobKey key;
   private JobDetail detail;
+  private TriggerHistory lastExecutedTrigger;
+  private List<TriggerHistory> history;
   private List<? extends Trigger> triggers;
   private List<JobExecutionContext> jobExecutionContexts;
 
@@ -31,6 +34,22 @@ public class JobInfo {
 
   public void setDetail(JobDetail detail) {
     this.detail = detail;
+  }
+
+  public TriggerHistory getLastExecutedTrigger() {
+    return lastExecutedTrigger;
+  }
+
+  public void setLastExecutedTrigger(TriggerHistory lastExecutedTrigger) {
+    this.lastExecutedTrigger = lastExecutedTrigger;
+  }
+
+  public List<TriggerHistory> getHistory() {
+    return history;
+  }
+
+  public void setHistory(List<TriggerHistory> history) {
+    this.history = history;
   }
 
   public List<? extends Trigger> getTriggers() {

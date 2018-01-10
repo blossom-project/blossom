@@ -12,6 +12,7 @@ fr.blossom.autoconfigure.core.CacheAutoConfiguration,\
 fr.blossom.autoconfigure.core.ActuatorAutoConfiguration,\
 fr.blossom.autoconfigure.core.MailAutoConfiguration,\
 fr.blossom.autoconfigure.core.CamundaAutoConfiguration,\
+fr.blossom.autoconfigure.core.CryptoAutoConfiguration,\
 fr.blossom.autoconfigure.module.FileManagerAutoConfiguration,\
 fr.blossom.autoconfigure.module.ArticleAutoConfiguration,\
 fr.blossom.autoconfigure.ui.MenuAutoConfiguration,\

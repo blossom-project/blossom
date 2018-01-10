@@ -1,7 +1,7 @@
 package fr.blossom.ui.api.administration;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -56,7 +56,7 @@ public class FileManagerApiControllerTest {
   public void should_get_paged_files_without_query_parameter() {
     when(service.getAll(any(Pageable.class)))
       .thenAnswer(a -> new PageImpl<FileDTO>(Lists.newArrayList()));
-    controller.list(null, new PageRequest(0, 20));
+    controller.list(null, PageRequest.of(0, 20));
     verify(service, times(1)).getAll(any(Pageable.class));
   }
 
@@ -64,7 +64,7 @@ public class FileManagerApiControllerTest {
   public void should_get_paged_files_with_query_parameter() {
     when(searchEngine.search(any(String.class), any(Pageable.class)))
       .thenAnswer(a -> new SearchResult<>(0, new PageImpl<FileDTO>(Lists.newArrayList())));
-    controller.list("test", null);
+    controller.list("test", PageRequest.of(0,10));
     verify(searchEngine, times(1)).search(eq("test"), any(Pageable.class));
   }
 
@@ -168,20 +168,19 @@ public class FileManagerApiControllerTest {
   @Test
   public void should_serve_one_without_id() throws IOException, SQLException {
     thrown.expect(IllegalArgumentException.class);
-    when(service.getOne(any(Long.class))).thenReturn(null);
     ResponseEntity<InputStreamResource> response = controller.serve(null);
   }
 
   @Test
   public void should_serve_one_with_id_found() throws IOException, SQLException {
     Long id = 1L;
-    FileDTO file = mock(FileDTO.class);
+    FileDTO file = new FileDTO();
+    file.setContentType("application/pdf");
+    file.setName("test.pdf");
+    file.setId(1L);
+    file.setSize(1024L);
 
     when(service.getOne(eq(id))).thenReturn(file);
-    when(file.getContentType()).thenReturn("application/pdf");
-    when(file.getName()).thenReturn("test.pdf");
-    when(file.getId()).thenReturn(1L);
-    when(file.getSize()).thenReturn(1024L);
     when(service.download(eq(id))).thenReturn(new ByteArrayInputStream(new byte[1024]));
 
     ResponseEntity<InputStreamResource> response = controller.serve(id);

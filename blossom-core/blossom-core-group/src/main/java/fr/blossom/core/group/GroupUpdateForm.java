@@ -2,21 +2,32 @@ package fr.blossom.core.group;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+@UniqueGroupName(idField = "id")
 public class GroupUpdateForm {
+
+  private Long id;
+
+  @NotBlank(message = "{groups.group.validation.name.NotBlank.message}")
+  private String name = "";
+
+  private String description = "";
 
   public GroupUpdateForm() {
   }
 
   public GroupUpdateForm(GroupDTO group) {
+    this.id = group.getId();
     this.name = group.getName();
     this.description = group.getDescription();
   }
 
-  @NotBlank(message = "{groups.group.validation.name.NotBlank.message}")
-  private String name = "";
+  public Long getId() {
+    return id;
+  }
 
-  @NotBlank(message = "{groups.group.validation.description.NotBlank.message}")
-  private String description = "";
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public String getName() {
     return name;

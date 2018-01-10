@@ -12,7 +12,7 @@
       </column>
 
       <column name="name" type="varchar(100)">
-        <constraints nullable="true"/>
+        <constraints nullable="false" unique="true"/>
       </column>
 
       <column name="description" type="clob">
@@ -28,7 +28,7 @@
       </column>
 
       <column name="modification_date" type="timestamp">
-        <constraints nullable="false"/>
+        <constraints nullable="false" />
       </column>
 
       <column name="modification_user" type="varchar(25)">

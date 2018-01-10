@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 public class ActionToken {
+
   private Long userId;
   private String action;
   private LocalDateTime expirationDate;
-  private boolean isValid;
   private Map<String, String> additionalParameters;
 
   public Long getUserId() {
@@ -35,11 +35,7 @@ public class ActionToken {
   }
 
   public boolean isValid() {
-    return isValid;
-  }
-
-  public void checkvalid() {
-    this.isValid = expirationDate.isAfter(LocalDateTime.now());
+    return expirationDate.isAfter(LocalDateTime.now());
   }
 
   public Map<String, String> getAdditionalParameters() {
@@ -48,12 +44,5 @@ public class ActionToken {
 
   public void setAdditionalParameters(Map<String, String> additionalParameters) {
     this.additionalParameters = additionalParameters;
-  }
-
-  @Override
-  public String toString() {
-    return "ActionToken{" + "userId='" + userId + '\'' + ", action=" + action + ", expirationDate="
-      + expirationDate + ", isValid=" + isValid + ", additionnalParameters="
-      + additionalParameters + '}';
   }
 }

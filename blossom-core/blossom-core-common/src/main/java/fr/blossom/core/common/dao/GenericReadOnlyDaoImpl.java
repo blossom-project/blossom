@@ -1,5 +1,7 @@
 package fr.blossom.core.common.dao;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -15,9 +17,15 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.Querydsl;
-import org.springframework.util.Assert;
 
-public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> implements ReadOnlyDao<ENTITY> {
+/**
+ * Default abstract implementation of {@link ReadOnlyDao}.
+ *
+ * @param <ENTITY> the managed {@link AbstractEntity}
+ * @author Maël Gargadennec
+ */
+public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> implements
+  ReadOnlyDao<ENTITY> {
 
   protected final CrudRepository<ENTITY> repository;
 
@@ -28,22 +36,23 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   };
 
   GenericReadOnlyDaoImpl(CrudRepository<ENTITY> repository) {
+    Preconditions.checkNotNull(repository);
     this.repository = repository;
   }
 
   @PostConstruct
   public void validate() {
-    Assert.notNull(entityManager, "EntityManager must not be null!");
-    Assert.notNull(querydsl, "Querydsl must not be null!");
+    Preconditions.checkState(entityManager != null, "EntityManager must not be null!");
+    Preconditions.checkState(querydsl != null, "Querydsl must not be null!");
   }
 
   @PersistenceContext
   public void setEntityManager(EntityManager entityManager) {
-    assert entityManager != null;
+    Preconditions.checkArgument(entityManager != null);
+    this.entityManager = entityManager;
 
     PathBuilder<?> builder = new PathBuilderFactory().create(type.getRawType());
     this.querydsl = new Querydsl(entityManager, builder);
-    this.entityManager = entityManager;
   }
 
   @Override
@@ -53,7 +62,7 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   }
 
   @Override
-  @Cacheable(key="'all'")
+  @Cacheable(key = "'all'")
   public List<ENTITY> getAll() {
     return this.repository.findAll();
   }
@@ -61,12 +70,17 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   @Override
   @Cacheable
   public List<ENTITY> getAll(List<Long> ids) {
+    Preconditions.checkArgument(ids != null);
+    if (ids.isEmpty()) {
+      return Lists.newArrayList();
+    }
     return this.repository.findAllById(ids);
   }
 
   @Override
   @Cacheable
   public Page<ENTITY> getAll(Pageable pageable) {
+    Preconditions.checkArgument(pageable != null);
     return repository.findAll(pageable);
   }
 
@@ -84,7 +98,6 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
    * Returns a {@link JPQLQuery} for the given {@link EntityPath}.
    *
    * @param path must not be {@literal null}.
-   * @return
    */
   protected <T> JPQLQuery<T> from(EntityPath<T> path) {
     return querydsl.createQuery(path).select(path);
@@ -92,8 +105,6 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
 
   /**
    * Returns the underlying Querydsl helper instance.
-   *
-   * @return
    */
   protected Querydsl getQuerydsl() {
     return this.querydsl;

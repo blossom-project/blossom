@@ -11,6 +11,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * Abstract base class for all entities.<br/>
+ * Provides technical columns such as identifier and auditing listener, and deals with setting/updating them.<br/>
+ *
+ * @author Maël Gargadennnec
+ */
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
 public abstract class AbstractEntity implements Serializable {
@@ -37,6 +43,9 @@ public abstract class AbstractEntity implements Serializable {
   @LastModifiedBy
   private String modificationUser;
 
+  /**
+   * Sets the id of the current entity just before it is persisted for the first time.
+   */
   @PrePersist
   public void ensureId() {
     if (this.id == null) {
@@ -104,10 +113,8 @@ public abstract class AbstractEntity implements Serializable {
       return false;
     }
     AbstractEntity other = (AbstractEntity) obj;
-    if (this.id == null) {
-      if (other.id != null) {
-        return false;
-      }
+    if (this.id == null || other.id == null) {
+      return false;
     } else if (!this.id.equals(other.id)) {
       return false;
     }

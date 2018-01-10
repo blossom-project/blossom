@@ -4,7 +4,7 @@ import fr.blossom.ui.menu.OpenedMenu;
 import fr.blossom.ui.stereotype.BlossomController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.actuate.endpoint.LiquibaseEndpoint;
+import org.springframework.boot.actuate.liquibase.LiquibaseEndpoint;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +30,7 @@ public class LiquibaseController {
 
   @GetMapping
   public ModelAndView liquibase(Model model) {
-    return new ModelAndView("system/liquibase/liquibase", "reports", liquibaseEndpoint.invoke());
+    return new ModelAndView("system/liquibase/liquibase", "reports", liquibaseEndpoint.liquibaseReports());
   }
 
 }

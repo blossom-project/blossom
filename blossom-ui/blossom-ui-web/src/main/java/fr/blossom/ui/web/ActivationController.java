@@ -11,7 +11,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +45,7 @@ public class ActivationController {
     try {
       actionToken = this.tokenService.decryptToken(token);
     } catch (Exception e) {
+      LOGGER.error("Cannot decrypt action token", e);
       return "redirect:/blossom";
     }
     if (actionToken.isValid() && actionToken.getAction().equals(UserService.USER_ACTIVATION)) {
@@ -77,7 +78,6 @@ public class ActivationController {
 
       if (user.isPresent()) {
         UpdatePasswordForm updatePasswordForm = new UpdatePasswordForm();
-        updatePasswordForm.setToken(token);
 
         return new ModelAndView("activation/change-password", "updatePasswordForm", updatePasswordForm);
       }

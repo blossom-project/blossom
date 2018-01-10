@@ -1,78 +1,77 @@
 package fr.blossom.core.common.utils.action_token;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
-import org.springframework.security.core.token.Token;
-import org.springframework.util.StringUtils;
-
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.token.Token;
+import org.springframework.security.core.token.TokenService;
+import org.springframework.util.StringUtils;
 
 public class ActionTokenServiceImpl implements ActionTokenService {
+
   private final static Logger LOGGER = LoggerFactory.getLogger(ActionTokenServiceImpl.class);
 
-  private KeyBasedPersistenceTokenService keyBasedPersistenceTokenService;
+  private TokenService tokenService;
 
-  public ActionTokenServiceImpl(KeyBasedPersistenceTokenService keyBasedPersistenceTokenService) {
-    this.keyBasedPersistenceTokenService = keyBasedPersistenceTokenService;
+  public ActionTokenServiceImpl(TokenService tokenService) {
+    this.tokenService = tokenService;
   }
 
   @Override
   public String generateToken(ActionToken actionToken) {
-    Token token = keyBasedPersistenceTokenService.allocateToken(encryptTokenAsString(actionToken));
+    Token token = tokenService.allocateToken(encryptTokenAsString(actionToken));
     return token.getKey();
   }
 
   @Override
   public ActionToken decryptToken(String aTokenKey) {
-    Token token = keyBasedPersistenceTokenService.verifyToken(aTokenKey);
+    Token token = tokenService.verifyToken(aTokenKey);
     return decryptTokenFromString(token.getExtendedInformation());
   }
 
-  private ActionToken decryptTokenFromString(String anExtendedInformationsToken) {
-    List<String> result =
-      Lists.newArrayList(Splitter.on('|').trimResults().split(anExtendedInformationsToken));
+  @VisibleForTesting
+  protected ActionToken decryptTokenFromString(String anExtendedInformationsToken) {
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(anExtendedInformationsToken));
+    List<String> result = Splitter.on('|').trimResults().splitToList(anExtendedInformationsToken);
+    Preconditions.checkState(result.size() >= 4);
+
     ActionToken actionToken = new ActionToken();
     actionToken.setUserId(Long.parseLong(result.get(0)));
     actionToken.setAction(result.get(1));
-    actionToken.setExpirationDate(Instant.ofEpochMilli(Long.parseLong(result.get(2)))
-      .atZone(ZoneId.systemDefault()).toLocalDateTime());
+    actionToken.setExpirationDate(Instant.ofEpochMilli(Long.parseLong(result.get(2))).atZone(ZoneOffset.UTC).toLocalDateTime());
     actionToken.setAdditionalParameters(decryptAdditionalParameters(result.get(3)));
-    actionToken.checkvalid();
     return actionToken;
   }
 
-  private String encryptTokenAsString(ActionToken actionToken) {
+  @VisibleForTesting
+  protected String encryptTokenAsString(ActionToken actionToken) {
     Preconditions.checkArgument(!StringUtils.isEmpty(actionToken.getUserId()),
       "The token user id can not be null");
-    Preconditions.checkNotNull(actionToken.getAction(), "The token action can not be null");
-    Preconditions.checkNotNull(actionToken.getExpirationDate(),
+    Preconditions.checkArgument(!StringUtils.isEmpty(actionToken.getAction()),
+      "The token action can not be null");
+    Preconditions.checkArgument(actionToken.getExpirationDate() != null,
       "The token expiration date can not be null");
 
     Joiner joiner = Joiner.on('|');
     return joiner.join(actionToken.getUserId(), actionToken.getAction(),
-      actionToken.getExpirationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+      actionToken.getExpirationDate().toInstant(ZoneOffset.UTC).toEpochMilli(),
       encryptAdditionalParameters(actionToken.getAdditionalParameters()));
   }
 
-  @Required
-  public void setKeyBasedPersistenceTokenService(
-    KeyBasedPersistenceTokenService keyBasedPersistenceTokenService) {
-    this.keyBasedPersistenceTokenService = keyBasedPersistenceTokenService;
-  }
-
-  private Map<String, String> decryptAdditionalParameters(String encryptedParams) {
+  @VisibleForTesting
+  protected Map<String, String> decryptAdditionalParameters(String encryptedParams) {
     if (StringUtils.isEmpty(encryptedParams)) {
-      return null;
+      return Maps.newHashMap();
     }
 
     Map<String, String> params = Maps.newHashMap();
@@ -81,16 +80,15 @@ public class ActionTokenServiceImpl implements ActionTokenService {
     Splitter keyValueSplitter = Splitter.on("&=&");
     Iterable<String> mapEntries = entrySplitter.split(encryptedParams);
     for (String entry : mapEntries) {
-      List<String> keyValueAsList = Lists.newArrayList(keyValueSplitter.split(entry));
-      if (!(keyValueAsList.size() == 2)) {
-        throw new RuntimeException("Can not decrypt token additional parameters");
-      }
+      List<String> keyValueAsList = keyValueSplitter.splitToList(entry);
+      Preconditions.checkState(keyValueAsList.size() == 2);
       params.put(keyValueAsList.get(0), keyValueAsList.get(1));
     }
     return params;
   }
 
-  private String encryptAdditionalParameters(Map<String, String> encryptedParams) {
+  @VisibleForTesting
+  protected String encryptAdditionalParameters(Map<String, String> encryptedParams) {
     if (encryptedParams == null) {
       return "";
     }

@@ -1,5 +1,6 @@
 package fr.blossom.core.user;
 
+import com.google.common.io.ByteStreams;
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.event.CreatedEvent;
 import fr.blossom.core.common.event.UpdatedEvent;
@@ -12,7 +13,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.plugin.core.PluginRegistry;
@@ -185,11 +186,11 @@ public class UserServiceImplTest {
   @Test
   public void test_load_avatar_not_null() throws Exception {
     User userToReturn = new User();
-    byte[] avatar = new byte[]{0};
+    byte[] avatar = new byte[]{0, 1,2,3};
     userToReturn.setAvatar(avatar);
     BDDMockito.given(userDao.getOne(BDDMockito.anyLong())).willReturn(userToReturn);
 
-    Assert.assertEquals(avatar, userService.loadAvatar(123456789L));
+    Assert.assertArrayEquals(avatar, ByteStreams.toByteArray(userService.loadAvatar(1L)));
   }
 
   @Test

@@ -15,6 +15,14 @@
       <div class="sk-rect5"></div>
     </div>
 
+    <@spring.bind "userUpdateForm"/>
+    <#if spring.status.error>
+      <p class="alert alert-danger">
+        <#list spring.status.errorMessages as error>
+        ${error}<#if !error?is_last><br/></#if>
+        </#list>
+      </p>
+    </#if>
 
     <div class="form-group">
       <label class="col-sm-2 control-label"><@spring.message "users.user.properties.identifier"/></label>
@@ -167,9 +175,15 @@
     var edit = $(targetSelector).data("edit");
     var form = $(targetSelector + ' > form');
 
-    $.post(edit, form.serialize()).done(function (responseText, textStatus, jqXHR) {
-      $(targetSelector).html(responseText);
+    $.post(edit, form.serialize())
+    .done(function(data, textStatus, jqXHR){
+      $(targetSelector).html(data);
       <@notification.success message="updated"/>
+    })
+    .fail(function( jqXHR, textStatus, errorThrown){
+      $(targetSelector).html(jqXHR.responseText);
+      <@notification.error message="errored"/>
+    }).always(function(){
       $(targetSelector+ ' > .ibox-content').removeClass("sk-loading");
     });
   };

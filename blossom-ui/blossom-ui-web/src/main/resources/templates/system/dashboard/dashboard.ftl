@@ -3,7 +3,6 @@
 
 
 <@master.default currentUser=currentUser>
-<!-- Morris -->
 <link href="/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
 
 <div class="wrapper wrapper-content">
@@ -14,7 +13,7 @@
         <div class="col-lg-12">
           <div id="status" class="ibox float-e-margins">
             <div class="ibox-title">
-              <h5>Server status</h5>
+              <h5><@spring.message "dashboard.server.status"/></h5>
             </div>
             <div class="ibox-content" style="min-height: 200px;">
               <div class="sk-spinner sk-spinner-wave">
@@ -31,7 +30,7 @@
         <div class="col-lg-12">
           <div id="memory" class="ibox float-e-margins">
             <div class="ibox-title">
-              <h5>Server status</h5>
+              <h5><@spring.message "dashboard.jvm.memory"/></h5>
             </div>
             <div class="ibox-content" style="min-height: 200px;">
               <div class="sk-spinner sk-spinner-wave">
@@ -48,7 +47,7 @@
         <div class="col-lg-12">
           <div id="jvm" class="ibox float-e-margins">
             <div class="ibox-title">
-              <h5>Server status</h5>
+              <h5><@spring.message "dashboard.jvm.status"/></h5>
             </div>
             <div class="ibox-content" style="min-height: 200px;">
               <div class="sk-spinner sk-spinner-wave">

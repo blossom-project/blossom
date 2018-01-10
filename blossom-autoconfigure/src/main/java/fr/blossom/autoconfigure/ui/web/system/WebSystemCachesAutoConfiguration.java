@@ -18,29 +18,29 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(CacheManagerController.class)
 public class WebSystemCachesAutoConfiguration {
 
-  @Bean
-  public MenuItem systemCacheMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
-    return builder
-      .key("cacheManager")
-      .label("menu.system.caches", true)
-      .link("/blossom/system/caches")
-      .icon("fa fa-magnet")
-      .order(2)
-      .privilege(cacheManagerPrivilegePlugin())
-      .parent(systemMenuItem)
-      .build();
-  }
+    @Bean
+    public MenuItem systemCacheMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
+        return builder
+                .key("cacheManager")
+                .label("menu.system.caches")
+                .link("/blossom/system/caches")
+                .icon("fa fa-magnet")
+                .order(2)
+                .privilege(cacheManagerPrivilegePlugin())
+                .parent(systemMenuItem)
+                .build();
+    }
 
 
-  @Bean
-  public CacheManagerController cacheManagerController(BlossomCacheManager cacheManager) {
-    return new CacheManagerController(cacheManager);
-  }
+    @Bean
+    public CacheManagerController cacheManagerController(BlossomCacheManager cacheManager) {
+        return new CacheManagerController(cacheManager);
+    }
 
 
-  @Bean
-  public Privilege cacheManagerPrivilegePlugin() {
-    return new SimplePrivilege("system","caches", "manager");
-  }
+    @Bean
+    public Privilege cacheManagerPrivilegePlugin() {
+        return new SimplePrivilege("system", "caches", "manager");
+    }
 
 }

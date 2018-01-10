@@ -19,26 +19,26 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnBean(Scheduler.class)
 public class WebSystemSchedulerAutoConfiguration {
 
-  @Bean
-  public MenuItem systemSchedulerMenuItem(MenuItemBuilder builder,
-    @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
-    return builder
-      .key("schedulerManager")
-      .label("menu.system.scheduler", true)
-      .link("/blossom/system/scheduler")
-      .order(1)
-      .icon("fa fa-calendar")
-      .privilege(schedulerPrivilegePlugin())
-      .parent(systemMenuItem).build();
-  }
+    @Bean
+    public MenuItem systemSchedulerMenuItem(MenuItemBuilder builder,
+                                            @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
+        return builder
+                .key("schedulerManager")
+                .label("menu.system.scheduler")
+                .link("/blossom/system/scheduler")
+                .order(1)
+                .icon("fa fa-calendar")
+                .privilege(schedulerPrivilegePlugin())
+                .parent(systemMenuItem).build();
+    }
 
-  @Bean
-  public SchedulerController schedulerController(ScheduledJobService scheduledJobService) {
-    return new SchedulerController(scheduledJobService);
-  }
+    @Bean
+    public SchedulerController schedulerController(ScheduledJobService scheduledJobService) {
+        return new SchedulerController(scheduledJobService);
+    }
 
-  @Bean
-  public Privilege schedulerPrivilegePlugin() {
-    return new SimplePrivilege("system", "scheduler", "manager");
-  }
+    @Bean
+    public Privilege schedulerPrivilegePlugin() {
+        return new SimplePrivilege("system", "scheduler", "manager");
+    }
 }

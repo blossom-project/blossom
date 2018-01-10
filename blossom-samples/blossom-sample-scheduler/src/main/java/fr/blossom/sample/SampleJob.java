@@ -16,7 +16,7 @@ public class SampleJob implements Job {
   public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
     LOGGER.info("Sample job execution !");
     try {
-      Thread.sleep(15000L);
+      Thread.sleep(500L);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }

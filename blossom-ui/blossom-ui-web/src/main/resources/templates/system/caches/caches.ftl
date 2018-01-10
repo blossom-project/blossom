@@ -53,13 +53,13 @@
       <table class="table table-stripped">
         <thead>
         <tr>
-          <th>Name</th>
-          <th>Specification</th>
-          <th>Action</th>
-          <th>Estimated size</th>
-          <th>Hit count</th>
-          <th>Miss count</th>
-          <th>Eviction count</th>
+          <th><@spring.message "caches.cache.properties.name"/></th>
+          <th><@spring.message "caches.cache.properties.specification"/></th>
+          <th><@spring.message "caches.cache.properties.actions"/></th>
+          <th><@spring.message "caches.cache.properties.estimated_size"/></th>
+          <th><@spring.message "caches.cache.properties.hit_count"/></th>
+          <th><@spring.message "caches.cache.properties.miss_count"/></th>
+          <th><@spring.message "caches.cache.properties.eviction_count"/></th>
         </tr>
         </thead>
         <tbody>

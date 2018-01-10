@@ -45,7 +45,7 @@ public class ErrorControllerAdvice {
 
   @ExceptionHandler(AccessDeniedException.class)
   @ResponseStatus(HttpStatus.FORBIDDEN)
-  public ModelAndView handleForbidden(HttpServletRequest req, NoHandlerFoundException exception) {
+  public ModelAndView handleForbidden(HttpServletRequest req, AccessDeniedException exception) {
     return new ModelAndView("error/403");
   }
 }

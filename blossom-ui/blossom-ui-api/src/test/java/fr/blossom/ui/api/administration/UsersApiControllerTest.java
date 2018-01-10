@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -65,15 +65,13 @@ public class UsersApiControllerTest {
   public void should_get_paged_users_with_query_parameter() {
     when(searchEngine.search(any(String.class), any(Pageable.class)))
       .thenAnswer(a -> new SearchResult<>(0, new PageImpl<UserDTO>(Lists.newArrayList())));
-    controller.list("test", null);
+    controller.list("test", PageRequest.of(0,10));
     verify(searchEngine, times(1)).search(eq("test"), any(Pageable.class));
   }
 
   @Test
   public void should_create_with_null_body() throws Exception {
     thrown.expect(IllegalArgumentException.class);
-
-    when(service.create(any(UserCreateForm.class))).thenAnswer(a -> new UserDTO());
     controller.create(null);
   }
 

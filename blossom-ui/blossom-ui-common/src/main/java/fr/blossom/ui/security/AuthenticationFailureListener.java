@@ -1,5 +1,6 @@
 package fr.blossom.ui.security;
 
+import com.google.common.base.Preconditions;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ public class AuthenticationFailureListener
   private final LoginAttemptsService loginAttemptService;
 
   public AuthenticationFailureListener(LoginAttemptsService loginAttemptService) {
+    Preconditions.checkArgument(loginAttemptService != null);
     this.loginAttemptService = loginAttemptService;
   }
 

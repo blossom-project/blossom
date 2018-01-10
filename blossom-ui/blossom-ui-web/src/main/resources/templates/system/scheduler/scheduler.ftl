@@ -1,5 +1,6 @@
 <#import "/spring.ftl" as spring>
 <#import "/master/master.ftl" as master>
+<#import "/utils/notification.ftl" as notification>
 
 
 <@master.default currentUser=currentUser>
@@ -31,7 +32,7 @@
                 <div class="col-lg-12">
                   <div>
                     <h2 class="no-margins">
-                    ${scheduler.name}
+                      <@spring.messageText "scheduler."+scheduler.name scheduler.name/>
                       <span class="small pull-right">
                         <div class="switch">
                                 <div class="onoffswitch">
@@ -46,8 +47,8 @@
                     </h2>
                     <p><strong><i class="fa fa-clock-o"></i> ${scheduler.start?datetime}</strong></p>
                     <small>
-                      There are <b>${scheduler.jobs} jobs</b> and <b>${scheduler.triggers} triggers</b> that are executed by a pool
-                      of <b>${scheduler.poolsize} threads</b>.
+                      <#assign detailsArgs = ["${scheduler.jobs?c}", "${scheduler.triggers?c}", "${scheduler.poolsize?c}"]/>
+                      <@spring.messageArgs "scheduler.details" detailsArgs/>
                     </small>
                   </div>
                 </div>
@@ -63,7 +64,7 @@
                      data-scheduler-group="${group}"
                      data-href="/blossom/system/scheduler/${group}"
                      data-target="#${group}">
-                  ${group}
+                    <@spring.messageText "scheduler.group."+group group/>
                   </a>
                 </li>
               </#list>
@@ -165,10 +166,11 @@
     updateDetailPane(null)
   });
 
-  $(document).on("scheduledTaskExecution", function (event, href) {
-    console.log("scheduledTaskExecution", event);
-    $.post(href, function(data){
-      console.log("executed");
+  $(document).on("scheduledTaskExecution", function (event, executeNowHref, refreshHref) {
+    console.log(event, executeNowHref, refreshHref);
+    $.post(executeNowHref, function(data){
+      <@notification.success message="scheduler.execution.manual.message"/>
+      $(document).trigger("scheduledTaskSelected", refreshHref);
     })
   });
 

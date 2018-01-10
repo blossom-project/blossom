@@ -1,5 +1,12 @@
 package fr.blossom.core.common.dto;
 
+/**
+ * Abstract DTO class for representing n-n relationships between {@code A} and {@code A} {@link AbstractDTO}
+ *
+ * @param <A>
+ * @param <B>
+ * @author Maël Gargadennec
+ */
 public abstract class AbstractAssociationDTO<A extends AbstractDTO, B extends AbstractDTO> extends AbstractDTO {
     private A a;
     private B b;

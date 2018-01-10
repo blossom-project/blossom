@@ -38,7 +38,7 @@
                 <li data-menuId="${subMenuItem.key()}" <#if currentMenu?seq_contains(subMenuItem.key())>class="active"</#if>>
                   <#if subMenuItem.link()??><a href="${subMenuItem.link()}"></#if>
                   <#if subMenuItem.icon()??><i class="${subMenuItem.icon()}"></i></#if>
-                  <span class="nav-label"><@spring.messageText subMenuItem.label() subMenuItem.label()/></span>
+                  <@spring.messageText subMenuItem.label() subMenuItem.label()/>
                   <#if subMenuItem.link??></a></#if>
                 </li>
                 </#if>
@@ -60,7 +60,7 @@
 
       <form role="search" class="navbar-form-custom" action="/blossom/search" method="get">
         <div class="form-group text-white">
-          <input type="text" name="q" placeholder="<@spring.message "omnisearch.placeholder"/>" class="form-control">
+          <input type="text" name="q" placeholder="<@spring.message "omnisearch.placeholder"/>" class="form-control" id="top-search">
         </div>
       </form>
 
@@ -87,7 +87,7 @@
       </li>
       <li>
         <a href="/blossom/logout">
-          <i class="fa fa-sign-out"></i> Log out
+          <i class="fa fa-sign-out"></i> <@spring.message "login.logout"/>
         </a>
       </li>
     </ul>

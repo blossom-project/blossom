@@ -1,6 +1,7 @@
 package fr.blossom.core.common.utils.tree;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import java.util.Comparator;
 import java.util.List;
@@ -37,6 +38,7 @@ public class TreeNode<T> {
   }
 
   public void walkTree(TreeNodeCallback<T> callbackHandler) {
+    Preconditions.checkArgument(callbackHandler != null);
     callbackHandler.handleTreeNode(this);
     children.sort(Comparator.comparing(o -> o.text));
     for (TreeNode<T> localizationTreeNode : children) {
@@ -46,6 +48,7 @@ public class TreeNode<T> {
   }
 
   public interface TreeNodeCallback<T> {
+
     void handleTreeNode(TreeNode<T> node);
   }
 
@@ -78,7 +81,4 @@ public class TreeNode<T> {
     return parent;
   }
 
-  public void setParent(TreeNode<T> parent) {
-    this.parent = parent;
-  }
 }

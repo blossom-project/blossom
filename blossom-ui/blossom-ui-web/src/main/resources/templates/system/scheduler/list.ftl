@@ -6,29 +6,46 @@
     <#list jobInfos as jobInfo>
     <tr>
       <td class="project-title">
-        <a onclick="clickedJobInfos(this)" data-href="/blossom/system/scheduler/${jobInfo.key.group}/${jobInfo.key.name}">${jobInfo.key.name}</a>
+        <a onclick="clickedJobInfos(this)" data-href="/blossom/system/scheduler/${jobInfo.key.group}/${jobInfo.key.name}">
+          <@spring.messageText "scheduler.job.name."+jobInfo.key.name jobInfo.key.name/>
+        </a>
         <br/>
-        <small>${jobInfo.detail.description}</small>
+        <small>
+          <@spring.messageText "scheduler.job.description."+jobInfo.detail.description jobInfo.detail.description/>
+        </small>
       </td>
       <td class="project-status">
         <#if scheduler.standBy>
-          <span class="label label-warning-light">Stand-by</span>
+          <span class="label label-warning-light">
+            <@spring.message "scheduler.job.state.standby"/>
+          </span>
         <#else>
           <#if jobInfo.active && jobInfo.executing>
-            <span class="label label-success"><span class="fa fa-spinner fa-spin"></span> In progress </span>
+            <span class="label label-success">
+              <span class="fa fa-spinner fa-spin"></span>
+              &nbsp;<@spring.message "scheduler.job.state.in_progress"/>
+            </span>
           <#elseif jobInfo.active && !jobInfo.executing>
-            <span class="label label-primary">Active</span>
+            <span class="label label-primary">
+              <@spring.message "scheduler.job.state.active"/>
+            </span>
           <#else>
-            <span class="label label-default">Idle</span>
+            <span class="label label-default">
+              <@spring.message "scheduler.job.state.idle"/>
+            </span>
           </#if>
         </#if>
       </td>
 
       <td class="project-lastExecution">
-        <#if jobInfo.previousFireTime??>
-          <i class="fa fa-thumbs-up text-success"></i> ${jobInfo.previousFireTime?datetime}
+        <#if jobInfo.lastExecutedTrigger??>
+          <i class="fa fa-thumbs-up text-success"></i> ${jobInfo.lastExecutedTrigger.startTime?datetime}
         <#else>
-          <i class="fa fa-thumbs-down text-danger"></i> <@spring.message "never"/>
+          <#if jobInfo.previousFireTime??>
+            <i class="fa fa-thumbs-up text-success"></i> ${jobInfo.previousFireTime?datetime}
+          <#else>
+            <i class="fa fa-thumbs-down text-danger"></i> <@spring.message "never"/>
+          </#if>
         </#if>
       </td>
 

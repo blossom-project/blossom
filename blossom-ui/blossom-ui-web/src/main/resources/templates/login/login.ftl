@@ -35,7 +35,9 @@
       <button type="submit" class="btn btn-primary block full-width m-b" id="login"><@spring.message "login.page.form.button.login"/></button>
 
       <#if error.isPresent() && SPRING_SECURITY_LAST_EXCEPTION??>
-        <p class="alert alert-danger">${SPRING_SECURITY_LAST_EXCEPTION.message}</p>
+        <#if SPRING_SECURITY_LAST_EXCEPTION.message??>
+          <p class="alert alert-danger">${SPRING_SECURITY_LAST_EXCEPTION.message}</p>
+        </#if>
       </#if>
       <a href="/blossom/public/forgotten_password"><small><@spring.message "login.forgotten.password"/></small></a>
     </form>

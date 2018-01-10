@@ -3,6 +3,7 @@ package fr.blossom.core.user;
 import fr.blossom.core.common.service.CrudService;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Optional;
 
@@ -33,6 +34,6 @@ public interface UserService extends CrudService<UserDTO> {
 
   void updateAvatar(long id, byte[] avatar);
 
-  byte[] loadAvatar(long id) throws IOException;
+  InputStream loadAvatar(long id) throws IOException;
 
 }

@@ -155,7 +155,7 @@ public class RolesController {
     if (role == null) {
       throw new NoSuchElementException(String.format("Role=%s not found", id));
     }
-    return this.updateRoleInformationView(new RoleUpdateForm(role), model);
+    return this.updateRoleInformationView(new RoleUpdateForm(role), model, Optional.empty());
   }
 
   @PostMapping("/{id}/_informations/_edit")
@@ -165,7 +165,7 @@ public class RolesController {
     @Valid @ModelAttribute("roleUpdateForm") RoleUpdateForm roleUpdateForm,
     BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
-      return this.updateRoleInformationView(roleUpdateForm, model);
+      return this.updateRoleInformationView(roleUpdateForm, model, Optional.of(HttpStatus.CONFLICT));
     }
 
     RoleDTO role = this.roleService.getOne(id);
@@ -183,8 +183,10 @@ public class RolesController {
     return new ModelAndView("roles/roleinformations", "role", role);
   }
 
-  private ModelAndView updateRoleInformationView(RoleUpdateForm roleUpdateForm, Model model) {
-    return new ModelAndView("roles/roleinformations-edit", "roleUpdateForm", roleUpdateForm);
+  private ModelAndView updateRoleInformationView(RoleUpdateForm roleUpdateForm, Model model, Optional<HttpStatus> status) {
+    ModelAndView modelAndView= new ModelAndView("roles/roleinformations-edit", "roleUpdateForm", roleUpdateForm);
+    modelAndView.setStatus(status.orElse(HttpStatus.OK));
+    return modelAndView;
   }
 
   @GetMapping("/{id}/_privileges")
@@ -236,7 +238,8 @@ public class RolesController {
     Model model) {
     model.addAttribute("rolePrivilegeUpdateForm", rolePrivilegeUpdateForm);
     model.addAttribute("privileges", groupPrivileges(this.roleService.getAvailablePrivileges()));
-    return new ModelAndView("roles/roleprivileges-edit", model.asMap());
+    ModelAndView modelAndView = new ModelAndView("roles/roleprivileges-edit", model.asMap());
+    return modelAndView;
   }
 
   private Map<String, Map<String, List<Privilege>>> groupPrivileges(List<Privilege> privileges) {

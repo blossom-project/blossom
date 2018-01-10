@@ -3,13 +3,17 @@ package fr.blossom.core.common.search;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.service.ReadOnlyService;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,15 +42,19 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
   private final ReadOnlyService<DTO> service;
   private final IndexationEngineConfiguration<DTO> configuration;
 
-  private final ObjectMapper objectMapper;
+  private final ObjectWriter objectWriter;
   private final BulkProcessor bulkProcessor;
 
-  public IndexationEngineImpl(Client client, ReadOnlyService<DTO> service, BulkProcessor bulkProcessor, ObjectMapper objectMapper, IndexationEngineConfiguration<DTO> configuration) {
+  public IndexationEngineImpl(Client client, ReadOnlyService<DTO> service,
+    BulkProcessor bulkProcessor, ObjectMapper objectMapper,
+    IndexationEngineConfiguration<DTO> configuration) {
     this.client = client;
     this.service = service;
     this.bulkProcessor = bulkProcessor;
-    this.objectMapper = objectMapper;
     this.configuration = configuration;
+    this.objectWriter = objectMapper.writer(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+      SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS,
+      SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
   }
 
   @Override
@@ -71,7 +79,8 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
       this.bulkProcessor.flush();
       this.switchIndex(newIndexName);
 
-      logger.info("Full indexing of {} {} ended.", pagedDTOs.getTotalElements(), this.configuration.getAlias());
+      logger.info("Full indexing of {} {} ended.", pagedDTOs.getTotalElements(),
+        this.configuration.getAlias());
 
     } catch (Exception e) {
       this.client.admin().indices().prepareDelete(newIndexName).get();
@@ -83,7 +92,8 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
   public void indexOne(long id) {
     if (!existsIndex()) {
       logger
-        .debug("Can't delete {} element with id {} as the index doesn't exist !", this.configuration.getAlias(), id);
+        .debug("Can't delete {} element with id {} as the index doesn't exist !",
+          this.configuration.getAlias(), id);
       return;
     }
 
@@ -106,7 +116,8 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
   public void deleteOne(long id) {
     if (!existsIndex()) {
       logger
-        .debug("Can't delete {} element with id {} as the index doesn't exist !", this.configuration.getAlias(), id);
+        .debug("Can't delete {} element with id {} as the index doesn't exist !",
+          this.configuration.getAlias(), id);
       return;
     }
     try {
@@ -134,20 +145,24 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
     }
   }
 
-  private boolean existsIndex() {
+  @VisibleForTesting
+  protected boolean existsIndex() {
     return !getIndicesFromAliasName().isEmpty();
   }
 
-  private String createIndex() {
+  @VisibleForTesting
+  protected String createIndex() {
     final String indexName = this.configuration.getAlias() + "_" + System.currentTimeMillis();
     CreateIndexRequestBuilder prepareCreate = this.client.admin().indices()
       .prepareCreate(indexName);
 
     if (this.configuration.getSource() != null) {
       try {
-        prepareCreate.setSource(ByteStreams.toByteArray(this.configuration.getSource().getInputStream()));
+        prepareCreate
+          .setSource(ByteStreams.toByteArray(this.configuration.getSource().getInputStream()));
       } catch (IOException e) {
-        logger.error("Can't read index {} configuration file {}", indexName, this.configuration.getSource(), e);
+        logger.error("Can't read index {} configuration file {}", indexName,
+          this.configuration.getSource(), e);
       }
     }
 
@@ -177,7 +192,8 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
     }
   }
 
-  Set<String> getIndicesFromAliasName() {
+  @VisibleForTesting
+  protected Set<String> getIndicesFromAliasName() {
     IndicesAdminClient iac = this.client.admin().indices();
     ImmutableOpenMap<String, List<AliasMetaData>> map = iac
       .getAliases(new GetAliasesRequest(this.configuration.getAlias())).actionGet().getAliases();
@@ -189,21 +205,23 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
 
   private UpdateRequestBuilder prepareIndexRequest(String indexName, DTO dto)
     throws JsonProcessingException {
-    ObjectNode json = prepareDocument(dto);
+    Map<String, Object> json = prepareDocument(dto);
     return this.client
-      .prepareUpdate(indexName, this.configuration.getTypeFunction().apply(dto), String.valueOf(dto.getId()))
-      .setDocAsUpsert(true).setDoc(this.objectMapper.writeValueAsString(json));
+      .prepareUpdate(indexName, this.configuration.getTypeFunction().apply(dto),
+        String.valueOf(dto.getId()))
+      .setDocAsUpsert(true).setDoc(this.objectWriter.writeValueAsString(json));
   }
 
-  protected ObjectNode prepareDocument(DTO dto) {
-    ObjectNode root = objectMapper.createObjectNode();
-    root.putPOJO("summary", this.configuration.getSummaryFunction().apply(dto));
-    root.set("dto", this.objectMapper.valueToTree(dto));
+  protected Map<String, Object> prepareDocument(DTO dto) {
+    Map<String, Object> root = Maps.newHashMap();
+    root.put("summary", this.configuration.getSummaryFunction().apply(dto));
+    root.put("dto", dto);
     return root;
   }
 
   private DeleteRequestBuilder prepareDeleteRequest(String indexName, DTO dto) {
-    return this.client.prepareDelete().setIndex(indexName).setType(this.configuration.getTypeFunction().apply(dto))
+    return this.client.prepareDelete().setIndex(indexName)
+      .setType(this.configuration.getTypeFunction().apply(dto))
       .setId(String.valueOf(dto.getId()));
   }
 

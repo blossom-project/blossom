@@ -32,7 +32,7 @@ public class FileContentDaoImpl implements FileContentDao {
   }
 
   @Override
-  public InputStream read(Long fileId) throws SQLException {
+  public InputStream read(Long fileId) throws SQLException, FileNotFoundException {
     return new ByteArrayInputStream(this.repository.findOne(QFileContent.fileContent.fileId.eq(fileId)).orElseThrow(FileNotFoundException::new).getData());
   }
 }

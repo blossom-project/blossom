@@ -1,6 +1,5 @@
 package fr.blossom.core.common.actuator;
 
-import org.elasticsearch.action.search.SearchResponse;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.web.annotation.WebEndpoint;
 import org.springframework.http.MediaType;
@@ -14,7 +13,9 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 /**
- * Created by Maël Gargadennnec on 17/05/2017.
+ * Adapter to expose trace statistics
+ *
+ * @author Maël Gargadennec
  */
 @WebEndpoint(id = "traces_stats")
 public class TraceStatisticsMvcEndpoint {

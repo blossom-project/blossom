@@ -19,13 +19,13 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 @EnablePluginRegistries({IndexationEngine.class, SearchEngine.class})
 public class IndexationEngineAutoConfiguration {
 
-  @Autowired
-  @Qualifier(value = PluginConstants.PLUGIN_INDEXATION_ENGINE)
-  private PluginRegistry<IndexationEngine, Class<? extends AbstractDTO>> registry;
+    @Autowired
+    @Qualifier(value = PluginConstants.PLUGIN_INDEXATION_ENGINE)
+    private PluginRegistry<IndexationEngine, Class<? extends AbstractDTO>> registry;
 
-  @Bean
-  public IndexationEventListeners indexationEventListeners(){
-    return new IndexationEventListeners(registry);
-  }
+    @Bean
+    public IndexationEventListeners indexationEventListeners() {
+        return new IndexationEventListeners(registry);
+    }
 
 }
