@@ -24,27 +24,33 @@
 </div>
 
 <div class="wrapper wrapper-content">
-  <#list reports as report>
+  <#list reports as name, report>
     <div class="ibox float-e-margins">
       <div class="ibox-title">
-        <h5>${report.name}</h5>
+        <h5>${name}</h5>
       </div>
       <div class="ibox-content">
-        <#assign displayedKeys = ["ID", "AUTHOR", "DATEEXECUTED", "ORDEREXECUTED", "EXECTYPE", "DESCRIPTION"]/>
+        <#assign displayedKeys = ["id", "author", "dateExecuted", "orderExecuted", "execType", "description"]/>
         <table class="table table-stripped">
           <thead>
             <tr>
-              <#list displayedKeys as key>
-                <th>${key}</th>
-              </#list>
+              <th>id</th>
+              <th>author</th>
+              <th>dateExecuted</th>
+              <th>orderExecuted</th>
+              <th>execType</th>
+              <th>description</th>
             </tr>
           </thead>
           <tbody>
-            <#list report.changeLogs as changeLog>
+            <#list report.changeSets as changeSet>
               <tr>
-                <#list displayedKeys as key>
-                  <td>${changeLog[key]!''}</td>
-                </#list>
+                <td>${changeSet["id"]!''}</td>
+                <td>${changeSet["author"]!''}</td>
+                <td>${changeSet["dateExecuted"]?datetime}</td>
+                <td>${changeSet["orderExecuted"]?c}</td>
+                <td>${changeSet["execType"]!''}</td>
+                <td>${changeSet["description"]!''}</td>
               </tr>
             </#list>
           </tbody>

@@ -107,7 +107,7 @@ public class BlossomCacheTest {
 
   @Test
   public void should_get_object_by_key_page_request() {
-    PageRequest key = new PageRequest(0, 5);
+    PageRequest key = PageRequest.of(0, 5);
     Page<?> value = new PageImpl<>(Lists.newArrayList());
     blossomCache.put(key, value);
 

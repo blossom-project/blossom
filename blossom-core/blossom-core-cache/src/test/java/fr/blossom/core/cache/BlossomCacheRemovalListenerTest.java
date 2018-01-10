@@ -94,7 +94,7 @@ public class BlossomCacheRemovalListenerTest {
       nativeCache, true);
     blossomCache = Mockito.spy(blossomCache);
 
-    PageRequest toEvict = new PageRequest(0, 10);
+    PageRequest toEvict = PageRequest.of(0, 10);
 
     ConcurrentMap<Object, Object> map = Maps.newConcurrentMap();
     map.put(toEvict, new PageImpl(Lists.newArrayList()));

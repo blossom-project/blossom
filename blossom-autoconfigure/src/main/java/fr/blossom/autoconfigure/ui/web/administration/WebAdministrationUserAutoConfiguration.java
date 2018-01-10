@@ -24,45 +24,45 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter(CommonAutoConfiguration.class)
 public class WebAdministrationUserAutoConfiguration {
 
-    @Bean
-    public MenuItem administrationUserMenuItem(MenuItemBuilder builder,
-                                               @Qualifier("administrationMenuItem") MenuItem administrationMenuItem) {
-        return builder
-                .key("users")
-                .label("menu.administration.users")
-                .link("/blossom/administration/users")
-                .icon("fa fa-user")
-                .order(1)
-                .privilege(usersReadPrivilege())
-                .parent(administrationMenuItem)
-                .build();
-    }
+  @Bean
+  public MenuItem administrationUserMenuItem(MenuItemBuilder builder,
+    @Qualifier("administrationMenuItem") MenuItem administrationMenuItem) {
+    return builder
+      .key("users")
+      .label("menu.administration.users")
+      .link("/blossom/administration/users")
+      .icon("fa fa-user")
+      .order(1)
+      .privilege(usersReadPrivilege())
+      .parent(administrationMenuItem)
+      .build();
+  }
 
-    @Bean
-    public UsersController usersController(UserService userService,
-                                           SearchEngineImpl<UserDTO> searchEngine, Tika tika) {
-        return new UsersController(userService, searchEngine, tika);
-    }
+  @Bean
+  public UsersController usersController(UserService userService, Tika tika,
+    SearchEngineImpl<UserDTO> searchEngine) {
+    return new UsersController(userService, searchEngine, tika);
+  }
 
 
-    @Bean
-    public Privilege usersReadPrivilege() {
-        return new SimplePrivilege("administration", "users", "read");
-    }
+  @Bean
+  public Privilege usersReadPrivilege() {
+    return new SimplePrivilege("administration", "users", "read");
+  }
 
-    @Bean
-    public Privilege usersWritePrivilege() {
-        return new SimplePrivilege("administration", "users", "write");
-    }
+  @Bean
+  public Privilege usersWritePrivilege() {
+    return new SimplePrivilege("administration", "users", "write");
+  }
 
-    @Bean
-    public Privilege usersCreatePrivilege() {
-        return new SimplePrivilege("administration", "users", "create");
-    }
+  @Bean
+  public Privilege usersCreatePrivilege() {
+    return new SimplePrivilege("administration", "users", "create");
+  }
 
-    @Bean
-    public Privilege usersDeletePrivilege() {
-        return new SimplePrivilege("administration", "users", "delete");
-    }
+  @Bean
+  public Privilege usersDeletePrivilege() {
+    return new SimplePrivilege("administration", "users", "delete");
+  }
 
 }

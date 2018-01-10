@@ -1,12 +1,11 @@
 package fr.blossom.core.user;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import java.util.Optional;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import com.google.common.base.Preconditions;
-import org.apache.commons.lang.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 class UniqueIdentifierValidator implements ConstraintValidator<UniqueIdentifier, Object> {
 

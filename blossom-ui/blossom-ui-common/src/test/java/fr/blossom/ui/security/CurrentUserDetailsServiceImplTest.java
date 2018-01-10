@@ -1,6 +1,6 @@
 package fr.blossom.ui.security;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
 import com.google.common.collect.Lists;
 import fr.blossom.core.association_user_role.AssociationUserRoleService;

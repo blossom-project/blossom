@@ -1,8 +1,8 @@
 package fr.blossom.ui.api.administration;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,7 +57,7 @@ public class GroupsApiControllerTest {
   public void should_get_paged_groups_without_query_parameter() {
     when(service.getAll(any(Pageable.class)))
       .thenAnswer(a -> new PageImpl<GroupDTO>(Lists.newArrayList()));
-    controller.list(null, new PageRequest(0, 20));
+    controller.list(null, PageRequest.of(0, 20));
     verify(service, times(1)).getAll(any(Pageable.class));
   }
 

@@ -49,7 +49,7 @@ public class CacheAutoConfiguration {
         }
 
         @Bean
-        public CacheManager blossomCacheManager() {
+        public BlossomCacheManager blossomCacheManager() {
             return new BlossomCacheManager(registry, registry.getPluginFor(DEFAULT_CACHE_CONFIGURATION));
         }
 

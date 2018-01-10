@@ -1,5 +1,13 @@
 package fr.blossom.initializr;
 
+import com.sun.codemodel.CodeWriter;
+import com.sun.codemodel.JClassAlreadyExistsException;
+import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JMethod;
+import com.sun.codemodel.JMod;
+import com.sun.codemodel.JPackage;
+import com.sun.codemodel.JVar;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,7 +17,6 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -21,18 +28,9 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-
-import com.sun.codemodel.CodeWriter;
-import com.sun.codemodel.JClassAlreadyExistsException;
-import com.sun.codemodel.JCodeModel;
-import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JMethod;
-import com.sun.codemodel.JMod;
-import com.sun.codemodel.JPackage;
-import com.sun.codemodel.JVar;
 
 /**
  * Created by Maël Gargadennnec on 14/06/2017.
@@ -165,8 +163,6 @@ public class ProjectGenerator {
     JDefinedClass clazz = jc._class(projectConfiguration.getPackageName() + ".Application");
 
     clazz.annotate(SpringBootApplication.class);
-    clazz.annotate(jc.ref("fr.blossom.autoconfigure.EnableBlossom"));
-
     if (PACKAGING_MODE.WAR.equals(projectConfiguration.getPackagingMode())) {
       clazz._extends(SpringBootServletInitializer.class);
       JMethod configure = clazz.method(JMod.PROTECTED, SpringApplicationBuilder.class, "configure");

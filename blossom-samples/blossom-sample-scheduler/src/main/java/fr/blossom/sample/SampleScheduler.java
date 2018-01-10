@@ -1,6 +1,5 @@
 package fr.blossom.sample;
 
-import fr.blossom.autoconfigure.EnableBlossom;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,7 +13,6 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 /**
  * Created by Maël Gargadennnec on 24/05/2017.
  */
-@EnableBlossom
 @SpringBootApplication
 public class SampleScheduler {
 

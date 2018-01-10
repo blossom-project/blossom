@@ -23,29 +23,30 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnBean(ProcessEngine.class)
 public class WebSystemBPMNAutoConfiguration {
 
-    @Bean
-    public MenuItem systemBPMNMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
-        return builder
-                .key("bpmnManager")
-                .label("menu.system.bpmn")
-                .link("/blossom/system/bpmn")
-                .icon("fa fa-sitemap")
-                .order(6)
-                .privilege(bpmnManagerPrivilegePlugin())
-                .parent(systemMenuItem)
-                .build();
-    }
+  @Bean
+  public MenuItem systemBPMNMenuItem(MenuItemBuilder builder,
+    @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
+    return builder
+      .key("bpmnManager")
+      .label("menu.system.bpmn")
+      .link("/blossom/system/bpmn")
+      .icon("fa fa-sitemap")
+      .order(6)
+      .privilege(bpmnManagerPrivilegePlugin())
+      .parent(systemMenuItem)
+      .build();
+  }
 
 
-    @Bean
-    public BPMNManagerController bpmnManagerController(ProcessEngine processEngine) {
-        return new BPMNManagerController(processEngine);
-    }
+  @Bean
+  public BPMNManagerController bpmnManagerController(ProcessEngine processEngine) {
+    return new BPMNManagerController(processEngine);
+  }
 
 
-    @Bean
-    public Privilege bpmnManagerPrivilegePlugin() {
-        return new SimplePrivilege("system", "bpmn", "manager");
-    }
+  @Bean
+  public Privilege bpmnManagerPrivilegePlugin() {
+    return new SimplePrivilege("system", "bpmn", "manager");
+  }
 
 }

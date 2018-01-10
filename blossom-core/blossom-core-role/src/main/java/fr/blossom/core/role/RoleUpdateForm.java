@@ -1,6 +1,6 @@
 package fr.blossom.core.role;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 
 @UniqueRoleName(idField = "id")

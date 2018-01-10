@@ -1,6 +1,5 @@
 package fr.blossom.sample;
 
-import fr.blossom.autoconfigure.EnableBlossom;
 import fr.blossom.core.user.UserRepository;
 import fr.blossom.sample.dataset.DataGenerator;
 import fr.blossom.sample.dataset.UserDataGenerator;
@@ -19,7 +18,6 @@ import java.util.List;
  */
 @Configuration
 @EnableAutoConfiguration
-@EnableBlossom
 public class CucumberConfiguration {
 
     @Autowired

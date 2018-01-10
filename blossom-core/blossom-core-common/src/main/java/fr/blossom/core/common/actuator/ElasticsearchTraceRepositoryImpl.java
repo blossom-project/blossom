@@ -120,8 +120,8 @@ public class ElasticsearchTraceRepositoryImpl implements ElasticsearchTraceRepos
         }
 
         @Override
-        public void onFailure(Exception e) {
-          logger.error("Indexed trace into elasticsearch {} {}", traceInfo, e);
+        public void onFailure(Throwable t) {
+          logger.error("Indexed trace into elasticsearch {} {}", traceInfo, t);
         }
       });
   }
@@ -159,7 +159,7 @@ public class ElasticsearchTraceRepositoryImpl implements ElasticsearchTraceRepos
       .addAggregation(AggregationBuilders.terms("flop_uris").field("path")
         .order(Terms.Order.aggregation("_count", true)).size(10))
       .addAggregation(AggregationBuilders.dateHistogram("request_histogram").field("timestamp")
-        .dateHistogramInterval(new DateHistogramInterval(precision))
+        .interval(new DateHistogramInterval(precision))
         .subAggregation(AggregationBuilders.terms("methods").field("method")));
     SearchResponse response = request.execute().actionGet();
 

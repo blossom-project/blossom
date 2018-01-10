@@ -43,9 +43,8 @@ public class DashboardController {
   @GetMapping("/status")
   public ModelAndView status(Model model) {
     Health health = healthEndpoint.health();
-//    Map<String, Object> metrics = metricsEndpoint.m;
     model.addAttribute("health", health);
-//    model.addAttribute("uptime", metrics.get("instance.uptime"));
+    model.addAttribute("uptime", metricsEndpoint.metric("process.uptime",null));
     return new ModelAndView("system/dashboard/panel/status", model.asMap());
   }
 

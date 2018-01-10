@@ -2,7 +2,7 @@ package fr.blossom.core.group;
 
 import java.util.Locale;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 @UniqueGroupName
 public class GroupCreateForm {

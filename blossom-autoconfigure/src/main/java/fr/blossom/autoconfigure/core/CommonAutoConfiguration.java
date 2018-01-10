@@ -8,6 +8,12 @@ import fr.blossom.core.common.service.ReadOnlyServicePlugin;
 import fr.blossom.core.common.utils.action_token.ActionTokenService;
 import fr.blossom.core.common.utils.action_token.ActionTokenServiceImpl;
 import fr.blossom.core.common.utils.privilege.Privilege;
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import org.apache.tika.Tika;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -41,13 +47,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.io.IOException;
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
  */
@@ -55,114 +54,115 @@ import java.util.stream.Collectors;
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 @AutoConfigureBefore(ElasticsearchAutoConfiguration.class)
 @EnablePluginRegistries({
-        MapperPlugin.class, ReadOnlyServicePlugin.class, AssociationServicePlugin.class, Privilege.class})
+  MapperPlugin.class, ReadOnlyServicePlugin.class, AssociationServicePlugin.class, Privilege.class})
 @EnableJpaAuditing
 @PropertySource({
-        "classpath:/freemarker.properties",
-        "classpath:/elasticsearch.properties",
-        "classpath:/jpa.properties"})
+  "classpath:/freemarker.properties",
+  "classpath:/elasticsearch.properties",
+  "classpath:/jpa.properties"})
 @EnableTransactionManagement
 public class CommonAutoConfiguration {
 
-    private final static Logger logger = LoggerFactory.getLogger(CommonAutoConfiguration.class);
+  private final static Logger logger = LoggerFactory.getLogger(CommonAutoConfiguration.class);
 
-    @Bean
-    @ConditionalOnMissingBean(TokenService.class)
-    public KeyBasedPersistenceTokenService keyBasedPersistenceTokenService(SecureRandom secureRandom) {
-        KeyBasedPersistenceTokenService keyBasedPersistenceTokenService = new KeyBasedPersistenceTokenService();
-        keyBasedPersistenceTokenService.setServerInteger(secureRandom.nextInt());
-        keyBasedPersistenceTokenService.setServerSecret(secureRandom.nextLong() + "");
-        keyBasedPersistenceTokenService.setSecureRandom(secureRandom);
+  @Bean
+  @ConditionalOnMissingBean(TokenService.class)
+  public KeyBasedPersistenceTokenService keyBasedPersistenceTokenService(
+    SecureRandom secureRandom) {
+    KeyBasedPersistenceTokenService keyBasedPersistenceTokenService = new KeyBasedPersistenceTokenService();
+    keyBasedPersistenceTokenService.setServerInteger(secureRandom.nextInt());
+    keyBasedPersistenceTokenService.setServerSecret(secureRandom.nextLong() + "");
+    keyBasedPersistenceTokenService.setSecureRandom(secureRandom);
 
-        return keyBasedPersistenceTokenService;
+    return keyBasedPersistenceTokenService;
+  }
+
+  @Bean
+  @ConditionalOnClass(ActionTokenService.class)
+  public ActionTokenService defaultActionTokenService(
+    TokenService tokenService) {
+    return new ActionTokenServiceImpl(tokenService);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(PasswordEncoder.class)
+  public PasswordEncoder passwordEncoder(SecureRandom secureRandom) {
+    return new BCryptPasswordEncoder(10, secureRandom);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(BulkProcessor.class)
+  public BulkProcessor bulkProcessor(Client client) {
+    return BulkProcessor.builder(client, new BulkProcessor.Listener() {
+
+      @Override
+      public void beforeBulk(long executionId, BulkRequest request) {
+        logger.info("Before bulk {} with {} actions to execute", executionId,
+          request.numberOfActions());
+      }
+
+      @Override
+      public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
+        logger.error("Error on bulk {} with {} actions to execute", executionId,
+          request.numberOfActions(), failure);
+      }
+
+      @Override
+      public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+        logger.info("Successful bulk {} with {} actions executed in {} ms.", executionId,
+          request.numberOfActions(), response.getTookInMillis());
+      }
+    })
+      .setName("Blossom Bulk Processor")
+      .setBulkActions(500)
+      .setBulkSize(new ByteSizeValue(10, ByteSizeUnit.MB))
+      .setFlushInterval(new TimeValue(30, TimeUnit.SECONDS))
+      .build();
+  }
+
+  @Bean
+  public ReloadableResourceBundleMessageSource messageSource() throws IOException {
+    PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+    List<String> resources = Lists
+      .newArrayList(resolver.getResources("classpath*:/messages/*.properties")).stream()
+      .filter(resource -> !resource.getFilename().contains("_"))
+      .map(resource -> "classpath:/messages/" + resource.getFilename().replace(".properties", ""))
+      .collect(Collectors.toList());
+
+    logger.info("Found {} i18n files :\n{}", resources.size(), Joiner.on(",").join(resources));
+
+    ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+    messageSource.setBasenames(resources.toArray(new String[resources.size()]));
+    messageSource.setFallbackToSystemLocale(false);
+    messageSource.setCacheSeconds(3600);
+    return messageSource;
+  }
+
+  @Bean
+  public AuditorAware<String> createAuditorProvider() {
+    return new SecurityAuditor();
+  }
+
+  @Bean
+  public AuditingEntityListener createAuditingListener() {
+    return new AuditingEntityListener();
+  }
+
+  @Bean
+  public Tika tika() {
+    return new Tika();
+  }
+
+  public static class SecurityAuditor implements AuditorAware<String> {
+
+    @Override
+    public Optional<String> getCurrentAuditor() {
+      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+      if (auth == null) {
+        return Optional.of("anonymous");
+      }
+      String username = auth.getName();
+      return Optional.of(username);
     }
-
-    @Bean
-    @ConditionalOnClass(ActionTokenService.class)
-    public ActionTokenService defaultActionTokenService(
-            TokenService tokenService) {
-        return new ActionTokenServiceImpl(tokenService);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(PasswordEncoder.class)
-    public PasswordEncoder passwordEncoder(SecureRandom secureRandom) {
-        return new BCryptPasswordEncoder(10, secureRandom);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(BulkProcessor.class)
-    public BulkProcessor bulkProcessor(Client client) {
-        return BulkProcessor.builder(client, new BulkProcessor.Listener() {
-
-            @Override
-            public void beforeBulk(long executionId, BulkRequest request) {
-                logger.info("Before bulk {} with {} actions to execute", executionId,
-                        request.numberOfActions());
-            }
-
-            @Override
-            public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-                logger.error("Error on bulk {} with {} actions to execute", executionId,
-                        request.numberOfActions(), failure);
-            }
-
-            @Override
-            public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-                logger.info("Successful bulk {} with {} actions executed in {} ms.", executionId,
-                        request.numberOfActions(), response.getTookInMillis());
-            }
-        })
-                .setName("Blossom Bulk Processor")
-                .setBulkActions(500)
-                .setBulkSize(new ByteSizeValue(10, ByteSizeUnit.MB))
-                .setFlushInterval(new TimeValue(30, TimeUnit.SECONDS))
-                .build();
-    }
-
-    @Bean
-    public ReloadableResourceBundleMessageSource messageSource() throws IOException {
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        List<String> resources = Lists
-                .newArrayList(resolver.getResources("classpath*:/messages/*.properties")).stream()
-                .filter(resource -> !resource.getFilename().contains("_"))
-                .map(resource -> "classpath:/messages/" + resource.getFilename().replace(".properties", ""))
-                .collect(Collectors.toList());
-
-        logger.info("Found {} i18n files :\n{}", resources.size(), Joiner.on(",").join(resources));
-
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasenames(resources.toArray(new String[resources.size()]));
-        messageSource.setFallbackToSystemLocale(false);
-        messageSource.setCacheSeconds(3600);
-        return messageSource;
-    }
-
-    @Bean
-    public AuditorAware<String> createAuditorProvider() {
-        return new SecurityAuditor();
-    }
-
-    @Bean
-    public AuditingEntityListener createAuditingListener() {
-        return new AuditingEntityListener();
-    }
-
-    @Bean
-    public Tika tika() {
-        return new Tika();
-    }
-
-    public static class SecurityAuditor implements AuditorAware<String> {
-
-        @Override
-        public Optional<String> getCurrentAuditor() {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth == null) {
-                return Optional.of("anonymous");
-            }
-            String username = auth.getName();
-            return Optional.of(username);
-        }
-    }
+  }
 }

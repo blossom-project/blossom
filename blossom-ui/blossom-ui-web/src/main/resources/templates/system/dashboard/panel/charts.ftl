@@ -329,7 +329,7 @@
 
       var updateData = function () {
         $(document).find("#charts .ibox-content").toggleClass("sk-loading");
-        $.get("/blossom/actuator/trace_stats?period=" + currentPeriod, function (data) {
+        $.get("/blossom/actuator/tracesstats?period=" + currentPeriod, function (data) {
           updateRequests(data);
           updateResponseTime(data);
           updateResponseStatus(data);

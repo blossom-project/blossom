@@ -87,8 +87,6 @@ public class MembershipsApiControllerTest {
   @Test
   public void should_get_list_by_userId_not_found() {
     Long id = 1L;
-    when(service.getAllLeft(any(UserDTO.class)))
-      .thenReturn(Lists.newArrayList(new AssociationUserGroupDTO()));
     when(userService.getOne(eq(id))).thenReturn(null);
     ResponseEntity<List<AssociationUserGroupDTO>> response = controller.list(id, null);
     verify(userService, times(1)).getOne(eq(id));
@@ -114,8 +112,6 @@ public class MembershipsApiControllerTest {
   @Test
   public void should_get_list_by_groupId_not_found() {
     Long id = 1L;
-    when(service.getAllRight(any(GroupDTO.class)))
-      .thenReturn(Lists.newArrayList(new AssociationUserGroupDTO()));
     when(groupService.getOne(eq(id))).thenReturn(null);
     ResponseEntity<List<AssociationUserGroupDTO>> response = controller.list(null, id);
     verify(groupService, times(1)).getOne(eq(id));
@@ -140,12 +136,16 @@ public class MembershipsApiControllerTest {
 
   @Test
   public void should_associate() {
+    AssociationUserGroupForm form = new AssociationUserGroupForm();
+    form.setUserId(1L);
+    form.setGroupId(1L);
+
     when(userService.getOne(anyLong())).thenReturn(new UserDTO());
     when(groupService.getOne(anyLong())).thenReturn(new GroupDTO());
     when(service.associate(any(UserDTO.class), any(GroupDTO.class)))
       .thenReturn(new AssociationUserGroupDTO());
-    ResponseEntity<AssociationUserGroupDTO> response = controller
-      .associate(new AssociationUserGroupForm());
+
+    ResponseEntity<AssociationUserGroupDTO> response = controller.associate(form);
 
     verify(userService, times(1)).getOne(anyLong());
     verify(groupService, times(1)).getOne(anyLong());
@@ -158,10 +158,13 @@ public class MembershipsApiControllerTest {
 
   @Test
   public void should_associate_user_not_found() {
+    AssociationUserGroupForm form = new AssociationUserGroupForm();
+    form.setUserId(1L);
+    form.setGroupId(1L);
+
     when(userService.getOne(anyLong())).thenReturn(null);
     when(groupService.getOne(anyLong())).thenReturn(new GroupDTO());
-    ResponseEntity<AssociationUserGroupDTO> response = controller
-      .associate(new AssociationUserGroupForm());
+    ResponseEntity<AssociationUserGroupDTO> response = controller.associate(form);
 
     verify(userService, times(1)).getOne(anyLong());
     verify(groupService, times(1)).getOne(anyLong());
@@ -173,13 +176,16 @@ public class MembershipsApiControllerTest {
 
   @Test
   public void should_associate_group_not_found() {
-    when(userService.getOne(anyLong())).thenReturn(new UserDTO());
-    when(groupService.getOne(anyLong())).thenReturn(null);
-    ResponseEntity<AssociationUserGroupDTO> response = controller
-      .associate(new AssociationUserGroupForm());
+    AssociationUserGroupForm form = new AssociationUserGroupForm();
+    form.setUserId(1L);
+    form.setGroupId(1L);
 
-    verify(userService, times(1)).getOne(anyLong());
-    verify(groupService, times(1)).getOne(anyLong());
+    when(userService.getOne(any(Long.class))).thenReturn(new UserDTO());
+    when(groupService.getOne(any(Long.class))).thenReturn(null);
+    ResponseEntity<AssociationUserGroupDTO> response = controller.associate(form);
+
+    verify(userService, times(1)).getOne(any(Long.class));
+    verify(groupService, times(1)).getOne(any(Long.class));
 
     Assert.assertNotNull(response);
     Assert.assertNull(response.getBody());
@@ -188,13 +194,16 @@ public class MembershipsApiControllerTest {
 
   @Test
   public void should_associate_user_and_group_not_found() {
+    AssociationUserGroupForm form = new AssociationUserGroupForm();
+    form.setUserId(1L);
+    form.setGroupId(1L);
+
     when(userService.getOne(anyLong())).thenReturn(null);
     when(groupService.getOne(anyLong())).thenReturn(null);
-    ResponseEntity<AssociationUserGroupDTO> response = controller
-      .associate(new AssociationUserGroupForm());
+    ResponseEntity<AssociationUserGroupDTO> response = controller.associate(form);
 
-    verify(userService, times(1)).getOne(anyLong());
-    verify(groupService, times(1)).getOne(anyLong());
+    verify(userService, times(1)).getOne(any(Long.class));
+    verify(groupService, times(1)).getOne(any(Long.class));
 
     Assert.assertNotNull(response);
     Assert.assertNull(response.getBody());
@@ -231,8 +240,6 @@ public class MembershipsApiControllerTest {
 
   @Test
   public void should_dissociate_by_userId_null_and_groupId_null() {
-    when(userService.getOne(anyLong())).thenReturn(null);
-    when(groupService.getOne(anyLong())).thenReturn(null);
     ResponseEntity<Void> response = controller.dissociate(new AssociationUserGroupForm());
 
     Assert.assertNotNull(response);
