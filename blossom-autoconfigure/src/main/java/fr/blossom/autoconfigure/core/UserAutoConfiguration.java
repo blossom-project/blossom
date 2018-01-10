@@ -64,19 +64,18 @@ public class UserAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(UserMailService.class)
-  public UserMailService userMailService(MailSender mailSender,
-    ActionTokenService actionTokenService) {
-    return new UserMailServiceImpl(mailSender, actionTokenService);
+  public UserMailService userMailService(MailSender mailSender) {
+    return new UserMailServiceImpl(mailSender);
   }
 
   @Bean
   @ConditionalOnMissingBean(UserService.class)
   public UserService userService(UserDao userDao, UserDTOMapper userDTOMapper,
-    PasswordEncoder passwordEncoder, UserMailService userMailService,
+    PasswordEncoder passwordEncoder, ActionTokenService actionTokenService, UserMailService userMailService,
     ApplicationEventPublisher eventPublisher,
     @Value("classpath:/images/avatar.jpeg") Resource defaultAvatar) {
     return new UserServiceImpl(userDao, userDTOMapper, eventPublisher, associationServicePlugins, passwordEncoder,
-      userMailService, defaultAvatar);
+      actionTokenService, userMailService, defaultAvatar);
   }
 
   @Bean

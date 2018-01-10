@@ -48,7 +48,7 @@ public class ActionTokenServiceImpl implements ActionTokenService {
     ActionToken actionToken = new ActionToken();
     actionToken.setUserId(Long.parseLong(result.get(0)));
     actionToken.setAction(result.get(1));
-    actionToken.setExpirationDate(Instant.ofEpochMilli(Long.parseLong(result.get(2))).atZone(ZoneOffset.UTC).toLocalDateTime());
+    actionToken.setExpirationDate(Instant.ofEpochMilli(Long.parseLong(result.get(2))));
     actionToken.setAdditionalParameters(decryptAdditionalParameters(result.get(3)));
     return actionToken;
   }
@@ -64,7 +64,7 @@ public class ActionTokenServiceImpl implements ActionTokenService {
 
     Joiner joiner = Joiner.on('|');
     return joiner.join(actionToken.getUserId(), actionToken.getAction(),
-      actionToken.getExpirationDate().toInstant(ZoneOffset.UTC).toEpochMilli(),
+      actionToken.getExpirationDate().toEpochMilli(),
       encryptAdditionalParameters(actionToken.getAdditionalParameters()));
   }
 

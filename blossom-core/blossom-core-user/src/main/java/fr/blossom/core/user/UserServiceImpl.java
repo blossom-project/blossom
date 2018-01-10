@@ -1,5 +1,6 @@
 package fr.blossom.core.user;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.event.CreatedEvent;
@@ -7,17 +8,20 @@ import fr.blossom.core.common.event.UpdatedEvent;
 import fr.blossom.core.common.mapper.DTOMapper;
 import fr.blossom.core.common.service.AssociationServicePlugin;
 import fr.blossom.core.common.service.GenericCrudServiceImpl;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import fr.blossom.core.common.utils.action_token.ActionToken;
+import fr.blossom.core.common.utils.action_token.ActionTokenService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
@@ -26,20 +30,27 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
 
   private final PasswordEncoder passwordEncoder;
   private final UserDao userDao;
+  private final ActionTokenService tokenService;
   private final UserMailService userMailService;
   private final Resource defaultAvatar;
 
-  public UserServiceImpl(UserDao dao, DTOMapper<User, UserDTO> mapper,
+  private final String creationDateParameter = "creationDate";
+
+  public UserServiceImpl(
+    UserDao dao, DTOMapper<User, UserDTO> mapper,
     ApplicationEventPublisher publisher,
     PluginRegistry<AssociationServicePlugin, Class<? extends AbstractDTO>> associationRegistry,
-    PasswordEncoder passwordEncoder, UserMailService userMailService, Resource defaultAvatar) {
+    PasswordEncoder passwordEncoder, ActionTokenService tokenService, UserMailService userMailService,
+    Resource defaultAvatar) {
     super(dao, mapper, publisher, associationRegistry);
     Preconditions.checkNotNull(passwordEncoder);
     Preconditions.checkNotNull(dao);
+    Preconditions.checkNotNull(tokenService);
     Preconditions.checkNotNull(userMailService);
     Preconditions.checkNotNull(defaultAvatar);
     this.passwordEncoder = passwordEncoder;
     this.userDao = dao;
+    this.tokenService = tokenService;
     this.userMailService = userMailService;
     this.defaultAvatar = defaultAvatar;
   }
@@ -60,7 +71,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
     user.setActivated(false);
 
     UserDTO savedUser = this.mapper.mapEntity(this.userDao.create(user));
-    userMailService.sendAccountCreationEmail(savedUser);
+    userMailService.sendAccountCreationEmail(savedUser, generateActivationToken(savedUser));
 
     this.publisher.publishEvent(new CreatedEvent<>(this, savedUser));
 
@@ -80,6 +91,25 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   @Override
   public Optional<UserDTO> getById(Long id) {
     return Optional.ofNullable(mapper.mapEntity(this.userDao.getOne(id)));
+  }
+
+  @Override
+  public Optional<UserDTO> getByActionToken(ActionToken actionToken) {
+    Preconditions.checkState(actionToken.isValid(), "Invalid token");
+    Preconditions.checkNotNull(actionToken.getAdditionalParameters().get(creationDateParameter));
+
+    Optional<UserDTO> optionalUserDTO = getById(actionToken.getUserId());
+    if (!optionalUserDTO.isPresent()) {
+      return Optional.empty();
+    }
+    UserDTO userDTO = optionalUserDTO.get();
+    Date creationDate = new Date(Long.parseLong(actionToken.getAdditionalParameters().get(creationDateParameter)));
+
+    if (userDTO.getLastConnection() != null && creationDate.before(userDTO.getLastConnection())) {
+      return Optional.empty();
+    }
+
+    return optionalUserDTO;
   }
 
   @Override
@@ -128,7 +158,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   public void askPasswordChange(long userId) throws Exception {
     UserDTO user = this
       .updatePassword(userId, passwordEncoder.encode(UUID.randomUUID().toString()));
-    userMailService.sendChangePasswordEmail(user);
+    userMailService.sendChangePasswordEmail(user, generatePasswordResetToken(user));
   }
 
   @Override
@@ -153,5 +183,32 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
 
   protected String generateRandomPasswordHash() {
     return passwordEncoder.encode(UUID.randomUUID().toString());
+  }
+
+  @VisibleForTesting
+  protected String generateActivationToken(UserDTO user) {
+    ActionToken actionToken = new ActionToken();
+    actionToken.setAction(UserService.USER_ACTIVATION);
+    actionToken.setUserId(user.getId());
+    actionToken.setExpirationDate(Instant.now().plus(3, ChronoUnit.DAYS));
+
+    Map<String, String> additionalParameters = new HashMap<>();
+    additionalParameters.put(creationDateParameter, Long.toString(Instant.now().toEpochMilli()));
+    actionToken.setAdditionalParameters(additionalParameters);
+
+    return tokenService.generateToken(actionToken);
+  }
+
+  public String generatePasswordResetToken(UserDTO user) {
+    ActionToken actionToken = new ActionToken();
+    actionToken.setAction(UserService.USER_RESET_PASSWORD);
+    actionToken.setUserId(user.getId());
+    actionToken.setExpirationDate(Instant.now().plus(3, ChronoUnit.HOURS));
+
+    Map<String, String> additionalParameters = new HashMap<>();
+    additionalParameters.put(creationDateParameter, Long.toString(Instant.now().toEpochMilli()));
+    actionToken.setAdditionalParameters(additionalParameters);
+
+    return tokenService.generateToken(actionToken);
   }
 }
