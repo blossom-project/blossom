@@ -1,7 +1,7 @@
 package fr.blossom.autoconfigure.ui;
 
 import com.google.common.collect.Iterables;
-import fr.blossom.ui.i18n.RestrictedSessionLocalResolver;
+import fr.blossom.ui.i18n.RestrictedSessionLocaleResolver;
 import fr.blossom.ui.stereotype.BlossomApiController;
 import fr.blossom.ui.stereotype.BlossomController;
 import java.lang.reflect.Method;
@@ -43,7 +43,7 @@ public class WebContextAutoConfiguration
 
   @Bean
   public LocaleResolver localeResolver(Set<Locale> availableLocales) {
-    RestrictedSessionLocalResolver resolver = new RestrictedSessionLocalResolver(availableLocales);
+    RestrictedSessionLocaleResolver resolver = new RestrictedSessionLocaleResolver(availableLocales);
     resolver.setDefaultLocale(Iterables.getFirst(availableLocales, Locale.ENGLISH));
     return resolver;
   }

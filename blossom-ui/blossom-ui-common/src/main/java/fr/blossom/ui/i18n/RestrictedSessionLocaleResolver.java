@@ -11,11 +11,11 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 /**
  * Created by Maël Gargadennnec on 05/06/2017.
  */
-public class RestrictedSessionLocalResolver extends SessionLocaleResolver {
+public class RestrictedSessionLocaleResolver extends SessionLocaleResolver {
 
   private final Set<Locale> availableLocales;
 
-  public RestrictedSessionLocalResolver(Set<Locale> availableLocales) {
+  public RestrictedSessionLocaleResolver(Set<Locale> availableLocales) {
     Preconditions.checkArgument(availableLocales != null && !availableLocales.isEmpty());
     this.availableLocales = availableLocales;
   }

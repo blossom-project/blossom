@@ -35,7 +35,6 @@ import org.springframework.plugin.core.PluginRegistry;
  */
 @Configuration
 @ConditionalOnClass(HomeController.class)
-@PropertySource({"classpath:/languages.properties"})
 public class WebInterfaceAutoConfiguration {
 
   @Bean
@@ -78,12 +77,6 @@ public class WebInterfaceAutoConfiguration {
   @Bean
   public MenuControllerAdvice menuControllerAdvice(Menu menu) {
     return new MenuControllerAdvice(menu);
-  }
-
-  @Bean
-  public Set<Locale> availableLocales(@Value("${blossom.languages}") String[] languages) {
-    return Stream.of(languages).sequential().map(language -> Locale.forLanguageTag(language))
-      .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   @Bean

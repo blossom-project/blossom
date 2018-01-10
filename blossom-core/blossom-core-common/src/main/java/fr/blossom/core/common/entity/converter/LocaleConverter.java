@@ -4,8 +4,8 @@ import java.util.Locale;
 import javax.persistence.AttributeConverter;
 
 /**
- * Custom AttributeConverter to store {@link Locale} into a database column.<br/>
- * It relies on {@link Locale#toLanguageTag()} to provide the locale as a {@code String}.
+ * <p>Custom AttributeConverter to store {@link Locale} into a database column.</p>
+ * <p>It relies on {@link Locale#toLanguageTag()} to provide the locale as a {@code String}.</p>
  *
  * @author Maël Gargadennnec
  */

@@ -1,8 +1,10 @@
 package fr.blossom.autoconfigure.core;
 
+import com.google.common.collect.Iterables;
 import fr.blossom.core.common.utils.mail.MailSender;
 import fr.blossom.core.common.utils.mail.MailSenderImpl;
 import fr.blossom.core.common.utils.mail.NoopMailSenderImpl;
+import java.util.Locale;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -34,13 +36,14 @@ public class MailAutoConfiguration {
   @ConditionalOnBean(JavaMailSender.class)
   @ConditionalOnMissingBean(MailSender.class)
   public MailSender blossomMailSender(JavaMailSender javaMailSender, MessageSource messageSource,
-      freemarker.template.Configuration configuration) {
+    freemarker.template.Configuration configuration, Set<Locale> availableLocales) {
     return new MailSenderImpl(javaMailSender,
-          configuration,
-          filters,
-          messageSource,
-          from,
-          baseUrl);
+      configuration,
+      filters,
+      messageSource,
+      from,
+      baseUrl,
+      Iterables.getFirst(availableLocales, Locale.ENGLISH));
   }
 
   @Bean

@@ -12,10 +12,10 @@ import org.springframework.data.domain.Pageable;
 public interface ReadOnlyDao<ENTITY extends AbstractEntity> {
 
   /**
-   * Retrieves the complete {@code List} of entities from the underlying datasource.<br/>
+   * <p>Retrieves the complete {@code List} of entities from the underlying datasource.</p>
    *
-   * Be careful : don't use this method on large datasets ! Use {@link ReadOnlyDao#getAll(Pageable
-   * pageable)} instead.
+   * <p>Be careful : don't use this method on large datasets ! Use {@link ReadOnlyDao#getAll(Pageable
+   * pageable)} instead.</p>
    *
    * @return the complete list of entities
    */
