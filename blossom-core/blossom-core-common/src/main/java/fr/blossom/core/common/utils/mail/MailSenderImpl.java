@@ -69,7 +69,7 @@ public class MailSenderImpl implements MailSender {
     String... mailTo) throws Exception {
     Preconditions.checkArgument(locale != null);
     Preconditions.checkArgument(ctx != null);
-    Preconditions.checkArgument(mailTo != null);
+    Preconditions.checkArgument(mailTo != null && mailTo.length > 0);
     this.enrichContext(ctx, locale);
 
     final Template template = this.freemarkerConfiguration
