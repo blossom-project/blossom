@@ -108,6 +108,7 @@ public class MailSenderImplTest {
 
   @Test
   public void should_not_send_mail_without_mailtos() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
     String htmlTemplate = "htmlTemplate";
     Map<String, Object> parameters = Maps.newHashMap();
     String subject = "subject";
