@@ -52,7 +52,7 @@ public class SystemUserDetailsServiceImpl implements UserDetailsService {
       user.setPhone("");
 
       Set<String> privileges = privilegeRegistry.getPlugins().stream()
-        .map(plugin -> plugin.privilege()).collect(
+        .map(Privilege::privilege).collect(
           Collectors.toSet());
 
       return new CurrentUser(user, privileges);

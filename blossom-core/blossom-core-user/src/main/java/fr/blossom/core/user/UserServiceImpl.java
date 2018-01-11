@@ -156,8 +156,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   @Override
   @Transactional
   public void askPasswordChange(long userId) throws Exception {
-    UserDTO user = this
-      .updatePassword(userId, passwordEncoder.encode(UUID.randomUUID().toString()));
+    UserDTO user = this.updatePassword(userId, passwordEncoder.encode(UUID.randomUUID().toString()));
     userMailService.sendChangePasswordEmail(user, generatePasswordResetToken(user));
   }
 

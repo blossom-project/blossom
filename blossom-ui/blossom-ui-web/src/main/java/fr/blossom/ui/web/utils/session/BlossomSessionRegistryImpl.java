@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistryImpl;
 
 public class BlossomSessionRegistryImpl extends SessionRegistryImpl {
@@ -60,8 +61,6 @@ public class BlossomSessionRegistryImpl extends SessionRegistryImpl {
     this.getAllPrincipals().stream()
       .filter(u -> userIds.contains(((CurrentUser) u).getUser().getId()))
       .flatMap(u -> this.getAllSessions(u, false).stream())
-      .forEach(session -> {
-        session.expireNow();
-      });
+      .forEach(SessionInformation::expireNow);
   }
 }

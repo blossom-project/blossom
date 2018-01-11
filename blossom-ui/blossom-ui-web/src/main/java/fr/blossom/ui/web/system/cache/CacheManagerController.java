@@ -30,7 +30,6 @@ import org.springframework.web.servlet.ModelAndView;
 @OpenedMenu("cacheManager")
 @PreAuthorize("hasAuthority('system:caches:manager')")
 public class CacheManagerController {
-
   private final static Logger LOGGER = LoggerFactory.getLogger(CacheManagerController.class);
   private final BlossomCacheManager cacheManager;
 

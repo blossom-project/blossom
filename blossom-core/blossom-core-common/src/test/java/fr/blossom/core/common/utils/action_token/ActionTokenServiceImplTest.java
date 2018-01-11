@@ -200,7 +200,7 @@ public class ActionTokenServiceImplTest {
     Map<String, String> map = ImmutableMap.<String, String>builder().put("test", "test").build();
     String result = service.encryptAdditionalParameters(map);
     assertNotNull(result);
-    assertEquals(result, "test&=&test");
+    assertEquals("test&=&test", result);
   }
 
   @Test

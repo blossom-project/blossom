@@ -2,6 +2,9 @@ package fr.blossom.autoconfigure.core;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.elasticsearch.common.settings.Settings;
@@ -19,6 +22,16 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties({ElasticsearchProperties.class})
 public class ElasticsearchAutoConfiguration {
 
+  private static final Map<String, String> DEFAULTS;
+
+  static {
+    Map<String, String> defaults = new LinkedHashMap<String, String>();
+    defaults.put("http.enabled", String.valueOf(false));
+    defaults.put("node.local", String.valueOf(true));
+    defaults.put("path.home", System.getProperty("user.dir"));
+    DEFAULTS = Collections.unmodifiableMap(defaults);
+  }
+
   @Bean
   @ConditionalOnMissingBean
   public Client elasticsearchClient() throws Exception {
@@ -28,11 +41,11 @@ public class ElasticsearchAutoConfiguration {
       .local(true)
       .data(true)
       .settings(Settings
-        .builder()
+        .settingsBuilder()
+        .put(DEFAULTS)
         .put(IndexMetaData.SETTING_NUMBER_OF_SHARDS, 1)
         .put(IndexMetaData.SETTING_NUMBER_OF_REPLICAS, 0)
         .put(EsExecutors.PROCESSORS, 1)
-        .put("path.home", homePath.toFile().getAbsolutePath())
         .build())
       .node()
       .client();

@@ -8,20 +8,15 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.token.Token;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.util.StringUtils;
 
 public class ActionTokenServiceImpl implements ActionTokenService {
 
-  private final static Logger LOGGER = LoggerFactory.getLogger(ActionTokenServiceImpl.class);
-
-  private TokenService tokenService;
+  private final TokenService tokenService;
 
   public ActionTokenServiceImpl(TokenService tokenService) {
     this.tokenService = tokenService;

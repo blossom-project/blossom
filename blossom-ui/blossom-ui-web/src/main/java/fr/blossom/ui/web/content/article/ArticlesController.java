@@ -132,7 +132,7 @@ public class ArticlesController {
 
   @GetMapping("/{id}/_informations")
   @PreAuthorize("hasAuthority('content:articles:read')")
-  public ModelAndView getRoleInformations(@PathVariable Long id, HttpServletRequest request) {
+  public ModelAndView getArticleInformations(@PathVariable Long id, HttpServletRequest request) {
     ArticleDTO article = this.articleService.getOne(id);
     if (article == null) {
       throw new NoSuchElementException(String.format("Article=%s not found", id));
@@ -147,7 +147,7 @@ public class ArticlesController {
     if (article == null) {
       throw new NoSuchElementException(String.format("Article=%s not found", id));
     }
-    return this.updateArticleInformationView(new ArticleUpdateForm(article), model);
+    return this.updateArticleInformationView(new ArticleUpdateForm(article));
   }
 
   @PostMapping("/{id}/_informations/_edit")
@@ -156,7 +156,7 @@ public class ArticlesController {
     @Valid @ModelAttribute("articleUpdateForm") ArticleUpdateForm articleUpdateForm,
     BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
-      return this.updateArticleInformationView(articleUpdateForm, model);
+      return this.updateArticleInformationView(articleUpdateForm);
     }
 
     ArticleDTO article = this.articleService.getOne(id);
@@ -173,8 +173,7 @@ public class ArticlesController {
     return new ModelAndView("articles/articleinformations", "article", article);
   }
 
-  private ModelAndView updateArticleInformationView(ArticleUpdateForm articleUpdateForm,
-    Model model) {
+  private ModelAndView updateArticleInformationView(ArticleUpdateForm articleUpdateForm) {
     return new ModelAndView("articles/articleinformations-edit", "articleUpdateForm",
       articleUpdateForm);
   }
