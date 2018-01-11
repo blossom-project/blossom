@@ -12,8 +12,8 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * Abstract base class for all entities.<br/>
- * Provides technical columns such as identifier and auditing listener, and deals with setting/updating them.<br/>
+ * <p>Abstract base class for all entities.</p>
+ * <p>Provides technical columns such as identifier and auditing listener, and deals with setting/updating them.</p>
  *
  * @author Maël Gargadennnec
  */

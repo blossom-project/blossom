@@ -22,31 +22,31 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RestrictedSessionLocalResolverTest {
+public class RestrictedSessionLocaleResolverTest {
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
   private Set<Locale> locales;
-  private RestrictedSessionLocalResolver resolver;
+  private RestrictedSessionLocaleResolver resolver;
 
   @Before
   public void setUp() throws Exception {
     this.locales = Sets.newHashSet(Locale.FRANCE, Locale.ENGLISH);
-    this.resolver = spy(new RestrictedSessionLocalResolver(this.locales));
+    this.resolver = spy(new RestrictedSessionLocaleResolver(this.locales));
   }
 
 
   @Test
   public void should_construct_not_null_locales() {
     thrown.expect(IllegalArgumentException.class);
-    new RestrictedSessionLocalResolver(null);
+    new RestrictedSessionLocaleResolver(null);
   }
 
   @Test
   public void should_construct_not_empty_locales() {
     thrown.expect(IllegalArgumentException.class);
-    new RestrictedSessionLocalResolver(Sets.newHashSet());
+    new RestrictedSessionLocaleResolver(Sets.newHashSet());
   }
 
   @Test

@@ -19,8 +19,8 @@ import java.util.List;
 public interface AssociationDao<A extends AbstractEntity, B extends AbstractEntity, ASSOCIATION extends AbstractAssociationEntity<A, B>> {
 
   /**
-   * Creates a new association between two {@code AbstractEntity}.<br/>
-   * If the association already exists, retrieves it.
+   * <p>Creates a new association between two {@code AbstractEntity}.</p>
+   * <p>If the association already exists, retrieves it.</p>
    *
    * @param a the first {@code AbstractEntity}. If null, throws an {@code IllegalArgumentException}.
    * @param b the second {@code AbstractEntity}. If null, throws an {@code IllegalArgumentException}.
@@ -29,8 +29,8 @@ public interface AssociationDao<A extends AbstractEntity, B extends AbstractEnti
   ASSOCIATION associate(A a, B b);
 
   /**
-   * Removes and existing association between two {@code AbstractEntity}.<br/>
-   * If the association does not exist, this method does nothing.
+   * <p>Removes and existing association between two {@code AbstractEntity}.</p>
+   * <p>If the association does not exist, this method does nothing.</p>
    *
    * @param a the first {@code AbstractEntity}. If null, throws an {@code IllegalArgumentException}.
    * @param b the second {@code AbstractEntity}. If null, throws an {@code IllegalArgumentException}.

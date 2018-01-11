@@ -25,22 +25,6 @@ public class AssociationUserGroup extends AbstractAssociationEntity<User, Group>
   @JoinColumn(name = "group_id",referencedColumnName = "id")
   private Group b;
 
-  public User getUser() {
-    return a;
-  }
-
-  public void setUser(User user) {
-    this.a = user;
-  }
-
-  public Group getGroup() {
-    return b;
-  }
-
-  public void setGroup(Group group) {
-    this.b = group;
-  }
-
   @Override
   public User getA() {
     return this.a;

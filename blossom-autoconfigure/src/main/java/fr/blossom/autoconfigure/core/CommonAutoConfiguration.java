@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Stream;
 import org.apache.tika.Tika;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -25,6 +29,7 @@ import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -60,11 +65,18 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @PropertySource({
   "classpath:/freemarker.properties",
   "classpath:/elasticsearch.properties",
-  "classpath:/jpa.properties"})
+  "classpath:/jpa.properties",
+  "classpath:/languages.properties"})
 @EnableTransactionManagement
 public class CommonAutoConfiguration {
 
   private final static Logger logger = LoggerFactory.getLogger(CommonAutoConfiguration.class);
+
+  @Bean
+  public Set<Locale> availableLocales(@Value("${blossom.languages}") String[] languages) {
+    return Stream.of(languages).sequential().map(language -> Locale.forLanguageTag(language))
+      .collect(Collectors.toCollection(LinkedHashSet::new));
+  }
 
   @Bean
   @ConditionalOnMissingBean(TokenService.class)

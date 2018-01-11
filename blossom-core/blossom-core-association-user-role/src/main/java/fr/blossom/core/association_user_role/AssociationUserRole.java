@@ -26,22 +26,6 @@ public class AssociationUserRole extends AbstractAssociationEntity<User, Role> {
   @JoinColumn(name = "role_id",referencedColumnName = "id")
   private Role b;
 
-  public User getUser() {
-    return a;
-  }
-
-  public void setUser(User user) {
-    this.a = user;
-  }
-
-  public Role getRole() {
-    return this.b;
-  }
-
-  public void setRole(Role role) {
-    this.b=role;
-  }
-
   @Override
   public User getA() {
     return this.a;

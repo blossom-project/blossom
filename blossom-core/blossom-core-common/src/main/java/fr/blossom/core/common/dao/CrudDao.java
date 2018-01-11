@@ -48,8 +48,8 @@ public interface CrudDao<ENTITY extends AbstractEntity> extends ReadOnlyDao<ENTI
   List<ENTITY> create(Collection<ENTITY> toCreates);
 
   /**
-   * Updates a {@code Map} of entities.<br/>
-   * This method only updates found entities, and does not failed if a provided {@code Entry<Long,ENTITY>} is not found.
+   * <p>Updates a {@code Map} of entities.</p>
+   * <p>This method only updates found entities, and does not failed if a provided {@code Entry<Long,ENTITY>} is not found.</p>
    *
    * @param toUpdates the entities to create, each one referenced by it's id
    * @return the updated entities

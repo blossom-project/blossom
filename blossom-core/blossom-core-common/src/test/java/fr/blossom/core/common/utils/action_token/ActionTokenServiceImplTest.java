@@ -1,21 +1,8 @@
 package fr.blossom.core.common.utils.action_token;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,6 +11,19 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;;
 import org.springframework.security.core.token.DefaultToken;
 import org.springframework.security.core.token.TokenService;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ActionTokenServiceImplTest {
@@ -42,7 +42,7 @@ public class ActionTokenServiceImplTest {
 
   @Test
   public void should_encrypt_action_token_to_string() throws Exception {
-    LocalDateTime time = LocalDateTime.now().plusHours(1);
+    Instant time = Instant.now().plus(1, ChronoUnit.HOURS);
 
     ActionToken action = new ActionToken();
     action.setAction("test");
@@ -55,7 +55,7 @@ public class ActionTokenServiceImplTest {
     List<String> splitted = Splitter.on("|").splitToList(result);
     assertEquals(splitted.get(0), action.getUserId().toString());
     assertEquals(splitted.get(1), action.getAction());
-    assertEquals(splitted.get(2), time.toInstant(ZoneOffset.UTC).toEpochMilli() + "");
+    assertEquals(splitted.get(2), time.toEpochMilli() + "");
     assertTrue(splitted.get(3).length() == 0);
   }
 
@@ -66,7 +66,7 @@ public class ActionTokenServiceImplTest {
     ActionToken action = new ActionToken();
     action.setAction(null);
     action.setUserId(1L);
-    action.setExpirationDate(LocalDateTime.now().plusHours(1));
+    action.setExpirationDate(Instant.now().plus(1, ChronoUnit.HOURS));
     action.setAdditionalParameters(Maps.newHashMap());
 
     service.encryptTokenAsString(action);
@@ -79,7 +79,7 @@ public class ActionTokenServiceImplTest {
     ActionToken action = new ActionToken();
     action.setAction("test");
     action.setUserId(null);
-    action.setExpirationDate(LocalDateTime.now().plusHours(1));
+    action.setExpirationDate(Instant.now().plus(1, ChronoUnit.HOURS));
     action.setAdditionalParameters(Maps.newHashMap());
 
     service.encryptTokenAsString(action);
@@ -138,8 +138,7 @@ public class ActionTokenServiceImplTest {
 
     assertEquals(token.getUserId(), userId);
     assertEquals(token.getAction(), action);
-    assertEquals(token.getExpirationDate().toInstant(ZoneOffset.UTC).toEpochMilli(),
-      (long) timestamp);
+    assertEquals(token.getExpirationDate().toEpochMilli(), (long) timestamp);
     assertTrue(token.isValid());
   }
 
@@ -219,7 +218,7 @@ public class ActionTokenServiceImplTest {
     ActionToken action = new ActionToken();
     action.setAction("test");
     action.setUserId(1L);
-    action.setExpirationDate(LocalDateTime.now().plusHours(1));
+    action.setExpirationDate(Instant.now().plus(1, ChronoUnit.HOURS));
     action
       .setAdditionalParameters(ImmutableMap.<String, String>builder().put("test", "test").build());
 
@@ -246,8 +245,7 @@ public class ActionTokenServiceImplTest {
     assertNotNull(token);
     assertEquals(token.getUserId(), userId);
     assertEquals(token.getAction(), action);
-    assertEquals(token.getExpirationDate().toInstant(ZoneOffset.UTC).toEpochMilli(),
-      (long) timestamp);
+    assertEquals(token.getExpirationDate().toEpochMilli(), (long) timestamp);
     assertTrue(token.isValid());
   }
 
@@ -265,8 +263,7 @@ public class ActionTokenServiceImplTest {
     assertNotNull(token);
     assertEquals(token.getUserId(), userId);
     assertEquals(token.getAction(), action);
-    assertEquals(token.getExpirationDate().toInstant(ZoneOffset.UTC).toEpochMilli(),
-      (long) timestamp);
+    assertEquals(token.getExpirationDate().toEpochMilli(), (long) timestamp);
     assertFalse(token.isValid());
   }
 }
