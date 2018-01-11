@@ -6,7 +6,7 @@
   <parent>
     <groupId>fr.blossom</groupId>
     <artifactId>blossom-parent</artifactId>
-    <version>1.0.0.M1</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>../blossom-parent</relativePath>
   </parent>
 
@@ -25,91 +25,91 @@
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-common</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-user</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-group</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-association-user-group</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-association-user-role</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-scheduler</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-cache</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-validation</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-ui-common</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-ui-api</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-ui-web</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-module-filemanager</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-module-articles</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-module-bpmn</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-crypto</artifactId>
-      <version>1.0.0.M1</version>
+      <version>1.0.0-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
   </dependencies>
