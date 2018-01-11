@@ -6,7 +6,7 @@
   <parent>
     <groupId>fr.blossom</groupId>
     <artifactId>blossom-ui</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.M1</version>
   </parent>
 
   <artifactId>blossom-ui-common</artifactId>
@@ -20,47 +20,47 @@
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-common</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-user</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-group</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-role</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-association-user-group</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-association-user-role</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-scheduler</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-cache</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-validation</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
