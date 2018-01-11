@@ -2,11 +2,13 @@ package fr.blossom.ui.web.system.dashboard;
 
 import fr.blossom.ui.menu.OpenedMenu;
 import fr.blossom.ui.stereotype.BlossomController;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
@@ -30,6 +32,9 @@ public class DashboardController {
   private final HealthEndpoint healthEndpoint;
   private final MetricsEndpoint metricsEndpoint;
 
+  @Autowired
+  private MeterRegistry registry;
+
   public DashboardController(HealthEndpoint healthEndpoint, MetricsEndpoint metricsEndpoint) {
     this.healthEndpoint = healthEndpoint;
     this.metricsEndpoint = metricsEndpoint;
@@ -44,20 +49,18 @@ public class DashboardController {
   public ModelAndView status(Model model) {
     Health health = healthEndpoint.health();
     model.addAttribute("health", health);
-    model.addAttribute("uptime", metricsEndpoint.metric("process.uptime",null));
+    model.addAttribute("uptime", 15000000);
     return new ModelAndView("system/dashboard/panel/status", model.asMap());
   }
 
   @GetMapping("/memory")
   public ModelAndView memory() {
-//    Map<String, Object> metrics = metricsEndpoint.invoke();
-    return new ModelAndView("system/dashboard/panel/memory", "memory", new MemoryMetrics(null));
+    return new ModelAndView("system/dashboard/panel/memory", "memory", new MemoryMetrics());
   }
 
   @GetMapping("/jvm")
   public ModelAndView jvm() {
-//    Map<String, Object> metrics = metricsEndpoint.invoke();
-    return new ModelAndView("system/dashboard/panel/jvm", "jvm", new JVMMetrics(null));
+    return new ModelAndView("system/dashboard/panel/jvm", "jvm", new JVMMetrics());
   }
 
   @GetMapping("/charts")
@@ -82,10 +85,10 @@ public class DashboardController {
     private final MemoryUsage heap;
     private final MemoryUsage nonheap;
 
-    public MemoryMetrics(Map<String, Object> metrics) {
-      jvm = new JVMMemoryUsage(metrics);
-      heap = new MemoryUsage("heap", metrics);
-      nonheap = new MemoryUsage("nonheap", metrics);
+    public MemoryMetrics() {
+      jvm = new JVMMemoryUsage();
+      heap = new MemoryUsage("heap");
+      nonheap = new MemoryUsage("nonheap");
     }
 
     public JVMMemoryUsage getJvm() {
@@ -105,9 +108,9 @@ public class DashboardController {
       private final long total;
       private final long free;
 
-      public JVMMemoryUsage(Map<String, Object> metrics) {
-        this.total = (Long) metrics.get("mem") * 1024;
-        this.free = (Long) metrics.get("mem.free") * 1024;
+      public JVMMemoryUsage() {
+        this.total = 10L * 1024;
+        this.free = 5L * 1024;
       }
 
       public String getTotal() {
@@ -134,11 +137,11 @@ public class DashboardController {
       private final long committed;
       private final long max;
 
-      public MemoryUsage(String prefix, Map<String, Object> metrics) {
-        this.init = (Long) metrics.get(prefix + ".init") * 1024;
-        this.used = (Long) metrics.get(prefix + ".used") * 1024;
-        this.committed = (Long) metrics.get(prefix + ".committed") * 1024;
-        this.max = (Long) metrics.get(prefix) * 1024;
+      public MemoryUsage(String prefix) {
+        this.init = 150L * 1024;
+        this.used = 100L * 1024;
+        this.committed = 200L * 1024;
+        this.max = 500L * 1024;
       }
 
       public String getInit() {
@@ -170,11 +173,11 @@ public class DashboardController {
     private final ThreadMetrics threads;
     private final ProcessorMetrics processors;
 
-    public JVMMetrics(Map<String, Object> metrics) {
-      this.classes = new ClassMetrics(metrics);
-      this.gcs = new GCMetrics(metrics);
-      this.threads = new ThreadMetrics(metrics);
-      this.processors = new ProcessorMetrics(metrics);
+    public JVMMetrics() {
+      this.classes = new ClassMetrics();
+      this.gcs = new GCMetrics();
+      this.threads = new ThreadMetrics();
+      this.processors = new ProcessorMetrics();
     }
 
     public ClassMetrics getClasses() {
@@ -199,10 +202,10 @@ public class DashboardController {
       private final long loaded;
       private final long unloaded;
 
-      public ClassMetrics(Map<String, Object> metrics) {
-        this.total = (Long) metrics.get("classes");
-        this.loaded = (Long) metrics.get("classes.loaded");
-        this.unloaded = (Long) metrics.get("classes.unloaded");
+      public ClassMetrics() {
+        this.total = 200000;
+        this.loaded = 150000;
+        this.unloaded = 4000;
       }
 
       public long getTotal() {
@@ -222,13 +225,9 @@ public class DashboardController {
 
       private final List<GCMetric> types;
 
-      public GCMetrics(Map<String, Object> metrics) {
-        this.types = metrics.keySet().stream()
-          .filter(key -> key.startsWith("gc."))
-          .map(key -> key.split("\\.")[1])
-          .distinct()
-          .map(gc -> new GCMetric(gc, (Long) metrics.get("gc." + gc + ".count"),
-            (Long) metrics.get("gc." + gc + ".time")))
+      public GCMetrics() {
+        this.types = IntStream.rangeClosed(0, 2)
+          .mapToObj(i -> new GCMetric("GC " + i, 10, 150))
           .collect(Collectors.toList());
       }
 
@@ -269,11 +268,11 @@ public class DashboardController {
       private final long peak;
       private final long daemon;
 
-      public ThreadMetrics(Map<String, Object> metrics) {
-        this.total = (Long) metrics.get("threads");
-        this.totalStarted = (Long) metrics.get("threads.totalStarted");
-        this.peak = (Long) metrics.get("threads.peak");
-        this.daemon = (Long) metrics.get("threads.daemon");
+      public ThreadMetrics() {
+        this.total = 50;
+        this.totalStarted = 45;
+        this.peak = 55;
+        this.daemon = 25;
       }
 
       public long getTotal() {
@@ -297,8 +296,8 @@ public class DashboardController {
 
       private final int total;
 
-      public ProcessorMetrics(Map<String, Object> metrics) {
-        this.total = (Integer) metrics.get("processors");
+      public ProcessorMetrics() {
+        this.total = 8;
       }
 
       public int getTotal() {

@@ -9,6 +9,7 @@ import fr.blossom.core.common.utils.action_token.ActionTokenService;
 import fr.blossom.core.common.utils.action_token.ActionTokenServiceImpl;
 import fr.blossom.core.common.utils.privilege.Privilege;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
@@ -135,6 +136,7 @@ public class CommonAutoConfiguration {
     messageSource.setBasenames(resources.toArray(new String[resources.size()]));
     messageSource.setFallbackToSystemLocale(false);
     messageSource.setCacheSeconds(3600);
+    messageSource.setDefaultEncoding(Charset.forName("UTF-8").displayName());
     return messageSource;
   }
 
