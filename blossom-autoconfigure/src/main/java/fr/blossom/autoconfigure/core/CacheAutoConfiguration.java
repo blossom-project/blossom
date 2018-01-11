@@ -45,18 +45,17 @@ public class CacheAutoConfiguration {
     private PluginRegistry<CacheConfig, String> registry;
 
     @Bean
-    public CacheResolver blossomCacheResolver(final CacheManager cacheManager) {
+    public BlossomCacheResolver blossomCacheResolver(final CacheManager cacheManager) {
       return new BlossomCacheResolver(cacheManager);
     }
 
     @Bean
-    public CacheManager blossomCacheManager(
+    public BlossomCacheManager blossomCacheManager(
       @Qualifier("defaultCacheConfig") CacheConfig defaultCacheConfig) {
       return new BlossomCacheManager(registry, defaultCacheConfig);
     }
 
     @Configuration
-
     public static class BlossomCachingConfigurerSupport extends CachingConfigurerSupport {
 
       @Autowired
