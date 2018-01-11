@@ -92,7 +92,6 @@ public class GlobalTriggerListenerTest {
 
     JobExecutionContext context = mock(JobExecutionContext.class);
     when(context.getFireInstanceId()).thenReturn("fireInstanceId");
-    when(context.getFireTime()).thenReturn(new Date(System.currentTimeMillis()));
 
     CompletedExecutionInstruction instruction = CompletedExecutionInstruction.SET_TRIGGER_COMPLETE;
 

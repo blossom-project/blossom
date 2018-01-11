@@ -122,7 +122,6 @@ public class ScheduledJobServiceImplTest {
     when(metaData.getRunningSince()).thenReturn(new Date());
     when(metaData.isStarted()).thenReturn(true);
     when(metaData.getSchedulerName()).thenReturn("schedulerName");
-    when(metaData.getSchedulerInstanceId()).thenReturn("schedulerInstanceId");
 
     when(this.scheduler.getMetaData()).thenReturn(metaData);
 
