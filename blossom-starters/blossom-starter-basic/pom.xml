@@ -6,7 +6,7 @@
   <parent>
     <groupId>fr.blossom</groupId>
     <artifactId>blossom-starters</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.M1</version>
   </parent>
 
   <artifactId>blossom-starter-basic</artifactId>
@@ -27,32 +27,32 @@
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-autoconfigure</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-user</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-group</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-scheduler</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-cache</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
     <dependency>
       <groupId>fr.blossom</groupId>
       <artifactId>blossom-core-crypto</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0.M1</version>
     </dependency>
   </dependencies>
 </project>
