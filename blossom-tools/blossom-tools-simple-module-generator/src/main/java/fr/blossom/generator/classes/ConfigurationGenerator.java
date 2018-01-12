@@ -111,6 +111,8 @@ public class ConfigurationGenerator implements ClassGenerator {
 
       appendMenuItemBean(settings, definedClass, readPrivilegeBean);
 
+      appendControllerBean(definedClass, codeModel);
+
       return definedClass;
     } catch (Exception e) {
       e.printStackTrace();
@@ -307,6 +309,21 @@ public class ConfigurationGenerator implements ClassGenerator {
     serviceBean.body()._return(
       JExpr._new(serviceImplClass).arg(serviceBeanDao).arg(serviceBeanDTOMapper)
         .arg(serviceBeanApplicationEvent).arg(associationRegistry));
+  }
+
+
+  private void appendControllerBean(JDefinedClass definedClass, JCodeModel codeModel) {
+    JMethod controllerBean = definedClass.
+            method(JMod.PUBLIC, controllerClass, controllerClass.name());
+
+
+    controllerBean.annotate(Bean.class);
+    JVar controllerBeanService = controllerBean.param(serviceClass, "service");
+    JVar controllerBeanSearchEngine = controllerBean
+            .param(codeModel.ref(SearchEngineImpl.class).narrow(dtoClass), "searchEngine");
+
+    controllerBean.body()._return(JExpr._new(controllerClass).arg(controllerBeanService)
+            .arg(controllerBeanSearchEngine));
   }
 
   private void appendIndexationConfiguration(Settings settings, JCodeModel codeModel,
