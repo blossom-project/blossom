@@ -43,6 +43,7 @@ public class EntityField {
     this.requiredCreate = requiredCreate;
     this.possibleUpdate = possibleUpdate;
     this.nullable = nullable;
+    this.notBlank = notBlank;
     this.defaultValue = defaultValue;
     this.maxLength = maxLength;
     this.temporalType = temporalType;
