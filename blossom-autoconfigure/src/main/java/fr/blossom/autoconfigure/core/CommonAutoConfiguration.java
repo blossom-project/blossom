@@ -64,7 +64,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaAuditing
 @PropertySource({
   "classpath:/freemarker.properties",
-  "classpath:/elasticsearch.properties",
   "classpath:/jpa.properties",
   "classpath:/languages.properties"})
 @EnableTransactionManagement
