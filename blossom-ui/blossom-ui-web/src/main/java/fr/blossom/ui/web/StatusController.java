@@ -25,12 +25,26 @@ public class StatusController {
 
   @GetMapping
   @ResponseBody
-  public ResponseEntity<String> status() {
-    Health health = healthEndpoint.health();
+  public ResponseEntity<Health> status() {
+    Health health = filteredDetails(healthEndpoint.health());
     if (health.getStatus().equals(Status.UP)) {
-      return ResponseEntity.ok(health.getStatus().getCode());
+      return ResponseEntity.ok(health);
     }
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-      .body(health.getStatus().getCode());
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(health);
+  }
+
+  private Health filteredDetails(Health health) {
+    Health.Builder builder = new Health.Builder(health.getStatus());
+
+    health
+      .getDetails()
+      .entrySet()
+      .stream()
+      .filter(e -> e.getValue() instanceof Health)
+      .forEach(
+        e -> builder.withDetail(e.getKey(), filteredDetails((Health) e.getValue()))
+      );
+
+    return builder.build();
   }
 }
