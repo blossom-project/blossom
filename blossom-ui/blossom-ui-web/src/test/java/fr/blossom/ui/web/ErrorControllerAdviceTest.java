@@ -3,6 +3,7 @@ package fr.blossom.ui.web;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import fr.blossom.ui.web.error.ErrorControllerAdvice;
 import java.util.NoSuchElementException;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package fr.blossom.ui.web;
+package fr.blossom.ui.web.error;
 
 import fr.blossom.ui.stereotype.BlossomController;
 import java.util.NoSuchElementException;

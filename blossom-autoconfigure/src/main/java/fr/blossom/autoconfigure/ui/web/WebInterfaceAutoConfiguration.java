@@ -10,7 +10,7 @@ import fr.blossom.ui.i18n.LocaleControllerAdvice;
 import fr.blossom.ui.menu.Menu;
 import fr.blossom.ui.menu.MenuControllerAdvice;
 import fr.blossom.ui.web.ActivationController;
-import fr.blossom.ui.web.ErrorControllerAdvice;
+import fr.blossom.ui.web.error.ErrorControllerAdvice;
 import fr.blossom.ui.web.HomeController;
 import fr.blossom.ui.web.LoginController;
 import fr.blossom.ui.web.OmnisearchController;

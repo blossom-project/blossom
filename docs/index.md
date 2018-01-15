@@ -203,22 +203,41 @@ blossom.security.default.account.password=system
 
 ### Indexation and Search
 Blossom provides utility classes to deal with indexation and search powered by Elasticsearch.
-The elasticsearch version currently is 2.4.5.
+The elasticsearch version currently is 2.4.6.
 
 #### Elasticsearch Client configuration
-Blossom relies on spring-boot-starter-data-elasticsearch to create the Elasticsearch Client.
+Blossom relies on Elasticsearch to index and search entities.
 By default, an embedded node will be started, and a client on that node provided.
 You can connect to a standalone Elasticsearch installation by setting the properties below in your application.properties file.
 
 ```ini
 # ELASTICSEARCH (ElasticsearchProperties)
-spring.data.elasticsearch.cluster-name=elasticsearch # Elasticsearch cluster name.
-spring.data.elasticsearch.cluster-nodes= # Comma-separated list of cluster node addresses.
-spring.data.elasticsearch.properties.*= # Additional properties used to configure the client.
-spring.data.elasticsearch.repositories.enabled=true # Enable Elasticsearch repositories.
+blossom.elasticsearch.cluster-name=elasticsearch # Elasticsearch cluster name.
+blossom.elasticsearch.cluster-nodes= # Comma-separated list of cluster node addresses.
+blossom.elasticsearch.properties.*= # Additional properties used to configure the client.
 ```
 
 #### Creating an indexation engine
+Add a Bean of type `IndexationEngine` in your context.
+The default implementation is `IndexationEngineImpl`. It depends on the ES `Client`, a `ReadOnlyService`, a `BulkProcessor`, a jackson `ObjectMapper` and a `IndexationEngineConfiguration`
+
+```java
+    @Bean
+    public IndexationEngineImpl<ExampleDTO> exampleIndexationEngine(
+      Client client, // Provided by Blossom
+      UserService userService, 
+      BulkProcessor bulkProcessor, // Provided by Blossom
+      ObjectMapper objectMapper,// Provided by Blossom
+      IndexationEngineConfiguration<ExampleDTO> exampleIndexationEngineConfiguration
+      ) {
+      return new IndexationEngineImpl<>(client, userService, bulkProcessor, objectMapper,
+        exampleIndexationEngineConfiguration);
+    }
+    
+```
+
+#### Indexation lifecycle
+
 
 #### Creating a search engine
 
