@@ -11,13 +11,12 @@ import fr.blossom.core.common.utils.privilege.Privilege;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.tika.Tika;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -39,7 +38,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -133,17 +131,17 @@ public class CommonAutoConfiguration {
   }
 
   @Bean
-  public ReloadableResourceBundleMessageSource messageSource() throws IOException {
+  public BlossomReloadableResourceBundleMessageSource messageSource() throws IOException {
     PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-    List<String> resources = Lists
+    Set<String> resources = Lists
       .newArrayList(resolver.getResources("classpath*:/messages/*.properties")).stream()
       .filter(resource -> !resource.getFilename().contains("_"))
-      .map(resource -> "classpath:/messages/" + resource.getFilename().replace(".properties", ""))
-      .collect(Collectors.toList());
+      .map(resource -> "classpath*:/messages/" + resource.getFilename().replace(".properties", ""))
+      .collect(Collectors.toSet());
 
     logger.info("Found {} i18n files :\n{}", resources.size(), Joiner.on(",").join(resources));
 
-    ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+    BlossomReloadableResourceBundleMessageSource messageSource = new BlossomReloadableResourceBundleMessageSource();
     messageSource.setBasenames(resources.toArray(new String[resources.size()]));
     messageSource.setFallbackToSystemLocale(false);
     messageSource.setCacheSeconds(3600);
