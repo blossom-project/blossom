@@ -46,6 +46,11 @@ public class ElasticsearchTraceRepositoryImpl implements ElasticsearchTraceRepos
    * Client}, writing and reading from a given index. This implementation only records traces not
    * excluded in the ignoredUris list of patterns. If the index doesn't exists on the Elasticsearch
    * cluster, a new one will be created with the given settings.
+   *
+   * @param client the elasticsearch client
+   * @param index the index name (serves as alias)
+   * @param ignoredUris a list of regexp patterns to ignore request uris
+   * @param settings the Elasticsearch index setting as json serialized string
    */
   public ElasticsearchTraceRepositoryImpl(Client client, String index, List<String> ignoredUris,
     String settings) {

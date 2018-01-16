@@ -97,7 +97,9 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   /**
    * Returns a {@link JPQLQuery} for the given {@link EntityPath}.
    *
+   * @param <T> the type of queryDSL generated entity
    * @param path must not be {@literal null}.
+   * @return the Querydsl {@link JPQLQuery}.
    */
   protected <T> JPQLQuery<T> from(EntityPath<T> path) {
     return querydsl.createQuery(path).select(path);
@@ -105,6 +107,8 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
 
   /**
    * Returns the underlying Querydsl helper instance.
+   *
+   * @return the Querydsl
    */
   protected Querydsl getQuerydsl() {
     return this.querydsl;

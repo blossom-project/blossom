@@ -9,14 +9,20 @@ import fr.blossom.core.user.UserDTO;
 import fr.blossom.core.user.UserService;
 import fr.blossom.core.user.UserUpdateForm;
 import fr.blossom.ui.stereotype.BlossomApiController;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import org.apache.tika.Tika;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +33,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
@@ -37,11 +45,13 @@ public class UsersApiController {
 
   private final UserService userService;
   private final SearchEngineImpl<UserDTO> searchEngine;
+  private final Tika tika;
 
   public UsersApiController(UserService userService,
-    SearchEngineImpl<UserDTO> searchEngine) {
+    SearchEngineImpl<UserDTO> searchEngine, Tika tika) {
     this.userService = userService;
     this.searchEngine = searchEngine;
+    this.tika = tika;
   }
 
   @GetMapping
@@ -78,7 +88,8 @@ public class UsersApiController {
 
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('administration:users:write')")
-  public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserUpdateForm userUpdateForm) {
+  public ResponseEntity<UserDTO> update(@PathVariable Long id,
+    @Valid @RequestBody UserUpdateForm userUpdateForm) {
     Preconditions.checkArgument(id != null);
     UserDTO user = userService.getOne(id);
     if (user == null) {
@@ -93,7 +104,7 @@ public class UsersApiController {
   public ResponseEntity<Map<Class<? extends AbstractDTO>, Long>> delete(@PathVariable Long id,
     @RequestParam(value = "force", defaultValue = "false", required = false) boolean force) {
     UserDTO user = this.userService.getOne(id);
-    if(user == null){
+    if (user == null) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -103,5 +114,26 @@ public class UsersApiController {
     } else {
       return new ResponseEntity<>(result.get(), HttpStatus.CONFLICT);
     }
+  }
+
+  @GetMapping(value = "/{id}/avatar")
+  @ResponseBody
+  public ResponseEntity<InputStreamResource> displayAvatar(@PathVariable Long id)
+    throws IOException {
+    InputStream avatar = this.userService.loadAvatar(id);
+    return ResponseEntity.ok()
+      .contentType(MediaType.parseMediaType(this.tika.detect(avatar)))
+      .body(new InputStreamResource(avatar));
+  }
+
+  @PostMapping("/{id}/_avatar/_edit")
+  @PreAuthorize("hasAuthority('administration:users:write')")
+  public void updateAvatar(@PathVariable Long id, @RequestParam("avatar") MultipartFile file)
+    throws IOException {
+    UserDTO user = this.userService.getOne(id);
+    if (user == null) {
+      throw new NoSuchElementException(String.format("User=%s not found", id));
+    }
+    this.userService.updateAvatar(id, file.getBytes());
   }
 }

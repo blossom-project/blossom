@@ -20,6 +20,7 @@ import fr.blossom.core.user.UserService;
 import fr.blossom.core.user.UserUpdateForm;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.tika.Tika;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,12 +28,14 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UsersApiControllerTest {
@@ -46,11 +49,14 @@ public class UsersApiControllerTest {
   @Mock
   private SearchEngineImpl<UserDTO> searchEngine;
 
+  @Mock
+  private Tika tika;
+
   private UsersApiController controller;
 
   @Before
   public void setUp() {
-    controller = new UsersApiController(service, searchEngine);
+    controller = new UsersApiController(service, searchEngine, tika);
   }
 
   @Test
