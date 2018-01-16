@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Parent;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -45,7 +45,8 @@ public class ProjectGenerator {
     this.resourceLoader = resourceLoader;
   }
 
-  public void generateProject(ProjectConfiguration projectConfiguration, OutputStream os) throws Exception {
+  public void generateProject(ProjectConfiguration projectConfiguration, OutputStream os)
+    throws Exception {
     ZipOutputStream zos = new ZipOutputStream(os);
 
     appendPom(projectConfiguration, zos);
@@ -56,26 +57,22 @@ public class ProjectGenerator {
     zos.close();
   }
 
-  private void appendChangeLog(ProjectConfiguration projectConfiguration, ZipOutputStream zos) throws IOException {
-    Resource resource = this.resourceLoader.getResource("classpath:/changelog/db.changelog-master.yaml");
+  private void appendChangeLog(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
+    throws IOException {
+    Resource resource = this.resourceLoader
+      .getResource("classpath:/changelog/db.changelog-master.yaml");
 
     ZipEntry e = new ZipEntry("src/main/resources/db/changelog/db.changelog-master.yaml");
     zos.putNextEntry(e);
     Streams.copy(resource.getInputStream(), zos, false);
   }
 
-  private void appendPom(ProjectConfiguration projectConfiguration, ZipOutputStream zos) throws IOException {
+  private void appendPom(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
+    throws IOException {
     Version version = initializr.findVersion(projectConfiguration.getVersion()).get();
 
     Model model = new Model();
     model.setModelVersion("4.0.0");
-
-    Parent parent = new Parent();
-    parent.setGroupId("org.springframework.boot");
-    parent.setArtifactId("spring-boot-starter-parent");
-    parent.setVersion(version.getSpringboot());
-    parent.setRelativePath(null);
-    model.setParent(parent);
 
     model.setGroupId(projectConfiguration.getGroupId());
     model.setArtifactId(projectConfiguration.getArtifactId());
@@ -92,14 +89,32 @@ public class ProjectGenerator {
     properties.put("java.version", "1.8");
     model.setProperties(properties);
 
-    model.setDependencies(projectConfiguration.getDependencies().stream().map(id -> initializr.findDependency(id))
+    org.apache.maven.model.Dependency blossomBom = new org.apache.maven.model.Dependency();
+    blossomBom.setGroupId("fr.blossom");
+    blossomBom.setArtifactId("blossom-parent");
+    blossomBom.setVersion(projectConfiguration.getVersion());
+    blossomBom.setScope("import");
+    blossomBom.setType("pom");
+
+    DependencyManagement dependencyManagement = new DependencyManagement();
+    dependencyManagement.addDependency(blossomBom);
+
+    model.setDependencyManagement(dependencyManagement);
+
+    model.setDependencies(
+      projectConfiguration
+        .getDependencies()
+        .stream()
+        .map(id -> initializr.findDependency(id))
         .filter(o -> o.isPresent()).map(o -> o.get()).map(d -> {
-          org.apache.maven.model.Dependency dependency = new org.apache.maven.model.Dependency();
-          dependency.setGroupId(d.getGroupId());
-          dependency.setArtifactId(d.getArtifactId());
-          dependency.setVersion(version.getBlossom());
-          return dependency;
-        }).collect(Collectors.toList()));
+        org.apache.maven.model.Dependency dependency = new org.apache.maven.model.Dependency();
+        dependency.setGroupId(d.getGroupId());
+        dependency.setArtifactId(d.getArtifactId());
+        dependency.setVersion(version.getBlossom());
+        return dependency;
+      })
+        .collect(Collectors.toList())
+    );
 
     if (PACKAGING_MODE.WAR.equals(projectConfiguration.getPackagingMode())) {
       model.setPackaging(PACKAGING_MODE.WAR.name().toLowerCase());
@@ -157,8 +172,9 @@ public class ProjectGenerator {
     new MavenXpp3Writer().write(zos, model);
   }
 
-  private void appendMain(ProjectConfiguration projectConfiguration, ZipOutputStream zos) throws IOException,
-      JClassAlreadyExistsException {
+  private void appendMain(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
+    throws IOException,
+    JClassAlreadyExistsException {
     JCodeModel jc = new JCodeModel();
     JDefinedClass clazz = jc._class(projectConfiguration.getPackageName() + ".Application");
 
@@ -174,12 +190,15 @@ public class ProjectGenerator {
     JMethod main = clazz.method(JMod.PUBLIC | JMod.FINAL | JMod.STATIC, jc.VOID, "main");
     JVar varargs = main.varParam(jc.ref(String.class), "args");
 
-    main.body().add(jc._ref(SpringApplication.class).boxify().staticInvoke("run").arg(clazz.dotclass()).arg(varargs));
+    main.body().add(
+      jc._ref(SpringApplication.class).boxify().staticInvoke("run").arg(clazz.dotclass())
+        .arg(varargs));
 
     jc.build(new CustomZipCodeWriter(zos));
   }
 
-  private void appendProperties(ProjectConfiguration projectConfiguration, ZipOutputStream zos) throws IOException {
+  private void appendProperties(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
+    throws IOException {
     ZipEntry e = new ZipEntry("src/main/resources/application.properties");
     zos.putNextEntry(e);
   }
