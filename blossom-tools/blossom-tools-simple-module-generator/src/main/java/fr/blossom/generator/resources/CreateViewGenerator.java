@@ -36,7 +36,6 @@ public class CreateViewGenerator implements ResourceGenerator {
 
       Files.write(templateRoot.resolve(settings.getEntityNameLowerUnderscore()+"_create.ftl"), content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
-      System.out.println(content);
     } catch (IOException e) {
       e.printStackTrace();
     }

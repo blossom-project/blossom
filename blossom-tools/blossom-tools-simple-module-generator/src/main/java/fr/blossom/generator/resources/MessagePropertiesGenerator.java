@@ -33,7 +33,6 @@ public class MessagePropertiesGenerator implements ResourceGenerator {
 
       Files.write(messageRoot.resolve(settings.getEntityNameLowerHyphen()+".properties"), content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
-      System.out.println(content);
     } catch (IOException e) {
       e.printStackTrace();
     }

@@ -1,6 +1,7 @@
 package fr.blossom.initializr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,6 +17,13 @@ public class ProjectConfiguration {
 
   private String version = "";
   private List<String> dependencies = new ArrayList<>();
+
+  public ProjectConfiguration() {
+  }
+
+  public ProjectConfiguration(String... dependencies) {
+      this.dependencies = new ArrayList<>(Arrays.asList(dependencies));;
+  }
 
   public String getGroupId() {
     return groupId;
