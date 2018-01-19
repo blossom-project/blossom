@@ -11,5 +11,7 @@
 <#list users as group>
     <li>${group.firstname} ${group.lastname}</li></#list>
 </ul>
+
+<#if currentUser??>current user<#else>no current user</#if>
 </body>
 </html>

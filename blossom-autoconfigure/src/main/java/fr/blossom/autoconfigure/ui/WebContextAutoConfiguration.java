@@ -107,6 +107,7 @@ public class WebContextAutoConfiguration implements WebMvcConfigurer {
       }
     };
   }
+  
   @Configuration
   static class BlossomErrorViewResolverConfiguration {
 

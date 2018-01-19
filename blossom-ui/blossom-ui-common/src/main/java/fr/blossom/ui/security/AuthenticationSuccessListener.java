@@ -16,10 +16,11 @@ public class AuthenticationSuccessListener
   }
   public void onApplicationEvent(AuthenticationSuccessEvent e) {
     Authentication auth = e.getAuthentication();
-    String identifier = ((CurrentUser) auth.getPrincipal()).getUsername();
-    WebAuthenticationDetails details = (WebAuthenticationDetails) auth.getDetails();
-
-    loginAttemptService.successfulAttempt(identifier, details.getRemoteAddress());
+    Object detailsObject = auth.getDetails();
+    if (detailsObject instanceof WebAuthenticationDetails) {
+      WebAuthenticationDetails details = (WebAuthenticationDetails) detailsObject;
+      String identifier = ((CurrentUser) auth.getPrincipal()).getUsername();
+      loginAttemptService.successfulAttempt(identifier, details.getRemoteAddress());
+    }
   }
-
 }
