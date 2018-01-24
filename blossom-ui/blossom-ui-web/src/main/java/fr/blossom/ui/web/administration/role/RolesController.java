@@ -64,7 +64,7 @@ public class RolesController {
   @PreAuthorize("hasAuthority('administration:roles:read')")
   public ModelAndView getRolesPage(@RequestParam(value = "q", required = false) String q,
     @PageableDefault(size = 25) Pageable pageable, Model model) {
-    return tableView(q, pageable, model, "roles/roles");
+    return tableView(q, pageable, model, "blossom/roles/roles");
   }
 
   private ModelAndView tableView(String q, Pageable pageable, Model model, String viewName) {
@@ -108,7 +108,7 @@ public class RolesController {
 
   private ModelAndView createView(RoleCreateForm roleCreateForm, Model model) {
     model.addAttribute("roleCreateForm", roleCreateForm);
-    return new ModelAndView("roles/create", model.asMap());
+    return new ModelAndView("blossom/roles/create", model.asMap());
   }
 
   @GetMapping("/{id}")
@@ -119,7 +119,7 @@ public class RolesController {
       throw new NoSuchElementException(String.format("Role=%s not found", id));
     }
     model.addAttribute("role", role);
-    return new ModelAndView("roles/role", "role", role);
+    return new ModelAndView("blossom/roles/role", "role", role);
   }
 
   @PostMapping("/{id}/_delete")
@@ -180,11 +180,11 @@ public class RolesController {
   }
 
   private ModelAndView viewRoleInformationView(RoleDTO role) {
-    return new ModelAndView("roles/roleinformations", "role", role);
+    return new ModelAndView("blossom/roles/roleinformations", "role", role);
   }
 
   private ModelAndView updateRoleInformationView(RoleUpdateForm roleUpdateForm, Model model, Optional<HttpStatus> status) {
-    ModelAndView modelAndView= new ModelAndView("roles/roleinformations-edit", "roleUpdateForm", roleUpdateForm);
+    ModelAndView modelAndView= new ModelAndView("blossom/roles/roleinformations-edit", "roleUpdateForm", roleUpdateForm);
     modelAndView.setStatus(status.orElse(HttpStatus.OK));
     return modelAndView;
   }
@@ -231,14 +231,14 @@ public class RolesController {
   private ModelAndView viewRolePrivilegeView(RoleDTO role, Model model) {
     model.addAttribute("role", role);
     model.addAttribute("privileges", groupPrivileges(this.roleService.getAvailablePrivileges()));
-    return new ModelAndView("roles/roleprivileges", model.asMap());
+    return new ModelAndView("blossom/roles/roleprivileges", model.asMap());
   }
 
   private ModelAndView updateRolePrivilegesView(RolePrivilegeUpdateForm rolePrivilegeUpdateForm,
     Model model) {
     model.addAttribute("rolePrivilegeUpdateForm", rolePrivilegeUpdateForm);
     model.addAttribute("privileges", groupPrivileges(this.roleService.getAvailablePrivileges()));
-    ModelAndView modelAndView = new ModelAndView("roles/roleprivileges-edit", model.asMap());
+    ModelAndView modelAndView = new ModelAndView("blossom/roles/roleprivileges-edit", model.asMap());
     return modelAndView;
   }
 

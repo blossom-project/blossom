@@ -39,7 +39,7 @@ public class LoggerManagerController {
   @GetMapping
   public ModelAndView loggers(
     @RequestParam(name = "q", defaultValue = "", required = false) String q, Model model) {
-    return new ModelAndView("system/loggers/loggers");
+    return new ModelAndView("blossom/system/loggers/loggers");
   }
 
 
@@ -51,7 +51,7 @@ public class LoggerManagerController {
     model.addAttribute("loggerLevels", levels);
     model.addAttribute("levels", loggersEndpoint.loggers().get("levels"));
 
-    return new ModelAndView("system/loggers/logger-detail", model.asMap());
+    return new ModelAndView("blossom/system/loggers/logger-detail", model.asMap());
   }
 
   @PostMapping("/{name}/{logLevel}")

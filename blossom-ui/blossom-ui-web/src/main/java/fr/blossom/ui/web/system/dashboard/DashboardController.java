@@ -42,7 +42,7 @@ public class DashboardController {
 
   @GetMapping
   public ModelAndView dashboard() {
-    return new ModelAndView("system/dashboard/dashboard");
+    return new ModelAndView("blossom/system/dashboard/dashboard");
   }
 
   @GetMapping("/status")
@@ -50,22 +50,22 @@ public class DashboardController {
     Health health = healthEndpoint.health();
     model.addAttribute("health", health);
     model.addAttribute("uptime", 15000000);
-    return new ModelAndView("system/dashboard/panel/status", model.asMap());
+    return new ModelAndView("blossom/system/dashboard/panel/status", model.asMap());
   }
 
   @GetMapping("/memory")
   public ModelAndView memory() {
-    return new ModelAndView("system/dashboard/panel/memory", "memory", new MemoryMetrics());
+    return new ModelAndView("blossom/system/dashboard/panel/memory", "memory", new MemoryMetrics());
   }
 
   @GetMapping("/jvm")
   public ModelAndView jvm() {
-    return new ModelAndView("system/dashboard/panel/jvm", "jvm", new JVMMetrics());
+    return new ModelAndView("blossom/system/dashboard/panel/jvm", "jvm", new JVMMetrics());
   }
 
   @GetMapping("/charts")
   public ModelAndView requests() {
-    return new ModelAndView("system/dashboard/panel/charts");
+    return new ModelAndView("blossom/system/dashboard/panel/charts");
   }
 
 

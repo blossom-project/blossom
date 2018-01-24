@@ -60,7 +60,7 @@ public class CacheManagerController {
     model.addAttribute("caches", caches);
     model.addAttribute("q", q);
 
-    return new ModelAndView("system/caches/caches", model.asMap());
+    return new ModelAndView("blossom/system/caches/caches", model.asMap());
   }
 
   @PostMapping("/{name}/_empty")

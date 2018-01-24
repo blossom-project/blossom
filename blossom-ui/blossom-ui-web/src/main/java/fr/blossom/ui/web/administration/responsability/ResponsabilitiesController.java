@@ -151,7 +151,7 @@ public class ResponsabilitiesController {
   }
 
   private ModelAndView responsabilitiesView(Page<AssociationUserRoleDTO> responsabilities, String mode) {
-    return new ModelAndView("responsabilities/responsabilities-" + mode,"responsabilities", responsabilities);
+    return new ModelAndView("blossom/responsabilities/responsabilities-" + mode,"responsabilities", responsabilities);
   }
 
   private ModelAndView responsabilitiesForm(List<AssociationUserRoleDTO> memberships, UserDTO user,
@@ -161,6 +161,6 @@ public class ResponsabilitiesController {
     model.addAttribute("roles", roleService.getAll());
     model.addAttribute("user", user);
     model.addAttribute("role", role);
-    return new ModelAndView("responsabilities/responsabilities-" + mode + "-edit", model.asMap());
+    return new ModelAndView("blossom/responsabilities/responsabilities-" + mode + "-edit", model.asMap());
   }
 }

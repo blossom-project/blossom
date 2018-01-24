@@ -75,7 +75,7 @@ public class ActivationController {
       if (user.isPresent()) {
         UpdatePasswordForm updatePasswordForm = new UpdatePasswordForm();
 
-        return new ModelAndView("activation/change-password", "updatePasswordForm",
+        return new ModelAndView("blossom/activation/change-password", "updatePasswordForm",
           updatePasswordForm);
       }
     }
@@ -87,7 +87,7 @@ public class ActivationController {
     @Valid @ModelAttribute("updatePasswordForm") UpdatePasswordForm updatePasswordForm,
     BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
-      return new ModelAndView("activation/change-password", "updatePasswordForm",
+      return new ModelAndView("blossom/activation/change-password", "updatePasswordForm",
         updatePasswordForm);
     }
 
@@ -110,7 +110,7 @@ public class ActivationController {
 
   @GetMapping("/forgotten_password")
   public ModelAndView askForForgottenPassword() {
-    return new ModelAndView("activation/ask-password", "askPasswordForm", new AskPasswordForm());
+    return new ModelAndView("blossom/activation/ask-password", "askPasswordForm", new AskPasswordForm());
   }
 
   @PostMapping("/forgotten_password")
@@ -133,7 +133,7 @@ public class ActivationController {
       model.addAttribute("resetPasswordMail", true);
     }
 
-    return new ModelAndView("activation/ask-password", model.asMap());
+    return new ModelAndView("blossom/activation/ask-password", model.asMap());
   }
 
   @FieldMatch(message = "{change.password.validation.FieldMatch.message}", value = "password", confirmation = "passwordRepeater")

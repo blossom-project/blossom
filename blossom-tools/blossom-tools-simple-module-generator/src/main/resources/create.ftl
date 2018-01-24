@@ -1,7 +1,7 @@
 <#import "/spring.ftl" as spring>
-<#import "/master/master.ftl" as master>
-<#import "/utils/civility.ftl" as gender>
-<#import "/utils/buttons.ftl" as buttons>
+<#import "/blossom/master/master.ftl" as master>
+<#import "/blossom/utils/civility.ftl" as gender>
+<#import "/blossom/utils/buttons.ftl" as buttons>
 
 
 <@master.default currentUser=currentUser>

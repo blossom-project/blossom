@@ -11,7 +11,7 @@ public class HomeController {
 
   @RequestMapping
   public ModelAndView home() {
-    return new ModelAndView("home/home");
+    return new ModelAndView("blossom/home/home");
   }
 
 }

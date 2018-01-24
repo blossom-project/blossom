@@ -153,7 +153,7 @@ public class MembershipsController {
 
 
   private ModelAndView membershipsView(Page<AssociationUserGroupDTO> memberships, String mode) {
-    return new ModelAndView("memberships/memberships-" + mode, "memberships", memberships);
+    return new ModelAndView("blossom/memberships/memberships-" + mode, "memberships", memberships);
   }
 
   private ModelAndView membershipsForm(List<AssociationUserGroupDTO> memberships, UserDTO user,
@@ -163,6 +163,6 @@ public class MembershipsController {
     model.addAttribute("groups", groupService.getAll());
     model.addAttribute("user", user);
     model.addAttribute("group", group);
-    return new ModelAndView("memberships/memberships-" + mode + "-edit", model.asMap());
+    return new ModelAndView("blossom/memberships/memberships-" + mode + "-edit", model.asMap());
   }
 }

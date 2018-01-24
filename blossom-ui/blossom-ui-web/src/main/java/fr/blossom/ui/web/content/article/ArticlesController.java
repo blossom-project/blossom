@@ -68,7 +68,7 @@ public class ArticlesController {
     model.addAttribute("articles", articles);
     model.addAttribute("q", q);
 
-    return new ModelAndView("articles/articles", model.asMap());
+    return new ModelAndView("blossom/articles/articles", model.asMap());
   }
 
   @GetMapping("/_create")
@@ -99,7 +99,7 @@ public class ArticlesController {
 
   private ModelAndView createView(ArticleCreateForm articleCreateForm, Model model) {
     model.addAttribute("articleCreateForm", articleCreateForm);
-    return new ModelAndView("articles/create", model.asMap());
+    return new ModelAndView("blossom/articles/create", model.asMap());
   }
 
   @GetMapping("/{id}")
@@ -110,7 +110,7 @@ public class ArticlesController {
       throw new NoSuchElementException(String.format("Article=%s not found", id));
     }
     model.addAttribute("article", article);
-    return new ModelAndView("articles/article", "article", article);
+    return new ModelAndView("blossom/articles/article", "article", article);
   }
 
   @PostMapping("/{id}/_delete")
@@ -170,11 +170,11 @@ public class ArticlesController {
   }
 
   private ModelAndView viewArticleInformationView(ArticleDTO article) {
-    return new ModelAndView("articles/articleinformations", "article", article);
+    return new ModelAndView("blossom/articles/articleinformations", "article", article);
   }
 
   private ModelAndView updateArticleInformationView(ArticleUpdateForm articleUpdateForm) {
-    return new ModelAndView("articles/articleinformations-edit", "articleUpdateForm",
+    return new ModelAndView("blossom/articles/articleinformations-edit", "articleUpdateForm",
       articleUpdateForm);
   }
 }

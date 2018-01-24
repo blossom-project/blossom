@@ -140,7 +140,7 @@ public class WebSecurityAutoConfiguration {
   }
 
   @Configuration
-  @Order(Ordered.LOWEST_PRECEDENCE)
+  @Order(Ordered.HIGHEST_PRECEDENCE)
   public static class PublicWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     @Override

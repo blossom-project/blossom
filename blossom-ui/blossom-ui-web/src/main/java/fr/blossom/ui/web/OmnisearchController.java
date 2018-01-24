@@ -81,7 +81,7 @@ public class OmnisearchController {
         throw new IllegalStateException(String.format("Duplicate key %s", u));
       }, LinkedHashMap::new)));
 
-    return new ModelAndView("omnisearch/omnisearch", model.asMap());
+    return new ModelAndView("blossom/omnisearch/omnisearch", model.asMap());
   }
 
   @VisibleForTesting

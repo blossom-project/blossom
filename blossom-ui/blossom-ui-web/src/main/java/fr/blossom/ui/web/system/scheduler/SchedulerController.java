@@ -38,14 +38,14 @@ public class SchedulerController {
   public ModelAndView scheduler(Model model) throws SchedulerException {
     model.addAttribute("scheduler", this.scheduledJobService.getSchedulerInfo());
     model.addAttribute("groups", this.scheduledJobService.getGroups());
-    return new ModelAndView("system/scheduler/scheduler", model.asMap());
+    return new ModelAndView("blossom/system/scheduler/scheduler", model.asMap());
   }
 
   @GetMapping("/{group}")
   public ModelAndView tasks(Model model, @PathVariable String group) throws SchedulerException {
     model.addAttribute("scheduler", this.scheduledJobService.getSchedulerInfo());
     model.addAttribute("jobInfos", this.scheduledJobService.getAll(group));
-    return new ModelAndView("system/scheduler/list", model.asMap());
+    return new ModelAndView("blossom/system/scheduler/list", model.asMap());
   }
 
   @GetMapping("/{group}/{name}")
@@ -53,7 +53,7 @@ public class SchedulerController {
     throws SchedulerException {
     model.addAttribute("scheduler", this.scheduledJobService.getSchedulerInfo());
     model.addAttribute("jobInfo", this.scheduledJobService.getOne(JobKey.jobKey(name, group)));
-    return new ModelAndView("system/scheduler/detail", model.asMap());
+    return new ModelAndView("blossom/system/scheduler/detail", model.asMap());
   }
 
   @PostMapping("/{group}/{name}/_execute")

@@ -46,7 +46,7 @@ public class FileManagerController {
   @GetMapping
   @PreAuthorize("hasAuthority('content:filemanager:read')")
   public ModelAndView getPage(Model model) {
-    return new ModelAndView("content/filemanager/filemanager", model.asMap());
+    return new ModelAndView("blossom/filemanager/filemanager", model.asMap());
   }
 
   @GetMapping("/files")
@@ -61,7 +61,7 @@ public class FileManagerController {
       files = fileService.getAll(pageable);
     }
     model.addAttribute("files", files);
-    return new ModelAndView("content/filemanager/filelist", model.asMap());
+    return new ModelAndView("blossom/filemanager/filelist", model.asMap());
   }
 
   @PostMapping(value = "/files", consumes = "multipart/form-data")

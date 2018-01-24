@@ -28,33 +28,33 @@ public class ErrorControllerAdviceTest {
   @Test
   public void should_display_error_when_Throwable() throws Exception {
     assertTrue(advice.handleDefault(mock(HttpServletRequest.class), new Throwable()).getViewName()
-      .equals("error/default"));
+      .equals("blossom/error/default"));
   }
 
   @Test
   public void should_display_error_when_HttpRequestMethodNotSupportedException() throws Exception {
     assertTrue(advice.handleMethodNotSupported(mock(HttpServletRequest.class),
-      new HttpRequestMethodNotSupportedException("GET")).getViewName().equals("error/405"));
+      new HttpRequestMethodNotSupportedException("GET")).getViewName().equals("blossom/error/405"));
   }
 
   @Test
   public void should_display_error_when_NoHandlerFoundException() throws Exception {
     assertTrue(advice.handleNotFound(mock(HttpServletRequest.class),
       new NoHandlerFoundException("GET", "/test", new HttpHeaders())).getViewName()
-      .equals("error/404"));
+      .equals("blossom/error/404"));
   }
 
   @Test
   public void should_display_error_when_NoSuchElementException() throws Exception {
     assertTrue(advice.handleNotFound(mock(HttpServletRequest.class),
       new NoSuchElementException()).getViewName()
-      .equals("error/404"));
+      .equals("blossom/error/404"));
   }
 
   @Test
   public void should_display_error_when_() throws Exception {
     assertTrue(advice.handleForbidden(mock(HttpServletRequest.class),
       new AccessDeniedException("")).getViewName()
-      .equals("error/403"));
+      .equals("blossom/error/403"));
   }
 }

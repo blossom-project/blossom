@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring>
-<#import "/master/master.ftl" as master>
+<#import "/blossom/master/master.ftl" as master>
 
 
 <@master.default currentUser=currentUser>

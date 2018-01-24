@@ -21,31 +21,31 @@ public class ErrorControllerAdvice {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Throwable.class)
   public ModelAndView handleDefault(HttpServletRequest req, Throwable throwable) {
-    return new ModelAndView("error/default");
+    return new ModelAndView("blossom/error/default");
   }
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
   @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
   public ModelAndView handleMethodNotSupported(HttpServletRequest req,
     HttpRequestMethodNotSupportedException exception) {
-    return new ModelAndView("error/405");
+    return new ModelAndView("blossom/error/405");
   }
 
   @ExceptionHandler(NoHandlerFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ModelAndView handleNotFound(HttpServletRequest req, NoHandlerFoundException exception) {
-    return new ModelAndView("error/404");
+    return new ModelAndView("blossom/error/404");
   }
 
   @ExceptionHandler(NoSuchElementException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ModelAndView handleNotFound(HttpServletRequest req, NoSuchElementException exception) {
-    return new ModelAndView("error/404");
+    return new ModelAndView("blossom/error/404");
   }
 
   @ExceptionHandler(AccessDeniedException.class)
   @ResponseStatus(HttpStatus.FORBIDDEN)
   public ModelAndView handleForbidden(HttpServletRequest req, AccessDeniedException exception) {
-    return new ModelAndView("error/403");
+    return new ModelAndView("blossom/error/403");
   }
 }

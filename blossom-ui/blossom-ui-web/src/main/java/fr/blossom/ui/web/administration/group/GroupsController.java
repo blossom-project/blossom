@@ -57,7 +57,7 @@ public class GroupsController {
   @PreAuthorize("hasAuthority('administration:groups:read')")
   public ModelAndView getGroupsPage(@RequestParam(value = "q", required = false) String q,
     @PageableDefault(size = 25) Pageable pageable, Model model) {
-    return tableView(q, pageable, model, "groups/groups");
+    return tableView(q, pageable, model, "blossom/groups/groups");
   }
 
   private ModelAndView tableView(String q, Pageable pageable, Model model, String viewName) {
@@ -105,7 +105,7 @@ public class GroupsController {
 
   private ModelAndView createView(GroupCreateForm groupCreateForm, Model model) {
     model.addAttribute("groupCreateForm", groupCreateForm);
-    return new ModelAndView("groups/create", model.asMap());
+    return new ModelAndView("blossom/groups/create", model.asMap());
   }
 
   @GetMapping("/{id}")
@@ -116,7 +116,7 @@ public class GroupsController {
       throw new NoSuchElementException(String.format("Group=%s not found", id));
     }
     model.addAttribute("group", group);
-    return new ModelAndView("groups/group", "group", group);
+    return new ModelAndView("blossom/groups/group", "group", group);
   }
 
 
@@ -178,11 +178,11 @@ public class GroupsController {
   }
 
   private ModelAndView viewGroupInformationView(GroupDTO group) {
-    return new ModelAndView("groups/groupinformations", "group", group);
+    return new ModelAndView("blossom/groups/groupinformations", "group", group);
   }
 
   private ModelAndView updateGroupInformationView(GroupUpdateForm groupUpdateForm, Model model, Optional<HttpStatus> status) {
-    ModelAndView modelAndView= new ModelAndView("groups/groupinformations-edit", "groupUpdateForm", groupUpdateForm);
+    ModelAndView modelAndView= new ModelAndView("blossom/groups/groupinformations-edit", "groupUpdateForm", groupUpdateForm);
     modelAndView.setStatus(status.orElse(HttpStatus.OK));
     return modelAndView;
   }

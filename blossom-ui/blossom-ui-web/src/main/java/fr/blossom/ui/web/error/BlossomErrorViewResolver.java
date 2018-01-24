@@ -72,7 +72,7 @@ public class BlossomErrorViewResolver implements ErrorViewResolver, Ordered {
     if (((String) model.getOrDefault("path", "")).startsWith("/blossom")) {
       prefix = "blossom/";
     }
-    String errorViewName = "error/" + prefix + viewName;
+    String errorViewName = "blossom/error/" + prefix + viewName;
     TemplateAvailabilityProvider provider = this.templateAvailabilityProviders
       .getProvider(errorViewName, this.applicationContext);
     if (provider != null) {

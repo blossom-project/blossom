@@ -19,6 +19,6 @@ public class HomeControllerTest {
 
   @Test
   public void should_display_home() throws Exception {
-    assertTrue(controller.home().getViewName().equals("home/home"));
+    assertTrue(controller.home().getViewName().equals("blossom/home/home"));
   }
 }
