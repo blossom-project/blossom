@@ -37,6 +37,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -89,7 +90,9 @@ public class WebSecurityAutoConfiguration {
       return new SystemUserDetailsServiceImpl(privilegeRegistry, properties.getIdentifier(),
         passwordEncoder.encode(properties.getPassword()));
     }
-    return null;
+    return identifier -> {
+      throw new UsernameNotFoundException(String.format("User with identifier=%s was not found", identifier));
+    };
   }
 
   @Bean
