@@ -126,22 +126,6 @@ public class WebSecurityAutoConfiguration {
     return new BlossomSessionRegistryImpl(associationUserRoleService);
   }
 
-
-  @Configuration
-  @Order(Ordered.HIGHEST_PRECEDENCE)
-  public static class GlobalSecurityConfigurerAdapter extends
-    GlobalAuthenticationConfigurerAdapter {
-
-    @Autowired
-    public LimitLoginAuthenticationProvider limitLoginAuthenticationProvider;
-
-    @Override
-    public void init(AuthenticationManagerBuilder auth) throws Exception {
-      auth.authenticationProvider(limitLoginAuthenticationProvider);
-    }
-
-  }
-
   @Configuration
   @Order(Ordered.HIGHEST_PRECEDENCE)
   public static class PublicWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
@@ -159,14 +143,4 @@ public class WebSecurityAutoConfiguration {
       return super.authenticationManagerBean();
     }
   }
-//
-//  @Configuration
-//  @Order(4)
-//  public static class AppWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-//
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//      http.antMatcher("/**").csrf().disable().authorizeRequests().anyRequest().permitAll();
-//    }
-//  }
 }

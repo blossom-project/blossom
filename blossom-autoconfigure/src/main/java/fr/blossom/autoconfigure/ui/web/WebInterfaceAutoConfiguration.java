@@ -13,6 +13,7 @@ import fr.blossom.ui.current_user.CurrentUserControllerAdvice;
 import fr.blossom.ui.i18n.LocaleControllerAdvice;
 import fr.blossom.ui.menu.Menu;
 import fr.blossom.ui.menu.MenuControllerAdvice;
+import fr.blossom.ui.security.LimitLoginAuthenticationProvider;
 import fr.blossom.ui.web.ActivationController;
 import fr.blossom.ui.web.error.ErrorControllerAdvice;
 import fr.blossom.ui.web.HomeController;
@@ -29,8 +30,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.plugin.core.PluginRegistry;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
@@ -97,17 +98,26 @@ public class WebInterfaceAutoConfiguration {
 
     private final LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler;
     private final SessionRegistry sessionRegistry;
+    public final LimitLoginAuthenticationProvider limitLoginAuthenticationProvider;
+
 
     public FormLoginWebSecurityConfigurerAdapter(
       LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler,
-      SessionRegistry sessionRegistry) {
+      SessionRegistry sessionRegistry,
+      LimitLoginAuthenticationProvider limitLoginAuthenticationProvider) {
       this.lastConnectionUpdateAuthenticationSuccessHandler = lastConnectionUpdateAuthenticationSuccessHandler;
       this.sessionRegistry = sessionRegistry;
+      this.limitLoginAuthenticationProvider = limitLoginAuthenticationProvider;
     }
 
     @Bean
     public static ServletListenerRegistrationBean httpSessionEventPublisher() {
       return new ServletListenerRegistrationBean(new HttpSessionEventPublisher());
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+      auth.authenticationProvider(limitLoginAuthenticationProvider);
     }
 
     @Override

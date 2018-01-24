@@ -47,8 +47,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity.RequestMatcherConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -160,7 +158,8 @@ public class WebApiAutoConfiguration {
     private Set<String> mappings;
 
     public NotOAuthRequestMatcher(FrameworkEndpointHandlerMapping mapping) {
-      this.mappings = mapping.getHandlerMethods().keySet().stream().flatMap(k -> k.getPatternsCondition().getPatterns().stream()).collect(Collectors.toSet());
+      this.mappings = mapping.getHandlerMethods().keySet().stream()
+        .flatMap(k -> k.getPatternsCondition().getPatterns().stream()).collect(Collectors.toSet());
     }
 
     @Override
@@ -232,8 +231,11 @@ public class WebApiAutoConfiguration {
     @Bean
     public TokenGranter tokenGranter() {
       List<TokenGranter> tokenGranters = new ArrayList<TokenGranter>();
-      tokenGranters.add(new RefreshTokenGranter(tokenServices(), clientDetailsService, oauth2RequestFactory()));
-      tokenGranters.add(new ResourceOwnerPasswordTokenGranter(authenticationManager, tokenServices(), clientDetailsService, oauth2RequestFactory()));
+      tokenGranters.add(
+        new RefreshTokenGranter(tokenServices(), clientDetailsService, oauth2RequestFactory()));
+      tokenGranters.add(
+        new ResourceOwnerPasswordTokenGranter(authenticationManager, tokenServices(),
+          clientDetailsService, oauth2RequestFactory()));
 
       return new CompositeTokenGranter(tokenGranters);
     }
@@ -260,8 +262,10 @@ public class WebApiAutoConfiguration {
       tokenServices.setTokenStore(tokenStore());
 
       PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
-      provider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<>(userDetailsService));
-      tokenServices.setAuthenticationManager(new ProviderManager(Arrays.<AuthenticationProvider>asList(provider)));
+      provider.setPreAuthenticatedUserDetailsService(
+        new UserDetailsByNameServiceWrapper<>(userDetailsService));
+      tokenServices.setAuthenticationManager(
+        new ProviderManager(Arrays.<AuthenticationProvider>asList(provider)));
 
       return tokenServices;
     }
