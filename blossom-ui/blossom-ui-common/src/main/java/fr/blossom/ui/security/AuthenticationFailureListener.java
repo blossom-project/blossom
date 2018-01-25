@@ -18,11 +18,12 @@ public class AuthenticationFailureListener
 
   public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent e) {
     Authentication auth = e.getAuthentication();
-    Object detailsObject = auth.getDetails();
-    if (detailsObject instanceof WebAuthenticationDetails) {
-      WebAuthenticationDetails details = (WebAuthenticationDetails) detailsObject;
+    if (auth.getPrincipal() instanceof String) {
       String identifier = (String) auth.getPrincipal();
-      loginAttemptService.failAttempt(identifier, details.getRemoteAddress());
+      if(auth.getDetails() instanceof  WebAuthenticationDetails) {
+        WebAuthenticationDetails details = (WebAuthenticationDetails) auth.getDetails();
+        loginAttemptService.failAttempt(identifier, details.getRemoteAddress());
+      }
     }
   }
 }

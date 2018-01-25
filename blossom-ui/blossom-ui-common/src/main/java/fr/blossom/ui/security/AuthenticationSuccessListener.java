@@ -14,13 +14,15 @@ public class AuthenticationSuccessListener
   public AuthenticationSuccessListener(LoginAttemptsService loginAttemptService) {
     this.loginAttemptService = loginAttemptService;
   }
+
   public void onApplicationEvent(AuthenticationSuccessEvent e) {
     Authentication auth = e.getAuthentication();
-    Object detailsObject = auth.getDetails();
-    if (detailsObject instanceof WebAuthenticationDetails) {
-      WebAuthenticationDetails details = (WebAuthenticationDetails) detailsObject;
+    if (auth.getPrincipal() instanceof CurrentUser) {
       String identifier = ((CurrentUser) auth.getPrincipal()).getUsername();
-      loginAttemptService.successfulAttempt(identifier, details.getRemoteAddress());
+      if(auth.getDetails() instanceof  WebAuthenticationDetails) {
+        WebAuthenticationDetails details = (WebAuthenticationDetails) auth.getDetails();
+        loginAttemptService.successfulAttempt(identifier, details.getRemoteAddress());
+      }
     }
   }
 }
