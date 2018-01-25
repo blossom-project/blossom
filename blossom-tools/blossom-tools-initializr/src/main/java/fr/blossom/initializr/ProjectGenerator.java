@@ -12,6 +12,7 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -87,12 +88,14 @@ public class ProjectGenerator {
     properties.put("project.build.sourceEncoding", "UTF-8");
     properties.put("project.reporting.outputEncoding", "UTF-8");
     properties.put("java.version", "1.8");
+    properties.put("springboot.version", version.getSpringboot());
+    properties.put("blossom.version", version.getBlossom());
     model.setProperties(properties);
 
     org.apache.maven.model.Dependency blossomBom = new org.apache.maven.model.Dependency();
     blossomBom.setGroupId("fr.blossom");
     blossomBom.setArtifactId("blossom-parent");
-    blossomBom.setVersion(projectConfiguration.getVersion());
+    blossomBom.setVersion("${blossom.version}");
     blossomBom.setScope("import");
     blossomBom.setType("pom");
 
@@ -110,7 +113,7 @@ public class ProjectGenerator {
         org.apache.maven.model.Dependency dependency = new org.apache.maven.model.Dependency();
         dependency.setGroupId(d.getGroupId());
         dependency.setArtifactId(d.getArtifactId());
-        dependency.setVersion(version.getBlossom());
+        dependency.setVersion("${blossom.version}");
         return dependency;
       })
         .collect(Collectors.toList())
@@ -163,6 +166,12 @@ public class ProjectGenerator {
     Plugin plugin = new Plugin();
     plugin.setGroupId("org.springframework.boot");
     plugin.setArtifactId("spring-boot-maven-plugin");
+    plugin.setVersion("${springboot.version}");
+
+    PluginExecution bootPluginExecution= new PluginExecution();
+    bootPluginExecution.setGoals(Arrays.asList("repackage"));
+
+    plugin.addExecution(bootPluginExecution);
     build.addPlugin(plugin);
 
     model.setBuild(build);
