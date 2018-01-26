@@ -39,12 +39,13 @@ public class BlossomSpringLiquibase extends SpringLiquibase {
       Set<String> returnSet = new HashSet<String>();
       if(path.startsWith("classpath*:")) {
         String tempFile = FilenameUtils.concat(FilenameUtils.getFullPath(relativeTo), path);
+        final String classpathBasePath = path.substring("classpath*:".length());
 
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         List<String> resources = Lists
           .newArrayList(resolver.getResources(tempFile + "*.xml")).stream()
           .sorted(Comparator.comparing(Resource::getFilename))
-          .map(resource -> "classpath:db/changelog/blossom/" + resource.getFilename())
+          .map(resource -> "classpath:" + classpathBasePath + resource.getFilename())
           .collect(Collectors.toList());
 
         for (String res : resources) {
