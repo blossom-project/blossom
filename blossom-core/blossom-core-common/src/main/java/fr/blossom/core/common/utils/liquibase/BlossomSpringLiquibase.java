@@ -39,7 +39,7 @@ public class BlossomSpringLiquibase extends SpringLiquibase {
       Set<String> returnSet = new HashSet<String>();
       if(path.startsWith("classpath*:")) {
         String tempFile = FilenameUtils.concat(FilenameUtils.getFullPath(relativeTo), path);
-        final String classpathBasePath = path.substring("classpath*:".length());
+        final String classpathBasePath = path.substring("classpath*:".length()) + (path.endsWith("/") ? "" : "/");
 
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         List<String> resources = Lists
