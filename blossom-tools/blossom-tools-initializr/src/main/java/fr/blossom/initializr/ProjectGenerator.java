@@ -341,10 +341,24 @@ public class ProjectGenerator {
   }
 
   private void appendKotlinMain(ProjectConfiguration projectConfiguration, ZipOutputStream zos) throws IOException {
-    TypeSpec applicationClass = TypeSpec.classBuilder("Application")
+    TypeSpec.Builder applicationClassBuilder = TypeSpec.classBuilder("Application")
       .addAnnotation(AnnotationSpec.builder(SpringBootApplication.class).build())
-      .addModifiers(KModifier.OPEN)
-      .build();
+      .addModifiers(KModifier.OPEN);
+
+    if (projectConfiguration.getPackagingMode() == PACKAGING_MODE.WAR) {
+      applicationClassBuilder.superclass(SpringBootServletInitializer.class);
+
+      FunSpec configure = FunSpec
+        .builder("configure")
+        .addParameter(
+          "application",
+          ClassName.bestGuess(SpringApplicationBuilder.class.getName()))
+        .returns(ClassName.bestGuess(SpringApplicationBuilder.class.getName()))
+        .addModifiers(KModifier.OVERRIDE)
+        .addCode("return application.sources(Application::class.java)")
+        .build();
+      applicationClassBuilder.addFunction(configure);
+    }
 
     FunSpec mainFun = FunSpec.builder("main")
       .addParameter(ParameterSpec.builder("args", new ClassName("", "Array<String>")).build())
@@ -352,7 +366,7 @@ public class ProjectGenerator {
       .build();
 
     FileSpec file = FileSpec.builder(projectConfiguration.getPackageName(), "Application")
-      .addType(applicationClass)
+      .addType(applicationClassBuilder.build())
       .addFunction(mainFun)
       .build();
 
