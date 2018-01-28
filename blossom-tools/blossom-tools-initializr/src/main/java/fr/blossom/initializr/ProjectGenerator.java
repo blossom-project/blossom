@@ -1,30 +1,11 @@
 package fr.blossom.initializr;
 
+import com.squareup.kotlinpoet.*;
 import com.sun.codemodel.CodeWriter;
-import com.sun.codemodel.JClassAlreadyExistsException;
-import com.sun.codemodel.JCodeModel;
-import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JMethod;
-import com.sun.codemodel.JMod;
-import com.sun.codemodel.JPackage;
-import com.sun.codemodel.JVar;
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
+import com.sun.codemodel.*;
 import fr.blossom.initializr.enums.PACKAGING_MODE;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.DependencyManagement;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.model.PluginExecution;
+import fr.blossom.initializr.enums.SOURCE_LANGUAGE;
+import org.apache.maven.model.*;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.tomcat.util.http.fileupload.util.Streams;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -34,6 +15,18 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Created by Maël Gargadennnec on 14/06/2017.
@@ -53,7 +46,11 @@ public class ProjectGenerator {
     ZipOutputStream zos = new ZipOutputStream(os);
 
     appendPom(projectConfiguration, zos);
-    appendMain(projectConfiguration, zos);
+    if (projectConfiguration.getSourceLanguage() == SOURCE_LANGUAGE.KOTLIN) {
+      appendKotlinMain(projectConfiguration, zos);
+    } else {
+      appendJavaMain(projectConfiguration, zos);
+    }
     appendProperties(projectConfiguration, zos);
     appendChangeLog(projectConfiguration, zos);
 
@@ -170,7 +167,7 @@ public class ProjectGenerator {
     plugin.setArtifactId("spring-boot-maven-plugin");
     plugin.setVersion("${springboot.version}");
 
-    PluginExecution bootPluginExecution= new PluginExecution();
+    PluginExecution bootPluginExecution = new PluginExecution();
     bootPluginExecution.setGoals(Arrays.asList("repackage"));
 
     plugin.addExecution(bootPluginExecution);
@@ -183,7 +180,7 @@ public class ProjectGenerator {
     new MavenXpp3Writer().write(zos, model);
   }
 
-  private void appendMain(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
+  private void appendJavaMain(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
     throws IOException,
     JClassAlreadyExistsException {
     JCodeModel jc = new JCodeModel();
@@ -206,6 +203,31 @@ public class ProjectGenerator {
         .arg(varargs));
 
     jc.build(new CustomZipCodeWriter(zos));
+  }
+
+  private void appendKotlinMain(ProjectConfiguration projectConfiguration, ZipOutputStream zos) throws IOException {
+    TypeSpec applicationClass = TypeSpec.classBuilder("Application")
+      .addAnnotation(AnnotationSpec.builder(SpringBootApplication.class).build())
+      .addModifiers(KModifier.OPEN)
+      .build();
+
+    FunSpec mainFun = FunSpec.builder("main")
+      .addParameter(ParameterSpec.builder("args", new ClassName("", "Array<String>")).build())
+      .addStatement("%T.run(Application::class.java, *args)", SpringApplication.class)
+      .build();
+
+    FileSpec file = FileSpec.builder(projectConfiguration.getPackageName(), "Application")
+      .addType(applicationClass)
+      .addFunction(mainFun)
+      .build();
+
+    String name = "src/main/kotlin/" + toDirName(projectConfiguration.getPackageName()) + "Application.kt";
+    zos.putNextEntry(new ZipEntry(name));
+
+    String fileContent = file.toString();
+    zos.write(fileContent.getBytes(StandardCharsets.UTF_8));
+    zos.closeEntry();
+
   }
 
   private void appendProperties(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
@@ -252,6 +274,10 @@ public class ProjectGenerator {
     public void close() throws IOException {
     }
 
+  }
+
+  private static String toDirName(String pkgName) {
+    return pkgName.replace('.', '/') + '/';
   }
 
 }
