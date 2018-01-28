@@ -1,6 +1,9 @@
 package fr.blossom.initializr;
 
 import javax.servlet.http.HttpServletResponse;
+
+import fr.blossom.initializr.enums.PACKAGING_MODE;
+import fr.blossom.initializr.enums.SOURCE_LANGUAGE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
@@ -32,6 +35,7 @@ public class InitializrController {
     model.addAttribute("project", new ProjectConfiguration("blossom-starter-basic"));
     model.addAttribute("initializr", initializr);
     model.addAttribute("packagingModes", PACKAGING_MODE.values());
+    model.addAttribute("sourceLanguages", SOURCE_LANGUAGE.values());
 
     return new ModelAndView("main");
   }

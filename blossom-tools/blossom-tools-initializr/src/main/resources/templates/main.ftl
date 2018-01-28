@@ -71,7 +71,11 @@
           <div class="form-group">
             <label class="col-sm-2 control-label">Packaging mode</label>
             <div class="col-sm-10">
-              <select class="form-control" name="packagingMode"><#list packagingModes as packagingMode><option value="${packagingMode}">${packagingMode}</option></#list></select>
+              <select class="form-control" name="packagingMode">
+                <#list packagingModes as packagingMode>
+                  <option value="${packagingMode}">${packagingMode}</option>
+                </#list>
+              </select>
             </div>
           </div>
         </div>
@@ -92,6 +96,16 @@
             <label class="col-sm-2 control-label">Package name</label>
             <div class="col-sm-10">
               <input class="form-control" type="text" name="packageName" value="${project.packageName}"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Sources language</label>
+            <div class="col-sm-10">
+              <select class="form-control" name="sourceLanguage">
+                <#list sourceLanguages as sourceLanguage>
+                  <option value="${sourceLanguage}">${sourceLanguage}</option>
+                </#list>
+              </select>
             </div>
           </div>
         </div>

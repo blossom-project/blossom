@@ -1,4 +1,4 @@
-package fr.blossom.initializr;
+package fr.blossom.initializr.enums;
 
 public enum PACKAGING_MODE {
 
