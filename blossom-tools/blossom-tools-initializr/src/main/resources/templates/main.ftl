@@ -103,7 +103,7 @@
             <div class="col-sm-10">
               <select class="form-control" name="sourceLanguage">
                 <#list sourceLanguages as sourceLanguage>
-                  <option value="${sourceLanguage}">${sourceLanguage}</option>
+                  <option value="${sourceLanguage.name()}" <#if (sourceLanguage.default)!false>selected="selected"</#if>>${sourceLanguage.displayName}</option>
                 </#list>
               </select>
             </div>

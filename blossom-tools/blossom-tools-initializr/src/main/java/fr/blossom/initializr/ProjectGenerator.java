@@ -46,7 +46,8 @@ public class ProjectGenerator {
     ZipOutputStream zos = new ZipOutputStream(os);
 
     appendPom(projectConfiguration, zos);
-    if (projectConfiguration.getSourceLanguage() == SOURCE_LANGUAGE.KOTLIN) {
+    if (projectConfiguration.getSourceLanguage() == SOURCE_LANGUAGE.KOTLIN
+      || projectConfiguration.getSourceLanguage() == SOURCE_LANGUAGE.JAVA_KOTLIN) {
       appendKotlinMain(projectConfiguration, zos);
     } else {
       appendJavaMain(projectConfiguration, zos);
@@ -175,9 +176,143 @@ public class ProjectGenerator {
 
     model.setBuild(build);
 
+    if (projectConfiguration.getSourceLanguage() == SOURCE_LANGUAGE.JAVA_KOTLIN) {
+      addMixedJavaKotlinConfiguration(model, version.getKotlin());
+    } else if (projectConfiguration.getSourceLanguage() == SOURCE_LANGUAGE.KOTLIN) {
+      addKotlinConfiguration(model, version.getKotlin());
+    }
+
     ZipEntry e = new ZipEntry("pom.xml");
     zos.putNextEntry(e);
     new MavenXpp3Writer().write(zos, model);
+  }
+
+  private void addKotlinCommonConfiguration(Model pomModel, String kotlinVersion) {
+    // Cf https://kotlinlang.org/docs/reference/using-maven.html for configurations
+    // This configuration is based on the "mixed Java+Kotlin" Maven configuration
+
+    pomModel.getProperties().put("kotlin.version", kotlinVersion);
+
+    org.apache.maven.model.Dependency kotlinDependency = new org.apache.maven.model.Dependency();
+    kotlinDependency.setGroupId("org.jetbrains.kotlin");
+    kotlinDependency.setArtifactId("kotlin-stdlib");
+    kotlinDependency.setVersion("${kotlin.version}");
+    pomModel.getDependencies().add(kotlinDependency);
+  }
+
+  private void addMixedJavaKotlinConfiguration(Model pomModel, String kotlinVersion) {
+
+    addKotlinCommonConfiguration(pomModel, kotlinVersion);
+
+    Plugin kotlinPlugin = new Plugin();
+    kotlinPlugin.setGroupId("org.jetbrains.kotlin");
+    kotlinPlugin.setArtifactId("kotlin-maven-plugin");
+    kotlinPlugin.setVersion("${kotlin.version}");
+
+    {
+      PluginExecution compileExecution = new PluginExecution();
+      compileExecution.setId("compile");
+      compileExecution.addGoal("compile");
+
+      {
+        Xpp3Dom configuration = new Xpp3Dom("configuration");
+        Xpp3Dom sourceDirs = new Xpp3Dom("sourceDirs");
+        Xpp3Dom sourceDirKotlin = new Xpp3Dom("sourceDir");
+        sourceDirKotlin.setValue("${project.basedir}/src/main/kotlin");
+        Xpp3Dom sourceDirJava = new Xpp3Dom("sourceDir");
+        sourceDirJava.setValue("${project.basedir}/src/main/java");
+        sourceDirs.addChild(sourceDirKotlin);
+        sourceDirs.addChild(sourceDirJava);
+        configuration.addChild(sourceDirs);
+        compileExecution.setConfiguration(configuration);
+      }
+
+      PluginExecution testCompileExecution = new PluginExecution();
+      testCompileExecution.setId("test-compile");
+      testCompileExecution.addGoal("test-compile");
+
+      {
+        Xpp3Dom configuration = new Xpp3Dom("configuration");
+        Xpp3Dom sourceDirs = new Xpp3Dom("sourceDirs");
+        Xpp3Dom sourceDirKotlin = new Xpp3Dom("sourceDir");
+        sourceDirKotlin.setValue("${project.basedir}/src/test/kotlin");
+        Xpp3Dom sourceDirJava = new Xpp3Dom("sourceDir");
+        sourceDirJava.setValue("${project.basedir}/src/test/java");
+        sourceDirs.addChild(sourceDirKotlin);
+        sourceDirs.addChild(sourceDirJava);
+        configuration.addChild(sourceDirs);
+        testCompileExecution.setConfiguration(configuration);
+      }
+
+      List<PluginExecution> executions = new ArrayList<>();
+      executions.add(compileExecution);
+      executions.add(testCompileExecution);
+      kotlinPlugin.setExecutions(executions);
+    }
+
+    pomModel.getBuild().addPlugin(kotlinPlugin);
+
+    Plugin mavenCompilePlugin = new Plugin();
+    mavenCompilePlugin.setGroupId("org.apache.maven.plugins");
+    mavenCompilePlugin.setArtifactId("maven-compiler-plugin");
+    mavenCompilePlugin.setVersion("3.5.1");
+
+    {
+      PluginExecution defaultCompileExecution = new PluginExecution();
+      defaultCompileExecution.setId("default-compile");
+      defaultCompileExecution.setPhase("none");
+
+      PluginExecution defaultTestCompileExecution = new PluginExecution();
+      defaultTestCompileExecution.setId("default-testCompile");
+      defaultTestCompileExecution.setPhase("none");
+
+      PluginExecution javaCompileExecution = new PluginExecution();
+      javaCompileExecution.setId("java-compile");
+      javaCompileExecution.setPhase("compile");
+      javaCompileExecution.addGoal("compile");
+
+      PluginExecution javaTestCompileExecution = new PluginExecution();
+      javaTestCompileExecution.setId("java-test-compile");
+      javaTestCompileExecution.setPhase("test-compile");
+      javaTestCompileExecution.addGoal("testCompile");
+
+      List<PluginExecution> executions = new ArrayList<>();
+      executions.add(defaultCompileExecution);
+      executions.add(defaultTestCompileExecution);
+      executions.add(javaCompileExecution);
+      executions.add(javaTestCompileExecution);
+      mavenCompilePlugin.setExecutions(executions);
+    }
+
+    pomModel.getBuild().addPlugin(mavenCompilePlugin);
+  }
+
+  private void addKotlinConfiguration(Model pomModel, String kotlinVersion) {
+
+    addKotlinCommonConfiguration(pomModel, kotlinVersion);
+
+    Plugin kotlinPlugin = new Plugin();
+    kotlinPlugin.setGroupId("org.jetbrains.kotlin");
+    kotlinPlugin.setArtifactId("kotlin-maven-plugin");
+    kotlinPlugin.setVersion("${kotlin.version}");
+
+    PluginExecution compileExecution = new PluginExecution();
+    compileExecution.setId("compile");
+    compileExecution.addGoal("compile");
+
+    PluginExecution testCompileExecution = new PluginExecution();
+    testCompileExecution.setId("test-compile");
+    testCompileExecution.addGoal("test-compile");
+
+    List<PluginExecution> executions = new ArrayList<>();
+    executions.add(compileExecution);
+    executions.add(testCompileExecution);
+    kotlinPlugin.setExecutions(executions);
+
+    pomModel.getBuild().addPlugin(kotlinPlugin);
+
+    pomModel.getBuild().setSourceDirectory("${project.basedir}/src/main/kotlin");
+    pomModel.getBuild().setTestSourceDirectory("${project.basedir}/src/main/kotlin");
   }
 
   private void appendJavaMain(ProjectConfiguration projectConfiguration, ZipOutputStream zos)
