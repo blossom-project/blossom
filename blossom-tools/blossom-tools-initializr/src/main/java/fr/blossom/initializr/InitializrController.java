@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
  * Created by Maël Gargadennnec on 14/06/2017.
  */
 @Controller
-@RequestMapping("/initializr")
+@RequestMapping("")
 public class InitializrController {
 
   private final Initializr initializr;
@@ -30,7 +30,12 @@ public class InitializrController {
     this.projectGenerator = projectGenerator;
   }
 
-  @GetMapping
+  @GetMapping("")
+  public String redirectInitializr() {
+    return "redirect:/initializr";
+  }
+
+  @GetMapping("/initializr")
   public ModelAndView main(Model model) {
     model.addAttribute("project", new ProjectConfiguration("blossom-starter-basic"));
     model.addAttribute("initializr", initializr);
@@ -40,7 +45,7 @@ public class InitializrController {
     return new ModelAndView("main");
   }
 
-  @PostMapping(produces = "application/zip")
+  @PostMapping(produces = "application/zip", value="/initializr")
   public void generate(@ModelAttribute("form") ProjectConfiguration projectConfiguration,
     HttpServletResponse res)
     throws Exception {
