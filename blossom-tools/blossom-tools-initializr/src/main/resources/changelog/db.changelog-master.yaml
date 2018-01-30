@@ -2,6 +2,9 @@ databaseChangeLog:
     - includeAll:
         path: classpath*:/db/changelog/blossom
     - includeAll:
+        path: classpath*:/db/changelog/blossom/modules
+        errorIfMissingOrEmpty: false
+    - includeAll:
         path: classpath:/db/changelog/generated
         errorIfMissingOrEmpty: false
 

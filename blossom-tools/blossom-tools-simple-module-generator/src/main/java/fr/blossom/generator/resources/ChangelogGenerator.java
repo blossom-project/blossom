@@ -5,11 +5,15 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import fr.blossom.generator.configuration.model.Field;
 import fr.blossom.generator.configuration.model.Settings;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -18,13 +22,15 @@ public class ChangelogGenerator implements ResourceGenerator {
   private Path changelogDir;
   private Path fullChangelogPath;
 
+  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HHmmss");
+
   @Override
   public void prepare(Settings settings) {
 
     try {
-      changelogDir = settings.getResourcePath().resolve("db").resolve("changelog").resolve("generated");
+      changelogDir = settings.getResourcePath().resolve("db").resolve("changelog").resolve("blossom").resolve("modules");
       Files.createDirectories(changelogDir);
-      fullChangelogPath = changelogDir.resolve("4_db.changelog_blossom_generated_" + settings.getEntityNameLowerUnderscore() + ".xml");
+      fullChangelogPath = changelogDir.resolve(formatter.format(ZonedDateTime.now(ZoneOffset.UTC)) + "_db.changelog_blossom_generated_" + settings.getEntityNameLowerUnderscore() + ".xml");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
