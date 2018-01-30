@@ -6,6 +6,7 @@ package fr.blossom.initializr;
 public class Version {
   private String blossom;
   private String springboot;
+  private String kotlin;
 
   public String getBlossom() {
     return blossom;
@@ -21,5 +22,13 @@ public class Version {
 
   public void setSpringboot(String springboot) {
     this.springboot = springboot;
+  }
+
+  public String getKotlin() {
+    return kotlin;
+  }
+
+  public void setKotlin(String kotlin) {
+    this.kotlin = kotlin;
   }
 }
