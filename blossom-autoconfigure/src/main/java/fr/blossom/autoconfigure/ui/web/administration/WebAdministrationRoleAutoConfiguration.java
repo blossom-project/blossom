@@ -12,6 +12,7 @@ import fr.blossom.ui.web.administration.role.RolesController;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,8 +38,8 @@ public class WebAdministrationRoleAutoConfiguration {
     }
 
     @Bean
-    public RolesController rolesController(RoleService roleService, SearchEngineImpl<RoleDTO> searchEngine) {
-        return new RolesController(roleService, searchEngine);
+    public RolesController rolesController(RoleService roleService, SearchEngineImpl<RoleDTO> searchEngine, MessageSource messageSource) {
+        return new RolesController(roleService, searchEngine, messageSource);
     }
 
     @Bean

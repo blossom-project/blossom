@@ -1,12 +1,11 @@
 package fr.blossom.ui.web.administration.role;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.search.SearchEngineImpl;
 import fr.blossom.core.common.utils.privilege.Privilege;
+import fr.blossom.core.common.utils.tree.TreeNode;
 import fr.blossom.core.role.RoleCreateForm;
 import fr.blossom.core.role.RoleDTO;
 import fr.blossom.core.role.RolePrivilegeUpdateForm;
@@ -19,15 +18,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
@@ -54,10 +55,13 @@ public class RolesController {
 
   private final RoleService roleService;
   private final SearchEngineImpl<RoleDTO> searchEngine;
+  private final MessageSource messageSource;
 
-  public RolesController(RoleService roleService, SearchEngineImpl<RoleDTO> searchEngine) {
+  public RolesController(RoleService roleService, SearchEngineImpl<RoleDTO> searchEngine,
+    MessageSource messageSource) {
     this.roleService = roleService;
     this.searchEngine = searchEngine;
+    this.messageSource = messageSource;
   }
 
   @GetMapping
@@ -128,18 +132,19 @@ public class RolesController {
   public ResponseEntity<Map<Class<? extends AbstractDTO>, Long>> deleteRole(
     @PathVariable Long id,
     @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force) {
-    Optional<Map<Class<? extends AbstractDTO>, Long>> result = this.roleService.delete(this.roleService.getOne(id), force);
+    Optional<Map<Class<? extends AbstractDTO>, Long>> result = this.roleService
+      .delete(this.roleService.getOne(id), force);
 
-    if(!result.isPresent() || result.get().isEmpty()){
+    if (!result.isPresent() || result.get().isEmpty()) {
       return new ResponseEntity<>(Maps.newHashMap(), HttpStatus.OK);
-    }else{
+    } else {
       return new ResponseEntity<>(result.get(), HttpStatus.CONFLICT);
     }
   }
 
   @GetMapping("/{id}/_informations")
   @PreAuthorize("hasAuthority('administration:roles:read')")
-  public ModelAndView getRoleInformations(@PathVariable Long id, HttpServletRequest request) {
+  public ModelAndView getRoleInformations(@PathVariable Long id) {
     RoleDTO role = this.roleService.getOne(id);
     if (role == null) {
       throw new NoSuchElementException(String.format("Role=%s not found", id));
@@ -161,11 +166,11 @@ public class RolesController {
   @PostMapping("/{id}/_informations/_edit")
   @PreAuthorize("hasAuthority('administration:roles:write')")
   public ModelAndView handleRoleInformationsForm(@PathVariable Long id, Model model,
-    HttpServletResponse response,
     @Valid @ModelAttribute("roleUpdateForm") RoleUpdateForm roleUpdateForm,
     BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
-      return this.updateRoleInformationView(roleUpdateForm, model, Optional.of(HttpStatus.CONFLICT));
+      return this
+        .updateRoleInformationView(roleUpdateForm, model, Optional.of(HttpStatus.CONFLICT));
     }
 
     RoleDTO role = this.roleService.getOne(id);
@@ -183,10 +188,47 @@ public class RolesController {
     return new ModelAndView("blossom/roles/roleinformations", "role", role);
   }
 
-  private ModelAndView updateRoleInformationView(RoleUpdateForm roleUpdateForm, Model model, Optional<HttpStatus> status) {
-    ModelAndView modelAndView= new ModelAndView("blossom/roles/roleinformations-edit", "roleUpdateForm", roleUpdateForm);
+  private ModelAndView updateRoleInformationView(RoleUpdateForm roleUpdateForm, Model model,
+    Optional<HttpStatus> status) {
+    ModelAndView modelAndView = new ModelAndView("blossom/roles/roleinformations-edit",
+      "roleUpdateForm", roleUpdateForm);
     modelAndView.setStatus(status.orElse(HttpStatus.OK));
     return modelAndView;
+  }
+
+  @GetMapping(value = "/privileges/tree", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public TreeNode<Privilege> privilegeTreeNode(Locale locale) {
+    List<Privilege> availablePrivileges = this.roleService.getAvailablePrivileges();
+
+    TreeNode<Privilege> rootNode = new TreeNode<>("ALL", messageSource.getMessage("right.all", null, "right.all", locale), null);
+
+    availablePrivileges
+      .stream()
+      .forEach(p -> {
+        TreeNode<Privilege> treeNode = rootNode;
+        String[] keyParts = p.privilege().split(":");
+        int i = 0;
+        String currentKey = null;
+        do {
+          currentKey = currentKey != null ? currentKey + ":" + keyParts[i] : keyParts[i];
+          Optional<TreeNode<Privilege>> child = treeNode.findChildWithId(currentKey);
+          if (child.isPresent()) {
+            treeNode = child.get();
+          } else {
+            String labelKey = ("right." + currentKey).replaceAll(":",".");
+            TreeNode<Privilege> newNode = new TreeNode<>(currentKey, messageSource.getMessage(labelKey, null, labelKey, locale));
+            if(currentKey.equals(p.privilege())) {
+              newNode.setData(p);
+            }
+            treeNode.addChild(newNode);
+            treeNode = newNode;
+          }
+          i++;
+        } while (i <= keyParts.length - 1);
+
+      });
+    return rootNode;
   }
 
   @GetMapping("/{id}/_privileges")
@@ -220,42 +262,25 @@ public class RolesController {
     }
 
     RoleDTO role = this.roleService.getOne(id);
+    List<String> availablePrivileges = this.roleService.getAvailablePrivileges().stream().map(Privilege::privilege).collect(Collectors.toList());
     if (role == null) {
       throw new NoSuchElementException(String.format("Role=%s not found", id));
     }
-    role.setPrivileges(rolePrivilegeUpdateForm.getPrivileges());
+    role.setPrivileges(rolePrivilegeUpdateForm.getPrivileges().stream().filter(availablePrivileges::contains).collect(Collectors.toList()));
     RoleDTO updatedRole = this.roleService.update(id, role);
     return this.viewRolePrivilegeView(updatedRole, model);
   }
 
   private ModelAndView viewRolePrivilegeView(RoleDTO role, Model model) {
     model.addAttribute("role", role);
-    model.addAttribute("privileges", groupPrivileges(this.roleService.getAvailablePrivileges()));
     return new ModelAndView("blossom/roles/roleprivileges", model.asMap());
   }
 
   private ModelAndView updateRolePrivilegesView(RolePrivilegeUpdateForm rolePrivilegeUpdateForm,
     Model model) {
     model.addAttribute("rolePrivilegeUpdateForm", rolePrivilegeUpdateForm);
-    model.addAttribute("privileges", groupPrivileges(this.roleService.getAvailablePrivileges()));
-    ModelAndView modelAndView = new ModelAndView("blossom/roles/roleprivileges-edit", model.asMap());
+    ModelAndView modelAndView = new ModelAndView("blossom/roles/roleprivileges-edit",
+      model.asMap());
     return modelAndView;
   }
-
-  private Map<String, Map<String, List<Privilege>>> groupPrivileges(List<Privilege> privileges) {
-    Map<String, Map<String, List<Privilege>>> groupedPrivileges = Maps.newTreeMap(Ordering.natural());
-    for (Privilege privilege : privileges) {
-      String namespace = privilege.namespace();
-      if (!groupedPrivileges.containsKey(namespace)) {
-        groupedPrivileges.put(namespace, Maps.newTreeMap(Ordering.natural()));
-      }
-      String feature = privilege.feature();
-      if (!groupedPrivileges.get(namespace).containsKey(feature)){
-        groupedPrivileges.get(namespace).put(feature, Lists.newArrayList());
-      }
-      groupedPrivileges.get(namespace).get(feature).add(privilege);
-    }
-    return groupedPrivileges;
-  }
-
 }

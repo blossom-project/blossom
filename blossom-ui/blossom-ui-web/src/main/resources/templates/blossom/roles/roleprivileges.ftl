@@ -12,37 +12,7 @@
     <div class="sk-rect5"></div>
   </div>
 
-  <form class="form form-horizontal">
-    <#list privileges?keys as namespace>
-      <div>
-        <h3>
-          <@spring.messageText "right."+namespace namespace/>
-        </h3>
-        <div class="row">
-          <#list privileges[namespace]?keys as feature>
-            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-              <div class="form-group">
-                <div class="col-sm-12">
-                  <h5>
-                    <@spring.messageText "right."+namespace+"."+feature feature/>
-                  </h5>
-                  <#list privileges[namespace][feature] as privilege>
-                    <div class="m-l-md">
-                      <label>
-                        <input type="checkbox" value="${privilege.privilege()}" name="privileges" disabled <#if role.privileges?? && role.privileges?seq_contains(privilege.privilege())>checked="checked"</#if>>
-                      <@spring.messageText "right."+namespace+"."+feature+"."+privilege.right() privilege.right() />
-                      </label>
-                    </div>
-                  </#list>
-                </div>
-              </div>
-            </div>
-          </#list>
-        </div>
-      </div>
-      <#if !(namespace?is_last)> <hr/></#if>
-    </#list>
-  </form>
+  <div id="privilegeTree"></div>
 </div>
 
 
@@ -57,6 +27,41 @@
 
 
   <script>
+    $(document).ready(function () {
+      var selectedPrivileges=[<#list role.privileges as privilege>"${privilege}"<#if privilege?has_next>,</#if></#list>];
+
+      var transformNode = function(node){
+        node.state = {
+          checkbox_disabled: true,
+          disabled: true
+        };
+
+        var children = [];
+        $.each(node.children,function(index,value){
+          children.push(transformNode(value));
+        });
+        node.children = children;
+        return node;
+      };
+
+
+      $.get("privileges/tree", function (data) {
+        $('#privilegeTree').closest(".ibox-content").removeClass("sk-loading");
+
+        $('#privilegeTree').jstree({
+          'core': {
+            'data': [transformNode(data)]
+          },
+          'plugins': ["checkbox"]
+        }).on('ready.jstree', function (e, data) {
+          $("#privilegeTree").jstree(true).open_all();
+          $.each(selectedPrivileges, function(i, p){
+            $("#privilegeTree").jstree(true).check_node(p);
+          });
+        });
+      });
+    });
+
     var edit_roleprivileges = function (button) {
       var targetSelector = '#' + $(button).closest(".tab-pane").attr('id');
       $(targetSelector + ' > .ibox-content').addClass("sk-loading");
