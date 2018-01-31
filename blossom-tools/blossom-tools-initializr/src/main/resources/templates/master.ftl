@@ -36,6 +36,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right text-primary">
+            <li><a class="page-scroll" href="/initializr">Generate</a></li>
             <li><a class="page-scroll" href="/documentation">Documentation</a></li>
             <li><a class="page-scroll" href="https://github.com/blossom-project/blossom/" target="_blank">Source code</a></li>
           </ul>

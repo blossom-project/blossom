@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <form method="post" class="form-horizontal">
+    <form method="post" action="/initializr" class="form-horizontal">
       <div class="row m-t-xl">
         <div class="col-md-6">
           <div class="form-group">

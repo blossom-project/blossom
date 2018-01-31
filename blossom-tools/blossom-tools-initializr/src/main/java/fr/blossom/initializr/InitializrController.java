@@ -40,7 +40,7 @@ public class InitializrController {
     return new ModelAndView("initializr");
   }
 
-  @PostMapping(produces = "application/zip", value="/initializr")
+  @PostMapping(produces = "application/zip")
   public void generate(@ModelAttribute("form") ProjectConfiguration projectConfiguration,
     HttpServletResponse res)
     throws Exception {
