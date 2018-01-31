@@ -47,7 +47,7 @@
               <tr>
                 <td>${changeSet["id"]!''}</td>
                 <td>${changeSet["author"]!''}</td>
-                <td>${changeSet["dateExecuted"]?datetime}</td>
+                <td>${changeSet["dateExecuted"]}</td>
                 <td>${changeSet["orderExecuted"]?c}</td>
                 <td>${changeSet["execType"]!''}</td>
                 <td>${changeSet["description"]!''}</td>

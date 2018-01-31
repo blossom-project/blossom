@@ -71,7 +71,7 @@
             ${type.count?c}
             </td>
             <td>
-            ${type.time?c}
+             ${type.time?c} ms
             </td>
           </tr>
           </#list>
@@ -86,10 +86,7 @@
           <thead>
           <tr>
             <th>
-            <@spring.message "dashboard.jvm.threads.total"/>
-            </th>
-            <th>
-            <@spring.message "dashboard.jvm.threads.started"/>
+            <@spring.message "dashboard.jvm.threads.live"/>
             </th>
             <th>
             <@spring.message "dashboard.jvm.threads.peak"/>
@@ -102,10 +99,7 @@
           <tbody>
           <tr>
             <td>
-            ${jvm.threads.total?c}
-            </td>
-            <td>
-            ${jvm.threads.totalStarted?c}
+            ${jvm.threads.live?c}
             </td>
             <td>
             ${jvm.threads.peak?c}

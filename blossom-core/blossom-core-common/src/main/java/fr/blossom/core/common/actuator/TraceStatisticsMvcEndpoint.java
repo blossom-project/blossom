@@ -5,9 +5,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.boot.actuate.endpoint.web.WebEndpointResponse;
-import org.springframework.boot.actuate.endpoint.web.annotation.WebEndpoint;
 import org.springframework.lang.Nullable;
 
 /**
@@ -15,7 +14,7 @@ import org.springframework.lang.Nullable;
  *
  * @author Maël Gargadennec
  */
-@WebEndpoint(id = "tracesstats")
+@Endpoint(id = "tracesstats")
 public class TraceStatisticsMvcEndpoint {
 
   private final ElasticsearchTraceRepository traceRepository;
@@ -26,7 +25,7 @@ public class TraceStatisticsMvcEndpoint {
 
 
   @ReadOperation
-  public WebEndpointResponse<String> statsForPeriod(@Nullable String period) {
+  public String statsForPeriod(@Nullable String period) {
     Period choice = Period.PAST_WEEK;
     if (!Strings.isNullOrEmpty(period)) {
       try {choice = Period.valueOf(period);}catch(Exception e){}
@@ -40,7 +39,7 @@ public class TraceStatisticsMvcEndpoint {
       to = choice.to();
       precision = choice.precision();
     }
-    return new WebEndpointResponse(traceRepository.stats(from, to, precision).toString());
+    return traceRepository.stats(from, to, precision).toString();
   }
 
   public enum Period {

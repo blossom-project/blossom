@@ -30,7 +30,7 @@ public class LiquibaseController {
 
   @GetMapping
   public ModelAndView liquibase(Model model) {
-    return new ModelAndView("blossom/system/liquibase/liquibase", "reports", liquibaseEndpoint.liquibaseReports());
+    return new ModelAndView("blossom/system/liquibase/liquibase", "reports", liquibaseEndpoint.liquibaseBeans().getContexts().get("application").getLiquibaseBeans());
   }
 
 }

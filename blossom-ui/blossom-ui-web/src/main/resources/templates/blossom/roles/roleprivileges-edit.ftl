@@ -67,14 +67,12 @@
     $(targetSelector + ' > .ibox-content').addClass("sk-loading");
     var edit = $(targetSelector).data("edit");
     var form = $(targetSelector + ' > form');
-    console.log(form);
 
     var selected = $("#privilegeTree").jstree(true).get_checked(null, true);
     $.each(selected, function(index,value){
       form.append("<input type='hidden' name='privileges' value='"+value+"'/>");
     });
 
-    console.log(form);
 
     $.post(edit, form.serialize()).done(function (responseText, textStatus, jqXHR) {
       $(targetSelector).html(responseText);
