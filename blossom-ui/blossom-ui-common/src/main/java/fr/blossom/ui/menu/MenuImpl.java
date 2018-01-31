@@ -3,6 +3,7 @@ package fr.blossom.ui.menu;
 import com.google.common.base.Preconditions;
 import fr.blossom.ui.current_user.CurrentUser;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 import org.elasticsearch.common.Strings;
 import org.springframework.plugin.core.PluginRegistry;
@@ -23,7 +24,7 @@ public class MenuImpl implements Menu {
   public Collection<MenuItem> items() {
     return this.registry.getPlugins().stream()
       .filter(item -> item.parent() == null)
-      .sorted((e1, e2) -> new Integer(e1.order()).compareTo(e2.order()))
+      .sorted(Comparator.comparingInt(MenuItem::order))
       .collect(Collectors.toList());
   }
 
@@ -34,7 +35,7 @@ public class MenuImpl implements Menu {
       .filter(item -> Strings.isNullOrEmpty(item.privilege()) || currentUser
         .hasPrivilege(item.privilege()))
       .filter(item -> item.leaf() || !item.filteredItems(currentUser).isEmpty())
-      .sorted((e1, e2) -> new Integer(e1.order()).compareTo(e2.order()))
+      .sorted(Comparator.comparingInt(MenuItem::order))
       .collect(Collectors.toList());
   }
 }

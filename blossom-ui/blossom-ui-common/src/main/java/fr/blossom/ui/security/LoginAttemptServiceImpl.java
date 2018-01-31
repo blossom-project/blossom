@@ -37,9 +37,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptsService {
   @Override
   public void failAttempt(String identifier, String ip) {
     Map<String, Integer> attempts = attemptsCache.get(identifier);
-    attempts.compute(ip, (s, integer) -> {
-      return integer == null ? 1 : integer+1;
-    });
+    attempts.compute(ip, (s, integer) -> integer == null ? 1 : integer+1);
     attemptsCache.put(identifier, attempts);
   }
 

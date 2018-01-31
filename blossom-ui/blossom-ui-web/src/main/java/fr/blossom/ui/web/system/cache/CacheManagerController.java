@@ -30,7 +30,6 @@ import org.springframework.web.servlet.ModelAndView;
 @OpenedMenu("cacheManager")
 @PreAuthorize("hasAuthority('system:caches:manager')")
 public class CacheManagerController {
-
   private final static Logger LOGGER = LoggerFactory.getLogger(CacheManagerController.class);
   private final BlossomCacheManager cacheManager;
 
@@ -61,7 +60,7 @@ public class CacheManagerController {
     model.addAttribute("caches", caches);
     model.addAttribute("q", q);
 
-    return new ModelAndView("system/caches/caches", model.asMap());
+    return new ModelAndView("blossom/system/caches/caches", model.asMap());
   }
 
   @PostMapping("/{name}/_empty")

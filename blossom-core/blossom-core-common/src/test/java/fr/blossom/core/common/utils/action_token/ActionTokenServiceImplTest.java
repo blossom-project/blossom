@@ -1,29 +1,33 @@
 package fr.blossom.core.common.utils.action_token;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.security.core.token.DefaultToken;
-import org.springframework.security.core.token.TokenService;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.core.token.DefaultToken;
+import org.springframework.security.core.token.TokenService;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ActionTokenServiceImplTest {
@@ -200,7 +204,7 @@ public class ActionTokenServiceImplTest {
     Map<String, String> map = ImmutableMap.<String, String>builder().put("test", "test").build();
     String result = service.encryptAdditionalParameters(map);
     assertNotNull(result);
-    assertEquals(result, "test&=&test");
+    assertEquals("test&=&test", result);
   }
 
   @Test
@@ -225,7 +229,7 @@ public class ActionTokenServiceImplTest {
     String expectedToken = "token !";
     when(tokenService.allocateToken(any(String.class))).thenAnswer(
       arg -> new DefaultToken(expectedToken, System.currentTimeMillis(),
-        arg.getArgumentAt(0, String.class)));
+        arg.getArgument(0)));
 
     String token = this.service.generateToken(action);
 
@@ -256,8 +260,8 @@ public class ActionTokenServiceImplTest {
     Long timestamp = LocalDateTime.now().minusHours(1).toInstant(ZoneOffset.UTC).toEpochMilli();
 
     when(this.tokenService.verifyToken(anyString())).thenAnswer(
-      arg -> new DefaultToken(arg.getArgumentAt(0, String.class), System.currentTimeMillis(),
-        arg.getArgumentAt(0, String.class)));
+      arg -> new DefaultToken(arg.getArgument(0), System.currentTimeMillis(),
+        arg.getArgument(0)));
     ActionToken token = service.decryptToken(userId + "|" + action + "|" + timestamp + "|");
 
     assertNotNull(token);

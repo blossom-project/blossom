@@ -10,9 +10,30 @@
         "default": 604800000
       },
       "properties": {
-        "headers": {
+        "timeTaken": {
+          "type": "long"
+        },
+        "timestamp": {
+          "type": "double"
+        },
+        "current_timestamp": {
+          "type": "long"
+        },
+        "request": {
           "properties": {
-            "request": {
+            "method": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "uri": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "remoteAddress": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "headers": {
               "properties": {
                 "accept": {
                   "type": "string",
@@ -67,8 +88,16 @@
                   "index": "not_analyzed"
                 }
               }
+            }
+          }
+        },
+        "response": {
+          "properties": {
+            "status": {
+              "type": "string",
+              "index": "not_analyzed"
             },
-            "response": {
+            "headers": {
               "properties": {
                 "Accept-Ranges": {
                   "type": "string",
@@ -124,28 +153,18 @@
                 "X-XSS-Protection": {
                   "type": "string",
                   "index": "not_analyzed"
-                },
-                "status": {
-                  "type": "string",
-                  "index": "not_analyzed"
                 }
               }
             }
           }
         },
-        "method": {
+        "principal": {
           "type": "string",
           "index": "not_analyzed"
         },
-        "path": {
+        "session": {
           "type": "string",
           "index": "not_analyzed"
-        },
-        "timeTaken": {
-          "type": "long"
-        },
-        "timestamp": {
-          "type": "long"
         }
       }
     }

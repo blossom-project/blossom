@@ -16,6 +16,7 @@ import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -70,7 +71,7 @@ public class FileServiceImpl extends GenericCrudServiceImpl<FileDTO, File> imple
   }
 
   @Override
-  public InputStream download(long fileId) throws SQLException {
+  public InputStream download(long fileId) throws SQLException, FileNotFoundException {
     return this.fileContentDao.read(fileId);
   }
 }

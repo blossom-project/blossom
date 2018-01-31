@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verify;
 import fr.blossom.core.common.search.IndexationEngine;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IndexationJobTest {

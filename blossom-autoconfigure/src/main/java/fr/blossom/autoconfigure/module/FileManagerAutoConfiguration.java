@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -95,109 +96,115 @@ public class FileManagerAutoConfiguration {
     return new FileDTOMapper();
   }
 
-  @Bean
-  public IndexationEngineConfiguration<FileDTO> fileIndexationEngineConfiguration(
-    @Value("classpath:/elasticsearch/files.json") Resource resource) {
-    return new IndexationEngineConfiguration<FileDTO>() {
-      @Override
-      public Class<FileDTO> getSupportedClass() {
-        return FileDTO.class;
-      }
+  @Configuration
+  @ConditionalOnBean(Client.class)
+  public static class FileManagerSearchAutoConfiguration {
 
-      @Override
-      public Resource getSource() {
-        return resource;
-      }
+    @Bean
+    public IndexationEngineConfiguration<FileDTO> fileIndexationEngineConfiguration(
+      @Value("classpath:/elasticsearch/files.json") Resource resource) {
+      return new IndexationEngineConfiguration<FileDTO>() {
+        @Override
+        public Class<FileDTO> getSupportedClass() {
+          return FileDTO.class;
+        }
 
-      @Override
-      public String getAlias() {
-        return "files";
-      }
+        @Override
+        public Resource getSource() {
+          return resource;
+        }
 
-      @Override
-      public Function<FileDTO, String> getTypeFunction() {
-        return u -> "file";
-      }
+        @Override
+        public String getAlias() {
+          return "files";
+        }
 
-      @Override
-      public Function<FileDTO, SummaryDTO> getSummaryFunction() {
-        return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u))
-          .name(u.getName()).description(u.getContentType())
-          .uri("/blossom/content/files/" + u.getId()).build();
-      }
-    };
-  }
+        @Override
+        public Function<FileDTO, String> getTypeFunction() {
+          return u -> "file";
+        }
 
-  @Bean
-  public IndexationEngineImpl<FileDTO> fileIndexationEngine(Client client, FileService fileService,
-    BulkProcessor bulkProcessor, ObjectMapper objectMapper,
-    IndexationEngineConfiguration<FileDTO> fileIndexationEngineConfiguration) {
-    return new IndexationEngineImpl<>(client, fileService, bulkProcessor, objectMapper,
-      fileIndexationEngineConfiguration);
-  }
+        @Override
+        public Function<FileDTO, SummaryDTO> getSummaryFunction() {
+          return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u))
+            .name(u.getName()).description(u.getContentType())
+            .uri("/blossom/content/files/" + u.getId()).build();
+        }
+      };
+    }
 
-  @Bean
-  public SearchEngineConfiguration<FileDTO> fileSearchEngineConfiguration() {
-    return new SearchEngineConfiguration<FileDTO>() {
-      @Override
-      public String getName() {
-        return "menu.content.filemanager";
-      }
+    @Bean
+    public IndexationEngineImpl<FileDTO> fileIndexationEngine(Client client,
+      FileService fileService,
+      BulkProcessor bulkProcessor, ObjectMapper objectMapper,
+      IndexationEngineConfiguration<FileDTO> fileIndexationEngineConfiguration) {
+      return new IndexationEngineImpl<>(client, fileService, bulkProcessor, objectMapper,
+        fileIndexationEngineConfiguration);
+    }
 
-      @Override
-      public Class<FileDTO> getSupportedClass() {
-        return FileDTO.class;
-      }
+    @Bean
+    public SearchEngineConfiguration<FileDTO> fileSearchEngineConfiguration() {
+      return new SearchEngineConfiguration<FileDTO>() {
+        @Override
+        public String getName() {
+          return "menu.content.filemanager";
+        }
 
-      @Override
-      public String[] getFields() {
-        return new String[]{"dto.name", "dto.contentType", "dto.extension"};
-      }
+        @Override
+        public Class<FileDTO> getSupportedClass() {
+          return FileDTO.class;
+        }
 
-      @Override
-      public String getAlias() {
-        return "files";
-      }
+        @Override
+        public String[] getFields() {
+          return new String[]{"dto.name", "dto.contentType", "dto.extension"};
+        }
 
-      @Override
-      public boolean includeInOmnisearch() {
-        return false;
-      }
-    };
-  }
+        @Override
+        public String getAlias() {
+          return "files";
+        }
+
+        @Override
+        public boolean includeInOmnisearch() {
+          return false;
+        }
+      };
+    }
 
 
-  @Bean
-  public SearchEngineImpl<FileDTO> fileSearchEngine(Client client, ObjectMapper objectMapper,
-    SearchEngineConfiguration<FileDTO> fileSearchEngineConfiguration) {
-    return new SearchEngineImpl<>(client, objectMapper, fileSearchEngineConfiguration);
-  }
+    @Bean
+    public SearchEngineImpl<FileDTO> fileSearchEngine(Client client, ObjectMapper objectMapper,
+      SearchEngineConfiguration<FileDTO> fileSearchEngineConfiguration) {
+      return new SearchEngineImpl<>(client, objectMapper, fileSearchEngineConfiguration);
+    }
 
-  @Bean
-  @Qualifier("fileIndexationFullJob")
-  public JobDetailFactoryBean fileIndexationFullJob() {
-    JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
-    factoryBean.setJobClass(FileIndexationJob.class);
-    factoryBean.setGroup("Indexation");
-    factoryBean.setName("Files Indexation Job");
-    factoryBean.setDescription("Files full indexation Job");
-    factoryBean.setDurability(true);
-    return factoryBean;
-  }
+    @Bean
+    @Qualifier("fileIndexationFullJob")
+    public JobDetailFactoryBean fileIndexationFullJob() {
+      JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+      factoryBean.setJobClass(FileIndexationJob.class);
+      factoryBean.setGroup("Indexation");
+      factoryBean.setName("Files Indexation Job");
+      factoryBean.setDescription("Files full indexation Job");
+      factoryBean.setDurability(true);
+      return factoryBean;
+    }
 
-  @Bean
-  @Qualifier("fileScheduledIndexationTrigger")
-  public SimpleTriggerFactoryBean fileScheduledIndexationTrigger(
-    @Qualifier("fileIndexationFullJob") JobDetail fileIndexationFullJob) {
-    SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-    factoryBean.setName("File re-indexation");
-    factoryBean.setDescription("Periodic re-indexation of all files of the application");
-    factoryBean.setJobDetail(fileIndexationFullJob);
-    factoryBean.setStartDelay((long) 30 * 1000);
-    factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
-    factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
-    factoryBean.setMisfireInstruction(
-      SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
-    return factoryBean;
+    @Bean
+    @Qualifier("fileScheduledIndexationTrigger")
+    public SimpleTriggerFactoryBean fileScheduledIndexationTrigger(
+      @Qualifier("fileIndexationFullJob") JobDetail fileIndexationFullJob) {
+      SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+      factoryBean.setName("File re-indexation");
+      factoryBean.setDescription("Periodic re-indexation of all files of the application");
+      factoryBean.setJobDetail(fileIndexationFullJob);
+      factoryBean.setStartDelay((long) 30 * 1000);
+      factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
+      factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
+      factoryBean.setMisfireInstruction(
+        SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
+      return factoryBean;
+    }
   }
 }

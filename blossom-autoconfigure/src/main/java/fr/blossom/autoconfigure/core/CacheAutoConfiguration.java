@@ -33,7 +33,8 @@ public class CacheAutoConfiguration {
   @Bean("defaultCacheConfig")
   @ConditionalOnMissingBean(name = "defaultCacheConfig")
   public CacheConfig defaultCacheConfig() {
-    return CacheConfigBuilder.create(DEFAULT_CACHE_CONFIGURATION).specification("recordStats").build();
+    return CacheConfigBuilder.create(DEFAULT_CACHE_CONFIGURATION).specification("recordStats")
+      .build();
   }
 
   @Configuration
@@ -44,12 +45,13 @@ public class CacheAutoConfiguration {
     private PluginRegistry<CacheConfig, String> registry;
 
     @Bean
-    public CacheResolver blossomCacheResolver(final CacheManager cacheManager) {
+    public BlossomCacheResolver blossomCacheResolver(final CacheManager cacheManager) {
       return new BlossomCacheResolver(cacheManager);
     }
 
     @Bean
-    public CacheManager blossomCacheManager(@Qualifier("defaultCacheConfig") CacheConfig defaultCacheConfig) {
+    public BlossomCacheManager blossomCacheManager(
+      @Qualifier("defaultCacheConfig") CacheConfig defaultCacheConfig) {
       return new BlossomCacheManager(registry, defaultCacheConfig);
     }
 

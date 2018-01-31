@@ -26,56 +26,56 @@ import org.springframework.core.annotation.Order;
 @AutoConfigureAfter(CommonAutoConfiguration.class)
 public class WebArticleAutoConfiguration {
 
-  @Bean
-  @Order(3)
-  @ConditionalOnMissingBean(name = "contentMenuItem")
-  public MenuItem contentMenuItem(MenuItemBuilder builder) {
-    return builder
-      .key("content")
-      .label("menu.content")
-      .icon("fa fa-book")
-      .link("/blossom/content")
-      .leaf(false)
-      .build();
-  }
+    @Bean
+    @Order(3)
+    @ConditionalOnMissingBean(name = "contentMenuItem")
+    public MenuItem contentMenuItem(MenuItemBuilder builder) {
+        return builder
+                .key("content")
+                .label("menu.content")
+                .icon("fa fa-book")
+                .link("/blossom/content")
+                .leaf(false)
+                .build();
+    }
 
-  @Bean
-  public MenuItem contentArticleMenuItem(MenuItemBuilder builder,
-    @Qualifier("contentMenuItem") MenuItem contentMenuItem) {
-    return builder
-      .key("articles")
-      .label("menu.content.articles")
-      .link("/blossom/content/articles")
-      .icon("fa fa-pencil")
-      .order(0)
-      .privilege(articleReadPrivilegePlugin())
-      .parent(contentMenuItem)
-      .build();
-  }
+    @Bean
+    public MenuItem contentArticleMenuItem(MenuItemBuilder builder,
+                                           @Qualifier("contentMenuItem") MenuItem contentMenuItem) {
+        return builder
+                .key("articles")
+                .label("menu.content.articles")
+                .link("/blossom/content/articles")
+                .icon("fa fa-pencil")
+                .order(0)
+                .privilege(articleReadPrivilegePlugin())
+                .parent(contentMenuItem)
+                .build();
+    }
 
-  @Bean
-  public ArticlesController articleManagerController(ArticleService articleService,
-    SearchEngineImpl<ArticleDTO> searchEngine) {
-    return new ArticlesController(articleService, searchEngine);
-  }
+    @Bean
+    public ArticlesController articleManagerController(ArticleService articleService,
+                                                       SearchEngineImpl<ArticleDTO> searchEngine) {
+        return new ArticlesController(articleService, searchEngine);
+    }
 
-  @Bean
-  public Privilege articleReadPrivilegePlugin() {
-    return new SimplePrivilege("content", "articles", "read");
-  }
+    @Bean
+    public Privilege articleReadPrivilegePlugin() {
+        return new SimplePrivilege("content", "articles", "read");
+    }
 
-  @Bean
-  public Privilege articleManagerWritePrivilegePlugin() {
-    return new SimplePrivilege("content", "articles", "write");
-  }
+    @Bean
+    public Privilege articleManagerWritePrivilegePlugin() {
+        return new SimplePrivilege("content", "articles", "write");
+    }
 
-  @Bean
-  public Privilege articleManagerCreatePrivilegePlugin() {
-    return new SimplePrivilege("content", "articles", "create");
-  }
+    @Bean
+    public Privilege articleManagerCreatePrivilegePlugin() {
+        return new SimplePrivilege("content", "articles", "create");
+    }
 
-  @Bean
-  public Privilege articleManagerDeletePrivilegePlugin() {
-    return new SimplePrivilege("content", "articles", "delete");
-  }
+    @Bean
+    public Privilege articleManagerDeletePrivilegePlugin() {
+        return new SimplePrivilege("content", "articles", "delete");
+    }
 }

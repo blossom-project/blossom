@@ -12,7 +12,7 @@ import fr.blossom.generator.configuration.model.Settings;
 import fr.blossom.generator.configuration.model.StringField;
 import fr.blossom.generator.utils.GeneratorUtils;
 import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 public class UpdateFormGenerator implements ClassGenerator {
 

@@ -1,5 +1,6 @@
 package fr.blossom.module.filemanager;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -11,5 +12,5 @@ public interface FileContentDao {
 
   FileContent store(File file, InputStream data, long size) throws IOException, SQLException;
 
-  InputStream read(Long id) throws SQLException;
+  InputStream read(Long id) throws SQLException, FileNotFoundException;
 }

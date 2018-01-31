@@ -1,8 +1,8 @@
 package fr.blossom.ui.api.administration;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,6 +20,7 @@ import fr.blossom.core.user.UserService;
 import fr.blossom.core.user.UserUpdateForm;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.tika.Tika;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,12 +28,14 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UsersApiControllerTest {
@@ -46,18 +49,21 @@ public class UsersApiControllerTest {
   @Mock
   private SearchEngineImpl<UserDTO> searchEngine;
 
+  @Mock
+  private Tika tika;
+
   private UsersApiController controller;
 
   @Before
   public void setUp() {
-    controller = new UsersApiController(service, searchEngine);
+    controller = new UsersApiController(service, searchEngine, tika);
   }
 
   @Test
   public void should_get_paged_users_without_query_parameter() {
     when(service.getAll(any(Pageable.class)))
       .thenAnswer(a -> new PageImpl<UserDTO>(Lists.newArrayList()));
-    controller.list(null, new PageRequest(0, 20));
+    controller.list(null, PageRequest.of(0, 20));
     verify(service, times(1)).getAll(any(Pageable.class));
   }
 
@@ -65,15 +71,13 @@ public class UsersApiControllerTest {
   public void should_get_paged_users_with_query_parameter() {
     when(searchEngine.search(any(String.class), any(Pageable.class)))
       .thenAnswer(a -> new SearchResult<>(0, new PageImpl<UserDTO>(Lists.newArrayList())));
-    controller.list("test", null);
+    controller.list("test", PageRequest.of(0,10));
     verify(searchEngine, times(1)).search(eq("test"), any(Pageable.class));
   }
 
   @Test
   public void should_create_with_null_body() throws Exception {
     thrown.expect(IllegalArgumentException.class);
-
-    when(service.create(any(UserCreateForm.class))).thenAnswer(a -> new UserDTO());
     controller.create(null);
   }
 

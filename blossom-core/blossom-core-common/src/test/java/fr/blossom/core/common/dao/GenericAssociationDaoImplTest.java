@@ -3,8 +3,8 @@ package fr.blossom.core.common.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -16,12 +16,14 @@ import fr.blossom.core.common.entity.AbstractEntity;
 import fr.blossom.core.common.repository.AssociationRepository;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -77,7 +79,7 @@ public class GenericAssociationDaoImplTest {
 
     when(this.repository.findOneByAAndB(eq(a), eq(b))).thenReturn(null);
     when(this.repository.save(any(ASSOCIATION.class))).thenAnswer(arg -> {
-      ASSOCIATION association = arg.getArgumentAt(0, ASSOCIATION.class);
+      ASSOCIATION association = arg.getArgument(0);
       association.setId(1L);
       association.setCreationDate(new Date());
       association.setCreationUser("test");
@@ -100,8 +102,8 @@ public class GenericAssociationDaoImplTest {
 
     when(this.repository.findOneByAAndB(eq(a), eq(b))).thenAnswer(arg -> {
       ASSOCIATION association = new ASSOCIATION();
-      association.setA(arg.getArgumentAt(0, A.class));
-      association.setB(arg.getArgumentAt(1, B.class));
+      association.setA(arg.getArgument(0));
+      association.setB(arg.getArgument(1));
       association.setId(1L);
       association.setCreationDate(new Date());
       association.setCreationUser("test");
@@ -151,8 +153,8 @@ public class GenericAssociationDaoImplTest {
     B b = new B();
     when(this.repository.findOneByAAndB(eq(a), eq(b))).thenAnswer(arg -> {
       ASSOCIATION association = new ASSOCIATION();
-      association.setA(arg.getArgumentAt(0, A.class));
-      association.setB(arg.getArgumentAt(1, B.class));
+      association.setA(arg.getArgument(0));
+      association.setB(arg.getArgument(1));
       association.setId(1L);
       association.setCreationDate(new Date());
       association.setCreationUser("test");
@@ -168,16 +170,16 @@ public class GenericAssociationDaoImplTest {
   @Test
   public void should_get_by_id_not_found() {
     this.dao.getOne(1L);
-    verify(this.repository, times(1)).findOne(1L);
+    verify(this.repository, times(1)).findById(1L);
   }
 
   @Test
   public void should_get_by_id() {
     Long id = 1L;
-    when(this.repository.findOne(eq(id))).thenReturn(new ASSOCIATION());
+    when(this.repository.findById(eq(id))).thenReturn(Optional.of(new ASSOCIATION()));
     ASSOCIATION association = this.dao.getOne(id);
     assertNotNull(association);
-    verify(this.repository, times(1)).findOne(id);
+    verify(this.repository, times(1)).findById(id);
   }
 
   @Test
@@ -234,8 +236,8 @@ public class GenericAssociationDaoImplTest {
     B b = new B();
     when(this.repository.findOneByAAndB(eq(a), eq(b))).thenAnswer(arg -> {
       ASSOCIATION association = new ASSOCIATION();
-      association.setA(arg.getArgumentAt(0, A.class));
-      association.setB(arg.getArgumentAt(1, B.class));
+      association.setA(arg.getArgument(0));
+      association.setB(arg.getArgument(1));
       association.setId(1L);
       association.setCreationDate(new Date());
       association.setCreationUser("test");

@@ -1,6 +1,10 @@
 package fr.blossom.initializr;
 
+import fr.blossom.initializr.enums.PACKAGING_MODE;
+import fr.blossom.initializr.enums.SOURCE_LANGUAGE;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -13,9 +17,17 @@ public class ProjectConfiguration {
   private String description = "Demo project for Blossom";
   private String packageName = "com.example.demo";
   private PACKAGING_MODE packagingMode = PACKAGING_MODE.JAR;
+  private SOURCE_LANGUAGE sourceLanguage = SOURCE_LANGUAGE.JAVA;
 
   private String version = "";
   private List<String> dependencies = new ArrayList<>();
+
+  public ProjectConfiguration() {
+  }
+
+  public ProjectConfiguration(String... dependencies) {
+      this.dependencies = new ArrayList<>(Arrays.asList(dependencies));;
+  }
 
   public String getGroupId() {
     return groupId;
@@ -81,4 +93,11 @@ public class ProjectConfiguration {
     this.packagingMode = packagingMode;
   }
 
+  public SOURCE_LANGUAGE getSourceLanguage() {
+    return sourceLanguage;
+  }
+
+  public void setSourceLanguage(SOURCE_LANGUAGE sourceLanguage) {
+    this.sourceLanguage = sourceLanguage;
+  }
 }

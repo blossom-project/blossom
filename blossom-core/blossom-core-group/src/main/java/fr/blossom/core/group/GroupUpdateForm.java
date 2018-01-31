@@ -1,6 +1,6 @@
 package fr.blossom.core.group;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 @UniqueGroupName(idField = "id")
 public class GroupUpdateForm {

@@ -14,8 +14,9 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 import org.springframework.plugin.core.PluginRegistry;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,9 +44,9 @@ public class SystemUserDetailsServiceImplTest {
   public void loadSystemUserUsername_should_return_default_user_with_all_privileges() {
     CurrentUser currentUser = this.systemUserDetailsService.loadUserByUsername("system");
     assertTrue(currentUser.getUsername().equals("system"));
-    assertTrue(this.privilegeRegistry.getPlugins().stream().map(p -> p.privilege()).collect(
+    assertTrue(this.privilegeRegistry.getPlugins().stream().map(Privilege::privilege).collect(
       Collectors.toList()).containsAll(
-      currentUser.getAuthorities().stream().map(auth -> auth.getAuthority())
+      currentUser.getAuthorities().stream().map(GrantedAuthority::getAuthority)
         .collect(Collectors.toList())));
   }
 

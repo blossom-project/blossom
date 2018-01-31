@@ -13,7 +13,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
@@ -94,7 +94,7 @@ public class BlossomCacheRemovalListenerTest {
       nativeCache, true);
     blossomCache = Mockito.spy(blossomCache);
 
-    PageRequest toEvict = new PageRequest(0, 10);
+    PageRequest toEvict = PageRequest.of(0, 10);
 
     ConcurrentMap<Object, Object> map = Maps.newConcurrentMap();
     map.put(toEvict, new PageImpl(Lists.newArrayList()));

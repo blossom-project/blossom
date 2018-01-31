@@ -23,43 +23,43 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter(CommonAutoConfiguration.class)
 public class WebAdministrationGroupAutoConfiguration {
 
-  @Bean
-  public MenuItem administrationGroupMenuItem(MenuItemBuilder builder,
-    @Qualifier("administrationMenuItem") MenuItem administrationMenuItem) {
-    return builder
-      .key("groups")
-      .label("menu.administration.groups")
-      .link("/blossom/administration/groups")
-      .icon("fa fa-users")
-      .order(2)
-      .privilege(groupsReadPrivilegePlugin())
-      .parent(administrationMenuItem)
-      .build();
-  }
+    @Bean
+    public MenuItem administrationGroupMenuItem(MenuItemBuilder builder,
+                                                @Qualifier("administrationMenuItem") MenuItem administrationMenuItem) {
+        return builder
+                .key("groups")
+                .label("menu.administration.groups")
+                .link("/blossom/administration/groups")
+                .icon("fa fa-users")
+                .order(2)
+                .privilege(groupsReadPrivilegePlugin())
+                .parent(administrationMenuItem)
+                .build();
+    }
 
-  @Bean
-  public GroupsController groupsController(GroupService groupService,
-    SearchEngineImpl<GroupDTO> searchEngine) {
-    return new GroupsController(groupService, searchEngine);
-  }
+    @Bean
+    public GroupsController groupsController(GroupService groupService,
+                                             SearchEngineImpl<GroupDTO> searchEngine) {
+        return new GroupsController(groupService, searchEngine);
+    }
 
-  @Bean
-  public Privilege groupsReadPrivilegePlugin() {
-    return new SimplePrivilege("administration", "groups", "read");
-  }
+    @Bean
+    public Privilege groupsReadPrivilegePlugin() {
+        return new SimplePrivilege("administration", "groups", "read");
+    }
 
-  @Bean
-  public Privilege groupsWritePrivilegePlugin() {
-    return new SimplePrivilege("administration", "groups", "write");
-  }
+    @Bean
+    public Privilege groupsWritePrivilegePlugin() {
+        return new SimplePrivilege("administration", "groups", "write");
+    }
 
-  @Bean
-  public Privilege groupsCreatePrivilegePlugin() {
-    return new SimplePrivilege("administration", "groups", "create");
-  }
+    @Bean
+    public Privilege groupsCreatePrivilegePlugin() {
+        return new SimplePrivilege("administration", "groups", "create");
+    }
 
-  @Bean
-  public Privilege groupsDeletePrivilegePlugin() {
-    return new SimplePrivilege("administration", "groups", "delete");
-  }
+    @Bean
+    public Privilege groupsDeletePrivilegePlugin() {
+        return new SimplePrivilege("administration", "groups", "delete");
+    }
 }

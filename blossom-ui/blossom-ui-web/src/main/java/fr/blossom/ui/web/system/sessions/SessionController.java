@@ -42,7 +42,7 @@ public class SessionController {
     model.addAttribute("sessions", sessions);
     model.addAttribute("attempts", loginAttemptsService.get());
 
-    return new ModelAndView("system/sessions/sessions", model.asMap());
+    return new ModelAndView("blossom/system/sessions/sessions", model.asMap());
   }
 
   @PostMapping("/{sessionId}/_invalidate")

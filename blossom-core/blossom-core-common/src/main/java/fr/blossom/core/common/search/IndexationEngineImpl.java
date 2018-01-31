@@ -132,7 +132,7 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
 
   private void cleanOrphanIndex() {
     String[] indices = client.admin().cluster().prepareState().execute().actionGet().getState()
-      .getMetaData().concreteAllIndices();
+      .getMetaData().getConcreteAllIndices();
 
     List<String> orphans = Stream.of(indices)
       .filter(i -> i.startsWith(this.configuration.getAlias()))

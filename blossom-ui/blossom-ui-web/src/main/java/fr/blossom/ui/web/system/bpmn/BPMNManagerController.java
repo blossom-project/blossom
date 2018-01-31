@@ -42,6 +42,6 @@ public class BPMNManagerController {
     model.addAttribute("processDefinitions", processDefinitions);
     model.addAttribute("instances", instances.stream().collect(
       Collectors.groupingBy(ProcessInstance::getProcessDefinitionId, Collectors.counting())));
-    return new ModelAndView("system/bpmn/bpmn", model.asMap());
+    return new ModelAndView("blossom/system/bpmn/bpmn", model.asMap());
   }
 }

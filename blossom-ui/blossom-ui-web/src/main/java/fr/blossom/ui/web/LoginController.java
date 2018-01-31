@@ -14,7 +14,7 @@ public class LoginController {
 
   @GetMapping
   public ModelAndView getLoginPage(@RequestParam Optional<String> error) {
-    return new ModelAndView("login/login", "error", error);
+    return new ModelAndView("blossom/login/login", "error", error);
   }
 
 }

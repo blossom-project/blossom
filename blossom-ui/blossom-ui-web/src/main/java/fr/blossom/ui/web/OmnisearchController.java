@@ -71,17 +71,17 @@ public class OmnisearchController {
     model.addAttribute("total",
       results.values().stream().mapToLong(r -> r.getPage().getTotalElements()).sum());
     model.addAttribute("duration",
-      results.values().stream().mapToLong(r -> r.getDuration()).max().getAsLong());
+      results.values().stream().mapToLong(SearchResult::getDuration).max().getAsLong());
     model.addAttribute("results", results.entrySet().stream()
       .filter(e -> e.getValue().getPage().getTotalElements() != 0)
       .sorted(Comparator.comparing(
         (Entry<String, SearchResult<SummaryDTO>> e) -> e.getValue().getPage().getTotalElements())
         .reversed())
-      .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue(), (u, v) -> {
+      .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (u, v) -> {
         throw new IllegalStateException(String.format("Duplicate key %s", u));
       }, LinkedHashMap::new)));
 
-    return new ModelAndView("omnisearch/omnisearch", model.asMap());
+    return new ModelAndView("blossom/omnisearch/omnisearch", model.asMap());
   }
 
   @VisibleForTesting

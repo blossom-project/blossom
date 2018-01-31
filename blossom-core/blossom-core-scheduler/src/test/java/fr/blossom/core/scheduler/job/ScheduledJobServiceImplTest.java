@@ -5,8 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -25,7 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -122,7 +122,6 @@ public class ScheduledJobServiceImplTest {
     when(metaData.getRunningSince()).thenReturn(new Date());
     when(metaData.isStarted()).thenReturn(true);
     when(metaData.getSchedulerName()).thenReturn("schedulerName");
-    when(metaData.getSchedulerInstanceId()).thenReturn("schedulerInstanceId");
 
     when(this.scheduler.getMetaData()).thenReturn(metaData);
 
@@ -258,7 +257,7 @@ public class ScheduledJobServiceImplTest {
       jobDetail.setName("test");
       jobDetail.setDescription("test");
       jobDetail.setGroup("test");
-      jobDetail.setKey(a.getArgumentAt(0, JobKey.class));
+      jobDetail.setKey(a.getArgument(0));
       jobDetail.setRequestsRecovery(true);
       jobDetail.setDurability(true);
       return jobDetail;

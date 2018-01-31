@@ -1,58 +1,54 @@
 package fr.blossom.core.common.actuator;
 
+import com.google.common.base.Strings;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.lang.Nullable;
 
 /**
- * Adapter to expose {@link TraceStatisticsEndpoint} as an {@link org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint}.
+ * Adapter to expose trace statistics
  *
  * @author Maël Gargadennec
  */
-public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
-  private final TraceStatisticsEndpoint endpoint;
+@Endpoint(id = "tracesstats")
+public class TraceStatisticsMvcEndpoint {
 
-  public TraceStatisticsMvcEndpoint(TraceStatisticsEndpoint endpoint) {
-    super(endpoint);
-    this.endpoint = endpoint;
+  private final ElasticsearchTraceRepository traceRepository;
+
+  public TraceStatisticsMvcEndpoint(ElasticsearchTraceRepository traceRepository) {
+    this.traceRepository = traceRepository;
   }
 
-  /**
-   * Retrieve trace statistics for a given {@link Period}
-   *
-   * @param period a predefined period of time
-   * @return a json-serialized Elasticsearch {@link org.elasticsearch.action.search.SearchResponse} with aggregations
-   */
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public String invoke(@RequestParam(name="period", required = false, defaultValue = "PAST_WEEK") Period period) {
+
+  @ReadOperation
+  public String statsForPeriod(@Nullable String period) {
+    Period choice = Period.PAST_WEEK;
+    if (!Strings.isNullOrEmpty(period)) {
+      try {choice = Period.valueOf(period);}catch(Exception e){}
+    }
+
     Instant from = null;
     Instant to = null;
-    String precision= null;
-    if(period!=null){
-      from = period.from();
-      to = period.to();
-      precision=period.precision();
+    String precision = null;
+    if (period != null) {
+      from = choice.from();
+      to = choice.to();
+      precision = choice.precision();
     }
-    return this.endpoint.invoke(from,to ,precision).toString();
+    return traceRepository.stats(from, to, precision).toString();
   }
 
-
-  /**
-   * Predefined periods of times with lower and upper boundaries calculated from now.
-   */
   public enum Period {
     PAST_WEEK {
       @Override
       public Instant from() {
         return LocalDate.now().minus(1, ChronoUnit.WEEKS).atStartOfDay().toInstant(ZoneOffset.UTC);
       }
+
       @Override
       public String precision() {
         return "2h";
@@ -61,7 +57,7 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
     PAST_5_DAYS {
       @Override
       public Instant from() {
-        return LocalDate.now().minus(5,ChronoUnit.DAYS).atStartOfDay().toInstant(ZoneOffset.UTC);
+        return LocalDate.now().minus(5, ChronoUnit.DAYS).atStartOfDay().toInstant(ZoneOffset.UTC);
       }
 
       @Override
@@ -72,8 +68,9 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
     PAST_3_DAYS {
       @Override
       public Instant from() {
-        return LocalDate.now().minus(3,ChronoUnit.DAYS).atStartOfDay().toInstant(ZoneOffset.UTC);
+        return LocalDate.now().minus(3, ChronoUnit.DAYS).atStartOfDay().toInstant(ZoneOffset.UTC);
       }
+
       @Override
       public String precision() {
         return "1h";
@@ -82,7 +79,7 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
     PAST_2_DAYS {
       @Override
       public Instant from() {
-        return LocalDate.now().minus(2,ChronoUnit.DAYS).atStartOfDay().toInstant(ZoneOffset.UTC);
+        return LocalDate.now().minus(2, ChronoUnit.DAYS).atStartOfDay().toInstant(ZoneOffset.UTC);
       }
 
       @Override
@@ -93,12 +90,13 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
     YESTERDAY {
       @Override
       public Instant from() {
-        return LocalDate.now().minus(1,ChronoUnit.DAYS).atStartOfDay().toInstant(ZoneOffset.UTC);
+        return LocalDate.now().minus(1, ChronoUnit.DAYS).atStartOfDay().toInstant(ZoneOffset.UTC);
       }
 
       @Override
       public Instant to() {
-        return LocalDate.now().minus(1,ChronoUnit.DAYS).atTime(23,59,59).toInstant(ZoneOffset.UTC);
+        return LocalDate.now().minus(1, ChronoUnit.DAYS).atTime(23, 59, 59)
+          .toInstant(ZoneOffset.UTC);
       }
 
       @Override
@@ -122,6 +120,7 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
       public Instant from() {
         return Instant.now().minus(24, ChronoUnit.HOURS);
       }
+
       @Override
       public String precision() {
         return "15m";
@@ -132,6 +131,7 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
       public Instant from() {
         return Instant.now().minus(12, ChronoUnit.HOURS);
       }
+
       @Override
       public String precision() {
         return "5m";
@@ -142,6 +142,7 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
       public Instant from() {
         return Instant.now().minus(6, ChronoUnit.HOURS);
       }
+
       @Override
       public String precision() {
         return "5m";
@@ -152,6 +153,7 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
       public Instant from() {
         return Instant.now().minus(1, ChronoUnit.HOURS);
       }
+
       @Override
       public String precision() {
         return "1m";
@@ -180,15 +182,15 @@ public class TraceStatisticsMvcEndpoint extends EndpointMvcAdapter {
       }
     };
 
-    public Instant from(){
+    public Instant from() {
       return null;
     }
 
-    public Instant to(){
+    public Instant to() {
       return null;
     }
 
-    public String precision(){
+    public String precision() {
       return "1h";
     }
 

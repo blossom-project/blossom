@@ -8,7 +8,7 @@ import java.util.Set;
 import liquibase.integration.spring.SpringLiquibase.SpringResourceOpener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 

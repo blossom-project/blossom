@@ -19,8 +19,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-
-    <springboot.version>1.5.4.RELEASE</springboot.version>
+    <springboot.version>2.0.0.RC1</springboot.version>
     <querydsl.version>3.7.0</querydsl.version>
     <jna.version>3.0.9</jna.version>
     <quartz.version>2.3.0</quartz.version>
@@ -30,6 +29,8 @@
     <camunda.version>2.2.0</camunda.version>
     <tika.version>1.17</tika.version>
     <powermock.version>1.7.3</powermock.version>
+    <elasticsearch.version>2.4.6</elasticsearch.version>
+    <commons-lang3.version>3.7</commons-lang3.version>
   </properties>
 
   <dependencyManagement>
@@ -47,7 +48,6 @@
         <artifactId>jna</artifactId>
         <version>${jna.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.quartz-scheduler</groupId>
         <artifactId>quartz</artifactId>
@@ -58,7 +58,16 @@
         <artifactId>quartz-jobs</artifactId>
         <version>${quartz.version}</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.elasticsearch</groupId>
+        <artifactId>elasticsearch</artifactId>
+        <version>${elasticsearch.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcprov-jdk16</artifactId>
@@ -74,19 +83,16 @@
         <artifactId>liquibase-core</artifactId>
         <version>${liquibase.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.camunda.bpm.extension.springboot</groupId>
         <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
         <version>${camunda.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.tika</groupId>
         <artifactId>tika-core</artifactId>
         <version>${tika.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.powermock</groupId>
         <artifactId>powermock-module-junit4</artifactId>
@@ -94,10 +100,46 @@
       </dependency>
       <dependency>
         <groupId>org.powermock</groupId>
-        <artifactId>powermock-api-mockito</artifactId>
+        <artifactId>powermock-api-mockito2</artifactId>
         <version>${powermock.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
+  <repositories>
+    <repository>
+      <id>spring-snapshots</id>
+      <name>Spring Snapshots</name>
+      <url>https://repo.spring.io/snapshot</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/milestone</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>spring-snapshots</id>
+      <name>Spring Snapshots</name>
+      <url>https://repo.spring.io/snapshot</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/milestone</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
 </project>

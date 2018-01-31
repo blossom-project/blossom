@@ -2,6 +2,7 @@ package fr.blossom.generator.configuration;
 
 import fr.blossom.generator.configuration.model.Field;
 
+@SuppressWarnings("unchecked")
 public abstract class FieldBuilder<T extends FieldBuilder<T>> {
 
   private final FieldsBuilder parent;

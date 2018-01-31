@@ -14,7 +14,6 @@ public class BlossomToolsInitializrApplication {
     SpringApplication.run(BlossomToolsInitializrApplication.class, args);
   }
 
-
   @Bean
   public Initializr initializr() {
     return new Initializr();

@@ -5,8 +5,6 @@ import fr.blossom.core.common.event.CreatedEvent;
 import fr.blossom.core.common.event.UpdatedEvent;
 import fr.blossom.core.common.service.AssociationServicePlugin;
 import fr.blossom.core.common.service.GenericCrudServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Created by Maël Gargadennnec on 03/05/2017.
  */
 public class ArticleServiceImpl extends GenericCrudServiceImpl<ArticleDTO, Article> implements ArticleService {
-    private final static Logger logger = LoggerFactory.getLogger(ArticleServiceImpl.class);
 
     public ArticleServiceImpl(ArticleDao dao, ArticleDTOMapper mapper, ApplicationEventPublisher publisher, PluginRegistry<AssociationServicePlugin, Class<? extends  AbstractDTO>> associationRegistry) {
         super(dao, mapper, publisher, associationRegistry);
@@ -23,7 +20,7 @@ public class ArticleServiceImpl extends GenericCrudServiceImpl<ArticleDTO, Artic
 
     @Override
     @Transactional
-    public ArticleDTO create(ArticleCreateForm articleCreateForm) throws Exception {
+    public ArticleDTO create(ArticleCreateForm articleCreateForm){
 
         Article articleToCreate = new Article();
         articleToCreate.setName(articleCreateForm.getName());
@@ -37,7 +34,7 @@ public class ArticleServiceImpl extends GenericCrudServiceImpl<ArticleDTO, Artic
 
     @Override
     @Transactional
-    public ArticleDTO update(Long articleId, ArticleUpdateForm articleUpdateForm) throws Exception {
+    public ArticleDTO update(Long articleId, ArticleUpdateForm articleUpdateForm) {
 
         Article articleToUpdate = new Article();
         articleToUpdate.setName(articleUpdateForm.getName());

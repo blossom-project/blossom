@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -68,7 +67,7 @@ public class UsersController {
   @PreAuthorize("hasAuthority('administration:users:read')")
   public ModelAndView getUsersPage(@RequestParam(value = "q", required = false) String q,
     @PageableDefault(size = 25) Pageable pageable, Model model) {
-    return tableView(q, pageable, model, "users/users");
+    return tableView(q, pageable, model, "blossom/users/users");
   }
 
   private ModelAndView tableView(String q, Pageable pageable, Model model, String viewName) {
@@ -113,7 +112,7 @@ public class UsersController {
   private ModelAndView createView(UserCreateForm userCreateForm, Model model) {
     model.addAttribute("userCreateForm", userCreateForm);
     model.addAttribute("civilities", User.Civility.values());
-    return new ModelAndView("users/create", model.asMap());
+    return new ModelAndView("blossom/users/create", model.asMap());
   }
 
   @GetMapping("/{id}")
@@ -124,7 +123,7 @@ public class UsersController {
       throw new NoSuchElementException(String.format("User=%s not found", id));
     }
     model.addAttribute("user", user);
-    return new ModelAndView("users/user", "user", user);
+    return new ModelAndView("blossom/users/user", "user", user);
   }
 
   @GetMapping("/{id}/_informations")
@@ -167,7 +166,7 @@ public class UsersController {
   }
 
   private ModelAndView viewUserInformationView(UserDTO user) {
-    return new ModelAndView("users/userinformations", "user", user);
+    return new ModelAndView("blossom/users/userinformations", "user", user);
   }
 
   private ModelAndView updateUserInformationView(UserUpdateForm userUpdateForm, UserDTO user,
@@ -175,7 +174,7 @@ public class UsersController {
     model.addAttribute("userUpdateForm", userUpdateForm);
     model.addAttribute("user", user);
     model.addAttribute("civilities", User.Civility.values());
-    ModelAndView modelAndView = new ModelAndView("users/userinformations-edit", model.asMap());
+    ModelAndView modelAndView = new ModelAndView("blossom/users/userinformations-edit", model.asMap());
     modelAndView.setStatus(status.orElse(HttpStatus.OK));
     return modelAndView;
   }
@@ -197,11 +196,10 @@ public class UsersController {
     if (user == null) {
       throw new NoSuchElementException(String.format("User=%s not found", id));
     }
-    return new ModelAndView("users/useravatar-edit-modal", "user", user);
+    return new ModelAndView("blossom/users/useravatar-edit-modal", "user", user);
   }
 
   @PostMapping("/{id}/_avatar/_edit")
-  @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAuthority('administration:users:write')")
   public void handleUserAvatarUpdateForm(@PathVariable Long id,
     @RequestParam("avatar") MultipartFile file)

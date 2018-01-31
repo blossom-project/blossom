@@ -1,4 +1,4 @@
-fr.blossom.autoconfigure.EnableBlossom=\
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 fr.blossom.autoconfigure.core.CommonAutoConfiguration,\
 fr.blossom.autoconfigure.core.LiquibaseAutoConfiguration,\
 fr.blossom.autoconfigure.core.IndexationEngineAutoConfiguration,\
@@ -10,6 +10,7 @@ fr.blossom.autoconfigure.core.AssociationUserRoleAutoConfiguration,\
 fr.blossom.autoconfigure.core.SchedulerAutoConfiguration,\
 fr.blossom.autoconfigure.core.CacheAutoConfiguration,\
 fr.blossom.autoconfigure.core.ActuatorAutoConfiguration,\
+fr.blossom.autoconfigure.core.ElasticsearchAutoConfiguration,\
 fr.blossom.autoconfigure.core.MailAutoConfiguration,\
 fr.blossom.autoconfigure.core.CamundaAutoConfiguration,\
 fr.blossom.autoconfigure.core.CryptoAutoConfiguration,\
@@ -33,5 +34,4 @@ fr.blossom.autoconfigure.ui.web.system.WebSystemLoggersAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.system.WebSystemSessionsAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.system.WebSystemBPMNAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.module.WebFileManagerAutoConfiguration,\
-fr.blossom.autoconfigure.ui.web.module.WebArticleAutoConfiguration,\
-fr.blossom.autoconfigure.ui.actuator.WebActuatorAutoConfiguration
+fr.blossom.autoconfigure.ui.web.module.WebArticleAutoConfiguration

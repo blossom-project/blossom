@@ -1,20 +1,23 @@
 package fr.blossom.core.user;
 
-import java.util.Locale;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+import fr.blossom.core.common.utils.action_token.ActionTokenService;
+import fr.blossom.core.common.utils.mail.MailSender;
+import java.util.Locale;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import fr.blossom.core.common.utils.action_token.ActionToken;
-import fr.blossom.core.common.utils.action_token.ActionTokenService;
-import fr.blossom.core.common.utils.mail.MailSender;
+;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserMailServiceImplTest {
@@ -25,17 +28,26 @@ public class UserMailServiceImplTest {
   @Mock
   private MailSender mailSender;
 
+  @Mock
+  private ActionTokenService tokenService;
+
   @Spy
   @InjectMocks
   private UserMailServiceImpl userMailService;
 
   @Test
   public void test_send_change_password_email_user_not_null_token_not_null() throws Exception {
+    UserDTO userDTO = new UserDTO();
+    userDTO.setLocale(Locale.FRANCE);
+    userDTO.setEmail("test");
+    userMailService.sendChangePasswordEmail(userDTO , "token !");
 
-    userMailService.sendChangePasswordEmail(new UserDTO(), "token !");
-
-    BDDMockito.verify(mailSender, BDDMockito.times(1)).sendMail(BDDMockito.anyString(), BDDMockito.any(),
-        BDDMockito.anyString(), BDDMockito.any(Locale.class), BDDMockito.anyString());
+    verify(mailSender, times(1))
+      .sendMail(anyString(),
+        any(),
+        anyString(),
+        any(Locale.class),
+        anyString());
   }
 
   @Test
@@ -46,17 +58,25 @@ public class UserMailServiceImplTest {
 
   @Test
   public void test_send_change_password_email_token_null() throws Exception {
+    UserDTO userDTO = new UserDTO();
+    userDTO.setLocale(Locale.FRANCE);
+    userDTO.setEmail("test");
+
     thrown.expect(NullPointerException.class);
-    userMailService.sendChangePasswordEmail(new UserDTO(), null);
+    userMailService.sendChangePasswordEmail(userDTO, null);
   }
 
   @Test
   public void test_send_account_creation_email_user_not_null_token_not_null() throws Exception {
+    UserDTO userDTO = new UserDTO();
+    userDTO.setLocale(Locale.FRANCE);
+    userDTO.setEmail("test");
 
-    userMailService.sendAccountCreationEmail(new UserDTO(), "token !");
+    userMailService.sendAccountCreationEmail(userDTO, "token !");
 
-    BDDMockito.verify(mailSender, BDDMockito.times(1)).sendMail(BDDMockito.anyString(), BDDMockito.any(),
-        BDDMockito.anyString(), BDDMockito.any(Locale.class), BDDMockito.anyString());
+    verify(mailSender, times(1))
+      .sendMail(anyString(), any(),
+        anyString(), any(Locale.class), anyString());
   }
 
   @Test

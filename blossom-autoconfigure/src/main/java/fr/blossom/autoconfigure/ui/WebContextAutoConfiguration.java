@@ -4,14 +4,18 @@ import com.google.common.collect.Iterables;
 import fr.blossom.ui.i18n.RestrictedSessionLocaleResolver;
 import fr.blossom.ui.stereotype.BlossomApiController;
 import fr.blossom.ui.stereotype.BlossomController;
+import fr.blossom.ui.web.error.BlossomErrorViewResolver;
 import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.WebMvcRegistrationsAdapter;
+import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +24,7 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -31,9 +35,8 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @Configuration
 @ConditionalOnWebApplication
-@AutoConfigureBefore(WebMvcAutoConfiguration.class)
-public class WebContextAutoConfiguration
-  extends WebMvcConfigurerAdapter {
+@AutoConfigureBefore({WebMvcAutoConfiguration.class, ErrorMvcAutoConfiguration.class})
+public class WebContextAutoConfiguration implements WebMvcConfigurer {
 
   public final static String BLOSSOM_BASE_PATH = "blossom";
   public final static String BLOSSOM_API_BASE_PATH = BLOSSOM_BASE_PATH + "/api";
@@ -43,7 +46,8 @@ public class WebContextAutoConfiguration
 
   @Bean
   public LocaleResolver localeResolver(Set<Locale> availableLocales) {
-    RestrictedSessionLocaleResolver resolver = new RestrictedSessionLocaleResolver(availableLocales);
+    RestrictedSessionLocaleResolver resolver = new RestrictedSessionLocaleResolver(
+      availableLocales);
     resolver.setDefaultLocale(Iterables.getFirst(availableLocales, Locale.ENGLISH));
     return resolver;
   }
@@ -69,8 +73,8 @@ public class WebContextAutoConfiguration
   }
 
   @Bean
-  public WebMvcRegistrationsAdapter webMvcRegistrationsHandlerMapping() {
-    return new WebMvcRegistrationsAdapter() {
+  public WebMvcRegistrations webMvcRegistrationsHandlerMapping() {
+    return new WebMvcRegistrations() {
       @Override
       public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
         return new RequestMappingHandlerMapping() {
@@ -81,8 +85,8 @@ public class WebContextAutoConfiguration
             Class<?> beanType = method.getDeclaringClass();
             if (AnnotationUtils.findAnnotation(beanType, BlossomController.class) != null) {
               mapping = computeMapping(mapping, BLOSSOM_BASE_PATH);
-            }
-            else if (AnnotationUtils.findAnnotation(beanType, BlossomApiController.class) != null) {
+            } else if (AnnotationUtils.findAnnotation(beanType, BlossomApiController.class)
+              != null) {
               mapping = computeMapping(mapping, BLOSSOM_API_BASE_PATH);
             }
 
@@ -102,5 +106,24 @@ public class WebContextAutoConfiguration
         };
       }
     };
+  }
+  
+  @Configuration
+  static class BlossomErrorViewResolverConfiguration {
+
+    private final ApplicationContext applicationContext;
+    private final ResourceProperties resourceProperties;
+
+    BlossomErrorViewResolverConfiguration(ApplicationContext applicationContext,
+      ResourceProperties resourceProperties) {
+      this.applicationContext = applicationContext;
+      this.resourceProperties = resourceProperties;
+    }
+
+    @Bean
+    public BlossomErrorViewResolver blossomErrorViewResolver() {
+      return new BlossomErrorViewResolver(this.applicationContext, this.resourceProperties);
+    }
+
   }
 }

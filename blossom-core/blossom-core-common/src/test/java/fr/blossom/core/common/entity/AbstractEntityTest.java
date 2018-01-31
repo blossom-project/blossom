@@ -10,7 +10,7 @@ import static org.mockito.Mockito.spy;
 import java.util.Date;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AbstractEntityTest {

@@ -44,6 +44,7 @@ public interface ReadOnlyDao<ENTITY extends AbstractEntity> {
    * Be careful : don't use this method on large datasets ! Use {@link ReadOnlyDao#getAll(Pageable
    * pageable)} instead.
    *
+   * @param  id the entity id
    * @return the complete list of entities
    */
   ENTITY getOne(long id);

@@ -14,7 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 import org.springframework.plugin.core.PluginRegistry;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -227,7 +227,6 @@ public class MenuItemBuilderTest {
   @Test
   public void should_build_parent_max_depth_with_success() {
     MenuItem parent = mock(MenuItem.class);
-    when(parent.key()).thenReturn("parentKey");
     when(parent.level()).thenReturn(0);
     MenuItemBuilder menuItemBuilder = new MenuItemBuilder(this.registry, 2)
       .key("key")

@@ -8,9 +8,15 @@ import fr.blossom.core.common.service.ReadOnlyServicePlugin;
 import fr.blossom.core.common.utils.action_token.ActionTokenService;
 import fr.blossom.core.common.utils.action_token.ActionTokenServiceImpl;
 import fr.blossom.core.common.utils.privilege.Privilege;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.security.SecureRandom;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.tika.Tika;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -32,7 +38,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -46,13 +51,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
  */
@@ -64,7 +62,6 @@ import java.util.stream.Collectors;
 @EnableJpaAuditing
 @PropertySource({
   "classpath:/freemarker.properties",
-  "classpath:/elasticsearch.properties",
   "classpath:/jpa.properties",
   "classpath:/languages.properties"})
 @EnableTransactionManagement
@@ -80,7 +77,8 @@ public class CommonAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(TokenService.class)
-  public KeyBasedPersistenceTokenService keyBasedPersistenceTokenService(SecureRandom secureRandom) {
+  public KeyBasedPersistenceTokenService keyBasedPersistenceTokenService(
+    SecureRandom secureRandom) {
     KeyBasedPersistenceTokenService keyBasedPersistenceTokenService = new KeyBasedPersistenceTokenService();
     keyBasedPersistenceTokenService.setServerInteger(secureRandom.nextInt());
     keyBasedPersistenceTokenService.setServerSecret(secureRandom.nextLong() + "");
@@ -133,20 +131,21 @@ public class CommonAutoConfiguration {
   }
 
   @Bean
-  public ReloadableResourceBundleMessageSource messageSource() throws IOException {
+  public BlossomReloadableResourceBundleMessageSource messageSource() throws IOException {
     PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-    List<String> resources = Lists
+    Set<String> resources = Lists
       .newArrayList(resolver.getResources("classpath*:/messages/*.properties")).stream()
       .filter(resource -> !resource.getFilename().contains("_"))
-      .map(resource -> "classpath:/messages/" + resource.getFilename().replace(".properties", ""))
-      .collect(Collectors.toList());
+      .map(resource -> "classpath*:/messages/" + resource.getFilename().replace(".properties", ""))
+      .collect(Collectors.toSet());
 
     logger.info("Found {} i18n files :\n{}", resources.size(), Joiner.on(",").join(resources));
 
-    ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+    BlossomReloadableResourceBundleMessageSource messageSource = new BlossomReloadableResourceBundleMessageSource();
     messageSource.setBasenames(resources.toArray(new String[resources.size()]));
     messageSource.setFallbackToSystemLocale(false);
     messageSource.setCacheSeconds(3600);
+    messageSource.setDefaultEncoding(Charset.forName("UTF-8").displayName());
     return messageSource;
   }
 
@@ -160,21 +159,21 @@ public class CommonAutoConfiguration {
     return new AuditingEntityListener();
   }
 
+  @Bean
+  public Tika tika() {
+    return new Tika();
+  }
+
   public static class SecurityAuditor implements AuditorAware<String> {
 
     @Override
-    public String getCurrentAuditor() {
+    public Optional<String> getCurrentAuditor() {
       Authentication auth = SecurityContextHolder.getContext().getAuthentication();
       if (auth == null) {
-        return "anonymous";
+        return Optional.of("anonymous");
       }
       String username = auth.getName();
-      return username;
+      return Optional.of(username);
     }
-  }
-
-  @Bean
-  public Tika tika(){
-    return new Tika();
   }
 }

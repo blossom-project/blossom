@@ -11,7 +11,7 @@ import fr.blossom.simple_module_generator.EntityField;
 import fr.blossom.simple_module_generator.GeneratorUtils;
 import fr.blossom.simple_module_generator.Parameters;
 import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 public class UpdateFormGenerator implements ClassGenerator {
 

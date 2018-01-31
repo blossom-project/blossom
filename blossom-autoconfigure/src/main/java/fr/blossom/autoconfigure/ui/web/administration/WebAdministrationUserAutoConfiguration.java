@@ -39,8 +39,8 @@ public class WebAdministrationUserAutoConfiguration {
   }
 
   @Bean
-  public UsersController usersController(UserService userService,
-    SearchEngineImpl<UserDTO> searchEngine, Tika tika) {
+  public UsersController usersController(UserService userService, Tika tika,
+    SearchEngineImpl<UserDTO> searchEngine) {
     return new UsersController(userService, searchEngine, tika);
   }
 

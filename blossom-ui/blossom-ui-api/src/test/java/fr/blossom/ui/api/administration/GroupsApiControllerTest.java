@@ -1,8 +1,8 @@
 package fr.blossom.ui.api.administration;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,7 +57,7 @@ public class GroupsApiControllerTest {
   public void should_get_paged_groups_without_query_parameter() {
     when(service.getAll(any(Pageable.class)))
       .thenAnswer(a -> new PageImpl<GroupDTO>(Lists.newArrayList()));
-    controller.list(null, new PageRequest(0, 20));
+    controller.list(null, PageRequest.of(0, 20));
     verify(service, times(1)).getAll(any(Pageable.class));
   }
 
@@ -65,15 +65,13 @@ public class GroupsApiControllerTest {
   public void should_get_paged_groups_with_query_parameter() {
     when(searchEngine.search(any(String.class), any(Pageable.class)))
       .thenAnswer(a -> new SearchResult<>(0, new PageImpl<GroupDTO>(Lists.newArrayList())));
-    controller.list("test", null);
+    controller.list("test", PageRequest.of(0,5));
     verify(searchEngine, times(1)).search(eq("test"), any(Pageable.class));
   }
 
   @Test
   public void should_create_with_null_body() throws Exception {
     thrown.expect(IllegalArgumentException.class);
-
-    when(service.create(any(GroupCreateForm.class))).thenAnswer(a -> new GroupDTO());
     controller.create(null);
   }
 

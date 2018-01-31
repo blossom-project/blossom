@@ -2,6 +2,7 @@ package fr.blossom.core.user;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -123,7 +124,7 @@ public class UserDaoImplTest {
   public void test_update_activation() throws Exception {
     User userToFind = new User();
     userToFind.setActivated(false);
-    BDDMockito.given(userRepository.findOne(BDDMockito.anyLong())).willReturn(userToFind);
+    BDDMockito.given(userRepository.findById(BDDMockito.anyLong())).willReturn(Optional.of(userToFind));
     BDDMockito.given(userRepository.save(BDDMockito.any(User.class))).willReturn(userToFind);
 
     Assert.assertTrue(userDaoImpl.updateActivation(123456789L, true).isActivated());
@@ -133,7 +134,7 @@ public class UserDaoImplTest {
   public void test_update_password() throws Exception {
     User userToFind = new User();
     userToFind.setPasswordHash("someHash");
-    BDDMockito.given(userRepository.findOne(BDDMockito.anyLong())).willReturn(userToFind);
+    BDDMockito.given(userRepository.findById(BDDMockito.anyLong())).willReturn(Optional.of(userToFind));
     BDDMockito.given(userRepository.save(BDDMockito.any(User.class))).willReturn(userToFind);
 
     Assert.assertEquals("any", userDaoImpl.updatePassword(123456789L, "any").getPasswordHash());
@@ -143,7 +144,7 @@ public class UserDaoImplTest {
   public void test_update_avatar() throws Exception {
     User userToFind = new User();
     userToFind.setAvatar(new byte[]{0});
-    BDDMockito.given(userRepository.findOne(BDDMockito.anyLong())).willReturn(userToFind);
+    BDDMockito.given(userRepository.findById(BDDMockito.anyLong())).willReturn(Optional.of(userToFind));
     BDDMockito.given(userRepository.save(BDDMockito.any(User.class))).willReturn(userToFind);
 
     byte[] avatar = new byte[]{1};
@@ -153,7 +154,7 @@ public class UserDaoImplTest {
   @Test
   public void test_update_last_connection() throws Exception {
     User userToFind = new User();
-    BDDMockito.given(userRepository.findOne(BDDMockito.anyLong())).willReturn(userToFind);
+    BDDMockito.given(userRepository.findById(BDDMockito.anyLong())).willReturn(Optional.of(userToFind));
     BDDMockito.given(userRepository.save(BDDMockito.any(User.class))).willReturn(userToFind);
     Date now = new Date();
 
@@ -162,7 +163,7 @@ public class UserDaoImplTest {
 
   @Test
   public void test_update_last_connection_null_user() throws Exception {
-    BDDMockito.given(userRepository.findOne(BDDMockito.anyLong())).willReturn(null);
+    BDDMockito.given(userRepository.findById(BDDMockito.anyLong())).willReturn(Optional.empty());
 
     Assert.assertNull(userDaoImpl.updateLastConnection(123456789L, new Date()));
   }

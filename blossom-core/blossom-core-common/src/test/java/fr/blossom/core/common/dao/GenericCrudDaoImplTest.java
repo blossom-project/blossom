@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyCollectionOf;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -24,13 +24,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GenericCrudDaoImplTest {
@@ -56,7 +57,7 @@ public class GenericCrudDaoImplTest {
   @Test
   public void should_create_with_success() {
     when(this.repository.save(any(ENTITY.class))).then(args -> {
-      ENTITY entity = args.getArgumentAt(0, ENTITY.class);
+      ENTITY entity = args.getArgument(0);
       entity.setId(1L);
       entity.setCreationDate(new Date(System.currentTimeMillis()));
       entity.setModificationDate(new Date(System.currentTimeMillis()));
@@ -81,7 +82,7 @@ public class GenericCrudDaoImplTest {
     toUpdate.setCreationUser("test");
     toUpdate.setModificationUser("test");
 
-    when(this.repository.findOne(anyLong())).thenReturn(toUpdate);
+    when(this.repository.findById(anyLong())).thenReturn(Optional.of(toUpdate));
     when(this.repository.save(any(ENTITY.class))).thenReturn(toUpdate);
 
     ENTITY createdEntity = this.dao.update(1L, toUpdate);
@@ -94,7 +95,7 @@ public class GenericCrudDaoImplTest {
   @Test
   public void should_update_with_wrong_id() {
     thrown.expect(IllegalArgumentException.class);
-    when(this.repository.findOne(anyLong())).thenReturn(null);
+    when(this.repository.findById(anyLong())).thenReturn(Optional.empty());
     ENTITY updatedEntity = this.dao.update(1L, new ENTITY());
   }
 
@@ -102,22 +103,21 @@ public class GenericCrudDaoImplTest {
   public void should_update_with_wrong_entity_id() {
     thrown.expect(IllegalArgumentException.class);
     Long id = 1L;
-    when(this.repository.findOne(anyLong())).then(arg -> {
+    when(this.repository.findById(anyLong())).then(arg -> {
       ENTITY entity = new ENTITY();
       entity.setId(id);
-      return entity;
+      return Optional.of(entity);
     });
 
     ENTITY entity = new ENTITY();
     entity.setId(2L);
 
-    this.dao.update(1L, entity);
+    ENTITY saved = this.dao.update(1L, entity);
   }
 
   @Test
   public void should_update_with_null_entity() {
     thrown.expect(IllegalArgumentException.class);
-    when(this.repository.findOne(anyLong())).thenReturn(new ENTITY());
     this.dao.update(1L, null);
   }
 
@@ -139,7 +139,7 @@ public class GenericCrudDaoImplTest {
     ENTITY entity = new ENTITY();
     entity.setId(1L);
 
-    doNothing().when(this.repository).delete(anyLong());
+    doNothing().when(this.repository).deleteById(anyLong());
     this.dao.delete(entity);
   }
 
@@ -152,24 +152,23 @@ public class GenericCrudDaoImplTest {
   @Test
   public void should_create_list_with_empty_collection() {
     List<ENTITY> toCreate = Lists.newArrayList();
-    when(this.repository.save(eq(toCreate))).thenReturn(Lists.newArrayList());
     List<ENTITY> saved = this.dao.create(toCreate);
-    verify(this.repository, times(0)).save(eq(toCreate));
+    verify(this.repository, times(0)).saveAll(eq(toCreate));
     assertTrue(saved.isEmpty());
   }
 
   @Test
   public void should_create_list_with_collection() {
     List<ENTITY> toCreate = Lists.newArrayList(new ENTITY(), new ENTITY());
-    when(this.repository.save(eq(toCreate))).thenAnswer(arg -> {
-      List<ENTITY> initial = (List<ENTITY>) arg.getArgumentAt(0, List.class);
+    when(this.repository.saveAll(eq(toCreate))).thenAnswer(arg -> {
+      List<ENTITY> initial = (List<ENTITY>) arg.getArgument(0);
       final AtomicLong i = new AtomicLong(0);
       initial.forEach(e -> e.setId(i.incrementAndGet()));
       return initial;
     });
 
     List<ENTITY> saved = this.dao.create(toCreate);
-    verify(this.repository, times(1)).save(eq(toCreate));
+    verify(this.repository, times(1)).saveAll(eq(toCreate));
     assertFalse(saved.isEmpty());
     assertEquals(saved.size(), toCreate.size());
   }
@@ -199,12 +198,12 @@ public class GenericCrudDaoImplTest {
 
     List<ENTITY> found = Lists.newArrayList(toUpdates.get(1L), toUpdates.get(3L));
 
-    when(this.repository.findAll(eq(toUpdates.keySet()))).thenReturn(found);
-    when(this.repository.save(anyCollectionOf(ENTITY.class))).thenReturn(found);
+    when(this.repository.findAllById(eq(toUpdates.keySet()))).thenReturn(found);
+    when(this.repository.saveAll(anyCollection())).thenReturn(found);
 
     List<ENTITY> saved = this.dao.update(toUpdates);
 
-    verify(this.repository, times(1)).save(anyCollectionOf(ENTITY.class));
+    verify(this.repository, times(1)).saveAll(anyCollection());
     assertFalse(saved.isEmpty());
     assertEquals(found.size(), saved.size());
 

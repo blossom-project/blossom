@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -80,108 +81,113 @@ public class RoleAutoConfiguration {
   }
 
 
-  @Bean
-  public IndexationEngineConfiguration<RoleDTO> roleIndexationEngineConfiguration(
-    @Value("classpath:/elasticsearch/roles.json") Resource resource) {
-    return new IndexationEngineConfiguration<RoleDTO>() {
-      @Override
-      public Class<RoleDTO> getSupportedClass() {
-        return RoleDTO.class;
-      }
+  @Configuration
+  @ConditionalOnBean(Client.class)
+  public static class RoleSearchAutoConfiguration {
 
-      @Override
-      public Resource getSource() {
-        return resource;
-      }
+    @Bean
+      public IndexationEngineConfiguration<RoleDTO> roleIndexationEngineConfiguration(
+      @Value("classpath:/elasticsearch/roles.json") Resource resource) {
+      return new IndexationEngineConfiguration<RoleDTO>() {
+        @Override
+        public Class<RoleDTO> getSupportedClass() {
+          return RoleDTO.class;
+        }
 
-      @Override
-      public String getAlias() {
-        return "roles";
-      }
+        @Override
+        public Resource getSource() {
+          return resource;
+        }
 
-      @Override
-      public Function<RoleDTO, String> getTypeFunction() {
-        return u -> "role";
-      }
+        @Override
+        public String getAlias() {
+          return "roles";
+        }
 
-      @Override
-      public Function<RoleDTO, SummaryDTO> getSummaryFunction() {
-        return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u))
-          .name(u.getName())
-          .description(u.getDescription()).uri("/blossom/administration/roles/" + u.getId())
-          .build();
-      }
-    };
-  }
+        @Override
+        public Function<RoleDTO, String> getTypeFunction() {
+          return u -> "role";
+        }
 
-  @Bean
-  public IndexationEngineImpl<RoleDTO> roleIndexationEngine(Client client,
-    RoleService roleService,
-    BulkProcessor bulkProcessor,
-    ObjectMapper objectMapper,
-    IndexationEngineConfiguration<RoleDTO> roleIndexationEngineConfiguration) {
-    return new IndexationEngineImpl<>(client, roleService, bulkProcessor, objectMapper,
-      roleIndexationEngineConfiguration);
-  }
+        @Override
+        public Function<RoleDTO, SummaryDTO> getSummaryFunction() {
+          return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u))
+            .name(u.getName())
+            .description(u.getDescription()).uri("/blossom/administration/roles/" + u.getId())
+            .build();
+        }
+      };
+    }
 
-
-  @Bean
-  public SearchEngineConfiguration<RoleDTO> roleSearchEngineConfiguration() {
-    return new SearchEngineConfiguration<RoleDTO>() {
-      @Override
-      public String getName() {
-        return "menu.administration.roles";
-      }
-
-      @Override
-      public Class<RoleDTO> getSupportedClass() {
-        return RoleDTO.class;
-      }
-
-      @Override
-      public String[] getFields() {
-        return new String[]{"dto.name", "dto.description"};
-      }
-
-      @Override
-      public String getAlias() {
-        return "roles";
-      }
-    };
-  }
-
-  @Bean
-  public SearchEngineImpl<RoleDTO> roleSearchEngine(Client client, ObjectMapper objectMapper,
-    SearchEngineConfiguration<RoleDTO> roleSearchEngineConfiguration) {
-    return new SearchEngineImpl<>(client, objectMapper, roleSearchEngineConfiguration);
-  }
+    @Bean
+    public IndexationEngineImpl<RoleDTO> roleIndexationEngine(Client client,
+      RoleService roleService,
+      BulkProcessor bulkProcessor,
+      ObjectMapper objectMapper,
+      IndexationEngineConfiguration<RoleDTO> roleIndexationEngineConfiguration) {
+      return new IndexationEngineImpl<>(client, roleService, bulkProcessor, objectMapper,
+        roleIndexationEngineConfiguration);
+    }
 
 
-  @Bean
-  @Qualifier("roleIndexationFullJob")
-  public JobDetailFactoryBean roleIndexationFullJob() {
-    JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
-    factoryBean.setJobClass(RoleIndexationJob.class);
-    factoryBean.setGroup("Indexation");
-    factoryBean.setName("Roles Indexation Job");
-    factoryBean.setDescription("Roles full indexation Job");
-    factoryBean.setDurability(true);
-    return factoryBean;
-  }
+    @Bean
+    public SearchEngineConfiguration<RoleDTO> roleSearchEngineConfiguration() {
+      return new SearchEngineConfiguration<RoleDTO>() {
+        @Override
+        public String getName() {
+          return "menu.administration.roles";
+        }
 
-  @Bean
-  @Qualifier("roleScheduledIndexationTrigger")
-  public SimpleTriggerFactoryBean roleScheduledIndexationTrigger(
-    @Qualifier("roleIndexationFullJob") JobDetail roleIndexationFullJob) {
-    SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-    factoryBean.setName("Role re-indexation");
-    factoryBean.setDescription("Periodic re-indexation of all roles of the application");
-    factoryBean.setJobDetail(roleIndexationFullJob);
-    factoryBean.setStartDelay((long) 30 * 1000);
-    factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
-    factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
-    factoryBean.setMisfireInstruction(
-      SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
-    return factoryBean;
+        @Override
+        public Class<RoleDTO> getSupportedClass() {
+          return RoleDTO.class;
+        }
+
+        @Override
+        public String[] getFields() {
+          return new String[]{"dto.name", "dto.description"};
+        }
+
+        @Override
+        public String getAlias() {
+          return "roles";
+        }
+      };
+    }
+
+    @Bean
+    public SearchEngineImpl<RoleDTO> roleSearchEngine(Client client, ObjectMapper objectMapper,
+      SearchEngineConfiguration<RoleDTO> roleSearchEngineConfiguration) {
+      return new SearchEngineImpl<>(client, objectMapper, roleSearchEngineConfiguration);
+    }
+
+
+    @Bean
+    @Qualifier("roleIndexationFullJob")
+    public JobDetailFactoryBean roleIndexationFullJob() {
+      JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+      factoryBean.setJobClass(RoleIndexationJob.class);
+      factoryBean.setGroup("Indexation");
+      factoryBean.setName("Roles Indexation Job");
+      factoryBean.setDescription("Roles full indexation Job");
+      factoryBean.setDurability(true);
+      return factoryBean;
+    }
+
+    @Bean
+    @Qualifier("roleScheduledIndexationTrigger")
+    public SimpleTriggerFactoryBean roleScheduledIndexationTrigger(
+      @Qualifier("roleIndexationFullJob") JobDetail roleIndexationFullJob) {
+      SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+      factoryBean.setName("Role re-indexation");
+      factoryBean.setDescription("Periodic re-indexation of all roles of the application");
+      factoryBean.setJobDetail(roleIndexationFullJob);
+      factoryBean.setStartDelay((long) 30 * 1000);
+      factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
+      factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
+      factoryBean.setMisfireInstruction(
+        SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
+      return factoryBean;
+    }
   }
 }

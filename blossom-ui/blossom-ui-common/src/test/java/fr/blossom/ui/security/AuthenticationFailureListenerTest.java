@@ -1,6 +1,6 @@
 package fr.blossom.ui.security;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -11,7 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -45,7 +45,6 @@ public class AuthenticationFailureListenerTest {
     String principal = "principal";
     String remoteAddress = "remoteAddress";
     WebAuthenticationDetails details = mock(WebAuthenticationDetails.class);
-    when(details.getSessionId()).thenReturn("sessionId");
     when(details.getRemoteAddress()).thenReturn(remoteAddress);
 
     Authentication authentication = mock(Authentication.class);

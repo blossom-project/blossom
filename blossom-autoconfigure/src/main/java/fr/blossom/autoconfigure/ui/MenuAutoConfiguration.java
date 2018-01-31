@@ -12,6 +12,7 @@ import fr.blossom.ui.menu.MenuItemPlugin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -19,14 +20,15 @@ import org.springframework.core.annotation.Order;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.plugin.core.config.EnablePluginRegistries;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Created by Maël Gargadennnec on 05/05/2017.
  */
 @Configuration
 @EnablePluginRegistries({MenuItemPlugin.class})
-public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
+@ConditionalOnWebApplication
+public class MenuAutoConfiguration {
 
   @Autowired
   @Qualifier(value = PluginConstants.PLUGIN_MENU)
@@ -80,13 +82,23 @@ public class MenuAutoConfiguration extends WebMvcConfigurerAdapter {
       .build();
   }
 
-  @Bean
-  public MenuInterceptor menuInterceptor() {
-    return new MenuInterceptor(registry);
+
+  @Configuration
+  public static class MenuWebAutoConfiguration  implements WebMvcConfigurer{
+
+    @Autowired
+    @Qualifier(value = PluginConstants.PLUGIN_MENU)
+    private PluginRegistry<MenuItem, String> registry;
+
+    @Bean
+    public MenuInterceptor menuInterceptor() {
+      return new MenuInterceptor(registry);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+      registry.addInterceptor(menuInterceptor()).addPathPatterns("/" + BLOSSOM_BASE_PATH + "/**");
+    }
   }
 
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(menuInterceptor()).addPathPatterns("/" + BLOSSOM_BASE_PATH + "/**");
-  }
 }

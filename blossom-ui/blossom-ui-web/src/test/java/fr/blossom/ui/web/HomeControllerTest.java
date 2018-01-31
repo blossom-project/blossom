@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HomeControllerTest {
@@ -19,6 +19,6 @@ public class HomeControllerTest {
 
   @Test
   public void should_display_home() throws Exception {
-    assertTrue(controller.home().getViewName().equals("home/home"));
+    assertTrue(controller.home().getViewName().equals("blossom/home/home"));
   }
 }

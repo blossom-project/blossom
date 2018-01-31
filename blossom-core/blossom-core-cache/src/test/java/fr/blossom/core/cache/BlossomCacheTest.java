@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -107,7 +107,7 @@ public class BlossomCacheTest {
 
   @Test
   public void should_get_object_by_key_page_request() {
-    PageRequest key = new PageRequest(0, 5);
+    PageRequest key = PageRequest.of(0, 5);
     Page<?> value = new PageImpl<>(Lists.newArrayList());
     blossomCache.put(key, value);
 

@@ -1,8 +1,8 @@
 <#import "/spring.ftl" as spring>
-<#import "/master/master.ftl" as master>
-<#import "/utils/table.ftl" as table>
-<#import "/utils/privilege.ftl" as privilege>
-<#import "/utils/table.ftl" as table>
+<#import "/blossom/master/master.ftl" as master>
+<#import "/blossom/utils/table.ftl" as table>
+<#import "/blossom/utils/privilege.ftl" as privilege>
+<#import "/blossom/utils/table.ftl" as table>
 
 <@master.default currentUser=currentUser>
 <div class="row wrapper border-bottom white-bg page-heading">

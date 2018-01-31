@@ -1,38 +1,40 @@
 package fr.blossom.core.user;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.event.CreatedEvent;
 import fr.blossom.core.common.event.UpdatedEvent;
 import fr.blossom.core.common.service.AssociationServicePlugin;
+import fr.blossom.core.common.utils.action_token.ActionToken;
+import fr.blossom.core.common.utils.action_token.ActionTokenService;
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
-
-import fr.blossom.core.common.utils.action_token.ActionToken;
-import fr.blossom.core.common.utils.action_token.ActionTokenService;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.mockito.Mockito.doReturn;
-
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(org.mockito.junit.MockitoJUnitRunner.class)
 public class UserServiceImplTest {
 
   @Rule
@@ -67,47 +69,44 @@ public class UserServiceImplTest {
 
   @Test
   public void test_get_by_email_optional_present() {
-    BDDMockito.given(userDao.getByEmail(BDDMockito.any(String.class))).willReturn(new User());
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(new UserDTO());
+    given(userDao.getByEmail(any(String.class))).willReturn(new User());
+    given(userMapper.mapEntity(any(User.class))).willReturn(new UserDTO());
 
     Assert.assertTrue(userService.getByEmail("any").isPresent());
   }
 
   @Test
   public void test_get_by_email_optional_not_present() {
-    BDDMockito.given(userDao.getByEmail(BDDMockito.any(String.class))).willReturn(null);
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(null);
+    given(userDao.getByEmail(any(String.class))).willReturn(null);
 
     Assert.assertFalse(userService.getByEmail("any").isPresent());
   }
 
   @Test
   public void test_get_by_identifier_optional_present() {
-    BDDMockito.given(userDao.getByIdentifier(BDDMockito.any(String.class))).willReturn(new User());
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(new UserDTO());
+    given(userDao.getByIdentifier(any(String.class))).willReturn(new User());
+    given(userMapper.mapEntity(any(User.class))).willReturn(new UserDTO());
 
     Assert.assertTrue(userService.getByIdentifier("any").isPresent());
   }
 
   @Test
   public void test_get_by_identifier_optional_not_present() {
-    BDDMockito.given(userDao.getByIdentifier(BDDMockito.any(String.class))).willReturn(null);
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(null);
+    given(userDao.getByIdentifier(any(String.class))).willReturn(null);
 
     Assert.assertFalse(userService.getByIdentifier("any").isPresent());
   }
 
   @Test
   public void test_get_by_id_optional_present() {
-    BDDMockito.given(userDao.getByIdentifier(BDDMockito.any(String.class))).willReturn(new User());
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(new UserDTO());
+    given(userDao.getByIdentifier(any(String.class))).willReturn(new User());
+    given(userMapper.mapEntity(any(User.class))).willReturn(new UserDTO());
     Assert.assertTrue(userService.getByIdentifier("any").isPresent());
   }
 
   @Test
   public void test_get_by_id_optional_not_present() {
-    BDDMockito.given(userDao.getOne(BDDMockito.anyLong())).willReturn(null);
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(null);
+    given(userDao.getOne(anyLong())).willReturn(null);
 
     Assert.assertFalse(userService.getById(123456789l).isPresent());
   }
@@ -119,15 +118,15 @@ public class UserServiceImplTest {
     UserDTO userSaved = new UserDTO();
     userSaved.setPasswordHash(passwordHash);
     doReturn(passwordHash).when(userService).generateRandomPasswordHash();
-    BDDMockito.given(userDao.create(BDDMockito.any(User.class))).willReturn(new User());
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(userSaved);
+    given(userDao.create(any(User.class))).willReturn(new User());
+    given(userMapper.mapEntity(any(User.class))).willReturn(userSaved);
+    given(tokenService.generateToken(any(ActionToken.class))).willReturn("token !");
 
     UserDTO result = userService.create(userCreateForm);
     Assert.assertEquals(userSaved, result);
     Assert.assertEquals(passwordHash, result.getPasswordHash());
-    BDDMockito.verify(userMailService, BDDMockito.times(1))
-      .sendAccountCreationEmail(BDDMockito.any(UserDTO.class), BDDMockito.anyString());
-    BDDMockito.verify(publisher, BDDMockito.times(1)).publishEvent(BDDMockito.any(CreatedEvent.class));
+    verify(userMailService, times(1)).sendAccountCreationEmail(any(UserDTO.class), anyString());
+    verify(publisher, times(1)).publishEvent(any(CreatedEvent.class));
 
   }
 
@@ -135,82 +134,85 @@ public class UserServiceImplTest {
   public void test_update_user_from_form() {
     UserDTO userToUpdate = new UserDTO();
     userToUpdate.setId(123456789l);
-    doReturn(userToUpdate).when(userService).getOne(BDDMockito.anyLong());
-    doReturn(userToUpdate).when(userService).update(BDDMockito.anyLong(), BDDMockito.any(UserDTO.class));
+    doReturn(userToUpdate).when(userService).getOne(anyLong());
+    doReturn(userToUpdate).when(userService).update(anyLong(), any(UserDTO.class));
 
-    Assert.assertEquals(userToUpdate, userService.update(123456789L, new UserUpdateForm(userToUpdate)));
-    BDDMockito.verify(userService, BDDMockito.times(1)).getOne(BDDMockito.anyLong());
-    BDDMockito.verify(userService, BDDMockito.times(1)).update(BDDMockito.anyLong(), BDDMockito.any(UserDTO.class));
+    Assert
+      .assertEquals(userToUpdate, userService.update(123456789L, new UserUpdateForm(userToUpdate)));
+    verify(userService, times(1)).getOne(anyLong());
+    verify(userService, times(1)).update(anyLong(), any(UserDTO.class));
   }
 
   @Test
   public void test_update_activation() throws Exception {
     UserDTO userToActivate = new UserDTO();
-    BDDMockito.given(userDao.updateActivation(BDDMockito.anyLong(), BDDMockito.any(Boolean.class))).willReturn(
-        new User());
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(userToActivate);
+    given(userDao.updateActivation(anyLong(), any(Boolean.class))).willReturn(
+      new User());
+    given(userMapper.mapEntity(any(User.class))).willReturn(userToActivate);
 
     Assert.assertEquals(userToActivate, userService.updateActivation(123456789l, true));
-    BDDMockito.verify(publisher, BDDMockito.times(1)).publishEvent(BDDMockito.any(UpdatedEvent.class));
+    verify(publisher, times(1)).publishEvent(any(UpdatedEvent.class));
   }
 
   @Test
   public void test_update_password() throws Exception {
     UserDTO userToUpdate = new UserDTO();
-    BDDMockito.given(passwordEncoder.encode(BDDMockito.anyString())).willReturn("any");
-    BDDMockito.given(userDao.updatePassword(BDDMockito.anyLong(), BDDMockito.anyString())).willReturn(new User());
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(userToUpdate);
+    given(passwordEncoder.encode(anyString())).willReturn("any");
+    given(userDao.updatePassword(anyLong(), anyString())).willReturn(new User());
+    given(userMapper.mapEntity(any(User.class))).willReturn(userToUpdate);
 
     Assert.assertEquals(userToUpdate, userService.updatePassword(123456789l, "any"));
-    BDDMockito.verify(publisher, BDDMockito.times(1)).publishEvent(BDDMockito.any(UpdatedEvent.class));
+    verify(publisher, times(1)).publishEvent(any(UpdatedEvent.class));
   }
 
   @Test
   public void test_update_last_connection() throws Exception {
     UserDTO userToUpdate = new UserDTO();
-    BDDMockito.given(userDao.updateLastConnection(BDDMockito.anyLong(), BDDMockito.any(Date.class))).willReturn(
-        new User());
-    BDDMockito.given(userMapper.mapEntity(BDDMockito.any(User.class))).willReturn(userToUpdate);
+    given(userDao.updateLastConnection(anyLong(), any(Date.class))).willReturn(
+      new User());
+    given(userMapper.mapEntity(any(User.class))).willReturn(userToUpdate);
 
     Assert.assertEquals(userToUpdate, userService.updateLastConnection(123456789l, new Date()));
-    BDDMockito.verify(publisher, BDDMockito.times(1)).publishEvent(BDDMockito.any(UpdatedEvent.class));
+    verify(publisher, times(1)).publishEvent(any(UpdatedEvent.class));
   }
 
   @Test
   public void test_ask_password_change() throws Exception {
     UserDTO userToUpdate = new UserDTO();
-    doReturn(userToUpdate).when(userService).updatePassword(BDDMockito.anyLong(), BDDMockito.anyString());
+    userToUpdate.setId(123456789L);
+    doReturn(userToUpdate).when(userService).updatePassword(anyLong(), anyString());
+    doReturn("token !").when(tokenService).generateToken(any(ActionToken.class));
+    doReturn("new_password").when(passwordEncoder).encode(any(CharSequence.class));
 
     userService.askPasswordChange(123456789L);
-    BDDMockito.verify(userMailService, BDDMockito.times(1))
-      .sendChangePasswordEmail(BDDMockito.any(UserDTO.class), BDDMockito.anyString());
+    verify(userMailService, times(1)).sendChangePasswordEmail(any(UserDTO.class), anyString());
   }
 
   @Test
   public void test_update_avatar_user_not_null() throws Exception {
-    doReturn(new UserDTO()).when(userService).getOne(BDDMockito.anyLong());
+    doReturn(new UserDTO()).when(userService).getOne(anyLong());
 
     userService.updateAvatar(123456789L, new byte[]{});
-    BDDMockito.verify(userDao, BDDMockito.times(1)).updateAvatar(BDDMockito.anyLong(), BDDMockito.any(byte[].class));
-    BDDMockito.verify(publisher, BDDMockito.times(1)).publishEvent(BDDMockito.any(UpdatedEvent.class));
+    verify(userDao, times(1)).updateAvatar(anyLong(), any(byte[].class));
+    verify(publisher, times(1)).publishEvent(any(UpdatedEvent.class));
 
   }
 
   @Test
   public void test_update_avatar_user_null() throws Exception {
-    doReturn(null).when(userService).getOne(BDDMockito.anyLong());
+    doReturn(null).when(userService).getOne(anyLong());
 
     userService.updateAvatar(123456789L, new byte[]{});
-    BDDMockito.verify(userDao, BDDMockito.times(0)).updateAvatar(BDDMockito.anyLong(), BDDMockito.any(byte[].class));
-    BDDMockito.verify(publisher, BDDMockito.times(1)).publishEvent(BDDMockito.any(UpdatedEvent.class));
+    verify(userDao, times(0)).updateAvatar(anyLong(), any(byte[].class));
+    verify(publisher, times(1)).publishEvent(any(UpdatedEvent.class));
   }
 
   @Test
   public void test_load_avatar_not_null() throws Exception {
     User userToReturn = new User();
-    byte[] avatar = new byte[]{0, 1,2,3};
+    byte[] avatar = new byte[]{0, 1, 2, 3};
     userToReturn.setAvatar(avatar);
-    BDDMockito.given(userDao.getOne(BDDMockito.anyLong())).willReturn(userToReturn);
+    given(userDao.getOne(anyLong())).willReturn(userToReturn);
 
     Assert.assertArrayEquals(avatar, ByteStreams.toByteArray(userService.loadAvatar(1L)));
   }
@@ -219,35 +221,36 @@ public class UserServiceImplTest {
   public void test_load_avatar_user_null_so_fallback_to_default() throws Exception {
     byte[] bytes = new byte[]{};
     ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-    BDDMockito.given(userDao.getOne(BDDMockito.anyLong())).willReturn(null);
-    BDDMockito.given(defaultAvatar.getInputStream()).willReturn(inputStream);
+    given(userDao.getOne(anyLong())).willReturn(null);
+    given(defaultAvatar.getInputStream()).willReturn(inputStream);
 
     userService.loadAvatar(123456789L);
-    BDDMockito.verify(defaultAvatar, BDDMockito.times(1)).getInputStream();
+    verify(defaultAvatar, times(1)).getInputStream();
   }
 
   @Test
-  public void test_load_avatar_user_not_nul_but_avatar_null_so_fallback_to_default() throws Exception {
+  public void test_load_avatar_user_not_nul_but_avatar_null_so_fallback_to_default()
+    throws Exception {
     byte[] bytes = new byte[]{};
     ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-    BDDMockito.given(userDao.getOne(BDDMockito.anyLong())).willReturn(new User());
-    BDDMockito.given(defaultAvatar.getInputStream()).willReturn(inputStream);
+    given(userDao.getOne(anyLong())).willReturn(new User());
+    given(defaultAvatar.getInputStream()).willReturn(inputStream);
 
     userService.loadAvatar(123456789L);
-    BDDMockito.verify(defaultAvatar, BDDMockito.times(1)).getInputStream();
+    verify(defaultAvatar, times(1)).getInputStream();
   }
 
   @Test
   public void test_generate_random_password_hash() throws Exception {
     String passwordHash = "someHash";
-    BDDMockito.given(passwordEncoder.encode(BDDMockito.anyString())).willReturn(passwordHash);
+    given(passwordEncoder.encode(anyString())).willReturn(passwordHash);
 
     Assert.assertEquals(passwordHash, userService.generateRandomPasswordHash());
   }
 
   private ActionToken setup_token_service_interceptor(String ret) {
     final ActionToken actionToken = new ActionToken();
-    BDDMockito.given(tokenService.generateToken(BDDMockito.any(ActionToken.class))).willAnswer(invocation -> {
+    given(tokenService.generateToken(any(ActionToken.class))).willAnswer(invocation -> {
       ActionToken generatedToken = (ActionToken) invocation.getArguments()[0];
       actionToken.setUserId(generatedToken.getUserId());
       actionToken.setAction(generatedToken.getAction());
@@ -285,9 +288,10 @@ public class UserServiceImplTest {
   public void test_get_by_activation_action_token() throws Exception {
     ActionToken actionToken = setup_token_service_interceptor("");
     UserDTO user = new UserDTO();
+    user.setId(1L);
     user.setLastConnection(new Date());
     userService.generateActivationToken(user);
-    doReturn(Optional.of(user)).when(userService).getById(BDDMockito.anyLong());
+    doReturn(Optional.of(user)).when(userService).getById(anyLong());
 
     Optional<UserDTO> userFromToken = userService.getByActionToken(actionToken);
     Assert.assertTrue(userFromToken.isPresent());
@@ -298,9 +302,10 @@ public class UserServiceImplTest {
   public void test_get_by_activation_action_token_invalid_user() throws Exception {
     ActionToken actionToken = setup_token_service_interceptor("");
     UserDTO user = new UserDTO();
+    user.setId(1L);
     user.setLastConnection(new Date());
     userService.generateActivationToken(user);
-    doReturn(Optional.empty()).when(userService).getById(BDDMockito.anyLong());
+    doReturn(Optional.empty()).when(userService).getById(anyLong());
 
     Optional<UserDTO> userFromToken = userService.getByActionToken(actionToken);
     Assert.assertFalse(userFromToken.isPresent());
@@ -308,11 +313,17 @@ public class UserServiceImplTest {
 
   @Test
   public void test_get_by_activation_action_token_expired_by_connection() throws Exception {
-    ActionToken actionToken = setup_token_service_interceptor("");
+    ActionToken actionToken = new ActionToken();
+    actionToken.setUserId(1L);
+    actionToken.setAction("action");
+    actionToken.setExpirationDate(Instant.now().plus(5, ChronoUnit.MINUTES));
+    actionToken.setAdditionalParameters(ImmutableMap.<String, String>builder()
+      .put("creationDate", Long.toString(Instant.now().toEpochMilli())).build());
+
     UserDTO user = new UserDTO();
     user.setLastConnection(Date.from(Instant.now().plus(1, ChronoUnit.HOURS)));
     userService.generateActivationToken(user);
-    doReturn(Optional.of(user)).when(userService).getById(BDDMockito.anyLong());
+    doReturn(Optional.of(user)).when(userService).getById(anyLong());
 
     Optional<UserDTO> userFromToken = userService.getByActionToken(actionToken);
     Assert.assertFalse(userFromToken.isPresent());
@@ -320,36 +331,42 @@ public class UserServiceImplTest {
 
   @Test
   public void test_user_service_impl_nothing_null() throws Exception {
-    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder, tokenService, userMailService, defaultAvatar);
+    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder,
+      tokenService, userMailService, defaultAvatar);
   }
 
   @Test
   public void test_user_service_impl_password_encoder_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, null, tokenService, userMailService, defaultAvatar);
+    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, null, tokenService,
+      userMailService, defaultAvatar);
   }
 
   @Test
   public void test_user_service_impl_token_service_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder, null, userMailService, defaultAvatar);
+    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder, null,
+      userMailService, defaultAvatar);
   }
 
   @Test
   public void test_user_service_impl_dao_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    new UserServiceImpl(null, userMapper, publisher, associationRegistry, passwordEncoder, tokenService, userMailService, defaultAvatar);
+    new UserServiceImpl(null, userMapper, publisher, associationRegistry, passwordEncoder,
+      tokenService, userMailService, defaultAvatar);
   }
 
   @Test
   public void test_user_service_mail_service_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder, tokenService,null, defaultAvatar);
+    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder,
+      tokenService, null, defaultAvatar);
   }
 
   @Test
   public void test_user_service_default_avatar_null() throws Exception {
     thrown.expect(NullPointerException.class);
-    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder, tokenService, userMailService, null);
+    new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder,
+      tokenService, userMailService, null);
   }
 }

@@ -49,7 +49,7 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   @Override
   @CachePut(key = "#a0+''")
   public User updateActivation(long id, boolean activated) {
-    User user = repository.findOne(id);
+    User user = repository.findById(id).orElse(null);
     user.setActivated(activated);
     return repository.save(user);
   }
@@ -57,7 +57,7 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   @Override
   @CachePut(key = "#a0+''")
   public User updatePassword(Long id, String encodedPassword) {
-    User user = repository.findOne(id);
+    User user = repository.findById(id).orElse(null);
     user.setPasswordHash(encodedPassword);
     return repository.save(user);
   }
@@ -65,7 +65,7 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   @Override
   @CachePut(key = "#a0+''")
   public User updateAvatar(Long id, byte[] avatar) {
-    User user = repository.findOne(id);
+    User user = repository.findById(id).orElse(null);
     user.setAvatar(avatar);
     return repository.save(user);
   }
@@ -73,7 +73,7 @@ public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
   @Override
   @CachePut(key = "#a0+''")
   public User updateLastConnection(Long id, Date lastConnection) {
-    User user = repository.findOne(id);
+    User user = repository.findById(id).orElse(null);
     if (user == null) {
       return null;
     }

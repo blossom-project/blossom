@@ -6,7 +6,10 @@ import fr.blossom.ui.menu.MenuItem;
 import fr.blossom.ui.menu.MenuItemBuilder;
 import fr.blossom.ui.web.system.logger.LoggerManagerController;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.endpoint.LoggersEndpoint;
+import org.springframework.boot.actuate.autoconfigure.logging.LoggersEndpointAutoConfiguration;
+import org.springframework.boot.actuate.logging.LoggersEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +18,9 @@ import org.springframework.context.annotation.Configuration;
  * Created by Maël Gargadennnec on 04/05/2017.
  */
 @Configuration
+@AutoConfigureAfter(LoggersEndpointAutoConfiguration.class)
 @ConditionalOnClass(LoggerManagerController.class)
+@ConditionalOnBean(LoggersEndpoint.class)
 public class WebSystemLoggersAutoConfiguration {
 
   @Bean
@@ -39,7 +44,7 @@ public class WebSystemLoggersAutoConfiguration {
 
   @Bean
   public Privilege loggersPrivilegePlugin() {
-    return new SimplePrivilege("system","loggers", "manager");
+    return new SimplePrivilege("system", "loggers", "manager");
   }
 
 }

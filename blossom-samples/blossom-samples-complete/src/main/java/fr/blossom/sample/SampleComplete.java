@@ -1,6 +1,5 @@
 package fr.blossom.sample;
 
-import fr.blossom.autoconfigure.EnableBlossom;
 import fr.blossom.ui.menu.MenuItem;
 import fr.blossom.ui.menu.MenuItemBuilder;
 import java.security.SecureRandom;
@@ -15,7 +14,6 @@ import org.springframework.core.annotation.Order;
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
  */
-@EnableBlossom
 @SpringBootApplication
 public class SampleComplete {
 

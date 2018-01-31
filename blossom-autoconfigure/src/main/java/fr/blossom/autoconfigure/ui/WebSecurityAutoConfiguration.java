@@ -1,5 +1,7 @@
 package fr.blossom.autoconfigure.ui;
 
+import static fr.blossom.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
+
 import fr.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.blossom.core.common.PluginConstants;
 import fr.blossom.core.common.utils.privilege.Privilege;
@@ -20,39 +22,42 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.plugin.core.PluginRegistry;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
  */
 @Configuration
 @ConditionalOnWebApplication
-@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
+@Order(SecurityProperties.DEFAULT_FILTER_ORDER)
 @PropertySource("classpath:/security.properties")
 @EnableConfigurationProperties(DefaultAccountProperties.class)
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityAutoConfiguration {
 
-  private static final String BLOSSOM_BASE_PATH = "blossom";
-  private static final String BLOSSOM_API_BASE_PATH = BLOSSOM_BASE_PATH + "/api";
-  private static final String BLOSSOM_REMEMBER_ME_COOKIE_NAME = "blossom";
+  public static final String BLOSSOM_REMEMBER_ME_COOKIE_NAME = "blossom";
+
+  private final AssociationUserRoleService associationUserRoleService;
+
+  public WebSecurityAutoConfiguration(AssociationUserRoleService associationUserRoleService) {
+    this.associationUserRoleService = associationUserRoleService;
+  }
 
   @Bean
   public LoginAttemptsService loginAttemptsService() {
@@ -91,6 +96,7 @@ public class WebSecurityAutoConfiguration {
   }
 
   @Bean
+  @Primary
   public UserDetailsService compositeUserDetailsService(
     List<UserDetailsService> userDetailsServices) {
     return new CompositeUserDetailsServiceImpl(
@@ -115,23 +121,13 @@ public class WebSecurityAutoConfiguration {
     return provider;
   }
 
-  @Configuration
-  @Order(-1)
-  public static class GlobalSecurityConfigurerAdapter extends
-    GlobalAuthenticationConfigurerAdapter {
-
-    @Autowired
-    public LimitLoginAuthenticationProvider limitLoginAuthenticationProvider;
-
-    @Override
-    public void init(AuthenticationManagerBuilder auth) throws Exception {
-      auth.authenticationProvider(limitLoginAuthenticationProvider);
-    }
-
+  @Bean
+  public SessionRegistry blossomSessionRegistry() {
+    return new BlossomSessionRegistryImpl(associationUserRoleService);
   }
 
   @Configuration
-  @Order(1)
+  @Order(Ordered.HIGHEST_PRECEDENCE)
   public static class PublicWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     @Override
@@ -140,78 +136,11 @@ public class WebSecurityAutoConfiguration {
       http.antMatcher("/" + BLOSSOM_BASE_PATH + "/public/**").authorizeRequests().anyRequest()
         .permitAll();
     }
-  }
-
-  @Configuration
-  @Order(2)
-  public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-      http.antMatcher("/" + BLOSSOM_API_BASE_PATH + "/**")
-        .csrf()
-        .disable()
-        .authorizeRequests()
-        .anyRequest()
-        .fullyAuthenticated()
-        .and()
-        .httpBasic()
-        .and()
-        .exceptionHandling()
-        .and()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-  }
-
-  @Configuration
-  @Order(3)
-  public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler;
-    @Autowired
-    private AssociationUserRoleService associationUserRoleService;
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-      http.antMatcher("/" + BLOSSOM_BASE_PATH + "/**").authorizeRequests().anyRequest()
-        .fullyAuthenticated().and()
-        .formLogin().loginPage("/" + BLOSSOM_BASE_PATH + "/login")
-        .failureUrl("/" + BLOSSOM_BASE_PATH + "/login?error")
-        .successHandler(lastConnectionUpdateAuthenticationSuccessHandler).permitAll().and().logout()
-        .logoutRequestMatcher(new AntPathRequestMatcher("/" + BLOSSOM_BASE_PATH + "/logout"))
-        .deleteCookies(BLOSSOM_REMEMBER_ME_COOKIE_NAME)
-        .logoutSuccessUrl("/" + BLOSSOM_BASE_PATH + "/login")
-        .permitAll().and().rememberMe().rememberMeCookieName(BLOSSOM_REMEMBER_ME_COOKIE_NAME).and()
-        .exceptionHandling().and()
-        .sessionManagement().maximumSessions(10)
-        .maxSessionsPreventsLogin(true)
-        .expiredUrl("/" + BLOSSOM_BASE_PATH + "/login")
-        .sessionRegistry(blossomSessionRegistry());
-    }
-
-
     @Bean
-    public SessionRegistry blossomSessionRegistry() {
-      return new BlossomSessionRegistryImpl(associationUserRoleService);
-    }
-
-    @Bean
-    public static ServletListenerRegistrationBean httpSessionEventPublisher() {
-      return new ServletListenerRegistrationBean(new HttpSessionEventPublisher());
-    }
-
-
-  }
-
-  @Configuration
-  @Order(4)
-  public static class AppWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-      http.antMatcher("/**").csrf().disable().authorizeRequests().anyRequest().permitAll();
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+      return super.authenticationManagerBean();
     }
   }
 }

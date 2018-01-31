@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -53,13 +54,14 @@ public class GroupAutoConfiguration {
 
   @Qualifier(PluginConstants.PLUGIN_ASSOCIATION_SERVICE)
   @Autowired
-  private PluginRegistry<AssociationServicePlugin,Class<? extends AbstractDTO>> associationServicePlugins;
+  private PluginRegistry<AssociationServicePlugin, Class<? extends AbstractDTO>> associationServicePlugins;
 
   @Bean
   @ConditionalOnMissingBean(GroupService.class)
   public GroupService groupService(GroupDao groupDao, GroupDTOMapper groupDTOMapper,
     ApplicationEventPublisher eventPublisher) {
-    return new GroupServiceImpl(groupDao, groupDTOMapper, eventPublisher, associationServicePlugins);
+    return new GroupServiceImpl(groupDao, groupDTOMapper, eventPublisher,
+      associationServicePlugins);
   }
 
   @Bean
@@ -74,105 +76,113 @@ public class GroupAutoConfiguration {
     return new GroupDTOMapper();
   }
 
-  @Bean
-  public IndexationEngineConfiguration<GroupDTO> groupIndexationEngineConfiguration(
-    @Value("classpath:/elasticsearch/groups.json") Resource resource) {
-    return new IndexationEngineConfiguration<GroupDTO>() {
-      @Override
-      public Class<GroupDTO> getSupportedClass() {
-        return GroupDTO.class;
-      }
+  @Configuration
+  @ConditionalOnBean(Client.class)
+  public static class GroupSearchAutoConfiguration {
 
-      @Override
-      public Resource getSource() {
-        return resource;
-      }
+    @Bean
+    public IndexationEngineConfiguration<GroupDTO> groupIndexationEngineConfiguration(
+      @Value("classpath:/elasticsearch/groups.json") Resource resource) {
+      return new IndexationEngineConfiguration<GroupDTO>() {
+        @Override
+        public Class<GroupDTO> getSupportedClass() {
+          return GroupDTO.class;
+        }
 
-      @Override
-      public String getAlias() {
-        return "groups";
-      }
+        @Override
+        public Resource getSource() {
+          return resource;
+        }
 
-      @Override
-      public Function<GroupDTO, String> getTypeFunction() {
-        return u -> "group";
-      }
+        @Override
+        public String getAlias() {
+          return "groups";
+        }
 
-      @Override
-      public Function<GroupDTO, SummaryDTO> getSummaryFunction() {
-        return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u)).name(u.getName()).description(u.getDescription()).uri("/blossom/administration/groups/" + u.getId()).build();
-      }
-    };
-  }
+        @Override
+        public Function<GroupDTO, String> getTypeFunction() {
+          return u -> "group";
+        }
 
-  @Bean
-  public IndexationEngineImpl<GroupDTO> groupIndexationEngine(Client client,
-    GroupService groupService,
-    BulkProcessor bulkProcessor,
-    ObjectMapper objectMapper,
-    IndexationEngineConfiguration<GroupDTO> groupIndexationEngineConfiguration
-  ) throws IOException {
-    return new IndexationEngineImpl<>(client, groupService, bulkProcessor, objectMapper,
-      groupIndexationEngineConfiguration);
-  }
+        @Override
+        public Function<GroupDTO, SummaryDTO> getSummaryFunction() {
+          return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u))
+            .name(u.getName()).description(u.getDescription())
+            .uri("/blossom/administration/groups/" + u.getId()).build();
+        }
+      };
+    }
 
-
-  @Bean
-  public SearchEngineConfiguration<GroupDTO> groupSearchEngineConfiguration() {
-    return new SearchEngineConfiguration<GroupDTO>() {
-      @Override
-      public String getName() {
-        return "menu.administration.groups";
-      }
-
-      @Override
-      public Class<GroupDTO> getSupportedClass() {
-        return GroupDTO.class;
-      }
-
-      @Override
-      public String[] getFields() {
-        return new String[]{"dto.name", "dto.description"};
-      }
-
-      @Override
-      public String getAlias() {
-        return "groups";
-      }
-    };
-  }
-
-  @Bean
-  public SearchEngineImpl<GroupDTO> groupSearchEngine(Client client, ObjectMapper objectMapper, SearchEngineConfiguration<GroupDTO> groupSearchEngineConfiguration) {
-    return new SearchEngineImpl<>(client, objectMapper, groupSearchEngineConfiguration);
-  }
+    @Bean
+    public IndexationEngineImpl<GroupDTO> groupIndexationEngine(Client client,
+      GroupService groupService,
+      BulkProcessor bulkProcessor,
+      ObjectMapper objectMapper,
+      IndexationEngineConfiguration<GroupDTO> groupIndexationEngineConfiguration
+    ) throws IOException {
+      return new IndexationEngineImpl<>(client, groupService, bulkProcessor, objectMapper,
+        groupIndexationEngineConfiguration);
+    }
 
 
-  @Bean
-  @Qualifier("groupIndexationFullJob")
-  public JobDetailFactoryBean groupIndexationFullJob() {
-    JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
-    factoryBean.setJobClass(GroupIndexationJob.class);
-    factoryBean.setGroup("Indexation");
-    factoryBean.setName("Groups Indexation Job");
-    factoryBean.setDescription("Groups full indexation Job");
-    factoryBean.setDurability(true);
-    return factoryBean;
-  }
+    @Bean
+    public SearchEngineConfiguration<GroupDTO> groupSearchEngineConfiguration() {
+      return new SearchEngineConfiguration<GroupDTO>() {
+        @Override
+        public String getName() {
+          return "menu.administration.groups";
+        }
 
-  @Bean
-  @Qualifier("groupScheduledIndexationTrigger")
-  public SimpleTriggerFactoryBean groupScheduledIndexationTrigger(
-    @Qualifier("groupIndexationFullJob") JobDetail groupIndexationFullJob) {
-    SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-    factoryBean.setName("Group re-indexation");
-    factoryBean.setDescription("Periodic re-indexation of all groups of the application");
-    factoryBean.setJobDetail(groupIndexationFullJob);
-    factoryBean.setStartDelay((long) 30 * 1000);
-    factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
-    factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
-    factoryBean.setMisfireInstruction(
-      SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
-    return factoryBean;
+        @Override
+        public Class<GroupDTO> getSupportedClass() {
+          return GroupDTO.class;
+        }
+
+        @Override
+        public String[] getFields() {
+          return new String[]{"dto.name", "dto.description"};
+        }
+
+        @Override
+        public String getAlias() {
+          return "groups";
+        }
+      };
+    }
+
+    @Bean
+    public SearchEngineImpl<GroupDTO> groupSearchEngine(Client client, ObjectMapper objectMapper,
+      SearchEngineConfiguration<GroupDTO> groupSearchEngineConfiguration) {
+      return new SearchEngineImpl<>(client, objectMapper, groupSearchEngineConfiguration);
+    }
+
+
+    @Bean
+    @Qualifier("groupIndexationFullJob")
+    public JobDetailFactoryBean groupIndexationFullJob() {
+      JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+      factoryBean.setJobClass(GroupIndexationJob.class);
+      factoryBean.setGroup("Indexation");
+      factoryBean.setName("Groups Indexation Job");
+      factoryBean.setDescription("Groups full indexation Job");
+      factoryBean.setDurability(true);
+      return factoryBean;
+    }
+
+    @Bean
+    @Qualifier("groupScheduledIndexationTrigger")
+    public SimpleTriggerFactoryBean groupScheduledIndexationTrigger(
+      @Qualifier("groupIndexationFullJob") JobDetail groupIndexationFullJob) {
+      SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+      factoryBean.setName("Group re-indexation");
+      factoryBean.setDescription("Periodic re-indexation of all groups of the application");
+      factoryBean.setJobDetail(groupIndexationFullJob);
+      factoryBean.setStartDelay((long) 30 * 1000);
+      factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
+      factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
+      factoryBean.setMisfireInstruction(
+        SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
+      return factoryBean;
+    }
   }
 }

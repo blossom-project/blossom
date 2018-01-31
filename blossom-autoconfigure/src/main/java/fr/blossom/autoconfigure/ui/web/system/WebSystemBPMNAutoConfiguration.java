@@ -24,7 +24,8 @@ import org.springframework.context.annotation.Configuration;
 public class WebSystemBPMNAutoConfiguration {
 
   @Bean
-  public MenuItem systemBPMNMenuItem(MenuItemBuilder builder, @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
+  public MenuItem systemBPMNMenuItem(MenuItemBuilder builder,
+    @Qualifier("systemMenuItem") MenuItem systemMenuItem) {
     return builder
       .key("bpmnManager")
       .label("menu.system.bpmn")
@@ -45,7 +46,7 @@ public class WebSystemBPMNAutoConfiguration {
 
   @Bean
   public Privilege bpmnManagerPrivilegePlugin() {
-    return new SimplePrivilege("system","bpmn", "manager");
+    return new SimplePrivilege("system", "bpmn", "manager");
   }
 
 }

@@ -14,7 +14,7 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UniqueEmailValidatorTest {
@@ -75,13 +75,11 @@ public class UniqueEmailValidatorTest {
 
   @Test
   public void test_is_valid_null_and_not_present_should_return_false() throws Exception {
-    BDDMockito.given(userRepository.findOneByEmail(BDDMockito.anyString())).willReturn(Optional.ofNullable(null));
     Assert.assertFalse(validator.isValid(null, null));
   }
 
   @Test
   public void test_is_valid_null_and_present_should_return_false() throws Exception {
-    BDDMockito.given(userRepository.findOneByEmail(BDDMockito.anyString())).willReturn(Optional.ofNullable(new User()));
     Assert.assertFalse(validator.isValid(null, null));
   }
 

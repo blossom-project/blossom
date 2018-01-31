@@ -6,7 +6,7 @@ import fr.blossom.core.group.Group;
 import fr.blossom.core.user.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AssociationUserGroupTest {

@@ -100,7 +100,7 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
     }
 
     SearchRequestBuilder searchRequest = this.client.prepareSearch(this.configuration.getAlias()).setQuery(query)
-      .setSize(pageable.getPageSize()).setFrom(pageable.getOffset());
+      .setSize(pageable.getPageSize()).setFrom((int) pageable.getOffset());
 
     Sort sort = pageable.getSort();
     if (sort != null) {

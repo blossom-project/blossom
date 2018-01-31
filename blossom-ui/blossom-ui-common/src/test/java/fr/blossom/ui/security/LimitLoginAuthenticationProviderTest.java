@@ -1,7 +1,7 @@
 package fr.blossom.ui.security;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -13,7 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,14 +47,11 @@ public class LimitLoginAuthenticationProviderTest {
     String remoteAddress = "remoteAddress";
 
     WebAuthenticationDetails details = mock(WebAuthenticationDetails.class);
-    when(details.getSessionId()).thenReturn(sessionId);
     when(details.getRemoteAddress()).thenReturn(remoteAddress);
 
     UsernamePasswordAuthenticationToken authentication = mock(
       UsernamePasswordAuthenticationToken.class);
     when(authentication.getName()).thenReturn(principal);
-    when(authentication.getPrincipal()).thenReturn(principal);
-    when(authentication.getCredentials()).thenReturn(credential);
     when(authentication.getDetails()).thenReturn(details);
 
     when(loginAttemptsService.isBlocked(anyString(), anyString())).thenReturn(true);
@@ -69,7 +66,6 @@ public class LimitLoginAuthenticationProviderTest {
     String remoteAddress = "remoteAddress";
 
     WebAuthenticationDetails details = mock(WebAuthenticationDetails.class);
-    when(details.getSessionId()).thenReturn(sessionId);
     when(details.getRemoteAddress()).thenReturn(remoteAddress);
 
     UsernamePasswordAuthenticationToken authentication = mock(
@@ -80,7 +76,7 @@ public class LimitLoginAuthenticationProviderTest {
     when(authentication.getDetails()).thenReturn(details);
 
     when(this.userDetailsService.loadUserByUsername(eq(principal))).thenReturn(
-      new CurrentUserBuilder().identifier(principal).passwordHash(credential).toCurrentUser());
+      new CurrentUserBuilder().identifier(principal).passwordHash("{noop}"+credential).toCurrentUser());
 
     this.authProvider.authenticate(authentication);
   }
@@ -94,7 +90,6 @@ public class LimitLoginAuthenticationProviderTest {
     String remoteAddress = "remoteAddress";
 
     WebAuthenticationDetails details = mock(WebAuthenticationDetails.class);
-    when(details.getSessionId()).thenReturn(sessionId);
     when(details.getRemoteAddress()).thenReturn(remoteAddress);
 
     UsernamePasswordAuthenticationToken authentication = mock(
@@ -105,7 +100,7 @@ public class LimitLoginAuthenticationProviderTest {
     when(authentication.getDetails()).thenReturn(details);
 
     when(this.userDetailsService.loadUserByUsername(eq(principal))).thenReturn(
-      new CurrentUserBuilder().identifier(principal).passwordHash(credential).toCurrentUser());
+      new CurrentUserBuilder().identifier(principal).passwordHash("{noop}"+credential).toCurrentUser());
 
     this.authProvider.authenticate(authentication);
     verify(this.loginAttemptsService, times(1)).successfulAttempt(eq(principal), eq(remoteAddress));
@@ -121,7 +116,6 @@ public class LimitLoginAuthenticationProviderTest {
     String remoteAddress = "remoteAddress";
 
     WebAuthenticationDetails details = mock(WebAuthenticationDetails.class);
-    when(details.getSessionId()).thenReturn(sessionId);
     when(details.getRemoteAddress()).thenReturn(remoteAddress);
 
     UsernamePasswordAuthenticationToken authentication = mock(
@@ -132,7 +126,7 @@ public class LimitLoginAuthenticationProviderTest {
     when(authentication.getDetails()).thenReturn(details);
 
     when(this.userDetailsService.loadUserByUsername(eq(principal))).thenReturn(
-      new CurrentUserBuilder().identifier(principal).passwordHash(credential).toCurrentUser());
+      new CurrentUserBuilder().identifier(principal).passwordHash("{noop}"+credential).toCurrentUser());
 
     try {
       this.authProvider.authenticate(authentication);

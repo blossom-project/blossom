@@ -107,8 +107,8 @@ public class DataConfiguration {
   public CommandLineRunner clrAssociationUserGroup(UserService userService,
     GroupService groupService, AssociationUserGroupService service) {
     return args -> {
-      Page<UserDTO> someUsers = userService.getAll(new PageRequest(0, 50));
-      Page<GroupDTO> groupDTOS = groupService.getAll(new PageRequest(0, 50));
+      Page<UserDTO> someUsers = userService.getAll(PageRequest.of(0, 50));
+      Page<GroupDTO> groupDTOS = groupService.getAll(PageRequest.of(0, 50));
 
       someUsers.forEach(user -> {
         groupDTOS.forEach(group -> {
@@ -125,8 +125,8 @@ public class DataConfiguration {
   public CommandLineRunner clrAssociationUserRole(UserService userService, RoleService roleService,
     AssociationUserRoleService service) {
     return args -> {
-      Page<UserDTO> someUsers = userService.getAll(new PageRequest(0, 50));
-      Page<RoleDTO> someRoles = roleService.getAll(new PageRequest(0, 50));
+      Page<UserDTO> someUsers = userService.getAll(PageRequest.of(0, 50));
+      Page<RoleDTO> someRoles = roleService.getAll(PageRequest.of(0, 50));
 
       someUsers.forEach(user -> {
         someRoles.forEach(role -> {

@@ -24,7 +24,7 @@ public class IndexationEngineAutoConfiguration {
   private PluginRegistry<IndexationEngine, Class<? extends AbstractDTO>> registry;
 
   @Bean
-  public IndexationEventListeners indexationEventListeners(){
+  public IndexationEventListeners indexationEventListeners() {
     return new IndexationEventListeners(registry);
   }
 

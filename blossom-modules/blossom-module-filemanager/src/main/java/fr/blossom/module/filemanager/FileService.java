@@ -3,6 +3,7 @@ package fr.blossom.module.filemanager;
 import fr.blossom.core.common.service.CrudService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -14,6 +15,6 @@ public interface FileService extends CrudService<FileDTO> {
 
   FileDTO upload(MultipartFile multipartFile) throws SQLException, IOException;
 
-  InputStream download(long fileId) throws SQLException;
+  InputStream download(long fileId) throws SQLException, FileNotFoundException;
 
 }
