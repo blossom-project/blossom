@@ -147,7 +147,7 @@ public class ActivationController {
     @Pattern.List({
       @Pattern(regexp = "(?=.*[0-9]).+", message = "{change.password.validation.Pattern.digit.message}"),
       @Pattern(regexp = "(?=.*[a-z]).+", message = "{change.password.validation.Pattern.lowercase.message}"),
-      @Pattern(regexp = "(?=.*[A-Z]).+", message = "{change.password.validation.Pattern.uppercase.message}")
+      @Pattern(regexp = "(?=.*[\\p{P}\\p{S}]).+", message = "{change.password.validation.Pattern.specialchar.message}")
     })
     private String password = "";
 

@@ -57,8 +57,6 @@ public MenuItem testSubMenuItem(MenuItemBuilder builder, @Qualifier("testMenuIte
 
 #### Open a specific menu on a page
 #### Ordering menus
-Menus et sub-menus can be ordered relatively to its siblings with the `order()` method on the `MenuItemBuilder`.
-Possible values are the whole Integer values, from `Integer.MIN_VALUE` (highest precedence) to `Integer.MAX_VALUE` (lowest precedence)
 
 ### Scheduling
 #### Configuring the scheduler

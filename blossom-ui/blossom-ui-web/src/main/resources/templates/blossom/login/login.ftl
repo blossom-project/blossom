@@ -8,7 +8,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>BLOSSOM | <@spring.message "login.page.title"/></title>
+  <title>Blossom | <@spring.message "login.page.title"/></title>
 
   <link href="/blossom/public/css/bootstrap.min.css" rel="stylesheet">
   <link href="/blossom/public/font-awesome/css/font-awesome.css" rel="stylesheet">

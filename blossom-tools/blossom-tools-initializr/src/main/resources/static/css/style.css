@@ -6871,6 +6871,11 @@ body.landing-page {
   color: #aeaeae;
   font-size: 13px;
 }
+
+.landing-page section.documentation p {
+  color: #676a6c;
+  font-size: 13px;
+}
 .landing-page address {
   font-size: 13px;
 }
@@ -6884,6 +6889,12 @@ body.landing-page {
   height: 1px;
   margin: 60px auto 0;
   border-bottom: 2px solid #1ab394;
+}
+.landing-page .navy-line-light {
+  width: 40px;
+  height: 1px;
+  margin: 40px auto 0;
+  border-bottom: 1px solid #1AE0C0;
 }
 .landing-page .navbar-wrapper {
   position: fixed;

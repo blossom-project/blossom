@@ -24,7 +24,7 @@
         <div class="ibox-content">
           <h2>
             <#assign sizeArgs = ["${total?c}"]/>
-            <@spring.messageArgs "omnisearch.total" sizeArgs />&nbsp;<span class="text-navy">“${q}”</span>
+            <@spring.messageArgs "omnisearch.total" sizeArgs />&nbsp;<span class="text-navy">“${q?html}”</span>
           </h2>
           <small>
             <#assign durationArgs = ["${(duration / 1000)?c}"]/>
@@ -34,7 +34,7 @@
           <div class="search-form m-b-lg">
             <form action="/blossom/search" method="GET">
               <div class="input-group">
-                <input type="text" class="form-control input-lg" name="q" value="${q}" placeholder="<@spring.message "omnisearch.placeholder"/>">
+                <input type="text" class="form-control input-lg" name="q" value="${q?html}" placeholder="<@spring.message "omnisearch.placeholder"/>">
                 <div class="input-group-btn">
                   <button class="btn btn-lg btn-primary" type="submit">
                     <@spring.message "search"/>

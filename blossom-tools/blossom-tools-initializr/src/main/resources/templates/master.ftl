@@ -13,6 +13,7 @@
 
   <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/style.css" rel="stylesheet">
+  <link href="/font-awesome/css/font-awesome.css" rel="stylesheet">
   <link href="/css/plugins/codemirror/codemirror.css" rel="stylesheet">
   <link href="/css/plugins/codemirror/ambiance.css" rel="stylesheet">
 
@@ -24,7 +25,7 @@
 
   <div class="navbar-wrapper">
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="container">
+      <div class="container white-bg">
         <div class="navbar-header page-scroll">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -49,6 +50,7 @@
 
   <script src="/js/plugins/codemirror/codemirror.js"></script>
   <script src="/js/plugins/codemirror/mode/properties/properties.js"></script>
+  <script src="/js/plugins/codemirror/mode/yaml/yaml.js"></script>
   <script src="/js/plugins/codemirror/mode/clike/clike.js"></script>
 
 </body>
