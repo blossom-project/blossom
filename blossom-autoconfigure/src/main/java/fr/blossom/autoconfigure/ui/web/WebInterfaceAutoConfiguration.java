@@ -15,6 +15,7 @@ import fr.blossom.ui.menu.Menu;
 import fr.blossom.ui.menu.MenuControllerAdvice;
 import fr.blossom.ui.security.LimitLoginAuthenticationProvider;
 import fr.blossom.ui.web.ActivationController;
+import fr.blossom.ui.web.error.BlossomErrorViewResolver;
 import fr.blossom.ui.web.error.ErrorControllerAdvice;
 import fr.blossom.ui.web.HomeController;
 import fr.blossom.ui.web.LoginController;
@@ -27,7 +28,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.plugin.core.PluginRegistry;
@@ -45,6 +48,24 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @ConditionalOnWebApplication
 @ConditionalOnClass(HomeController.class)
 public class WebInterfaceAutoConfiguration {
+
+  @Configuration
+  static class BlossomErrorViewResolverConfiguration {
+
+    private final ApplicationContext applicationContext;
+    private final ResourceProperties resourceProperties;
+
+    BlossomErrorViewResolverConfiguration(ApplicationContext applicationContext,
+      ResourceProperties resourceProperties) {
+      this.applicationContext = applicationContext;
+      this.resourceProperties = resourceProperties;
+    }
+
+    @Bean
+    public BlossomErrorViewResolver blossomErrorViewResolver() {
+      return new BlossomErrorViewResolver(this.applicationContext, this.resourceProperties);
+    }
+  }
 
   @Bean
   public LoginController loginController() {

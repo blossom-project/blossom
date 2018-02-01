@@ -107,23 +107,4 @@ public class WebContextAutoConfiguration implements WebMvcConfigurer {
       }
     };
   }
-  
-  @Configuration
-  static class BlossomErrorViewResolverConfiguration {
-
-    private final ApplicationContext applicationContext;
-    private final ResourceProperties resourceProperties;
-
-    BlossomErrorViewResolverConfiguration(ApplicationContext applicationContext,
-      ResourceProperties resourceProperties) {
-      this.applicationContext = applicationContext;
-      this.resourceProperties = resourceProperties;
-    }
-
-    @Bean
-    public BlossomErrorViewResolver blossomErrorViewResolver() {
-      return new BlossomErrorViewResolver(this.applicationContext, this.resourceProperties);
-    }
-
-  }
 }
