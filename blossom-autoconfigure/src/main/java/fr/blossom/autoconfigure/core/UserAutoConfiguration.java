@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -100,112 +99,108 @@ public class UserAutoConfiguration {
       .specification("expireAfterWrite=15m").build();
   }
 
-  @Configuration
-  @ConditionalOnBean(Client.class)
-  public static class UserSearchAutoConfiguration {
+  @Bean
+  public IndexationEngineConfiguration<UserDTO> userIndexationEngineConfiguration(
+    @Value("classpath:/elasticsearch/users.json") Resource resource) {
+    return new IndexationEngineConfiguration<UserDTO>() {
+      @Override
+      public Class<UserDTO> getSupportedClass() {
+        return UserDTO.class;
+      }
 
-    @Bean
-    public IndexationEngineConfiguration<UserDTO> userIndexationEngineConfiguration(
-      @Value("classpath:/elasticsearch/users.json") Resource resource) {
-      return new IndexationEngineConfiguration<UserDTO>() {
-        @Override
-        public Class<UserDTO> getSupportedClass() {
-          return UserDTO.class;
-        }
+      @Override
+      public Resource getSource() {
+        return resource;
+      }
 
-        @Override
-        public Resource getSource() {
-          return resource;
-        }
+      @Override
+      public String getAlias() {
+        return "users";
+      }
 
-        @Override
-        public String getAlias() {
-          return "users";
-        }
+      @Override
+      public Function<UserDTO, String> getTypeFunction() {
+        return u -> "user";
+      }
 
-        @Override
-        public Function<UserDTO, String> getTypeFunction() {
-          return u -> "user";
-        }
-
-        @Override
-        public Function<UserDTO, SummaryDTO> getSummaryFunction() {
-          return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u))
-            .name(u.getFirstname() + " " + u.getLastname()).description(u.getDescription())
-            .uri("/blossom/administration/users/" + u.getId()).build();
-        }
-      };
-    }
-
-    @Bean
-    public IndexationEngineImpl<UserDTO> userIndexationEngine(Client client,
-      UserService userService,
-      BulkProcessor bulkProcessor,
-      ObjectMapper objectMapper,
-      IndexationEngineConfiguration<UserDTO> userIndexationEngineConfiguration) {
-      return new IndexationEngineImpl<>(client, userService, bulkProcessor, objectMapper,
-        userIndexationEngineConfiguration);
-    }
-
-
-    @Bean
-    public SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration() {
-      return new SearchEngineConfiguration<UserDTO>() {
-        @Override
-        public String getName() {
-          return "menu.administration.users";
-        }
-
-        @Override
-        public Class<UserDTO> getSupportedClass() {
-          return UserDTO.class;
-        }
-
-        @Override
-        public String[] getFields() {
-          return new String[]{"dto.identifier", "dto.email", "dto.firstname", "dto.lastname",
-            "dto.company", "dto.description", "dto.function"};
-        }
-
-        @Override
-        public String getAlias() {
-          return "users";
-        }
-      };
-    }
-
-    @Bean
-    public SearchEngineImpl<UserDTO> userSearchEngine(Client client, ObjectMapper objectMapper,
-      SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration) {
-      return new SearchEngineImpl<>(client, objectMapper, userSearchEngineConfiguration);
-    }
-
-    @Bean
-    @Qualifier("userIndexationFullJob")
-    public JobDetailFactoryBean userIndexationFullJob() {
-      JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
-      factoryBean.setJobClass(UserIndexationJob.class);
-      factoryBean.setGroup("Indexation");
-      factoryBean.setName("Users Indexation Job");
-      factoryBean.setDescription("Users full indexation Job");
-      factoryBean.setDurability(true);
-      return factoryBean;
-    }
-
-    @Bean
-    @Qualifier("userScheduledIndexationTrigger")
-    public SimpleTriggerFactoryBean userScheduledIndexationTrigger(
-      @Qualifier("userIndexationFullJob") JobDetail userIndexationFullJob) {
-      SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-      factoryBean.setName("User re-indexation");
-      factoryBean.setDescription("Periodic re-indexation of all users of the application");
-      factoryBean.setJobDetail(userIndexationFullJob);
-      factoryBean.setStartDelay((long) 30 * 1000);
-      factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
-      factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
-      factoryBean.setMisfireInstruction(
-        SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
-      return factoryBean;
-    }
+      @Override
+      public Function<UserDTO, SummaryDTO> getSummaryFunction() {
+        return u -> SummaryDTOBuilder.create().id(u.getId()).type(this.getTypeFunction().apply(u))
+          .name(u.getFirstname() + " " + u.getLastname()).description(u.getDescription())
+          .uri("/blossom/administration/users/" + u.getId()).build();
+      }
+    };
   }
+
+  @Bean
+  public IndexationEngineImpl<UserDTO> userIndexationEngine(Client client,
+    UserService userService,
+    BulkProcessor bulkProcessor,
+    ObjectMapper objectMapper,
+    IndexationEngineConfiguration<UserDTO> userIndexationEngineConfiguration) {
+    return new IndexationEngineImpl<>(client, userService, bulkProcessor, objectMapper,
+      userIndexationEngineConfiguration);
+  }
+
+
+  @Bean
+  public SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration() {
+    return new SearchEngineConfiguration<UserDTO>() {
+      @Override
+      public String getName() {
+        return "menu.administration.users";
+      }
+
+      @Override
+      public Class<UserDTO> getSupportedClass() {
+        return UserDTO.class;
+      }
+
+      @Override
+      public String[] getFields() {
+        return new String[]{"dto.identifier", "dto.email", "dto.firstname", "dto.lastname",
+          "dto.company", "dto.description", "dto.function"};
+      }
+
+      @Override
+      public String getAlias() {
+        return "users";
+      }
+    };
+  }
+
+  @Bean
+  public SearchEngineImpl<UserDTO> userSearchEngine(Client client, ObjectMapper objectMapper,
+    SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration) {
+    return new SearchEngineImpl<>(client, objectMapper, userSearchEngineConfiguration);
+  }
+
+  @Bean
+  @Qualifier("userIndexationFullJob")
+  public JobDetailFactoryBean userIndexationFullJob() {
+    JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+    factoryBean.setJobClass(UserIndexationJob.class);
+    factoryBean.setGroup("Indexation");
+    factoryBean.setName("Users Indexation Job");
+    factoryBean.setDescription("Users full indexation Job");
+    factoryBean.setDurability(true);
+    return factoryBean;
+  }
+
+  @Bean
+  @Qualifier("userScheduledIndexationTrigger")
+  public SimpleTriggerFactoryBean userScheduledIndexationTrigger(
+    @Qualifier("userIndexationFullJob") JobDetail userIndexationFullJob) {
+    SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+    factoryBean.setName("User re-indexation");
+    factoryBean.setDescription("Periodic re-indexation of all users of the application");
+    factoryBean.setJobDetail(userIndexationFullJob);
+    factoryBean.setStartDelay((long) 30 * 1000);
+    factoryBean.setRepeatInterval(1 * 60 * 60 * 1000);
+    factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
+    factoryBean.setMisfireInstruction(
+      SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
+    return factoryBean;
+  }
+
 }

@@ -1,6 +1,6 @@
 package fr.blossom.autoconfigure.ui.web.administration;
 
-import fr.blossom.autoconfigure.core.CommonAutoConfiguration;
+import fr.blossom.autoconfigure.ui.web.WebInterfaceAutoConfiguration;
 import fr.blossom.core.association_user_group.AssociationUserGroupService;
 import fr.blossom.core.common.utils.privilege.Privilege;
 import fr.blossom.core.common.utils.privilege.SimplePrivilege;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnClass(MembershipsController.class)
-@AutoConfigureAfter(CommonAutoConfiguration.class)
+@AutoConfigureAfter(WebInterfaceAutoConfiguration.class)
 public class WebAdministrationMembershipAutoConfiguration {
 
     @Bean

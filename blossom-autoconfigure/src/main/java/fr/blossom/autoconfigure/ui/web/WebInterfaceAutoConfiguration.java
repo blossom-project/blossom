@@ -3,6 +3,7 @@ package fr.blossom.autoconfigure.ui.web;
 import static fr.blossom.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
 import static fr.blossom.autoconfigure.ui.WebSecurityAutoConfiguration.BLOSSOM_REMEMBER_ME_COOKIE_NAME;
 
+import fr.blossom.autoconfigure.ui.WebContextAutoConfiguration;
 import fr.blossom.core.common.PluginConstants;
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.search.SearchEngine;
@@ -26,6 +27,7 @@ import java.util.Set;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
@@ -47,6 +49,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @ConditionalOnWebApplication
 @ConditionalOnClass(HomeController.class)
+@AutoConfigureAfter(WebContextAutoConfiguration.class)
 public class WebInterfaceAutoConfiguration {
 
   @Configuration

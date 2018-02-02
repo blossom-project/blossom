@@ -1,6 +1,7 @@
 package fr.blossom.autoconfigure.ui.web.administration;
 
 import fr.blossom.autoconfigure.core.CommonAutoConfiguration;
+import fr.blossom.autoconfigure.ui.web.WebInterfaceAutoConfiguration;
 import fr.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.blossom.core.common.utils.privilege.Privilege;
 import fr.blossom.core.common.utils.privilege.SimplePrivilege;
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnClass(ResponsabilitiesController.class)
-@AutoConfigureAfter(CommonAutoConfiguration.class)
+@AutoConfigureAfter(WebInterfaceAutoConfiguration.class)
 public class WebAdministrationResponsabilityAutoConfiguration {
 
     @Bean

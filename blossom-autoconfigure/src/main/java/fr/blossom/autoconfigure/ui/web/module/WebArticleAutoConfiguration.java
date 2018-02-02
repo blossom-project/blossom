@@ -1,6 +1,6 @@
 package fr.blossom.autoconfigure.ui.web.module;
 
-import fr.blossom.autoconfigure.core.CommonAutoConfiguration;
+import fr.blossom.autoconfigure.ui.web.WebInterfaceAutoConfiguration;
 import fr.blossom.core.common.search.SearchEngineImpl;
 import fr.blossom.core.common.utils.privilege.Privilege;
 import fr.blossom.core.common.utils.privilege.SimplePrivilege;
@@ -11,7 +11,7 @@ import fr.blossom.ui.menu.MenuItemBuilder;
 import fr.blossom.ui.web.content.article.ArticlesController;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +22,8 @@ import org.springframework.core.annotation.Order;
  */
 
 @Configuration
-@ConditionalOnBean(ArticleService.class)
-@AutoConfigureAfter(CommonAutoConfiguration.class)
+@ConditionalOnClass(ArticlesController.class)
+@AutoConfigureAfter(WebInterfaceAutoConfiguration.class)
 public class WebArticleAutoConfiguration {
 
     @Bean
