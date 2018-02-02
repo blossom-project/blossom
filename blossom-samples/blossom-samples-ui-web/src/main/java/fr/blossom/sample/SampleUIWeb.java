@@ -9,10 +9,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Created by Maël Gargadennnec on 03/05/2017.
  */
 @SpringBootApplication
-public class SampleUI {
-  private final static Logger LOGGER = LoggerFactory.getLogger(SampleUI.class);
+public class SampleUIWeb {
+
+  private final static Logger LOGGER = LoggerFactory.getLogger(SampleUIWeb.class);
 
   public static void main(String[] args) {
-    SpringApplication.run(SampleUI.class, args);
+    SpringApplication.run(SampleUIWeb.class, args);
   }
 }

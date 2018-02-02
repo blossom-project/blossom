@@ -1,9 +1,8 @@
 package fr.blossom.autoconfigure.ui.web.module;
 
+import fr.blossom.autoconfigure.ui.common.privileges.ArticlePrivilegesConfiguration;
 import fr.blossom.autoconfigure.ui.web.WebInterfaceAutoConfiguration;
 import fr.blossom.core.common.search.SearchEngineImpl;
-import fr.blossom.core.common.utils.privilege.Privilege;
-import fr.blossom.core.common.utils.privilege.SimplePrivilege;
 import fr.blossom.module.article.ArticleDTO;
 import fr.blossom.module.article.ArticleService;
 import fr.blossom.ui.menu.MenuItem;
@@ -11,10 +10,12 @@ import fr.blossom.ui.menu.MenuItemBuilder;
 import fr.blossom.ui.web.content.article.ArticlesController;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 
 /**
@@ -22,11 +23,20 @@ import org.springframework.core.annotation.Order;
  */
 
 @Configuration
-@ConditionalOnClass(ArticlesController.class)
+@ConditionalOnClass({ArticleService.class, ArticlesController.class})
+@ConditionalOnBean(ArticleService.class)
 @AutoConfigureAfter(WebInterfaceAutoConfiguration.class)
+@Import(ArticlePrivilegesConfiguration.class)
 public class WebArticleAutoConfiguration {
 
-    @Bean
+  private final ArticlePrivilegesConfiguration articlePrivilegesConfiguration;
+
+  public WebArticleAutoConfiguration(
+    ArticlePrivilegesConfiguration articlePrivilegesConfiguration) {
+    this.articlePrivilegesConfiguration = articlePrivilegesConfiguration;
+  }
+
+  @Bean
     @Order(3)
     @ConditionalOnMissingBean(name = "contentMenuItem")
     public MenuItem contentMenuItem(MenuItemBuilder builder) {
@@ -48,7 +58,7 @@ public class WebArticleAutoConfiguration {
                 .link("/blossom/content/articles")
                 .icon("fa fa-pencil")
                 .order(0)
-                .privilege(articleReadPrivilegePlugin())
+                .privilege(articlePrivilegesConfiguration.articleReadPrivilegePlugin())
                 .parent(contentMenuItem)
                 .build();
     }
@@ -57,25 +67,5 @@ public class WebArticleAutoConfiguration {
     public ArticlesController articleManagerController(ArticleService articleService,
                                                        SearchEngineImpl<ArticleDTO> searchEngine) {
         return new ArticlesController(articleService, searchEngine);
-    }
-
-    @Bean
-    public Privilege articleReadPrivilegePlugin() {
-        return new SimplePrivilege("content", "articles", "read");
-    }
-
-    @Bean
-    public Privilege articleManagerWritePrivilegePlugin() {
-        return new SimplePrivilege("content", "articles", "write");
-    }
-
-    @Bean
-    public Privilege articleManagerCreatePrivilegePlugin() {
-        return new SimplePrivilege("content", "articles", "create");
-    }
-
-    @Bean
-    public Privilege articleManagerDeletePrivilegePlugin() {
-        return new SimplePrivilege("content", "articles", "delete");
     }
 }

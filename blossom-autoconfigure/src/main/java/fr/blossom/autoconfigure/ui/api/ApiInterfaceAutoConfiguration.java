@@ -80,39 +80,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 @Configuration
 @ConditionalOnWebApplication
 @ConditionalOnClass(UsersApiController.class)
-public class WebApiAutoConfiguration {
-
-  @Bean
-  public UsersApiController usersApiController(UserService userService,
-    SearchEngineImpl<UserDTO> searchEngine, Tika tika) {
-    return new UsersApiController(userService, searchEngine, tika);
-  }
-
-  @Bean
-  public GroupsApiController groupsApiController(GroupService groupService,
-    SearchEngineImpl<GroupDTO> searchEngine) {
-    return new GroupsApiController(groupService, searchEngine);
-  }
-
-  @Bean
-  public RolesApiController rolesApiController(RoleService roleService,
-    SearchEngineImpl<RoleDTO> searchEngine) {
-    return new RolesApiController(roleService, searchEngine);
-  }
-
-  @Bean
-  public MembershipsApiController membershipsApiController(
-    AssociationUserGroupService associationUserGroupService, UserService userService,
-    GroupService groupService) {
-    return new MembershipsApiController(associationUserGroupService, userService, groupService);
-  }
-
-  @Bean
-  public ResponsabilitiesApiController responsabilitiesApiController(
-    AssociationUserRoleService associationUserRoleService, UserService userService,
-    RoleService roleService) {
-    return new ResponsabilitiesApiController(associationUserRoleService, userService, roleService);
-  }
+public class ApiInterfaceAutoConfiguration {
 
   @Bean
   public OmnisearchApiController omnisearchApiController(Client client,

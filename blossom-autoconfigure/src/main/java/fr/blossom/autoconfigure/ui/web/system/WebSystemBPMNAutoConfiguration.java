@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @AutoConfigureAfter({CamundaBpmAutoConfiguration.class})
-@ConditionalOnClass(BPMNManagerController.class)
+@ConditionalOnClass({ProcessEngine.class,BPMNManagerController.class})
 @ConditionalOnBean(ProcessEngine.class)
 public class WebSystemBPMNAutoConfiguration {
 

@@ -53,12 +53,6 @@ public class WebSecurityAutoConfiguration {
 
   public static final String BLOSSOM_REMEMBER_ME_COOKIE_NAME = "blossom";
 
-  private final AssociationUserRoleService associationUserRoleService;
-
-  public WebSecurityAutoConfiguration(AssociationUserRoleService associationUserRoleService) {
-    this.associationUserRoleService = associationUserRoleService;
-  }
-
   @Bean
   public LoginAttemptsService loginAttemptsService() {
     return new LoginAttemptServiceImpl(10);
@@ -119,11 +113,6 @@ public class WebSecurityAutoConfiguration {
       compositeUserDetailsService, loginAttempsService);
     provider.setPasswordEncoder(passwordEncoder);
     return provider;
-  }
-
-  @Bean
-  public SessionRegistry blossomSessionRegistry() {
-    return new BlossomSessionRegistryImpl(associationUserRoleService);
   }
 
   @Configuration

@@ -19,7 +19,6 @@ fr.blossom.autoconfigure.module.ArticleAutoConfiguration,\
 fr.blossom.autoconfigure.ui.MenuAutoConfiguration,\
 fr.blossom.autoconfigure.ui.WebContextAutoConfiguration,\
 fr.blossom.autoconfigure.ui.WebSecurityAutoConfiguration,\
-fr.blossom.autoconfigure.ui.api.WebApiAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.WebInterfaceAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.administration.WebAdministrationUserAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.administration.WebAdministrationGroupAutoConfiguration,\
@@ -34,4 +33,10 @@ fr.blossom.autoconfigure.ui.web.system.WebSystemLoggersAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.system.WebSystemSessionsAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.system.WebSystemBPMNAutoConfiguration,\
 fr.blossom.autoconfigure.ui.web.module.WebFileManagerAutoConfiguration,\
-fr.blossom.autoconfigure.ui.web.module.WebArticleAutoConfiguration
+fr.blossom.autoconfigure.ui.web.module.WebArticleAutoConfiguration,\
+fr.blossom.autoconfigure.ui.api.ApiInterfaceAutoConfiguration,\
+fr.blossom.autoconfigure.ui.api.administration.ApiAdministrationGroupAutoConfiguration,\
+fr.blossom.autoconfigure.ui.api.administration.ApiAdministrationMembershipAutoConfiguration,\
+fr.blossom.autoconfigure.ui.api.administration.ApiAdministrationResponsabilityAutoConfiguration,\
+fr.blossom.autoconfigure.ui.api.administration.ApiAdministrationRoleAutoConfiguration,\
+fr.blossom.autoconfigure.ui.api.administration.ApiAdministrationUserAutoConfiguration

@@ -1,15 +1,12 @@
 package fr.blossom.autoconfigure.ui.web.module;
 
-import fr.blossom.autoconfigure.core.CommonAutoConfiguration;
+import fr.blossom.autoconfigure.ui.common.privileges.FileManagerPrivilegesConfiguration;
 import fr.blossom.autoconfigure.ui.web.WebInterfaceAutoConfiguration;
 import fr.blossom.core.common.search.SearchEngineImpl;
-import fr.blossom.core.common.utils.privilege.Privilege;
-import fr.blossom.core.common.utils.privilege.SimplePrivilege;
 import fr.blossom.module.filemanager.FileDTO;
 import fr.blossom.module.filemanager.FileService;
 import fr.blossom.ui.menu.MenuItem;
 import fr.blossom.ui.menu.MenuItemBuilder;
-import fr.blossom.ui.web.content.article.ArticlesController;
 import fr.blossom.ui.web.content.filemanager.FileController;
 import fr.blossom.ui.web.content.filemanager.FileManagerController;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,6 +17,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 
 /**
@@ -28,11 +26,20 @@ import org.springframework.core.annotation.Order;
 
 @Configuration
 @ConditionalOnProperty(prefix = "blossom.filemanager.", name = "enabled")
-@ConditionalOnClass(FileController.class)
+@ConditionalOnClass({FileService.class, FileController.class})
+@ConditionalOnBean(FileService.class)
 @AutoConfigureAfter(WebInterfaceAutoConfiguration.class)
+@Import(FileManagerPrivilegesConfiguration.class)
 public class WebFileManagerAutoConfiguration {
+  private final FileManagerPrivilegesConfiguration fileManagerPrivilegesConfiguration;
 
-    @Bean
+  public WebFileManagerAutoConfiguration(
+    FileManagerPrivilegesConfiguration fileManagerPrivilegesConfiguration) {
+    this.fileManagerPrivilegesConfiguration = fileManagerPrivilegesConfiguration;
+  }
+
+
+  @Bean
     @Order(3)
     @ConditionalOnMissingBean(name = "contentMenuItem")
     public MenuItem contentMenuItem(MenuItemBuilder builder) {
@@ -53,7 +60,7 @@ public class WebFileManagerAutoConfiguration {
                 .link("/blossom/content/filemanager")
                 .icon("fa fa-photo")
                 .order(0)
-                .privilege(fileManagerReadPrivilegePlugin())
+                .privilege(fileManagerPrivilegesConfiguration.fileManagerReadPrivilegePlugin())
                 .parent(contentMenuItem).build();
     }
 
@@ -67,23 +74,4 @@ public class WebFileManagerAutoConfiguration {
         return new FileController(fileService);
     }
 
-    @Bean
-    public Privilege fileManagerReadPrivilegePlugin() {
-        return new SimplePrivilege("content", "filemanager", "read");
-    }
-
-    @Bean
-    public Privilege fileManagerWritePrivilegePlugin() {
-        return new SimplePrivilege("content", "filemanager", "write");
-    }
-
-    @Bean
-    public Privilege fileManagerCreatePrivilegePlugin() {
-        return new SimplePrivilege("content", "filemanager", "create");
-    }
-
-    @Bean
-    public Privilege fileManagerDeletePrivilegePlugin() {
-        return new SimplePrivilege("content", "filemanager", "delete");
-    }
 }

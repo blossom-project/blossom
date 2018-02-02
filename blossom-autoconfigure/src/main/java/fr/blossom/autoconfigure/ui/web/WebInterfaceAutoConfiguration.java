@@ -4,6 +4,7 @@ import static fr.blossom.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BA
 import static fr.blossom.autoconfigure.ui.WebSecurityAutoConfiguration.BLOSSOM_REMEMBER_ME_COOKIE_NAME;
 
 import fr.blossom.autoconfigure.ui.WebContextAutoConfiguration;
+import fr.blossom.core.association_user_role.AssociationUserRoleService;
 import fr.blossom.core.common.PluginConstants;
 import fr.blossom.core.common.dto.AbstractDTO;
 import fr.blossom.core.common.search.SearchEngine;
@@ -22,6 +23,7 @@ import fr.blossom.ui.web.HomeController;
 import fr.blossom.ui.web.LoginController;
 import fr.blossom.ui.web.OmnisearchController;
 import fr.blossom.ui.web.StatusController;
+import fr.blossom.ui.web.utils.session.BlossomSessionRegistryImpl;
 import java.util.Locale;
 import java.util.Set;
 import org.elasticsearch.client.Client;
@@ -51,23 +53,16 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @ConditionalOnClass(HomeController.class)
 @AutoConfigureAfter(WebContextAutoConfiguration.class)
 public class WebInterfaceAutoConfiguration {
+  private final AssociationUserRoleService associationUserRoleService;
 
-  @Configuration
-  static class BlossomErrorViewResolverConfiguration {
+  public WebInterfaceAutoConfiguration(
+    AssociationUserRoleService associationUserRoleService) {
+    this.associationUserRoleService = associationUserRoleService;
+  }
 
-    private final ApplicationContext applicationContext;
-    private final ResourceProperties resourceProperties;
-
-    BlossomErrorViewResolverConfiguration(ApplicationContext applicationContext,
-      ResourceProperties resourceProperties) {
-      this.applicationContext = applicationContext;
-      this.resourceProperties = resourceProperties;
-    }
-
-    @Bean
-    public BlossomErrorViewResolver blossomErrorViewResolver() {
-      return new BlossomErrorViewResolver(this.applicationContext, this.resourceProperties);
-    }
+  @Bean
+  public SessionRegistry blossomSessionRegistry() {
+    return new BlossomSessionRegistryImpl(associationUserRoleService);
   }
 
   @Bean
@@ -115,6 +110,25 @@ public class WebInterfaceAutoConfiguration {
   @Bean
   public LocaleControllerAdvice languageControllerAdvice(Set<Locale> availableLocales) {
     return new LocaleControllerAdvice(availableLocales);
+  }
+
+  @Configuration
+  static class BlossomErrorViewResolverConfiguration {
+
+    private final ApplicationContext applicationContext;
+    private final ResourceProperties resourceProperties;
+
+    BlossomErrorViewResolverConfiguration(ApplicationContext applicationContext,
+      ResourceProperties resourceProperties,
+      AssociationUserRoleService associationUserRoleService) {
+      this.applicationContext = applicationContext;
+      this.resourceProperties = resourceProperties;
+    }
+
+    @Bean
+    public BlossomErrorViewResolver blossomErrorViewResolver() {
+      return new BlossomErrorViewResolver(this.applicationContext, this.resourceProperties);
+    }
   }
 
   @Configuration
