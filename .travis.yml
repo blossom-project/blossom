@@ -6,7 +6,8 @@ jdk:
 sudo: false # faster builds
 
 notifications:
-    slack: blossomproject:qUPz65E4R2K8KLnZ1wmVoXKb
+    slack:
+      secure: "QIZYRxhVaOw7PwNBAuSYNLmmMFkFqHCa7gB/oUSHemxxh4a7nbHhwqrP9p2jfqnuZiuz+uzpHNChuJnhCE1lIco/XJSo9Nf7xkbW5/QsViBwZ5obhdh5xTFxhi6pJzHEdM05D3dksBromolGgZ+GQ/K2xTF/ibiUnIQYVJdlPBtKeLy33Uhv0Mrw878toV1/50qAXPD0BEtxdlyYY3IiwDvWEwifRFpuEsNA/0Lc3Kyd2li3w+30WRET9539YpvpKLAB3JO3bMr9xkPUFGe1YO2s3f1Gvx5uatZFg7O6cTYuACIQMJzCJru5Ls2GRcSZexiBIZIkufA5Wt36bwhoSE6Owyhd8SfB4xgL2EHX5RxxQwjKET6G+DoOxOAfOYy1m5cFmeZ7gpVTzMkur/6XUsUDk5OC0PxWLPkphITCaJVWSlASLCavDn+6xr40iiLM5SBjiyYN2JT/FobAuZ/MDrEUaX6t6oRqj9+82U0mb3h6XFultZn6O00WtrNG1KIVMwzvdU+AMMRhkkxirBO37D699hsf/BiGQPNK6kevkZUk/xbAI/ZWL1AMqE6kdu7TXjjgccAQI5v3perbbE8not8ka12fpgKH2jm3rhiD5DZLSjbRWUCGdVrqXJMOIzkqMRBmCECLY2DBUsmA2UQilKCpDI5G7gR3HfHcdzT2Cds="
 
 after_success:
   - mvn clean test org.jacoco:jacoco-maven-plugin:report org.eluder.coveralls:coveralls-maven-plugin:report
