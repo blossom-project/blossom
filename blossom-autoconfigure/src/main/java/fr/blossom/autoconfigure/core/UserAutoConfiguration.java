@@ -1,6 +1,7 @@
 package fr.blossom.autoconfigure.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.ByteStreams;
 import fr.blossom.core.cache.CacheConfig;
 import fr.blossom.core.cache.CacheConfig.CacheConfigBuilder;
 import fr.blossom.core.common.PluginConstants;
@@ -25,6 +26,7 @@ import fr.blossom.core.user.UserMailServiceImpl;
 import fr.blossom.core.user.UserRepository;
 import fr.blossom.core.user.UserService;
 import fr.blossom.core.user.UserServiceImpl;
+import java.io.IOException;
 import java.util.function.Function;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
@@ -74,10 +76,13 @@ public class UserAutoConfiguration {
     PasswordEncoder passwordEncoder, ActionTokenService actionTokenService,
     UserMailService userMailService,
     ApplicationEventPublisher eventPublisher,
-    @Value("classpath:/images/avatar.jpeg") Resource defaultAvatar) {
+    @Value("classpath:/images/avatar.jpeg") Resource defaultAvatarFile) throws IOException {
+    if (!defaultAvatarFile.exists()) {
+      throw new RuntimeException("Cannot find default user avatar on the classpath.");
+    }
     return new UserServiceImpl(userDao, userDTOMapper, eventPublisher, associationServicePlugins,
       passwordEncoder,
-      actionTokenService, userMailService, defaultAvatar);
+      actionTokenService, userMailService, ByteStreams.toByteArray(defaultAvatarFile.getInputStream()));
   }
 
   @Bean

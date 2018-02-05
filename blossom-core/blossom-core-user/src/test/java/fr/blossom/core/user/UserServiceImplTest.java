@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -22,15 +23,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.core.io.Resource;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -52,8 +51,7 @@ public class UserServiceImplTest {
   @Mock
   private UserMailService userMailService;
 
-  @Mock
-  private Resource defaultAvatar;
+  private byte[] defaultAvatar = new byte[1024];
 
   @Mock
   private UserDTOMapper userMapper;
@@ -63,9 +61,14 @@ public class UserServiceImplTest {
   @Mock
   private PluginRegistry<AssociationServicePlugin, Class<? extends AbstractDTO>> associationRegistry;
 
-  @InjectMocks
-  @Spy
   private UserServiceImpl userService;
+
+  @Before
+  public void setUp() throws Exception {
+    this.userService = spy(
+      new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder,
+        tokenService, userMailService, defaultAvatar));
+  }
 
   @Test
   public void test_get_by_email_optional_present() {
@@ -222,10 +225,8 @@ public class UserServiceImplTest {
     byte[] bytes = new byte[]{};
     ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
     given(userDao.getOne(anyLong())).willReturn(null);
-    given(defaultAvatar.getInputStream()).willReturn(inputStream);
 
     userService.loadAvatar(123456789L);
-    verify(defaultAvatar, times(1)).getInputStream();
   }
 
   @Test
@@ -234,10 +235,8 @@ public class UserServiceImplTest {
     byte[] bytes = new byte[]{};
     ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
     given(userDao.getOne(anyLong())).willReturn(new User());
-    given(defaultAvatar.getInputStream()).willReturn(inputStream);
 
     userService.loadAvatar(123456789L);
-    verify(defaultAvatar, times(1)).getInputStream();
   }
 
   @Test

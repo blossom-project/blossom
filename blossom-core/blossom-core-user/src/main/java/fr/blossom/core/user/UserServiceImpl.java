@@ -10,18 +10,20 @@ import fr.blossom.core.common.service.AssociationServicePlugin;
 import fr.blossom.core.common.service.GenericCrudServiceImpl;
 import fr.blossom.core.common.utils.action_token.ActionToken;
 import fr.blossom.core.common.utils.action_token.ActionTokenService;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.core.io.Resource;
-import org.springframework.plugin.core.PluginRegistry;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.plugin.core.PluginRegistry;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
@@ -32,7 +34,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
   private final UserDao userDao;
   private final ActionTokenService tokenService;
   private final UserMailService userMailService;
-  private final Resource defaultAvatar;
+  private final byte[] defaultAvatar;
 
   private final String creationDateParameter = "creationDate";
 
@@ -41,7 +43,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
     ApplicationEventPublisher publisher,
     PluginRegistry<AssociationServicePlugin, Class<? extends AbstractDTO>> associationRegistry,
     PasswordEncoder passwordEncoder, ActionTokenService tokenService, UserMailService userMailService,
-    Resource defaultAvatar) {
+    byte[] defaultAvatar) {
     super(dao, mapper, publisher, associationRegistry);
     Preconditions.checkNotNull(passwordEncoder);
     Preconditions.checkNotNull(dao);
@@ -176,7 +178,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
     if (user != null && user.getAvatar() != null) {
       return new ByteArrayInputStream(user.getAvatar());
     } else {
-      return defaultAvatar.getInputStream();
+      return new ByteArrayInputStream(defaultAvatar);
     }
   }
 
