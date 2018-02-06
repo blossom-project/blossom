@@ -14,7 +14,7 @@
       <div class="sk-rect5"></div>
     </div>
 
-      <div id="privilegeTree"></div>
+      <div id="privilegeTree_edit"></div>
   </div>
 
   <div class="ibox-footer">
@@ -46,17 +46,17 @@
 
 
     $.get("privileges/tree", function (data) {
-      $('#privilegeTree').closest(".ibox-content").removeClass("sk-loading");
+      $('#privilegeTree_edit').closest(".ibox-content").removeClass("sk-loading");
 
-      $('#privilegeTree').jstree({
+      $('#privilegeTree_edit').jstree({
         'core': {
           'data': [transformNode(data)]
         },
         'plugins': ["checkbox"]
       }).on('ready.jstree', function (e, data) {
-        $("#privilegeTree").jstree(true).open_all();
+        $("#privilegeTree_edit").jstree(true).open_all();
         $.each(selectedPrivileges, function(i, p){
-          $("#privilegeTree").jstree(true).check_node(p.replace(new RegExp(":", 'g'), '.'));
+          $("#privilegeTree_edit").jstree(true).check_node(p);
         });
       });
     });
@@ -68,11 +68,10 @@
     var edit = $(targetSelector).data("edit");
     var form = $(targetSelector + ' > form');
 
-    var selected = $("#privilegeTree").jstree(true).get_checked(null, true);
+    var selected = $("#privilegeTree_edit").jstree(true).get_checked(null, true);
     $.each(selected, function(index,value){
       form.append("<input type='hidden' name='privileges' value='"+value+"'/>");
     });
-
 
     $.post(edit, form.serialize()).done(function (responseText, textStatus, jqXHR) {
       $(targetSelector).html(responseText);

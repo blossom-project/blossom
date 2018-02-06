@@ -25,7 +25,6 @@
     <module>blossom-ui</module>
     <module>blossom-autoconfigure</module>
     <module>blossom-starters</module>
-    <module>blossom-samples</module>
     <module>blossom-tools</module>
     <module>blossom-integration</module>
   </modules>

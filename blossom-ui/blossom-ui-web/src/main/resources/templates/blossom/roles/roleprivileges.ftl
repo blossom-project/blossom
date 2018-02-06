@@ -44,7 +44,6 @@
         return node;
       };
 
-
       $.get("privileges/tree", function (data) {
         $('#privilegeTree').closest(".ibox-content").removeClass("sk-loading");
 
