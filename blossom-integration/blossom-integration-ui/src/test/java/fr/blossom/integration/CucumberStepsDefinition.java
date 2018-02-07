@@ -1,4 +1,4 @@
-package fr.blossom.sample;
+package com.blossom_project.sample;
 
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

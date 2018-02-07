@@ -1,4 +1,4 @@
-package fr.blossom.sample.utils;
+package com.blossom_project.sample.utils;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

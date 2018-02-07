@@ -1,6 +1,6 @@
-package fr.blossom.sample.builder;
+package com.blossom_project.sample.builder;
 
-import fr.blossom.core.user.User;
+import com.blossom_project.core.user.User;
 
 import java.util.Date;
 import java.util.Locale;

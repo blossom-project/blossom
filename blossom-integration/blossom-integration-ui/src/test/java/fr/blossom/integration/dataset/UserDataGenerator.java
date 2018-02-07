@@ -1,8 +1,8 @@
-package fr.blossom.sample.dataset;
+package com.blossom_project.sample.dataset;
 
-import fr.blossom.core.user.User;
-import fr.blossom.core.user.UserRepository;
-import fr.blossom.sample.builder.UserBuilder;
+import com.blossom_project.core.user.User;
+import com.blossom_project.core.user.UserRepository;
+import com.blossom_project.sample.builder.UserBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
