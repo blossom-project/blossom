@@ -1,8 +1,8 @@
-package fr.blossom.sample;
+package com.blossom_project.sample;
 
-import fr.blossom.core.user.UserRepository;
-import fr.blossom.sample.dataset.DataGenerator;
-import fr.blossom.sample.dataset.UserDataGenerator;
+import com.blossom_project.core.user.UserRepository;
+import com.blossom_project.sample.dataset.DataGenerator;
+import com.blossom_project.sample.dataset.UserDataGenerator;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

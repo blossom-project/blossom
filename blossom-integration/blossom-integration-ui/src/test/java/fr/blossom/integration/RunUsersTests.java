@@ -1,4 +1,4 @@
-package fr.blossom.sample;
+package com.blossom_project.sample;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
