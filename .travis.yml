@@ -24,8 +24,8 @@ cache:
 after_success:
 - pushd ./cd
 - ./before-deploy.sh
-- ./deploy.sh
 - popd
+- ./deploy.sh
 
 notifications:
   slack:
