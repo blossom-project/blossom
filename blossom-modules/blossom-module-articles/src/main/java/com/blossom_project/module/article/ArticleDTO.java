@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ArticleDTO extends AbstractDTO {
 
   private String name;
+  private String description;
 
   public String getName() {
     return name;
@@ -17,4 +18,11 @@ public class ArticleDTO extends AbstractDTO {
     this.name = name;
   }
 
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
 }

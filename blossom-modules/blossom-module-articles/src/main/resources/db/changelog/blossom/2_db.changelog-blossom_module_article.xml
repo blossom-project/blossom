@@ -15,6 +15,10 @@
         <constraints nullable="false"/>
       </column>
 
+      <column name="description" type="clob">
+        <constraints nullable="true"/>
+      </column>
+
       <column name="creation_date" type="timestamp">
         <constraints nullable="false"/>
       </column>

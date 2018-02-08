@@ -14,7 +14,6 @@ public class ArticleUpdateForm {
     @NotBlank(message = "{articles.article.validation.name.NotBlank.message}")
     private String name = "";
 
-
     public String getName() {
         return name;
     }
