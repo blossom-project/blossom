@@ -23,8 +23,8 @@ cache:
 
 after_success:
 - pushd ./cd
-- before-deploy.sh
-- deploy.sh
+- ./before-deploy.sh
+- ./deploy.sh
 - popd
 
 notifications:
