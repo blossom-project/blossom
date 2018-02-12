@@ -14,8 +14,7 @@ env:
    - secure: "m1avFILU618AUmEptS0IevpeOfn+qemnZAD0LmlKtxnp6q1Tz6hjRvo76X2h6bo31KJ7CAxLXQFc9j+NrC3HEFBGDCYaiDLsj6LVDmiZUKBxdn8q7/xo/4rYi/PE5nSQETUEv2cHb5Ac9z+QYKEKqpnlj2xDClXRi3BZhtX4Rt1hbzSpduvmm2wQ2RXXsxx5R2EFcz4xjOmbYcquhYWO0GIZjjhqIxJraKKHesRphMsWTFCWIWBqOAo5/M+/K5QWPkMmuXt4GB5VTLrSLu+S6ui0moIGQjV2B3svGBbWNKy2eIqL9ePjHSJtqYKTqDeE/mNIv1/Lsb7w2XnYdi/Wk2msvD8mZo+yvvoAmRZoQbFKQARfFvoBNytuPverysjw22KLMTkWHkVl4hDAmvE675RtjYfxy1T5LU47jt6+ib0DD87uPBkNPk9I2KqXY1z/mzrtm4GYtxKucbkO7rdk4ZUCw81628m8JG5/H68nM+8fsG12qwCZHX8np9m0MolwCeM1Z7Y9hFzIfLcKSGDXBRRAjOEKkmYE1oATFZvLVB2VoIj1F0AF2U3GB3IUHkEOPIdma2F7WXeDAdioeSf5MQ+L7fgxjafMpgwV9Sfc8KR1LAq4cvIAm2pXD1lB8W01xykBHj6bzCygNQqI6NefaCh4lYujdhTVHqax6mv8kLM="
    - # ^^ GPG_PASSPHRASE
 
-install: mvn install -P !build-extras -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-script: mvn test org.jacoco:jacoco-maven-plugin:report org.eluder.coveralls:coveralls-maven-plugin:report -P !build-extras -B
+install: mvn clean install org.jacoco:jacoco-maven-plugin:report org.eluder.coveralls:coveralls-maven-plugin:report -P !build-extras  -B -V
 
 cache:
   directories:
