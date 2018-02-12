@@ -11,6 +11,7 @@ import com.blossom_project.core.common.utils.privilege.Privilege;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Optional;
@@ -33,11 +34,16 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.context.MessageSourceProperties;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -50,6 +56,7 @@ import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.util.StringUtils;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
@@ -131,7 +138,35 @@ public class CommonAutoConfiguration {
   }
 
   @Bean
-  public BlossomReloadableResourceBundleMessageSource messageSource() throws IOException {
+  @ConfigurationProperties(prefix = "spring.messages")
+  public MessageSourceProperties messageSourceProperties() {
+    return new MessageSourceProperties();
+  }
+
+  @Bean
+  @Primary
+  public MessageSource messageSource( BlossomReloadableResourceBundleMessageSource parentMmessageSource) {
+    MessageSourceProperties properties = messageSourceProperties();
+    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    if (StringUtils.hasText(properties.getBasename())) {
+      messageSource.setBasenames(StringUtils.commaDelimitedListToStringArray(
+        StringUtils.trimAllWhitespace(properties.getBasename())));
+    }
+    if (properties.getEncoding() != null) {
+      messageSource.setDefaultEncoding(properties.getEncoding().name());
+    }
+    messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
+    Duration cacheDuration = properties.getCacheDuration();
+    messageSource.setCacheSeconds(
+      cacheDuration == null ? -1 : (int) cacheDuration.getSeconds());
+    messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());
+    messageSource.setUseCodeAsDefaultMessage(properties.isUseCodeAsDefaultMessage());
+    messageSource.setParentMessageSource(parentMmessageSource);
+    return messageSource;
+  }
+
+  @Bean
+  public BlossomReloadableResourceBundleMessageSource parentMmessageSource() throws IOException {
     PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
     Set<String> resources = Lists
       .newArrayList(resolver.getResources("classpath*:/messages/*.properties")).stream()
