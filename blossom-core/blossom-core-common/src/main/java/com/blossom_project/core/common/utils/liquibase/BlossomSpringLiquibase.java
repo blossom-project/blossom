@@ -3,7 +3,7 @@ package com.blossom_project.core.common.utils.liquibase;
 import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,7 +36,7 @@ public class BlossomSpringLiquibase extends SpringLiquibase {
     @Override
     public Set<String> list(String relativeTo, String path, boolean includeFiles,
       boolean includeDirectories, boolean recursive) throws IOException {
-      Set<String> returnSet = new HashSet<String>();
+      Set<String> returnSet = new LinkedHashSet<String>();
       if(path.startsWith("classpath*:")) {
         String tempFile = FilenameUtils.concat(FilenameUtils.getFullPath(relativeTo), path);
         final String classpathBasePath = path.substring("classpath*:".length()) + (path.endsWith("/") ? "" : "/");
