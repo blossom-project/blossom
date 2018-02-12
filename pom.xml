@@ -80,7 +80,6 @@
     <module>blossom-autoconfigure</module>
     <module>blossom-starters</module>
     <module>blossom-tools</module>
-    <module>blossom-integration</module>
   </modules>
 
 
