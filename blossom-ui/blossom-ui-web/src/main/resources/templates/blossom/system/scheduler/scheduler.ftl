@@ -47,8 +47,10 @@
                     </h2>
                     <p><strong><i class="fa fa-clock-o"></i> ${scheduler.start?datetime}</strong></p>
                     <small>
-                      <#assign detailsArgs = ["${scheduler.jobs?c}", "${scheduler.triggers?c}", "${scheduler.poolsize?c}"]/>
-                      <@spring.messageArgs "scheduler.details" detailsArgs/>
+                      <#outputformat "plainText">
+                        <#assign detailsArgs = ["${scheduler.jobs?c}", "${scheduler.triggers?c}", "${scheduler.poolsize?c}"]/>
+                        ${springMacroRequestContext.getMessage("scheduler.details", detailsArgs)}
+                     </#outputformat>
                     </small>
                   </div>
                 </div>
