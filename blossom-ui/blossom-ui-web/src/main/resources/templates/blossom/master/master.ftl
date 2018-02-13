@@ -33,6 +33,12 @@
         $(document).ajaxSend(function(e, xhr, options) {
           xhr.setRequestHeader(header, token);
         });
+        $(document).ajaxError(function( event, jqxhr, settings, thrownError ) {
+          console.log( event, jqxhr, settings, thrownError );
+          if(jqxhr.status === 401){
+            window.location.href="/blossom/login";
+          }
+        });
       });
     </script>
   </body>
