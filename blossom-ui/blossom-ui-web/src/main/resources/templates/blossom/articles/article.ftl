@@ -14,7 +14,7 @@
         <a href="/blossom"><@spring.message "menu.home"/></a>
       </li>
       <li>
-        <a href="/blossom/content"><@spring.message "menu.content"/></a>
+        <@spring.message "menu.content"/>
       </li>
       <li>
         <a href="/blossom/content/articles"><@spring.message "articles.title"/></a>
