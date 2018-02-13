@@ -28,7 +28,11 @@
         </h2>
 
         <p>
-          <@spring.message "change.password.message"/>
+        <@spring.message "change.password.message"/>
+        </p>
+
+        <p>
+        <@spring.message "change.password.constraints"/>
         </p>
 
         <div class="row">
