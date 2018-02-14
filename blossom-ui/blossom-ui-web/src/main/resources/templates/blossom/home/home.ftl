@@ -27,7 +27,7 @@
     <div class="error-desc">
       You can create here any grid layout you want. And any variation layout you imagine:) Check out
       main dashboard and other site. It use many different layout.
-      <br><a href="index.html" class="btn btn-primary m-t">Dashboard</a>
+      <br><a href="/blossom/system/dashboard" class="btn btn-primary m-t">Dashboard</a>
     </div>
   </div>
 </div>
