@@ -230,10 +230,11 @@ public class RolesControllerTest {
 
     @Test
     public void should_display_one_form_edit_with_id_not_found() throws Exception {
+        HttpServletRequest req = mock(HttpServletRequest.class);
         when(service.getOne(any(Long.class))).thenReturn(null);
         thrown.expect(NoSuchElementException.class);
         thrown.expectMessage(String.format("Role=%s not found", 1L));
-        controller.getRoleInformations(1L);
+        controller.getRoleInformationsForm(1L, new ExtendedModelMap(), req);
     }
 
     @Test
