@@ -56,7 +56,7 @@ public class ExecutionPlanBuilder {
   }
 
   public ExecutionPlanBuilder allResources() {
-    return this.messagesPropertiesGenerator().changelogGenerator().listViewGenerator();
+    return this.messagesPropertiesGenerator().changelogGenerator().listViewGenerator().createViewGenerator();
   }
 
   public ExecutionPlanBuilder entity() {
@@ -118,6 +118,11 @@ public class ExecutionPlanBuilder {
     return this;
   }
 
+  public ExecutionPlanBuilder createViewGenerator() {
+    this.createViewGenerator = new CreateViewGenerator();
+    return this;
+  }
+
 
   public ExecutionPlan build() {
     List<ClassGenerator> classGenerators = Lists
@@ -127,7 +132,7 @@ public class ExecutionPlanBuilder {
     Iterables.removeIf(classGenerators, Predicates.isNull());
 
     List<ResourceGenerator> resourceGenerators = Lists
-      .newArrayList(changelogGenerator, messagesPropertiesGenerator, listViewGenerator);
+      .newArrayList(changelogGenerator, messagesPropertiesGenerator, listViewGenerator, createViewGenerator);
     Iterables.removeIf(resourceGenerators, Predicates.isNull());
 
     return new DefaultExecutionPlan(classGenerators, resourceGenerators);

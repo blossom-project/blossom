@@ -1,16 +1,7 @@
 package com.blossomproject.generator.classes;
 
 import com.google.common.base.Strings;
-import com.helger.jcodemodel.AbstractJClass;
-import com.helger.jcodemodel.JBlock;
-import com.helger.jcodemodel.JCodeModel;
-import com.helger.jcodemodel.JConditional;
-import com.helger.jcodemodel.JDefinedClass;
-import com.helger.jcodemodel.JExpr;
-import com.helger.jcodemodel.JFieldVar;
-import com.helger.jcodemodel.JMethod;
-import com.helger.jcodemodel.JMod;
-import com.helger.jcodemodel.JVar;
+import com.helger.jcodemodel.*;
 import com.blossomproject.core.common.search.SearchEngineImpl;
 import com.blossomproject.generator.utils.GeneratorUtils;
 import com.blossomproject.generator.configuration.model.Settings;
@@ -23,21 +14,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
+import java.util.Locale;
 
 public class ControllerGenerator implements ClassGenerator {
 
   private AbstractJClass dtoClass;
   private AbstractJClass serviceClass;
-
+  private AbstractJClass createFormClass;
 
   @Override
   public void prepare(Settings settings, JCodeModel codeModel) {
     this.dtoClass = codeModel.ref(GeneratorUtils.getDtoFullyQualifiedClassName(settings));
     this.serviceClass = codeModel.ref(GeneratorUtils.getServiceFullyQualifiedClassName(settings));
+    this.createFormClass = codeModel.ref(GeneratorUtils.getCreateFormFullyQualifiedClassName(settings));
   }
 
   @Override
@@ -47,7 +41,7 @@ public class ControllerGenerator implements ClassGenerator {
         ._class(GeneratorUtils.getControllerFullyQualifiedClassName(settings));
       definedClass.annotate(BlossomController.class);
       definedClass.annotate(RequestMapping.class)
-        .param("value", "/modules/" + settings.getEntityNameLowerUnderscore() + "s");
+        .param("value", "/modules/" + settings.getEntityName() + "s");
       definedClass.annotate(OpenedMenu.class)
         .param("value", settings.getEntityNameLowerUnderscore() + "s");
 
@@ -67,7 +61,16 @@ public class ControllerGenerator implements ClassGenerator {
       constructor.body().assign(JExpr.refthis(searchEngine.name()),
         constructor.param(codeModel.ref(SearchEngineImpl.class).narrow(dtoClass), "searchEngine"));
 
-      JMethod method = buildGetPage(definedClass, settings, codeModel, service, searchEngine);
+      JMethod methodGetPage = buildGetPage(definedClass, settings, codeModel, service, searchEngine);
+
+      JMethod methodGetCreatePage = buildGetCreatePage(definedClass, settings, codeModel, service, searchEngine);
+
+      JMethod methodHandleCreateForm = buildHandleCreateForm(definedClass, settings, codeModel, service, searchEngine);
+
+      JMethod methodCreateView = buildCreateView(definedClass, codeModel, settings);
+
+
+
 
       return definedClass;
     } catch (Exception e) {
@@ -78,7 +81,7 @@ public class ControllerGenerator implements ClassGenerator {
 
   private JMethod buildGetPage(JDefinedClass definedClass, Settings settings,
     JCodeModel codeModel, JFieldVar service, JFieldVar searchEngine) {
-    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "getPage");
+    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "get"+settings.getEntityName()+"sPage");
     method.annotate(GetMapping.class);
     method.annotate(PreAuthorize.class).param("value",
       "hasAuthority('modules:" + settings.getEntityNameLowerUnderscore() + "s:read')");
@@ -108,6 +111,73 @@ public class ControllerGenerator implements ClassGenerator {
     body._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(
       "modules/" + settings.getEntityNameLowerUnderscore() + "s" + "/" + settings
         .getEntityNameLowerUnderscore() + "s").arg(model.invoke("asMap")));
+
+    return method;
+  }
+
+  private JMethod buildHandleCreateForm(JDefinedClass definedClass, Settings settings,
+                                      JCodeModel codeModel, JFieldVar service, JFieldVar searchEngine) {
+    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "handle"+settings.getEntityName()+"CreateForm");
+    method.annotate(PostMapping.class).param("value", "/_create");
+    method.annotate(PreAuthorize.class).param("value",
+            "hasAuthority('modules:" + settings.getEntityNameLowerUnderscore() + "s:create')");
+
+    JVar createForm = method.param(createFormClass, "createForm");
+    createForm.annotate(Valid.class);
+    createForm.annotate(ModelAttribute.class).param("value", settings.getEntityNameLowerCamel()+"CreateForm");
+
+    JVar bindingResult = method.param(BindingResult.class, "bindingResult");
+
+    JVar model = method.param(Model.class, "model");
+
+    JBlock body = method.body();
+
+    JConditional ifCondition = body._if(bindingResult.invoke("hasErrors"));
+    ifCondition._then()._return(JExpr._this().invoke("createView").arg(createForm).arg(model));
+
+    JTryBlock tryBlock = body._try();
+    JVar entity = tryBlock.body().decl(dtoClass,"entity", JExpr.refthis(service.name()).invoke("create").arg(createForm));
+    tryBlock.body()._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(JExpr.lit("redirect:../"+settings.getEntityNameLowerCamel()+"s/").plus(entity.invoke("getId"))));
+
+    JCatchBlock catchBlock = tryBlock._catch(codeModel.ref(Exception.class));
+    catchBlock.body().add(JExpr.refthis("logger").invoke("error").arg( JExpr.lit("Error on creating article, name ").plus(createForm.invoke("getName")).plus(" already exists ")).arg(catchBlock.param("e")));
+
+    catchBlock.body()._return(JExpr._this().invoke("createView").arg(createForm).arg(model));
+
+    return method;
+  }
+
+  private JMethod buildGetCreatePage(JDefinedClass definedClass, Settings settings,
+                                     JCodeModel codeModel, JFieldVar service, JFieldVar searchEngine) {
+    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "get"+settings.getEntityName()+"CreatePage");
+    method.annotate(GetMapping.class).param("value", "/_create");
+    method.annotate(PreAuthorize.class).param("value",
+            "hasAuthority('modules:" + settings.getEntityNameLowerUnderscore() + "s:create')");
+
+    JVar model = method.param(Model.class, "model");
+
+    JVar locale = method.param(Locale.class, "locale");
+
+    JBlock body = method.body();
+
+    JVar entityCreateForm = body.decl(createFormClass, "createForm", JExpr._new(createFormClass));
+
+    body._return(JExpr._this().invoke("createView").arg(entityCreateForm).arg(model));
+
+    return method;
+  }
+
+  private JMethod buildCreateView (JDefinedClass definedClass,
+                                   JCodeModel codeModel, Settings settings) {
+    JMethod method = definedClass.method(JMod.PRIVATE, ModelAndView.class, "createView");
+    JVar createForm = method.param(createFormClass, "createForm");
+    JVar model = method.param(Model.class, "model");
+
+    JBlock body = method.body();
+    body.add(model.invoke("addAttribute").arg(settings.getEntityNameLowerCamel()+"CreateForm").arg(createForm));
+
+    body._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(
+            "modules/" + settings.getEntityNameLowerUnderscore() + "s" + "/create").arg(model.invoke("asMap")));
 
     return method;
   }
