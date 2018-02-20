@@ -18,7 +18,12 @@ import com.blossomproject.core.user.UserCreateForm;
 import com.blossomproject.core.user.UserDTO;
 import com.blossomproject.core.user.UserService;
 import com.blossomproject.core.user.UserUpdateForm;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.apache.tika.Tika;
 import org.junit.Assert;
@@ -29,11 +34,14 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 ;
 
@@ -243,5 +251,64 @@ public class UsersApiControllerTest {
     verify(service, times(2)).getOne(eq(id));
     verify(service, times(2)).delete(any(UserDTO.class), anyBoolean());
 
+  }
+
+  @Test
+  public void should_get_avatar_with_id_found() throws Exception {
+    Long id = 1L;
+    InputStream avatar = new ByteArrayInputStream("test".getBytes());
+    when(service.loadAvatar(any(Long.class))).thenReturn(avatar);
+    when(tika.detect(any(InputStream.class))).thenReturn("image/jpeg");
+    ResponseEntity<InputStreamResource> response = controller.displayAvatar(id);
+    verify(service, times(1)).loadAvatar(eq(id));
+    Assert.assertNotNull(response);
+    Assert.assertNotNull(response.getBody());
+    Assert.assertTrue((response.getBody().getInputStream().equals(avatar)));
+    Assert.assertTrue(response.getStatusCode() == HttpStatus.OK);
+  }
+
+ @Test
+  public void should_get_avatar_with_id_not_found() throws Exception {
+    Long id = 1L;
+    InputStream defaultAvatar = new ByteArrayInputStream("defaultAvatar".getBytes());
+    when(service.loadAvatar(any(Long.class))).thenReturn(defaultAvatar);
+    when(tika.detect(any(InputStream.class))).thenReturn("image/jpeg");
+    ResponseEntity<InputStreamResource> response = controller.displayAvatar(id);
+    verify(service, times(1)).loadAvatar(eq(id));
+    Assert.assertNotNull(response);
+    Assert.assertNotNull(response.getBody());
+    Assert.assertTrue((response.getBody().getInputStream().equals(defaultAvatar)));
+    Assert.assertTrue(response.getStatusCode() == HttpStatus.OK);
+  }
+
+  @Test
+  public void should_update_avatar_with_id_found() throws Exception {
+    Long id = 1L;
+
+    when(service.getOne(any(Long.class))).thenAnswer(a -> {
+      UserDTO userDTO = new UserDTO();
+      userDTO.setId((Long) a.getArguments()[0]);
+      return userDTO;
+    });
+
+    MultipartFile multipartFile = new MockMultipartFile("testFile", "content".getBytes());
+
+    controller.updateAvatar(id, multipartFile);
+    verify(service, times(1)).getOne(eq(id));
+    verify(service, times(1)).updateAvatar(eq(id), eq(multipartFile.getBytes()));
+  }
+
+  @Test
+  public void should_update_avatar_with_id_not_found() throws Exception {
+    Long id = 1L;
+
+    when(service.getOne(any(Long.class))).thenReturn(null);
+
+    MultipartFile multipartFile = new MockMultipartFile("testFile", "content".getBytes());
+
+    thrown.expect(NoSuchElementException.class);
+    thrown.expectMessage(String.format("User=%s not found", id));
+
+    controller.updateAvatar(id, multipartFile);
   }
 }

@@ -77,7 +77,7 @@ public class GroupsController {
 
   @GetMapping("/_create")
   @PreAuthorize("hasAuthority('administration:groups:create')")
-  public ModelAndView getGroupCreatePage(Model model, Locale locale) {
+  public ModelAndView getGroupCreateForm(Model model, Locale locale) {
     GroupCreateForm groupCreateForm = new GroupCreateForm();
     groupCreateForm.setLocale(locale);
     return this.createView(groupCreateForm, model);
@@ -139,7 +139,7 @@ public class GroupsController {
 
   @GetMapping("/{id}/_informations")
   @PreAuthorize("hasAuthority('administration:groups:read')")
-  public ModelAndView getRoleInformations(@PathVariable Long id, HttpServletRequest request) {
+  public ModelAndView getGroupInformations(@PathVariable Long id, HttpServletRequest request) {
     GroupDTO group = this.groupService.getOne(id);
     if (group == null) {
       throw new NoSuchElementException(String.format("Group=%s not found", id));
@@ -168,7 +168,7 @@ public class GroupsController {
 
     GroupDTO group = this.groupService.getOne(id);
     if (group == null) {
-      throw new NoSuchElementException(String.format("Role=%s not found", id));
+      throw new NoSuchElementException(String.format("Group=%s not found", id));
     }
     group.setName(groupUpdateForm.getName());
     group.setDescription(groupUpdateForm.getDescription());
