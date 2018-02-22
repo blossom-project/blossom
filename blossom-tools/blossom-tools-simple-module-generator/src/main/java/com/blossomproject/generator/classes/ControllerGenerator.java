@@ -1,6 +1,8 @@
 package com.blossomproject.generator.classes;
 
+import com.blossomproject.core.common.dto.AbstractDTO;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.helger.jcodemodel.*;
 import com.blossomproject.core.common.search.SearchEngineImpl;
 import com.blossomproject.generator.utils.GeneratorUtils;
@@ -12,14 +14,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Locale;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class ControllerGenerator implements ClassGenerator {
 
@@ -41,7 +49,7 @@ public class ControllerGenerator implements ClassGenerator {
         ._class(GeneratorUtils.getControllerFullyQualifiedClassName(settings));
       definedClass.annotate(BlossomController.class);
       definedClass.annotate(RequestMapping.class)
-        .param("value", "/modules/" + settings.getEntityName() + "s");
+        .param("value", "/modules/" + settings.getEntityNameLowerUnderscore() + "s");
       definedClass.annotate(OpenedMenu.class)
         .param("value", settings.getEntityNameLowerUnderscore() + "s");
 
@@ -69,6 +77,14 @@ public class ControllerGenerator implements ClassGenerator {
 
       JMethod methodCreateView = buildCreateView(definedClass, codeModel, settings);
 
+      JMethod methodGetEntity = buildGetEntity(definedClass, codeModel, settings, service);
+
+      JMethod methodGetEntityInformations = buildGetEntityInformations(definedClass, codeModel, settings, service);
+
+      JMethod methodDeleteEntity = buildDeleteEntity(definedClass, settings, codeModel, service, searchEngine);
+
+      JMethod methodViewInformationView = buildViewInformationView(definedClass, codeModel, settings);
+
 
 
 
@@ -81,7 +97,7 @@ public class ControllerGenerator implements ClassGenerator {
 
   private JMethod buildGetPage(JDefinedClass definedClass, Settings settings,
     JCodeModel codeModel, JFieldVar service, JFieldVar searchEngine) {
-    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "get"+settings.getEntityName()+"sPage");
+    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "get"+settings.getEntityNameLowerCamel()+"sPage");
     method.annotate(GetMapping.class);
     method.annotate(PreAuthorize.class).param("value",
       "hasAuthority('modules:" + settings.getEntityNameLowerUnderscore() + "s:read')");
@@ -117,7 +133,7 @@ public class ControllerGenerator implements ClassGenerator {
 
   private JMethod buildHandleCreateForm(JDefinedClass definedClass, Settings settings,
                                       JCodeModel codeModel, JFieldVar service, JFieldVar searchEngine) {
-    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "handle"+settings.getEntityName()+"CreateForm");
+    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "handle"+settings.getEntityNameLowerCamel()+"CreateForm");
     method.annotate(PostMapping.class).param("value", "/_create");
     method.annotate(PreAuthorize.class).param("value",
             "hasAuthority('modules:" + settings.getEntityNameLowerUnderscore() + "s:create')");
@@ -137,7 +153,7 @@ public class ControllerGenerator implements ClassGenerator {
 
     JTryBlock tryBlock = body._try();
     JVar entity = tryBlock.body().decl(dtoClass,"entity", JExpr.refthis(service.name()).invoke("create").arg(createForm));
-    tryBlock.body()._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(JExpr.lit("redirect:../"+settings.getEntityNameLowerCamel()+"s/").plus(entity.invoke("getId"))));
+    tryBlock.body()._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(JExpr.lit("redirect:../"+settings.getEntityNameLowerUnderscore()+"s/").plus(entity.invoke("getId"))));
 
     JCatchBlock catchBlock = tryBlock._catch(codeModel.ref(Exception.class));
     catchBlock.body().add(JExpr.refthis("logger").invoke("error").arg( JExpr.lit("Error on creating article, name ").plus(createForm.invoke("getName")).plus(" already exists ")).arg(catchBlock.param("e")));
@@ -149,7 +165,7 @@ public class ControllerGenerator implements ClassGenerator {
 
   private JMethod buildGetCreatePage(JDefinedClass definedClass, Settings settings,
                                      JCodeModel codeModel, JFieldVar service, JFieldVar searchEngine) {
-    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "get"+settings.getEntityName()+"CreatePage");
+    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "get"+settings.getEntityNameLowerCamel()+"CreatePage");
     method.annotate(GetMapping.class).param("value", "/_create");
     method.annotate(PreAuthorize.class).param("value",
             "hasAuthority('modules:" + settings.getEntityNameLowerUnderscore() + "s:create')");
@@ -170,6 +186,7 @@ public class ControllerGenerator implements ClassGenerator {
   private JMethod buildCreateView (JDefinedClass definedClass,
                                    JCodeModel codeModel, Settings settings) {
     JMethod method = definedClass.method(JMod.PRIVATE, ModelAndView.class, "createView");
+
     JVar createForm = method.param(createFormClass, "createForm");
     JVar model = method.param(Model.class, "model");
 
@@ -178,6 +195,104 @@ public class ControllerGenerator implements ClassGenerator {
 
     body._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(
             "modules/" + settings.getEntityNameLowerUnderscore() + "s" + "/create").arg(model.invoke("asMap")));
+
+    return method;
+  }
+
+  private JMethod buildGetEntity (JDefinedClass definedClass,
+                                   JCodeModel codeModel, Settings settings, JFieldVar service) {
+    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "get"+settings.getEntityNameLowerCamel());
+    method.annotate(GetMapping.class).param("value", "/{id}");
+    method.annotate(PreAuthorize.class).param("value",
+            "hasAuthority('modules:" + settings.getEntityNameLowerUnderscore() + "s:read')");
+
+    JVar id = method.param(Long.class, "id");
+    id.annotate(PathVariable.class);
+    JVar model = method.param(Model.class, "model");
+    JVar request = method.param(HttpServletRequest.class, "request");
+
+    JBlock body = method.body();
+
+    JVar entity = body.decl(dtoClass,"entity", JExpr.refthis(service.name()).invoke("getOne").arg(id));
+
+    JConditional ifCondition = body._if(entity.eqNull());
+    ifCondition._then()._throw(JExpr._new(codeModel.ref(NoSuchElementException.class)).arg(codeModel.ref(String.class).staticInvoke("format").arg(settings.getEntityNameLowerCamel()+"=%s not found").arg(id)));
+
+
+    body.add(model.invoke("addAttribute").arg(settings.getEntityNameLowerCamel()).arg(entity));
+
+    body._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(
+            "modules/" + settings.getEntityNameLowerUnderscore() + "s" + "/"+settings.getEntityNameLowerUnderscore()).arg(settings.getEntityNameLowerUnderscore()).arg(entity));
+
+    return method;
+  }
+
+  private JMethod buildGetEntityInformations (JDefinedClass definedClass,
+                                  JCodeModel codeModel, Settings settings, JFieldVar service) {
+    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "get"+settings.getEntityNameLowerCamel()+"Informations");
+    method.annotate(GetMapping.class).param("value", "/{id}/_informations");
+    method.annotate(PreAuthorize.class).param("value",
+            "hasAuthority('modules:" + settings.getEntityNameLowerUnderscore() + "s:read')");
+
+    JVar id = method.param(Long.class, "id");
+    id.annotate(PathVariable.class);
+    JVar request = method.param(HttpServletRequest.class, "request");
+
+    JBlock body = method.body();
+
+    JVar entity = body.decl(dtoClass,"entity", JExpr.refthis(service.name()).invoke("getOne").arg(id));
+
+    JConditional ifCondition = body._if(entity.eqNull());
+    ifCondition._then()._throw(JExpr._new(codeModel.ref(NoSuchElementException.class)).arg(codeModel.ref(String.class).staticInvoke("format").arg(settings.getEntityNameLowerCamel()+"=%s not found").arg(id)));
+
+    body._return(JExpr._this().invoke("viewInformationView").arg(entity));
+
+    return method;
+  }
+
+  private JMethod buildViewInformationView (JDefinedClass definedClass,
+                                   JCodeModel codeModel, Settings settings) {
+    JMethod method = definedClass.method(JMod.PRIVATE, ModelAndView.class, "viewInformationView");
+
+    JVar entity = method.param(dtoClass, "entity");
+
+    JBlock body = method.body();
+
+    body._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(
+            "modules/" + settings.getEntityNameLowerUnderscore() + "s" + "/"+settings.getEntityNameLowerUnderscore()+"informations").arg(settings.getEntityNameLowerUnderscore()).arg(entity));
+
+    return method;
+  }
+
+  private JMethod buildDeleteEntity(JDefinedClass definedClass, Settings settings,
+                                     JCodeModel codeModel, JFieldVar service, JFieldVar searchEngine) {
+
+    //JDefinedClass responseClass = codeModel.ref(ResponseEntity.class);
+
+    JNarrowedClass response = codeModel.ref(ResponseEntity.class).narrow(codeModel.ref(Map.class).narrow(codeModel.ref(Class.class).narrow(codeModel.ref(AbstractDTO.class).wildcardExtends()),codeModel.ref(Long.class)));
+
+    JMethod method = definedClass.method(JMod.PUBLIC, response, "delete"+settings.getEntityNameLowerCamel());
+    method.annotate(PostMapping.class).param("value", "/{id}/_delete");
+    method.annotate(PreAuthorize.class).param("value",
+            "hasAuthority('modules:" + settings.getEntityNameLowerUnderscore() + "s:delete')");
+
+    JVar id = method.param(Long.class, "id");
+    id.annotate(PathVariable.class);
+
+    JVar force = method.param(Boolean.class, "force");
+    force.annotate(RequestParam.class).param("value", "force").param("required", false).param("defaultValue", "false");
+
+    JBlock body = method.body();
+
+    JVar result = body.decl(
+            codeModel.ref(Optional.class).narrow(codeModel.ref(Map.class).narrow(codeModel.ref(Class.class).narrow(codeModel.ref(AbstractDTO.class).wildcardExtends()),codeModel.ref(Long.class)))
+            , "result",
+            JExpr.refthis(service.name()).invoke("delete").arg(JExpr.refthis(service.name()).invoke("getOne").arg(id)).arg(force));
+
+    JConditional conditional = body._if(result.invoke("isPresent").not().cor(result.invoke("get").invoke("isEmpty")));
+    conditional._then()._return(JExpr._new(codeModel.ref(ResponseEntity.class).narrowEmpty()).arg(codeModel.ref(Maps.class).staticInvoke("newHashMap")).arg(codeModel.ref(HttpStatus.class).staticRef("OK")));
+
+    conditional._else()._return(JExpr._new(codeModel.ref(ResponseEntity.class).narrowEmpty()).arg(result.invoke("get")).arg(codeModel.ref(HttpStatus.class).staticRef("CONFLICT")));
 
     return method;
   }

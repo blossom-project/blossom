@@ -1,5 +1,6 @@
 package com.blossomproject.generator.classes;
 
+import com.blossomproject.generator.configuration.model.TemporalField;
 import com.helger.jcodemodel.JCodeModel;
 import com.helger.jcodemodel.JDefinedClass;
 import com.helger.jcodemodel.JExpr;
@@ -11,8 +12,13 @@ import com.blossomproject.generator.configuration.model.Field;
 import com.blossomproject.generator.configuration.model.Settings;
 import com.blossomproject.generator.configuration.model.StringField;
 import com.blossomproject.generator.utils.GeneratorUtils;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.sql.Timestamp;
 
 public class CreateFormGenerator implements ClassGenerator {
 
@@ -59,6 +65,22 @@ public class CreateFormGenerator implements ClassGenerator {
           .getEntityNameLowerUnderscore() + ".validation." + field.getName() + ".NotBlank.message"
           + "}";
         fieldVar.annotate(NotBlank.class).param("message", message);
+      }
+      Integer stringMaxLength = ((StringField) field).getMaxLength();
+      if(stringMaxLength != null){
+        fieldVar.annotate(Size.class).param("max", stringMaxLength);
+      }
+    }
+    else if(field instanceof TemporalField){
+      TemporalField temporalField = (TemporalField) field;
+      if(temporalField.getTemporalType()== TemporalType.TIME){
+        fieldVar.annotate(DateTimeFormat.class).param("pattern", "HH:mm");
+      }
+      else if(temporalField.getTemporalType()== TemporalType.TIMESTAMP){
+        fieldVar.annotate(DateTimeFormat.class).param("pattern", "yyyy-MM-dd'T'HH:mm");
+      }
+      else {
+        fieldVar.annotate(DateTimeFormat.class).param("pattern", "yyyy-MM-dd");
       }
     }
 

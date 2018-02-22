@@ -162,7 +162,7 @@ public class ConfigurationGenerator implements ClassGenerator {
   private void appendWritePrivilegeBean(Settings settings, JCodeModel codeModel,
     JDefinedClass definedClass) {
     JMethod writePrivilegeBean = definedClass.method(JMod.PUBLIC, Privilege.class,
-      settings.getEntityNameLowerUnderscore() + "WritePrivilegePlugin");
+      settings.getEntityName() + "WritePrivilegePlugin");
     writePrivilegeBean.annotate(Bean.class);
     writePrivilegeBean.body()._return(
       JExpr._new(codeModel.ref(SimplePrivilege.class)).arg("modules")

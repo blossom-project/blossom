@@ -7,19 +7,19 @@
 <@master.default currentUser=currentUser>
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-8">
-    <h2><i class="fa fa-user"></i> <@spring.message "%%ENTITY_NAME_PLURAL%%.creation"/></h2>
+    <h2><i class="fa fa-user"></i> <@spring.message "%%ENTITY_NAME_PLURAL%%.title"/></h2>
     <ol class="breadcrumb">
       <li>
         <a href="/blossom"><@spring.message "menu.home"/></a>
       </li>
       <li>
-        <a href="/blossom/modules"><@spring.message "menu.modules"/></a>
+       <@spring.message "menu.modules"/>
       </li>
       <li>
         <a href="/blossom/administration/users"><@spring.message "%%ENTITY_NAME_PLURAL%%.title"/></a>
       </li>
       <li class="active">
-        <strong><@spring.message "%%ENTITY_NAME_PLURAL%%.creation"/></strong>
+        <strong><@spring.message "%%ENTITY_NAME_PLURAL%%.title"/></strong>
       </li>
     </ol>
   </div>
@@ -31,17 +31,33 @@
       <div class="ibox-content">
 
           %%FIELD_FORM%%
+          %%FIELD_FORM_INPUT%%
         <@spring.bind "%%CREATE_FORM%%.%%FIELD_NAME%%"/>
         <div class="form-group <#if spring.status.error>has-error</#if>">
-          <label class="col-sm-2 control-label"><@spring.message "%%FIELD_LABEL%%"/></label>
+          <label class="col-sm-2 control-label">%%FIELD_LABEL%%</label>
           <div class="col-sm-10">
-            <input type="text" name="%%FIELD_NAME%%" class="form-control" value="${%%CREATE_FORM%%.%%FIELD_NAME%%}"
-                   placeholder="<@spring.message "%%FIELD_LABEL%%"/>">
+            <input type="%%FIELD_TYPE%%" name="%%FIELD_NAME%%" class="form-control" value="<#if %%CREATE_FORM%%.%%FIELD_NAME%%??>${%%CREATE_FORM%%.%%FIELD_NAME%%%%FIELD_CAST%%}</#if>"
+                   placeholder="%%FIELD_LABEL%%">
             <#list spring.status.errorMessages as error>
               <span class="help-block text-danger m-b-none">${error}</span>
             </#list>
           </div>
         </div>
+          %%/FIELD_FORM_INPUT%%
+
+          %%FIELD_FORM_BOOLEAN%%
+          <div class="form-group">
+              <label class="col-sm-2 control-label">%%FIELD_LABEL%%</label>
+              <div class="col-sm-10">
+                  <#if %%CREATE_FORM%%.%%FIELD_NAME%%??>
+                      <@buttons.switch checked=%%CREATE_FORM%%.%%FIELD_NAME%% name="%%FIELD_NAME%%"/>
+                  <#else>
+                      <@buttons.switch checked=false name="%%FIELD_NAME%%"/>
+                  </#if>
+
+              </div>
+          </div>
+          %%/FIELD_FORM_BOOLEAN%%
           %%/FIELD_FORM%%
 
       </div>

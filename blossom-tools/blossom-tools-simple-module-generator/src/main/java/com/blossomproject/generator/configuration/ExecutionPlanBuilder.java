@@ -1,5 +1,6 @@
 package com.blossomproject.generator.configuration;
 
+import com.blossomproject.generator.resources.*;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -18,11 +19,7 @@ import com.blossomproject.generator.classes.ServiceImplGenerator;
 import com.blossomproject.generator.classes.UpdateFormGenerator;
 import com.blossomproject.generator.configuration.model.ExecutionPlan;
 import com.blossomproject.generator.configuration.model.impl.DefaultExecutionPlan;
-import com.blossomproject.generator.resources.ChangelogGenerator;
-import com.blossomproject.generator.resources.CreateViewGenerator;
-import com.blossomproject.generator.resources.ListViewGenerator;
-import com.blossomproject.generator.resources.MessagePropertiesGenerator;
-import com.blossomproject.generator.resources.ResourceGenerator;
+
 import java.util.List;
 
 public class ExecutionPlanBuilder {
@@ -46,6 +43,8 @@ public class ExecutionPlanBuilder {
   private MessagePropertiesGenerator messagesPropertiesGenerator;
   private ListViewGenerator listViewGenerator;
   private CreateViewGenerator createViewGenerator;
+  private EntityViewGenerator entityViewGenerator;
+  private EntityInformationsViewGenerator entityInformationsViewGenerator;
 
   ExecutionPlanBuilder(GeneratorBuilder parent) {
     this.parent = parent;
@@ -56,7 +55,7 @@ public class ExecutionPlanBuilder {
   }
 
   public ExecutionPlanBuilder allResources() {
-    return this.messagesPropertiesGenerator().changelogGenerator().listViewGenerator().createViewGenerator();
+    return this.messagesPropertiesGenerator().changelogGenerator().listViewGenerator().createViewGenerator().entityViewGenerator().entityInformationsViewGenerator();
   }
 
   public ExecutionPlanBuilder entity() {
@@ -123,6 +122,16 @@ public class ExecutionPlanBuilder {
     return this;
   }
 
+  public ExecutionPlanBuilder entityViewGenerator() {
+    this.entityViewGenerator = new EntityViewGenerator();
+    return this;
+  }
+
+  public ExecutionPlanBuilder entityInformationsViewGenerator() {
+    this.entityInformationsViewGenerator = new EntityInformationsViewGenerator();
+    return this;
+  }
+
 
   public ExecutionPlan build() {
     List<ClassGenerator> classGenerators = Lists
@@ -132,7 +141,7 @@ public class ExecutionPlanBuilder {
     Iterables.removeIf(classGenerators, Predicates.isNull());
 
     List<ResourceGenerator> resourceGenerators = Lists
-      .newArrayList(changelogGenerator, messagesPropertiesGenerator, listViewGenerator, createViewGenerator);
+      .newArrayList(changelogGenerator, messagesPropertiesGenerator, listViewGenerator, createViewGenerator, entityViewGenerator, entityInformationsViewGenerator);
     Iterables.removeIf(resourceGenerators, Predicates.isNull());
 
     return new DefaultExecutionPlan(classGenerators, resourceGenerators);
