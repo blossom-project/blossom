@@ -52,6 +52,24 @@
           </div>
       </div>
       %%/FIELD_FORM_BOOLEAN%%
+
+      %%FIELD_FORM_SELECT%%
+  <@spring.bind "%%UPDATE_FORM%%.%%FIELD_NAME%%"/>
+      <div class="form-group">
+          <label class="col-sm-2 control-label">%%FIELD_LABEL%%</label>
+          <div class="col-sm-10">
+              <select class="form-control" name="%%FIELD_NAME%%">
+                  %%FIELD_FORM_SELECT_OPTION%%
+                  <option value="%%OPTION_VALUE%%" <#if "%%OPTION_VALUE%%"==%%UPDATE_FORM%%.%%FIELD_NAME%%!"">selected</#if>>%%OPTION_LABEL%%</option>
+                  %%/FIELD_FORM_SELECT_OPTION%%
+              </select>
+          <#list spring.status.errorMessages as error>
+              <span class="help-block text-danger m-b-none">${error}</span>
+          </#list>
+          </div>
+      </div>
+      %%/FIELD_FORM_SELECT%%
+
       %%/FIELD_FORM%%
 
 

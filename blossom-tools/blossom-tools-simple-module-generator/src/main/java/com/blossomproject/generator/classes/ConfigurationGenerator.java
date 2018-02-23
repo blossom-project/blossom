@@ -318,6 +318,7 @@ public class ConfigurationGenerator implements ClassGenerator {
 
 
     controllerBean.annotate(Bean.class);
+    controllerBean.annotate(ConditionalOnMissingBean.class).param("value", controllerClass);
     JVar controllerBeanService = controllerBean.param(serviceClass, "service");
     JVar controllerBeanSearchEngine = controllerBean
             .param(codeModel.ref(SearchEngineImpl.class).narrow(dtoClass), "searchEngine");

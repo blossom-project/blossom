@@ -1,5 +1,6 @@
 package com.blossomproject.generator.classes;
 
+import com.blossomproject.generator.configuration.model.impl.EnumField;
 import com.helger.jcodemodel.JCodeModel;
 import com.helger.jcodemodel.JDefinedClass;
 import com.helger.jcodemodel.JExpr;
@@ -28,9 +29,8 @@ public class DtoGenerator implements ClassGenerator {
 
       // Fields
       for (Field field : settings.getFields()) {
-        addField(codeModel, definedClass, field);
+        addField(codeModel, definedClass, field, settings);
       }
-
       return definedClass;
     } catch (Exception e) {
       e.printStackTrace();
@@ -38,9 +38,13 @@ public class DtoGenerator implements ClassGenerator {
     }
   }
 
-  private void addField(JCodeModel codeModel, JDefinedClass definedClass, Field field) {
+  private void addField(JCodeModel codeModel, JDefinedClass definedClass, Field field, Settings settings) {
     // Field
     JFieldVar fieldVar = definedClass.field(JMod.PRIVATE, codeModel.ref(field.getClassName()), field.getName());
+
+    if(field instanceof EnumField){
+      fieldVar.type(codeModel.ref(settings.getBasePackage()+"."+settings.getEntityName()+"."+field.getClassName().getSimpleName()));
+    }
 
     // Getter
     JMethod getter = definedClass.method(JMod.PUBLIC, fieldVar.type(), field.getGetterName());

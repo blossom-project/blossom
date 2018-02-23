@@ -1,13 +1,7 @@
 package com.blossomproject.generator.classes;
 
-import com.helger.jcodemodel.JAnnotationUse;
-import com.helger.jcodemodel.JCodeModel;
-import com.helger.jcodemodel.JDefinedClass;
-import com.helger.jcodemodel.JExpr;
-import com.helger.jcodemodel.JFieldVar;
-import com.helger.jcodemodel.JMethod;
-import com.helger.jcodemodel.JMod;
-import com.helger.jcodemodel.JVar;
+import com.blossomproject.generator.configuration.model.impl.EnumField;
+import com.helger.jcodemodel.*;
 import com.blossomproject.core.common.entity.AbstractEntity;
 import com.blossomproject.generator.configuration.model.Field;
 import com.blossomproject.generator.configuration.model.Settings;
@@ -15,11 +9,9 @@ import com.blossomproject.generator.configuration.model.StringField;
 import com.blossomproject.generator.configuration.model.TemporalField;
 import com.blossomproject.generator.configuration.model.impl.BlobField;
 import com.blossomproject.generator.utils.GeneratorUtils;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
+
+import javax.persistence.*;
+import java.util.EnumSet;
 
 public class EntityGenerator implements ClassGenerator {
 
@@ -56,6 +48,9 @@ public class EntityGenerator implements ClassGenerator {
   }
 
   private void addField(JCodeModel codeModel, JDefinedClass definedClass, Field field) {
+
+
+
     // Field
     JFieldVar fieldVar = definedClass
       .field(JMod.PRIVATE, codeModel.ref(field.getClassName()), field.getName());
@@ -84,6 +79,26 @@ public class EntityGenerator implements ClassGenerator {
     if(field instanceof BlobField){
       fieldVar.annotate(Lob.class);
     }
+
+
+    if(field instanceof EnumField){
+      try {
+        JDefinedClass definedEnum = definedClass._enum(field.getClassName().getSimpleName());
+
+        for(Object enumObj : EnumSet.allOf((Class<? extends Enum>)field.getClassName()) ){
+          Enum enumCasted =  (Enum) enumObj;
+          definedEnum.direct(enumCasted.toString()+",");
+        }
+        fieldVar.type(codeModel.ref(definedEnum.name()));
+        fieldVar.annotate(Enumerated.class).param("value",EnumType.STRING);
+      }
+      catch (Exception e){
+        System.out.println(e.getMessage());
+      }
+    }
+
+
+
 
     // Getter
     JMethod getter = definedClass.method(JMod.PUBLIC, fieldVar.type(), field.getGetterName());

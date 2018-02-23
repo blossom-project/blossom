@@ -36,6 +36,19 @@
       </div>
       %%/FIELD_FORM_BOOLEAN%%
 
+      %%FIELD_FORM_SELECT%%
+      <div class="form-group">
+          <label class="col-sm-2 control-label">%%FIELD_LABEL%%</label>
+          <div class="col-sm-10">
+              <select class="form-control" name="%%FIELD_NAME%%" disabled>
+                  %%FIELD_FORM_SELECT_OPTION%%
+                    <option value="%%OPTION_VALUE%%" <#if "%%OPTION_VALUE%%"==%%ENTITY_NAME%%.%%FIELD_NAME%%!"">selected</#if>>%%OPTION_LABEL%%</option>
+                  %%/FIELD_FORM_SELECT_OPTION%%
+              </select>
+          </div>
+      </div>
+      %%/FIELD_FORM_SELECT%%
+
       %%/FIELD_FORM%%
   </form>
 </div>

@@ -4,6 +4,7 @@ import com.blossomproject.generator.configuration.model.Field;
 import com.blossomproject.generator.configuration.model.Settings;
 import com.blossomproject.generator.configuration.model.StringField;
 import com.blossomproject.generator.configuration.model.TemporalField;
+import com.blossomproject.generator.configuration.model.impl.EnumField;
 import com.helger.jcodemodel.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class GeneratorUtils {
@@ -125,32 +127,86 @@ public class GeneratorUtils {
     String formTag = "FIELD_FORM";
     int startTagPosition = content.indexOf("%%"+formTag+"%%");
     int endTagPosition = content.indexOf("%%/"+formTag+"%%", startTagPosition);
+
     String formFieldTemplate = content.substring(startTagPosition+formTag.length()+4, endTagPosition);
 
-    String formTagInput = "FIELD_FORM_INPUT";
-    int startTagPositionInput = formFieldTemplate.indexOf("%%"+formTagInput+"%%");
-    int endTagPositionInput = formFieldTemplate.indexOf("%%/"+formTagInput+"%%", startTagPositionInput);
-    String formFieldTemplateInput = formFieldTemplate.substring(startTagPositionInput+formTagInput.length()+4, endTagPositionInput);
+    String formFieldTemplateInput = getFormFieldTemplateInput(formFieldTemplate);
 
-    String formTagBoolean = "FIELD_FORM_BOOLEAN";
-    int startTagPositionBoolean = formFieldTemplate.indexOf("%%"+formTagBoolean+"%%");
-    int endTagPositionBoolean = formFieldTemplate.indexOf("%%/"+formTagBoolean+"%%", startTagPositionBoolean);
-    String formFieldTemplateBoolean = formFieldTemplate.substring(startTagPositionBoolean+formTagBoolean.length()+4, endTagPositionBoolean);
+    String formFieldTemplateBoolean = getFormFieldTemplateBoolean(formFieldTemplate);
+
+    String formFieldTemplateSelect = getFormFieldTemplateSelect(formFieldTemplate);
 
     String form = "";
     for(Field field : fields){
-      String formField = "";
-        if ("boolean".equals(field.getJdbcType())){
-          formField = formFieldTemplateBoolean.replaceAll("%%FIELD_NAME%%", field.getName()).replaceAll("%%FIELD_LABEL%%", field.getName());
-        }
-        else {
-          String htmlType = getHtmlType(field);
-          String htmlCast = getHtmlCast(field);
-          formField = formFieldTemplateInput.replaceAll("%%FIELD_NAME%%", field.getName()).replaceAll("%%FIELD_LABEL%%", field.getName()).replaceAll("%%FIELD_TYPE%%", htmlType).replaceAll("%%FIELD_CAST%%", htmlCast);
-        }
-        form+=formField;
+      form+= generateFormField(field, formFieldTemplateInput, formFieldTemplateBoolean, formFieldTemplateSelect);
     }
     return content.substring(0,startTagPosition)+form+content.substring((endTagPosition + formTag.length()+5));
+  }
+
+  private static String getFormFieldTemplateInput(String formFieldTemplate){
+    String formTagInput = "FIELD_FORM_INPUT";
+    int startTagPositionInput = formFieldTemplate.indexOf("%%"+formTagInput+"%%");
+    int endTagPositionInput = formFieldTemplate.indexOf("%%/"+formTagInput+"%%", startTagPositionInput);
+
+    return formFieldTemplate.substring(startTagPositionInput+formTagInput.length()+4, endTagPositionInput);
+  }
+
+  private static String getFormFieldTemplateBoolean(String formFieldTemplate){
+    String formTagBoolean = "FIELD_FORM_BOOLEAN";
+    int startTagPositionBoolean = formFieldTemplate.indexOf("%%"+formTagBoolean+"%%");
+    int endTagPositionBoolean = formFieldTemplate.indexOf("%%/"+formTagBoolean+"%%", startTagPositionBoolean);
+
+    return formFieldTemplate.substring(startTagPositionBoolean+formTagBoolean.length()+4, endTagPositionBoolean);
+  }
+
+  private static String getFormFieldTemplateSelect(String formFieldTemplate){
+    String formTagSelect = "FIELD_FORM_SELECT";
+    int startTagPositionSelect = formFieldTemplate.indexOf("%%"+formTagSelect+"%%");
+    int endTagPositionSelect = formFieldTemplate.indexOf("%%/"+formTagSelect+"%%", startTagPositionSelect);
+
+    return formFieldTemplate.substring(startTagPositionSelect+formTagSelect.length()+4, endTagPositionSelect);
+  }
+
+  private static String generateFormField(Field field, String formFieldTemplateInput, String formFieldTemplateBoolean, String formFieldTemplateSelect){
+    String formField;
+    if ("boolean".equals(field.getJdbcType())){
+      formField = generateFormFieldBoolean(field, formFieldTemplateBoolean);
+    }
+    else if(field instanceof EnumField){
+      formField = generateFormFieldSelect(field, formFieldTemplateSelect);
+    }
+    else {
+      String htmlType = getHtmlType(field);
+      String htmlCast = getHtmlCast(field);
+      formField = generateFormFieldInput(field, formFieldTemplateInput, htmlType, htmlCast);
+    }
+    return formField;
+  }
+
+  private static String generateFormFieldBoolean(Field field, String formFieldTemplateBoolean){
+    return formFieldTemplateBoolean.replaceAll("%%FIELD_NAME%%", field.getName()).replaceAll("%%FIELD_LABEL%%", field.getName());
+  }
+
+  private static String generateFormFieldSelect(Field field, String formFieldTemplateSelect){
+    String formTagOption = "FIELD_FORM_SELECT_OPTION";
+    int startTagPositionOption = formFieldTemplateSelect.indexOf("%%"+formTagOption+"%%");
+    int endTagPositionOption = formFieldTemplateSelect.indexOf("%%/"+formTagOption+"%%", startTagPositionOption);
+    String formFieldTemplateOption = formFieldTemplateSelect.substring(startTagPositionOption+formTagOption.length()+4, endTagPositionOption);
+
+    String options = "";
+    if(field.isNullable()){
+      options += formFieldTemplateOption.replaceAll("%%OPTION_VALUE%%", "").replaceAll("%%OPTION_LABEL%%", "");
+    }
+    for(Object enumObj : EnumSet.allOf((Class<? extends Enum>)field.getClassName()) ){
+      Enum enumCasted =  (Enum) enumObj;
+      options += formFieldTemplateOption.replaceAll("%%OPTION_VALUE%%", enumCasted.toString()).replaceAll("%%OPTION_LABEL%%", enumCasted.toString());
+    }
+    String formFieldTemplateSelectReplaced = formFieldTemplateSelect.substring(0,startTagPositionOption)+options+formFieldTemplateSelect.substring((endTagPositionOption + formTagOption.length()+5));
+    return formFieldTemplateSelectReplaced.replace("%%FIELD_NAME%%", field.getName()).replace("%%FIELD_LABEL%%", field.getName());
+  }
+
+  private static String generateFormFieldInput(Field field, String formFieldTemplateInput, String htmlType, String htmlCast){
+    return formFieldTemplateInput.replaceAll("%%FIELD_NAME%%", field.getName()).replaceAll("%%FIELD_LABEL%%", field.getName()).replaceAll("%%FIELD_TYPE%%", htmlType).replaceAll("%%FIELD_CAST%%", htmlCast);
   }
 
   public static String getHtmlType(Field field){
@@ -190,6 +246,23 @@ public class GeneratorUtils {
   public static JFieldVar addField(Settings settings, JCodeModel codeModel, JDefinedClass definedClass,
                              Field field) {
     // Field
+    JFieldVar fieldVar = addFieldDefinition(settings, field, codeModel, definedClass);
+
+    addFieldAnnotations(settings, field, fieldVar, codeModel);
+
+    // Getter
+    JMethod getter = definedClass.method(JMod.PUBLIC, fieldVar.type(), field.getGetterName());
+    getter.body()._return(fieldVar);
+
+    // Setter
+    JMethod setter = definedClass.method(JMod.PUBLIC, void.class, field.getSetterName());
+    JVar param = setter.param(fieldVar.type(), field.getName());
+    setter.body().assign(JExpr.refthis(fieldVar.name()), param);
+
+    return fieldVar;
+  }
+
+  private static JFieldVar addFieldDefinition(Settings settings, Field field,JCodeModel codeModel, JDefinedClass definedClass){
     JFieldVar fieldVar;
     if("boolean".equals(field.getJdbcType())){
       fieldVar = definedClass
@@ -205,7 +278,10 @@ public class GeneratorUtils {
               + "}";
       fieldVar.annotate(NotNull.class).param("message", message);
     }
+    return fieldVar;
+  }
 
+  private static void addFieldAnnotations(Settings settings, Field field, JFieldVar fieldVar, JCodeModel codeModel){
     if (field instanceof StringField) {
       if (!((StringField) field).isNotBlank()) {
         String message = "{" + settings.getEntityNameLowerUnderscore() + "s." + settings
@@ -230,16 +306,9 @@ public class GeneratorUtils {
         fieldVar.annotate(DateTimeFormat.class).param("pattern", "yyyy-MM-dd");
       }
     }
-    // Getter
-    JMethod getter = definedClass.method(JMod.PUBLIC, fieldVar.type(), field.getGetterName());
-    getter.body()._return(fieldVar);
-
-    // Setter
-    JMethod setter = definedClass.method(JMod.PUBLIC, void.class, field.getSetterName());
-    JVar param = setter.param(fieldVar.type(), field.getName());
-    setter.body().assign(JExpr.refthis(fieldVar.name()), param);
-
-    return fieldVar;
+    else if(field instanceof EnumField){
+      fieldVar.type(codeModel.ref(settings.getBasePackage()+"."+settings.getEntityName()+"."+field.getClassName().getSimpleName()));
+    }
   }
 
 }

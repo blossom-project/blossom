@@ -30,7 +30,7 @@ public class ChangelogGenerator implements ResourceGenerator {
     try {
       changelogDir = settings.getResourcePath().resolve("db").resolve("changelog").resolve("blossom").resolve("modules");
       Files.createDirectories(changelogDir);
-      fullChangelogPath = changelogDir.resolve(formatter.format(ZonedDateTime.now(ZoneOffset.UTC)) + "_db.changelog_blossom_generated_" + settings.getEntityNameLowerUnderscore() + ".xml");
+      fullChangelogPath = changelogDir.resolve( "1_db.changelog_blossom_generated_" + settings.getEntityNameLowerUnderscore() + ".xml");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

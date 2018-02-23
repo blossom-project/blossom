@@ -1,7 +1,7 @@
 <#import "/spring.ftl" as spring>
 
 <#macro switch checked name="" disabled=false>
-  <#assign id= 'button_'+.now?long?c />
+  <#assign id= 'button_'+name+'_'+.now?long?c />
 <div class="switch">
   <div class="onoffswitch">
     <input name="${name}" type="checkbox" <#if checked>checked</#if> <#if disabled>disabled</#if>
