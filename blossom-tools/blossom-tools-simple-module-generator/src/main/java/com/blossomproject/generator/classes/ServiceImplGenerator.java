@@ -103,17 +103,15 @@ public class ServiceImplGenerator implements ClassGenerator {
     JVar form = update.param(updateFormClass, "updateForm");
 
     JBlock body = update.body();
-    JVar toCreate = body.decl(entityClass, "toUpdate", JExpr._new(entityClass));
+    JVar toUpdate = body.decl(dtoClass, "toUpdate", JExpr._this().invoke("getOne").arg(id));
     for (Field field : settings.getFields()) {
       if (field.isPossibleUpdate()) {
-        body.add(toCreate.invoke(field.getSetterName()).arg(form.invoke(field.getGetterName())));
+        body.add(toUpdate.invoke(field.getSetterName()).arg(form.invoke(field.getGetterName())));
       }
     }
 
-    JVar savedEntity = body.decl(entityClass, "savedEntity",
-      JExpr.refthis("crudDao").invoke("update").arg(id).arg(toCreate));
     JVar savedDto = body
-      .decl(dtoClass, "savedDto", JExpr.refthis("mapper").invoke("mapEntity").arg(savedEntity));
+      .decl(dtoClass, "savedDto", JExpr._this().invoke("update").arg(id).arg(toUpdate));
 
     body.add(JExpr.refthis("publisher").invoke("publishEvent").arg(
       JExpr._new(codeModel.ref(UpdatedEvent.class).narrow(dtoClass)).arg(JExpr._this())

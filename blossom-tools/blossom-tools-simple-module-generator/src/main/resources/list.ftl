@@ -13,7 +13,7 @@
         <a href="/blossom"><@spring.message "menu.home"/></a>
       </li>
       <li>
-        <a href="/blossom/modules"><@spring.message "menu.modules"/></a>
+      <@spring.message "menu.modules"/>
       </li>
       <li class="active">
         <strong><@spring.message "%%ENTITY_NAME_PLURAL%%.title"/></strong>

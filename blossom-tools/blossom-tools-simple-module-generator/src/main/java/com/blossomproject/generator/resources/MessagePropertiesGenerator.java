@@ -1,5 +1,6 @@
 package com.blossomproject.generator.resources;
 
+import com.blossomproject.generator.configuration.model.Field;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.blossomproject.generator.configuration.model.Settings;
@@ -26,6 +27,14 @@ public class MessagePropertiesGenerator implements ResourceGenerator {
 
       for(Entry<String,String> entry : params.entrySet()){
         content = content.replaceAll("%%"+entry.getKey()+"%%", entry.getValue());
+      }
+
+      for(Field field : settings.getFields()){
+        content+=settings.getEntityNameLowerUnderscore()+"s."+settings.getEntityNameLowerUnderscore()+".properties."+field.getName()+"="+field.getName()+"\r\n";
+        if(!field.isNullable()){
+          content+=settings.getEntityNameLowerUnderscore()+"s."+settings.getEntityNameLowerUnderscore()+".validation."+field.getName()+".NotNull.message=The "+settings.getEntityNameLowerUnderscore()+"\'s "+field.getName()+" cannot be empty !\r\n";
+        }
+        content+=settings.getEntityNameLowerUnderscore()+"s."+settings.getEntityNameLowerUnderscore()+".validation."+field.getName()+".NotBlank.message=The "+settings.getEntityNameLowerUnderscore()+"\'s "+field.getName()+" cannot be empty !\r\n";
       }
 
       Path messageRoot = settings.getResourcePath().resolve("messages");
