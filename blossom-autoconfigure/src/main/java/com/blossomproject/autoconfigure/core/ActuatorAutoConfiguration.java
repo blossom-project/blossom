@@ -11,7 +11,7 @@ import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import java.io.IOException;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.autoconfigure.web.trace.HttpTraceAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.trace.http.HttpTraceAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.annotation.Bean;

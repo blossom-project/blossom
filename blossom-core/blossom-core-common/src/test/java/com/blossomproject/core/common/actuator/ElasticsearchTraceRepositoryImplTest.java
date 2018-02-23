@@ -24,8 +24,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.actuate.web.trace.HttpTrace;
-import org.springframework.boot.actuate.web.trace.HttpTraceCreator;
+import org.springframework.boot.actuate.trace.http.HttpTrace;
+import org.springframework.boot.actuate.trace.http.HttpTraceCreator;
 
 ;
 

@@ -2,10 +2,10 @@ package com.blossomproject.core.common.actuator;
 
 import java.time.Instant;
 import org.elasticsearch.action.search.SearchResponse;
-import org.springframework.boot.actuate.web.trace.HttpTraceRepository;
+import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
 
 /**
- * An extended {@link HttpTraceRepository} that records {@link org.springframework.boot.actuate.web.trace.HttpTrace} into an Elasticsearch index.
+ * An extended {@link HttpTraceRepository} that records {@link org.springframework.boot.actuate.trace.http.HttpTrace} into an Elasticsearch index.
  *
  * @author Maël Gargadennec
  */

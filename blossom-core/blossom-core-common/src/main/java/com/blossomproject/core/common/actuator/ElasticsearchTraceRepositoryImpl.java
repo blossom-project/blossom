@@ -26,8 +26,8 @@ import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInter
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.actuate.web.trace.HttpTrace;
-import org.springframework.boot.actuate.web.trace.InMemoryHttpTraceRepository;
+import org.springframework.boot.actuate.trace.http.HttpTrace;
+import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
 
 /**
  * An implementation of {@link ElasticsearchTraceRepository}

@@ -62,7 +62,7 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
     this.cleanOrphanIndex();
     String newIndexName = this.createIndex();
     try {
-      Pageable pageable = new PageRequest(0, 1000);
+      Pageable pageable = PageRequest.of(0, 1000);
       Page<DTO> pagedDTOs = null;
       do {
         pagedDTOs = this.service.getAll(pageable);

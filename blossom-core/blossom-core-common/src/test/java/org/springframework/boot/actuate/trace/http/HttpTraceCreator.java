@@ -1,4 +1,4 @@
-package org.springframework.boot.actuate.web.trace;
+package org.springframework.boot.actuate.trace.http;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
