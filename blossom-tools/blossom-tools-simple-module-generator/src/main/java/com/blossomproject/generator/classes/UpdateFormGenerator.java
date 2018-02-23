@@ -1,24 +1,27 @@
 package com.blossomproject.generator.classes;
 
-import com.helger.jcodemodel.JCodeModel;
-import com.helger.jcodemodel.JDefinedClass;
-import com.helger.jcodemodel.JExpr;
-import com.helger.jcodemodel.JFieldVar;
-import com.helger.jcodemodel.JMethod;
-import com.helger.jcodemodel.JMod;
-import com.helger.jcodemodel.JVar;
+import com.blossomproject.core.common.search.SearchEngineImpl;
+import com.blossomproject.generator.configuration.model.TemporalField;
+import com.helger.jcodemodel.*;
 import com.blossomproject.generator.configuration.model.Field;
 import com.blossomproject.generator.configuration.model.Settings;
 import com.blossomproject.generator.configuration.model.StringField;
 import com.blossomproject.generator.utils.GeneratorUtils;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UpdateFormGenerator implements ClassGenerator {
 
+  private AbstractJClass dtoClass;
   @Override
   public void prepare(Settings settings, JCodeModel codeModel) {
-
+    this.dtoClass = codeModel.ref(GeneratorUtils.getDtoFullyQualifiedClassName(settings));
   }
 
   @Override
@@ -28,12 +31,17 @@ public class UpdateFormGenerator implements ClassGenerator {
       JDefinedClass definedClass = codeModel
         ._class(GeneratorUtils.getUpdateFormFullyQualifiedClassName(settings));
 
+      JMethod constructor = definedClass.constructor(JMod.PUBLIC);
+      JVar entityDTO = constructor.param(dtoClass, "entityDTO");
       // Fields
       for (Field field : settings.getFields()) {
         if (field.isPossibleUpdate()) {
-          addField(settings, codeModel, definedClass, field);
+          JFieldVar fieldVar = GeneratorUtils.addField(settings, codeModel, definedClass, field);
+          constructor.body().assign(JExpr.refthis(fieldVar.name()), entityDTO.invoke(field.getGetterName()));
         }
       }
+
+      JMethod constructorEmpty = definedClass.constructor(JMod.PUBLIC);
 
       return definedClass;
     } catch (Exception e) {
@@ -42,36 +50,5 @@ public class UpdateFormGenerator implements ClassGenerator {
     }
   }
 
-  private void addField(Settings settings, JCodeModel codeModel, JDefinedClass definedClass,
-    Field field) {
-    // Field
-    JFieldVar fieldVar = definedClass
-      .field(JMod.PRIVATE, codeModel.ref(field.getClassName()), field.getName());
-
-    if (!field.isNullable()) {
-      String message = "{" + settings.getEntityNameLowerUnderscore() + "s." + settings
-        .getEntityNameLowerUnderscore() + ".validation." + field.getName() + ".NotNull.message"
-        + "}";
-      fieldVar.annotate(NotNull.class).param("message", message);
-    }
-
-    if (field instanceof StringField) {
-      if (!((StringField) field).isNotBlank()) {
-        String message = "{" + settings.getEntityNameLowerUnderscore() + "s." + settings
-          .getEntityNameLowerUnderscore() + ".validation." + field.getName() + ".NotBlank.message"
-          + "}";
-        fieldVar.annotate(NotBlank.class).param("message", message);
-      }
-    }
-
-    // Getter
-    JMethod getter = definedClass.method(JMod.PUBLIC, fieldVar.type(), field.getGetterName());
-    getter.body()._return(fieldVar);
-
-    // Setter
-    JMethod setter = definedClass.method(JMod.PUBLIC, void.class, field.getSetterName());
-    JVar param = setter.param(fieldVar.type(), field.getName());
-    setter.body().assign(JExpr.refthis(fieldVar.name()), param);
-  }
 
 }

@@ -22,8 +22,7 @@ public class ListViewGenerator implements ResourceGenerator {
   public void generate(Settings settings, Map<String, String> params) {
     try {
       params.put("ENTITY_COLUMNS",
-        "\"name\": { \"label\":\"" + settings.getEntityNameLowerUnderscore() + "s" + "." + settings
-          .getEntityNameLowerUnderscore() + ".properties.name\", \"sortable\":true, \"link\":\""
+        "\"id\": { \"label\":\"id\", \"sortable\":true, \"link\":\""
           + params.get("LINK_ITEM") + "\"},\n"
           + "  \"modificationDate\": {\"label\":\"list.modification.date.head\", \"sortable\":true, \"type\":\"datetime\"}");
 

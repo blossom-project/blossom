@@ -17,7 +17,7 @@
     <div class="form-group">
       <label class="col-sm-2 control-label"><@spring.message "%%ENTITY_NAME_PLURAL%%.%%ENTITY_NAME%%.properties.%%FIELD_NAME%%"/></label>
       <div class="col-sm-10">
-        <p class="form-control-static">${%%ENTITY_NAME%%.%%FIELD_NAME%%%%FIELD_CAST%%!''}</p>
+        <p class="form-control-static"><#if %%ENTITY_NAME%%.%%FIELD_NAME%%??>${%%ENTITY_NAME%%.%%FIELD_NAME%%%%FIELD_CAST%%}</#if></p>
       </div>
     </div>
       %%/FIELD_FORM_INPUT%%

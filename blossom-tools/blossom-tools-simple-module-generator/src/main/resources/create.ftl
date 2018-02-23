@@ -7,7 +7,7 @@
 <@master.default currentUser=currentUser>
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-8">
-    <h2><i class="fa fa-user"></i> <@spring.message "%%ENTITY_NAME_PLURAL%%.title"/></h2>
+    <h2><i class="fa fa-question"></i> <@spring.message "%%ENTITY_NAME_PLURAL%%.title"/></h2>
     <ol class="breadcrumb">
       <li>
         <a href="/blossom"><@spring.message "menu.home"/></a>
@@ -16,10 +16,10 @@
        <@spring.message "menu.modules"/>
       </li>
       <li>
-        <a href="/blossom/administration/users"><@spring.message "%%ENTITY_NAME_PLURAL%%.title"/></a>
+        <a href="/blossom/modules/%%ENTITY_NAME_PLURAL%%"><@spring.message "%%ENTITY_NAME_PLURAL%%.title"/></a>
       </li>
       <li class="active">
-        <strong><@spring.message "%%ENTITY_NAME_PLURAL%%.title"/></strong>
+        <strong><@spring.message "%%ENTITY_NAME_PLURAL%%.%%ENTITY_NAME%%.label"/></strong>
       </li>
     </ol>
   </div>

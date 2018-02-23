@@ -2,6 +2,18 @@ package com.blossomproject.generator.utils;
 
 import com.blossomproject.generator.configuration.model.Field;
 import com.blossomproject.generator.configuration.model.Settings;
+import com.blossomproject.generator.configuration.model.StringField;
+import com.blossomproject.generator.configuration.model.TemporalField;
+import com.helger.jcodemodel.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GeneratorUtils {
 
@@ -109,7 +121,7 @@ public class GeneratorUtils {
     return base;
   }
 
-  public static String generateFormFields (String content, Settings settings){
+  public static String generateFormFields (String content, List<Field> fields){
     String formTag = "FIELD_FORM";
     int startTagPosition = content.indexOf("%%"+formTag+"%%");
     int endTagPosition = content.indexOf("%%/"+formTag+"%%", startTagPosition);
@@ -126,9 +138,8 @@ public class GeneratorUtils {
     String formFieldTemplateBoolean = formFieldTemplate.substring(startTagPositionBoolean+formTagBoolean.length()+4, endTagPositionBoolean);
 
     String form = "";
-    for(Field field : settings.getFields()){
+    for(Field field : fields){
       String formField = "";
-      if(field.isRequiredCreate()){
         if ("boolean".equals(field.getJdbcType())){
           formField = formFieldTemplateBoolean.replaceAll("%%FIELD_NAME%%", field.getName()).replaceAll("%%FIELD_LABEL%%", field.getName());
         }
@@ -138,7 +149,6 @@ public class GeneratorUtils {
           formField = formFieldTemplateInput.replaceAll("%%FIELD_NAME%%", field.getName()).replaceAll("%%FIELD_LABEL%%", field.getName()).replaceAll("%%FIELD_TYPE%%", htmlType).replaceAll("%%FIELD_CAST%%", htmlCast);
         }
         form+=formField;
-      }
     }
     return content.substring(0,startTagPosition)+form+content.substring((endTagPosition + formTag.length()+5));
   }
@@ -166,12 +176,70 @@ public class GeneratorUtils {
       return "?string(\"yyyy-MM-dd\")";
     }
     if("timestamp".equals(type)){
-      return "?string(\"yyyy-MM-dd'T'HH:mm\")";
+      if(!Timestamp.class.equals(field.getClassName())){
+        return "?string(\"yyyy-MM-dd'T'HH:mm\")";
+      }
     }
     if("time".equals(type)){
-      return "?time";
+      return "?string(\"HH:mm\")";
     }
     return "";
+  }
+
+
+  public static JFieldVar addField(Settings settings, JCodeModel codeModel, JDefinedClass definedClass,
+                             Field field) {
+    // Field
+    JFieldVar fieldVar;
+    if("boolean".equals(field.getJdbcType())){
+      fieldVar = definedClass
+              .field(JMod.PRIVATE, codeModel.ref(field.getClassName()), field.getName(), JExpr.lit(false));
+    }
+    else {
+      fieldVar = definedClass
+              .field(JMod.PRIVATE, codeModel.ref(field.getClassName()), field.getName());
+    }
+    if (!field.isNullable()) {
+      String message = "{" + settings.getEntityNameLowerUnderscore() + "s." + settings
+              .getEntityNameLowerUnderscore() + ".validation." + field.getName() + ".NotNull.message"
+              + "}";
+      fieldVar.annotate(NotNull.class).param("message", message);
+    }
+
+    if (field instanceof StringField) {
+      if (!((StringField) field).isNotBlank()) {
+        String message = "{" + settings.getEntityNameLowerUnderscore() + "s." + settings
+                .getEntityNameLowerUnderscore() + ".validation." + field.getName() + ".NotBlank.message"
+                + "}";
+        fieldVar.annotate(NotBlank.class).param("message", message);
+      }
+      Integer stringMaxLength = ((StringField) field).getMaxLength();
+      if(stringMaxLength != null){
+        fieldVar.annotate(Size.class).param("max", stringMaxLength);
+      }
+    }
+    else if(field instanceof TemporalField){
+      TemporalField temporalField = (TemporalField) field;
+      if(temporalField.getTemporalType()== TemporalType.TIME){
+        fieldVar.annotate(DateTimeFormat.class).param("pattern", "HH:mm");
+      }
+      else if(temporalField.getTemporalType()== TemporalType.TIMESTAMP){
+        fieldVar.annotate(DateTimeFormat.class).param("pattern", "yyyy-MM-dd'T'HH:mm");
+      }
+      else {
+        fieldVar.annotate(DateTimeFormat.class).param("pattern", "yyyy-MM-dd");
+      }
+    }
+    // Getter
+    JMethod getter = definedClass.method(JMod.PUBLIC, fieldVar.type(), field.getGetterName());
+    getter.body()._return(fieldVar);
+
+    // Setter
+    JMethod setter = definedClass.method(JMod.PUBLIC, void.class, field.getSetterName());
+    JVar param = setter.param(fieldVar.type(), field.getName());
+    setter.body().assign(JExpr.refthis(fieldVar.name()), param);
+
+    return fieldVar;
   }
 
 }

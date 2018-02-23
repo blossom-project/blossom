@@ -31,6 +31,10 @@ public class MessagePropertiesGenerator implements ResourceGenerator {
 
       for(Field field : settings.getFields()){
         content+=settings.getEntityNameLowerUnderscore()+"s."+settings.getEntityNameLowerUnderscore()+".properties."+field.getName()+"="+field.getName()+"\r\n";
+        if(!field.isNullable()){
+          content+=settings.getEntityNameLowerUnderscore()+"s."+settings.getEntityNameLowerUnderscore()+".validation."+field.getName()+".NotNull.message=The "+settings.getEntityNameLowerUnderscore()+"\'s "+field.getName()+" cannot be empty !\r\n";
+        }
+        content+=settings.getEntityNameLowerUnderscore()+"s."+settings.getEntityNameLowerUnderscore()+".validation."+field.getName()+".NotBlank.message=The "+settings.getEntityNameLowerUnderscore()+"\'s "+field.getName()+" cannot be empty !\r\n";
       }
 
       Path messageRoot = settings.getResourcePath().resolve("messages");

@@ -34,12 +34,14 @@ public class ControllerGenerator implements ClassGenerator {
   private AbstractJClass dtoClass;
   private AbstractJClass serviceClass;
   private AbstractJClass createFormClass;
+  private AbstractJClass updateFormClass;
 
   @Override
   public void prepare(Settings settings, JCodeModel codeModel) {
     this.dtoClass = codeModel.ref(GeneratorUtils.getDtoFullyQualifiedClassName(settings));
     this.serviceClass = codeModel.ref(GeneratorUtils.getServiceFullyQualifiedClassName(settings));
     this.createFormClass = codeModel.ref(GeneratorUtils.getCreateFormFullyQualifiedClassName(settings));
+    this.updateFormClass = codeModel.ref(GeneratorUtils.getUpdateFormFullyQualifiedClassName(settings));
   }
 
   @Override
@@ -81,9 +83,15 @@ public class ControllerGenerator implements ClassGenerator {
 
       JMethod methodGetEntityInformations = buildGetEntityInformations(definedClass, codeModel, settings, service);
 
+      JMethod methodGetEntityInformationsForm = buildGetEntityInformationsForm(definedClass, codeModel, settings, service);
+
+      JMethod methodHandleInformationsForm = buildHandleInformationsForm(definedClass, settings, codeModel, service, searchEngine);
+
       JMethod methodDeleteEntity = buildDeleteEntity(definedClass, settings, codeModel, service, searchEngine);
 
       JMethod methodViewInformationView = buildViewInformationView(definedClass, codeModel, settings);
+
+      JMethod methodUpdateInformationView = buildUpdateInformationView(definedClass, codeModel, settings);
 
 
 
@@ -156,7 +164,7 @@ public class ControllerGenerator implements ClassGenerator {
     tryBlock.body()._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(JExpr.lit("redirect:../"+settings.getEntityNameLowerUnderscore()+"s/").plus(entity.invoke("getId"))));
 
     JCatchBlock catchBlock = tryBlock._catch(codeModel.ref(Exception.class));
-    catchBlock.body().add(JExpr.refthis("logger").invoke("error").arg( JExpr.lit("Error on creating article, name ").plus(createForm.invoke("getName")).plus(" already exists ")).arg(catchBlock.param("e")));
+    catchBlock.body().add(JExpr.refthis("logger").invoke("error").arg( JExpr.lit("Error on creating entity, already exists ")).arg(catchBlock.param("e")));
 
     catchBlock.body()._return(JExpr._this().invoke("createView").arg(createForm).arg(model));
 
@@ -250,6 +258,63 @@ public class ControllerGenerator implements ClassGenerator {
     return method;
   }
 
+  private JMethod buildGetEntityInformationsForm (JDefinedClass definedClass,
+                                              JCodeModel codeModel, Settings settings, JFieldVar service) {
+    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "get"+settings.getEntityNameLowerCamel()+"InformationsForm");
+    method.annotate(GetMapping.class).param("value", "/{id}/_informations/_edit");
+    method.annotate(PreAuthorize.class).param("value",
+            "hasAuthority('modules:" + settings.getEntityNameLowerUnderscore() + "s:write')");
+
+    JVar id = method.param(Long.class, "id");
+    id.annotate(PathVariable.class);
+
+    JBlock body = method.body();
+
+    JVar entity = body.decl(dtoClass,"entity", JExpr.refthis(service.name()).invoke("getOne").arg(id));
+
+    JConditional ifCondition = body._if(entity.eqNull());
+    ifCondition._then()._throw(JExpr._new(codeModel.ref(NoSuchElementException.class)).arg(codeModel.ref(String.class).staticInvoke("format").arg(settings.getEntityNameLowerCamel()+"=%s not found").arg(id)));
+
+    body._return(JExpr._this().invoke("updateInformationView").arg(JExpr._new(updateFormClass).arg(entity)));
+
+    return method;
+  }
+
+  private JMethod buildHandleInformationsForm(JDefinedClass definedClass, Settings settings,
+                                        JCodeModel codeModel, JFieldVar service, JFieldVar searchEngine) {
+    JMethod method = definedClass.method(JMod.PUBLIC, ModelAndView.class, "handle"+settings.getEntityNameLowerCamel()+"InformationsForm");
+    method.annotate(PostMapping.class).param("value", "/{id}/_informations/_edit");
+    method.annotate(PreAuthorize.class).param("value",
+            "hasAuthority('modules:" + settings.getEntityNameLowerUnderscore() + "s:write')");
+
+    JVar id = method.param(Long.class, "id");
+    id.annotate(PathVariable.class);
+
+    JVar model = method.param(Model.class, "model");
+
+    JVar updateForm = method.param(updateFormClass, "updateForm");
+    updateForm.annotate(Valid.class);
+    updateForm.annotate(ModelAttribute.class).param("value", settings.getEntityNameLowerCamel()+"UpdateForm");
+
+    JVar bindingResult = method.param(BindingResult.class, "bindingResult");
+
+    JBlock body = method.body();
+
+    JConditional ifErrors = body._if(bindingResult.invoke("hasErrors"));
+    ifErrors._then()._return(JExpr._this().invoke("updateInformationView").arg(updateForm));
+
+    JVar entity = body.decl(dtoClass,"entity", JExpr.refthis(service.name()).invoke("getOne").arg(id));
+
+    JConditional ifEntity = body._if(entity.eqNull());
+    ifEntity._then()._throw(JExpr._new(codeModel.ref(NoSuchElementException.class)).arg(codeModel.ref(String.class).staticInvoke("format").arg(settings.getEntityNameLowerCamel()+"=%s not found").arg(id)));
+
+    JVar entityUpdated = body.decl(dtoClass,"entityUpdated", JExpr.refthis(service.name()).invoke("update").arg(id).arg(updateForm));
+
+    body._return(JExpr._this().invoke("viewInformationView").arg(entityUpdated));
+
+    return method;
+  }
+
   private JMethod buildViewInformationView (JDefinedClass definedClass,
                                    JCodeModel codeModel, Settings settings) {
     JMethod method = definedClass.method(JMod.PRIVATE, ModelAndView.class, "viewInformationView");
@@ -260,6 +325,20 @@ public class ControllerGenerator implements ClassGenerator {
 
     body._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(
             "modules/" + settings.getEntityNameLowerUnderscore() + "s" + "/"+settings.getEntityNameLowerUnderscore()+"informations").arg(settings.getEntityNameLowerUnderscore()).arg(entity));
+
+    return method;
+  }
+
+  private JMethod buildUpdateInformationView (JDefinedClass definedClass,
+                                            JCodeModel codeModel, Settings settings) {
+    JMethod method = definedClass.method(JMod.PRIVATE, ModelAndView.class, "updateInformationView");
+
+    JVar entityForm = method.param(updateFormClass, "entityUpdateForm");
+
+    JBlock body = method.body();
+
+    body._return(JExpr._new(codeModel.ref(ModelAndView.class)).arg(
+            "modules/" + settings.getEntityNameLowerUnderscore() + "s" + "/"+settings.getEntityNameLowerUnderscore()+"informations-edit").arg(settings.getEntityNameLowerCamel()+"UpdateForm").arg(entityForm));
 
     return method;
   }

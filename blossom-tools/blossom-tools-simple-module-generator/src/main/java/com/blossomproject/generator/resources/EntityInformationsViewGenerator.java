@@ -11,8 +11,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class EntityInformationsViewGenerator implements ResourceGenerator {
 
@@ -31,7 +33,7 @@ public class EntityInformationsViewGenerator implements ResourceGenerator {
         content = content.replaceAll("%%" + entry.getKey() + "%%", entry.getValue());
       }
 
-      content = GeneratorUtils.generateFormFields(content, settings);
+      content = GeneratorUtils.generateFormFields(content, settings.getFields());
 
       Path templateRoot = settings.getResourcePath().resolve("templates").resolve("modules")
         .resolve(settings.getEntityNameLowerUnderscore() + "s");
@@ -44,19 +46,5 @@ public class EntityInformationsViewGenerator implements ResourceGenerator {
     } catch (IOException e) {
       e.printStackTrace();
     }
-  }
-
-  public String generateFormFields (String content, Settings settings){
-    String formTag = "FIELD_FORM";
-    int startTagPosition = content.indexOf("%%"+formTag+"%%");
-    int endTagPosition = content.indexOf("%%/"+formTag+"%%", startTagPosition);
-    String formFieldTemplate = content.substring(startTagPosition+formTag.length()+4, endTagPosition);
-
-    String form = "";
-    for(Field field : settings.getFields()){
-      String formField = formFieldTemplate.replaceAll("%%FIELD_NAME%%", field.getName());
-      form+=formField;
-    }
-    return content.substring(0,startTagPosition)+form+content.substring((endTagPosition + formTag.length()+5));
   }
 }
