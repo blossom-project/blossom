@@ -111,5 +111,12 @@
             <version>1.0.0-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
+
+        <!-- Generate spring-configuration-metadata.json on process -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>
