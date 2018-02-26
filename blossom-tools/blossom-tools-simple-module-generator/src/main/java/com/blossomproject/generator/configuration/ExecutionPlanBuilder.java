@@ -1,22 +1,10 @@
 package com.blossomproject.generator.configuration;
 
+import com.blossomproject.generator.classes.*;
 import com.blossomproject.generator.resources.*;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.blossomproject.generator.classes.ClassGenerator;
-import com.blossomproject.generator.classes.ConfigurationGenerator;
-import com.blossomproject.generator.classes.ControllerGenerator;
-import com.blossomproject.generator.classes.CreateFormGenerator;
-import com.blossomproject.generator.classes.DaoGenerator;
-import com.blossomproject.generator.classes.DaoImplGenerator;
-import com.blossomproject.generator.classes.DtoGenerator;
-import com.blossomproject.generator.classes.EntityGenerator;
-import com.blossomproject.generator.classes.MapperGenerator;
-import com.blossomproject.generator.classes.RepositoryGenerator;
-import com.blossomproject.generator.classes.ServiceGenerator;
-import com.blossomproject.generator.classes.ServiceImplGenerator;
-import com.blossomproject.generator.classes.UpdateFormGenerator;
 import com.blossomproject.generator.configuration.model.ExecutionPlan;
 import com.blossomproject.generator.configuration.model.impl.DefaultExecutionPlan;
 
@@ -38,7 +26,9 @@ public class ExecutionPlanBuilder {
   private ServiceImplGenerator serviceImplGenerator;
   private ControllerGenerator controllerGenerator;
   private ConfigurationGenerator configurationGenerator;
+  private IndexationJobGenerator indexationJobGenerator;
 
+  private ElasticSearchSourceGenerator elasticSearchSourceGenerator;
   private ChangelogGenerator changelogGenerator;
   private MessagePropertiesGenerator messagesPropertiesGenerator;
   private ListViewGenerator listViewGenerator;
@@ -52,11 +42,11 @@ public class ExecutionPlanBuilder {
   }
 
   public ExecutionPlanBuilder allClasses() {
-    return this.entity().repository().dao().dto().mapper().service().controller().configuration();
+    return this.entity().repository().dao().dto().mapper().service().controller().configuration().indexationJob();
   }
 
   public ExecutionPlanBuilder allResources() {
-    return this.messagesPropertiesGenerator().changelogGenerator().listViewGenerator().createViewGenerator().entityViewGenerator().entityInformationsViewGenerator().entityInformationsEditViewGenerator();
+    return this.messagesPropertiesGenerator().changelogGenerator().elasticSearchSourceGenerator().listViewGenerator().createViewGenerator().entityViewGenerator().entityInformationsViewGenerator().entityInformationsEditViewGenerator();
   }
 
   public ExecutionPlanBuilder entity() {
@@ -103,8 +93,18 @@ public class ExecutionPlanBuilder {
     return this;
   }
 
+  public ExecutionPlanBuilder indexationJob() {
+    this.indexationJobGenerator = new IndexationJobGenerator();
+    return this;
+  }
+
   public ExecutionPlanBuilder changelogGenerator() {
     this.changelogGenerator = new ChangelogGenerator();
+    return this;
+  }
+
+  public ExecutionPlanBuilder elasticSearchSourceGenerator() {
+    this.elasticSearchSourceGenerator = new ElasticSearchSourceGenerator();
     return this;
   }
 
@@ -143,11 +143,11 @@ public class ExecutionPlanBuilder {
     List<ClassGenerator> classGenerators = Lists
       .newArrayList(entityGenerator, repositoryGenerator, daoGenerator, daoImplGenerator,
         dtoGenerator, mapperGenerator, createFormGenerator, updateFormGenerator, serviceGenerator,
-        serviceImplGenerator, controllerGenerator, configurationGenerator);
+        serviceImplGenerator, controllerGenerator, configurationGenerator, indexationJobGenerator);
     Iterables.removeIf(classGenerators, Predicates.isNull());
 
     List<ResourceGenerator> resourceGenerators = Lists
-      .newArrayList(changelogGenerator, messagesPropertiesGenerator, listViewGenerator, createViewGenerator, entityViewGenerator, entityInformationsViewGenerator, entityInformationsEditViewGenerator);
+      .newArrayList(changelogGenerator, elasticSearchSourceGenerator, messagesPropertiesGenerator, listViewGenerator, createViewGenerator, entityViewGenerator, entityInformationsViewGenerator, entityInformationsEditViewGenerator);
     Iterables.removeIf(resourceGenerators, Predicates.isNull());
 
     return new DefaultExecutionPlan(classGenerators, resourceGenerators);

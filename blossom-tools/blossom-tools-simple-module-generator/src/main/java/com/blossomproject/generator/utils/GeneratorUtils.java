@@ -63,6 +63,10 @@ public class GeneratorUtils {
     return  settings.getEntityName() + "Controller";
   }
 
+  public static String getIndexationJobClassName(Settings settings) {
+    return  settings.getEntityName() + "IndexationJob";
+  }
+
   public static String getConfigurationClassName(Settings settings) {
     return  settings.getEntityName() + "Configuration";
   }
@@ -113,6 +117,10 @@ public class GeneratorUtils {
 
   public static String getConfigurationFullyQualifiedClassName(Settings settings) {
     return getPackage(settings) + '.' + getConfigurationClassName(settings);
+  }
+
+  public static String getIndexationJobFullyQualifiedClassName(Settings settings) {
+    return getPackage(settings) + '.' + getIndexationJobClassName(settings);
   }
 
   private static String getPackage(Settings settings, String... subpackages) {
