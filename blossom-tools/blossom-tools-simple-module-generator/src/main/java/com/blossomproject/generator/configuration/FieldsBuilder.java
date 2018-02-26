@@ -75,6 +75,12 @@ public class FieldsBuilder {
     return field;
   }
 
+  public EnumFieldBuilder _enum(String name, Class<? extends Enum> enumClass){
+    EnumFieldBuilder field = new EnumFieldBuilder(this, name, enumClass);
+    fields.add(field);
+    return field;
+  }
+
   public SettingsBuilder done() {
     return parent;
   }
