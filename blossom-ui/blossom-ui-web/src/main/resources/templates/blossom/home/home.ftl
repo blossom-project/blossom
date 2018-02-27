@@ -39,24 +39,34 @@
         </div>
     </div>
     <div class="row">
-        <#assign colors = ["navy-bg", "yellow-bg", "lazur-bg", "blue-bg"]>
+        <#assign colorsWidget = ["navy-bg", "yellow-bg", "lazur-bg", "blue-bg"]>
+        <#assign colorsPanel = ["panel-primary", "panel-warning", "panel-info", "panel-success"]>
         <#list menu.filteredItems(currentUser) as menuItem>
             <#if menuItem.filteredItems(currentUser)?size gt 0>
-                <#list menuItem.items() as subMenuItem>
-                    <#if !(subMenuItem.privilege()?has_content) || privilege.hasOne(currentUser, subMenuItem.privilege())>
-                        <div class="col-xs-6 col-md-4 col-lg-2">
-                            <#if subMenuItem.link()??><a href="${subMenuItem.link()}"></#if>
-                            <div class="widget <#if menuItem?index<=4>${colors[(menuItem?index)-1]}<#else>${colors[0]}</#if> p-lg text-center"
-                                 style="height: 150px;">
-                                <#if subMenuItem.icon()??><i class="${subMenuItem.icon()} fa-4x"></i></#if>
-                                <h3 class="font-bold" style="margin-top:15px;">
-                                    <@spring.messageText subMenuItem.label() subMenuItem.label()/>
-                                </h3>
-                            </div>
-                        </a>
+                <div class="col-md-12">
+                    <div class="panel <#if menuItem?index<=4>${colorsPanel[(menuItem?index)-1]}<#else>${colorsPanel[0]}</#if>">
+                        <div class="panel-heading">
+                            <@spring.messageText menuItem.label() menuItem.label()/>
                         </div>
-                    </#if>
-                </#list>
+                        <div class="panel-body gray-bg">
+                            <#list menuItem.items() as subMenuItem>
+                                <#if !(subMenuItem.privilege()?has_content) || privilege.hasOne(currentUser, subMenuItem.privilege())>
+                                    <div class="col-xs-6 col-md-4 col-lg-2">
+                                        <#if subMenuItem.link()??><a href="${subMenuItem.link()}"></#if>
+                                        <div class="widget <#if menuItem?index<=4>${colorsWidget[(menuItem?index)-1]}<#else>${colorsWidget[0]}</#if> p-lg text-center"
+                                             style="height: 150px;">
+                                            <#if subMenuItem.icon()??><i class="${subMenuItem.icon()} fa-4x"></i></#if>
+                                            <h3 class="font-bold" style="margin-top:15px;">
+                                                <@spring.messageText subMenuItem.label() subMenuItem.label()/>
+                                            </h3>
+                                        </div>
+                                        <#if subMenuItem.link()??></a></#if>
+                                    </div>
+                                </#if>
+                            </#list>
+                        </div>
+                    </div>
+                </div>
             </#if>
         </#list>
     </div>
