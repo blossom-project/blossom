@@ -49,6 +49,19 @@
       </div>
       %%/FIELD_FORM_SELECT%%
 
+      %%FIELD_FORM_TEXTAREA%%
+  <@spring.bind "%%ENTITY_NAME%%.%%FIELD_NAME%%"/>
+      <div class="form-group">
+          <label class="col-sm-2 control-label">%%FIELD_LABEL%%</label>
+          <div class="col-sm-10">
+              <textarea disabled class="form-control" name="%%FIELD_NAME%%" rows="5"><#if %%ENTITY_NAME%%.%%FIELD_NAME%%??>${%%ENTITY_NAME%%.%%FIELD_NAME%%}</#if></textarea>
+          <#list spring.status.errorMessages as error>
+              <span class="help-block text-danger m-b-none">${error}</span>
+          </#list>
+          </div>
+      </div>
+      %%/FIELD_FORM_TEXTAREA%%
+
       %%/FIELD_FORM%%
   </form>
 </div>

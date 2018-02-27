@@ -144,9 +144,11 @@ public class GeneratorUtils {
 
     String formFieldTemplateSelect = getFormFieldTemplateSelect(formFieldTemplate);
 
+    String formFieldTemplateTextarea = getFormFieldTemplateTextarea(formFieldTemplate);
+
     String form = "";
     for(Field field : fields){
-      form+= generateFormField(field, formFieldTemplateInput, formFieldTemplateBoolean, formFieldTemplateSelect);
+      form+= generateFormField(field, formFieldTemplateInput, formFieldTemplateBoolean, formFieldTemplateSelect, formFieldTemplateTextarea);
     }
     return content.substring(0,startTagPosition)+form+content.substring((endTagPosition + formTag.length()+5));
   }
@@ -175,13 +177,24 @@ public class GeneratorUtils {
     return formFieldTemplate.substring(startTagPositionSelect+formTagSelect.length()+4, endTagPositionSelect);
   }
 
-  private static String generateFormField(Field field, String formFieldTemplateInput, String formFieldTemplateBoolean, String formFieldTemplateSelect){
+  private static String getFormFieldTemplateTextarea(String formFieldTemplate){
+    String formTagSelect = "FIELD_FORM_TEXTAREA";
+    int startTagPositionTextarea= formFieldTemplate.indexOf("%%"+formTagSelect+"%%");
+    int endTagPositionTextarea = formFieldTemplate.indexOf("%%/"+formTagSelect+"%%", startTagPositionTextarea);
+
+    return formFieldTemplate.substring(startTagPositionTextarea+formTagSelect.length()+4, endTagPositionTextarea);
+  }
+
+  private static String generateFormField(Field field, String formFieldTemplateInput, String formFieldTemplateBoolean, String formFieldTemplateSelect, String formFieldTemplateTextarea){
     String formField;
     if ("boolean".equals(field.getJdbcType())){
       formField = generateFormFieldBoolean(field, formFieldTemplateBoolean);
     }
     else if(field instanceof EnumField){
       formField = generateFormFieldSelect(field, formFieldTemplateSelect);
+    }
+    else if(field instanceof StringField && ((StringField) field).isLob()) {
+      formField = generateFormFieldTextarea(field, formFieldTemplateTextarea);
     }
     else {
       String htmlType = getHtmlType(field);
@@ -215,6 +228,10 @@ public class GeneratorUtils {
 
   private static String generateFormFieldInput(Field field, String formFieldTemplateInput, String htmlType, String htmlCast){
     return formFieldTemplateInput.replaceAll("%%FIELD_NAME%%", field.getName()).replaceAll("%%FIELD_LABEL%%", field.getName()).replaceAll("%%FIELD_TYPE%%", htmlType).replaceAll("%%FIELD_CAST%%", htmlCast);
+  }
+
+  private static String generateFormFieldTextarea(Field field, String formFieldTemplateTextarea){
+    return formFieldTemplateTextarea.replaceAll("%%FIELD_NAME%%", field.getName()).replaceAll("%%FIELD_LABEL%%", field.getName());
   }
 
   public static String getHtmlType(Field field){
