@@ -63,8 +63,13 @@ public class GeneratorUtils {
     return  settings.getEntityName() + "Controller";
   }
 
+
   public static String getIndexationJobClassName(Settings settings) {
-    return  settings.getEntityName() + "IndexationJob";
+    return settings.getEntityName() + "IndexationJob";
+  }
+
+  public static String getApiControllerClassName(Settings settings) {
+    return  settings.getEntityName() + "ApiController";
   }
 
   public static String getConfigurationClassName(Settings settings) {
@@ -113,6 +118,10 @@ public class GeneratorUtils {
 
   public static String getControllerFullyQualifiedClassName(Settings settings) {
     return getPackage(settings) + '.' + getControllerClassName(settings);
+  }
+
+  public static String getApiControllerFullyQualifiedClassName(Settings settings) {
+    return getPackage(settings) + '.' + getApiControllerClassName(settings);
   }
 
   public static String getConfigurationFullyQualifiedClassName(Settings settings) {

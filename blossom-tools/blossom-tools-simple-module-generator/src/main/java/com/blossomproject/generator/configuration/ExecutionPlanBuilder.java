@@ -25,6 +25,7 @@ public class ExecutionPlanBuilder {
   private ServiceGenerator serviceGenerator;
   private ServiceImplGenerator serviceImplGenerator;
   private ControllerGenerator controllerGenerator;
+  private ApiControllerGenerator apiControllerGenerator;
   private ConfigurationGenerator configurationGenerator;
   private IndexationJobGenerator indexationJobGenerator;
 
@@ -42,7 +43,7 @@ public class ExecutionPlanBuilder {
   }
 
   public ExecutionPlanBuilder allClasses() {
-    return this.entity().repository().dao().dto().mapper().service().controller().configuration().indexationJob();
+    return this.entity().repository().dao().dto().mapper().service().controller().apiController().configuration().indexationJob();
   }
 
   public ExecutionPlanBuilder allResources() {
@@ -85,6 +86,11 @@ public class ExecutionPlanBuilder {
 
   public ExecutionPlanBuilder controller() {
     this.controllerGenerator = new ControllerGenerator();
+    return this;
+  }
+
+  public ExecutionPlanBuilder apiController() {
+    this.apiControllerGenerator = new ApiControllerGenerator();
     return this;
   }
 
@@ -143,7 +149,7 @@ public class ExecutionPlanBuilder {
     List<ClassGenerator> classGenerators = Lists
       .newArrayList(entityGenerator, repositoryGenerator, daoGenerator, daoImplGenerator,
         dtoGenerator, mapperGenerator, createFormGenerator, updateFormGenerator, serviceGenerator,
-        serviceImplGenerator, controllerGenerator, configurationGenerator, indexationJobGenerator);
+        serviceImplGenerator, controllerGenerator, apiControllerGenerator, configurationGenerator, indexationJobGenerator);
     Iterables.removeIf(classGenerators, Predicates.isNull());
 
     List<ResourceGenerator> resourceGenerators = Lists
