@@ -28,7 +28,7 @@ public class IndexationJobGenerator implements ClassGenerator {
                             "fileIndexationEngine");
             fileIndexationEngine.annotate(Autowired.class);
             fileIndexationEngine.annotate(Qualifier.class).param("value",
-                    "testGenIndexationEngine");
+                    settings.getEntityNameLowerCamel()+"IndexationEngine");
 
             JMethod getIndexationEngine = definedClass.method(JMod.PROTECTED, IndexationEngine.class, "getIndexationEngine");
             getIndexationEngine.annotate(Override.class);
