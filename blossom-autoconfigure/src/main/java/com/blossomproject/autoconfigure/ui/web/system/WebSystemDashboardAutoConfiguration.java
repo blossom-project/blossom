@@ -7,7 +7,9 @@ import com.blossomproject.ui.menu.MenuItemBuilder;
 import com.blossomproject.ui.web.system.dashboard.DashboardController;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.health.HealthIndicatorAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.metrics.MetricsEndpointAutoConfiguration;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -20,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  * Created by Maël Gargadennnec on 04/05/2017.
  */
 @Configuration
-@AutoConfigureAfter({HealthEndpointAutoConfiguration.class, MetricsAutoConfiguration.class})
+@AutoConfigureAfter({HealthEndpointAutoConfiguration.class, MetricsEndpointAutoConfiguration.class})
 @ConditionalOnClass(DashboardController.class)
 @ConditionalOnBean({HealthEndpoint.class, MetricsEndpoint.class})
 public class WebSystemDashboardAutoConfiguration {
@@ -47,6 +49,7 @@ public class WebSystemDashboardAutoConfiguration {
 
   @Bean
   public Privilege dashboardPrivilegePlugin() {
-    return new SimplePrivilege("system", "dashboard", "manager");
+    return new
+      SimplePrivilege("system", "dashboard", "manager");
   }
 }
