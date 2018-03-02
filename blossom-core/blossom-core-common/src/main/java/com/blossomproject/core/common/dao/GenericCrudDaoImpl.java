@@ -36,7 +36,7 @@ public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends
 
     @Override
     @Transactional
-    @CacheEvict(key = "#a0.id+''")
+    @CacheEvict(allEntries = true)
     public void delete(ENTITY toDelete) {
         Preconditions.checkArgument(toDelete != null);
         Preconditions.checkArgument(toDelete.getId() != null);
