@@ -171,71 +171,11 @@ To run a job on application start:
 
 ### Adding an entity
 #### Manually create an entity
-Blossom provides an abstract class that helps you creating entities.
-
-To create a simple entity, create an @Entity annoted class that extends `AbstractEntity`: this class provides typically needed technical columns such as identifier and and auditing listener. It also deals with setting/updating them so you only need to care about the "usefull" data of your entity. The example below corresponds to a table of 6 columns: id, name, creation_date, creation_user, modification_date, modification_user.
-
-```java
-@Entity 
-public class ExampleEntity extend AbstractEntity{
- @Column(name = "name")
-    private String nameExample;
-    
-   public String getNameExample() {
-        return nameExample;
-    }
-
-    public void setNameExample(String name) {
-        this.nameExample = name;
-    }
-}
-```
-
-You can then implement the interface `CrudRepository` to manage your entity.
-
 #### Index and search an entity
 #### Generate a (simple) entity
 
 ### Adding an association between two entities
 #### Manually create an association
-Blossom provides an abstract class that helps you creating associations tables representing n-n relationships between entities.
-To create an association between two entities A and B that both extends `AbstractEntity`, create an @Entity annoted class that extends `AbstractAssociationEntity<A,B>` and implement its methods. The example below corresponds to a table of 7 columns: id, a_id, b_id, creation_date, creation_user, modification_date, modification_user.
-```java
-@Entity
-public class AssociationAB extends AbstractAssociationEntity<A, B> {
-
-  @ManyToOne(fetch = FetchType.EAGER)
-  @Fetch(FetchMode.JOIN)
-  @JoinColumn(name = "a_id",referencedColumnName = "id")
-  private A a;
-
-  @ManyToOne(fetch = FetchType.EAGER)
-  @Fetch(FetchMode.JOIN)
-  @JoinColumn(name = "b_id",referencedColumnName = "id")
-  private B b;
-
-  @Override
-  public A getA() {
-    return this.a;
-  }
-
-  @Override
-  public void setA(A a) {
-    this.a = a;
-  }
-
-  @Override
-  public B getB() {
-    return this.b;
-  }
-
-  @Override
-  public void setB(B b) {
-    this.b = b;
-  }
-}
-```
-You can then implement the interface `AssociationRepository` to manage your association entity.
 
 ## Features
 
@@ -314,13 +254,6 @@ The default implementation is `IndexationEngineImpl`. It depends on the ES `Clie
 ### Scheduling
 
 ### I18n
-Blossom's back-office interface natively considers two languages: english and french. If you want to add other languages to the interface, you need to create a `languages.properties` file in you Resources folder containing the following:
-```ini
-blossom.languages=en,fr  (followed by all the locale language codes you want to add)
-```
-To include you own message ressources, simply add your them to your Resources/messages folder.
-
-You can use the Set<Locale> Bean declared in the class `CommonAutoConfiguration` in your controllers to internationalise your application.
 
 ### Mails
 
