@@ -314,6 +314,13 @@ The default implementation is `IndexationEngineImpl`. It depends on the ES `Clie
 ### Scheduling
 
 ### I18n
+Blossom's back-office interface natively considers two languages: english and french. If you want to add other languages to the interface, you need to create a `languages.properties` file in you Resources folder containing the following:
+```ini
+blossom.languages=en,fr  (followed by all the locale language codes you want to add)
+```
+To include you own message ressources, simply add your them to your Resources/messages folder.
+
+You can use the Set<Locale> Bean declared in the class `CommonAutoConfiguration` in your controllers to internationalise your application.
 
 ### Mails
 
