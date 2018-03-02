@@ -171,6 +171,26 @@ To run a job on application start:
 
 ### Adding an entity
 #### Manually create an entity
+Blossom provides abstract classes that help you creating entities.
+To create a simple entity, create an @Entity annoted class that extends AbstractEntity: this class provides typically needed technical columns such as identifier and and auditing listener. It also deals with setting/updating them so you only need to care about the "usefull" data of your entity. The example below corresponds to a table of 6 columns: id, name, creation_date, creation_user, modification_date, modification_user.
+
+```java
+@Entity 
+public class ExampleEntity extend AbstractEntity{
+ @Column(name = "name")
+    private String nameExample;
+    
+   public String getNameExample() {
+        return nameExample;
+    }
+
+    public void setNameExample(String name) {
+        this.nameExample = name;
+    }
+}
+```
+
+
 #### Index and search an entity
 #### Generate a (simple) entity
 
