@@ -171,8 +171,9 @@ To run a job on application start:
 
 ### Adding an entity
 #### Manually create an entity
-Blossom provides abstract classes that help you creating entities.
-To create a simple entity, create an @Entity annoted class that extends AbstractEntity: this class provides typically needed technical columns such as identifier and and auditing listener. It also deals with setting/updating them so you only need to care about the "usefull" data of your entity. The example below corresponds to a table of 6 columns: id, name, creation_date, creation_user, modification_date, modification_user.
+Blossom provides an abstract class that helps you creating entities.
+
+To create a simple entity, create an @Entity annoted class that extends `AbstractEntity`: this class provides typically needed technical columns such as identifier and and auditing listener. It also deals with setting/updating them so you only need to care about the "usefull" data of your entity. The example below corresponds to a table of 6 columns: id, name, creation_date, creation_user, modification_date, modification_user.
 
 ```java
 @Entity 
@@ -196,6 +197,43 @@ public class ExampleEntity extend AbstractEntity{
 
 ### Adding an association between two entities
 #### Manually create an association
+Blossom provides an abstract class that helps you creating associations tables representing n-n relationships between entities.
+To create an association between two entities A and B that both extends `AbstractEntity`, create an @Entity annoted class that extends `AbstractAssociationEntity<A,B>` and implement its methods. The example below corresponds to a table of 7 columns: id, a_id, b_id, creation_date, creation_user, modification_date, modification_user.
+```java
+@Entity
+public class AssociationAB extends AbstractAssociationEntity<A, B> {
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @Fetch(FetchMode.JOIN)
+  @JoinColumn(name = "a_id",referencedColumnName = "id")
+  private A a;
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @Fetch(FetchMode.JOIN)
+  @JoinColumn(name = "b_id",referencedColumnName = "id")
+  private B b;
+
+  @Override
+  public A getA() {
+    return this.a;
+  }
+
+  @Override
+  public void setA(A a) {
+    this.a = a;
+  }
+
+  @Override
+  public B getB() {
+    return this.b;
+  }
+
+  @Override
+  public void setB(B b) {
+    this.b = b;
+  }
+}
+```
 
 ## Features
 
