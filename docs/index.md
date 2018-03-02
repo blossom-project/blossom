@@ -191,6 +191,7 @@ public class ExampleEntity extend AbstractEntity{
 }
 ```
 
+You can then implement the interface `CrudRepository` to manage your entity.
 
 #### Index and search an entity
 #### Generate a (simple) entity
@@ -234,6 +235,7 @@ public class AssociationAB extends AbstractAssociationEntity<A, B> {
   }
 }
 ```
+You can then implement the interface `AssociationRepository` to manage your association entity.
 
 ## Features
 
