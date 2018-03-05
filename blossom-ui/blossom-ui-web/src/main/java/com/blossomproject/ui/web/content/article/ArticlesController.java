@@ -104,7 +104,7 @@ public class ArticlesController {
 
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthority('content:articles:read')")
-  public ModelAndView getGroup(@PathVariable Long id, Model model, HttpServletRequest request) {
+  public ModelAndView getArticle(@PathVariable Long id, Model model, HttpServletRequest request) {
     ArticleDTO article = this.articleService.getOne(id);
     if (article == null) {
       throw new NoSuchElementException(String.format("Article=%s not found", id));
@@ -116,7 +116,7 @@ public class ArticlesController {
   @PostMapping("/{id}/_delete")
   @PreAuthorize("hasAuthority('content:articles:delete')")
   public @ResponseBody
-  ResponseEntity<Map<Class<? extends AbstractDTO>, Long>> deleteGroup(
+  ResponseEntity<Map<Class<? extends AbstractDTO>, Long>> deleteArticle(
     @PathVariable Long id,
     @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force) {
     Optional<Map<Class<? extends AbstractDTO>, Long>> result = this.articleService
