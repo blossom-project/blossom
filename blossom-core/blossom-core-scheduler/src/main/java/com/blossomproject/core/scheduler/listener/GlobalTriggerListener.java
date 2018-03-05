@@ -10,6 +10,7 @@ import org.quartz.Trigger.CompletedExecutionInstruction;
 import org.quartz.TriggerListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class GlobalTriggerListener implements TriggerListener {
 
@@ -39,6 +40,7 @@ public class GlobalTriggerListener implements TriggerListener {
   }
 
   @Override
+  @Transactional
   public void triggerFired(Trigger trigger, JobExecutionContext context) {
     if(logger.isDebugEnabled()){
       logger.debug("Trigger fired with id {} for triggerKey ({} - {}) for jobKey ({} - {})",
@@ -58,6 +60,7 @@ public class GlobalTriggerListener implements TriggerListener {
   }
 
   @Override
+  @Transactional
   public void triggerComplete(Trigger trigger, JobExecutionContext context,
     CompletedExecutionInstruction triggerInstructionCode) {
     if(logger.isDebugEnabled()) {

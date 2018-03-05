@@ -22,7 +22,6 @@
     <springboot.version>2.0.0.RELEASE</springboot.version>
     <querydsl.version>3.7.0</querydsl.version>
     <jna.version>3.0.9</jna.version>
-    <quartz.version>2.3.0</quartz.version>
     <caffeine.version>2.5.0</caffeine.version>
     <bouncycastle.version>1.46</bouncycastle.version>
     <liquibase.version>3.5.3</liquibase.version>
@@ -47,16 +46,6 @@
         <groupId>com.sun.jna</groupId>
         <artifactId>jna</artifactId>
         <version>${jna.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.quartz-scheduler</groupId>
-        <artifactId>quartz</artifactId>
-        <version>${quartz.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.quartz-scheduler</groupId>
-        <artifactId>quartz-jobs</artifactId>
-        <version>${quartz.version}</version>
       </dependency>
       <dependency>
         <groupId>org.elasticsearch</groupId>
