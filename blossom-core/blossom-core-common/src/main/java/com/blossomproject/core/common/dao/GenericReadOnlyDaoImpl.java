@@ -56,19 +56,19 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   }
 
   @Override
-  @Cacheable(key = "#a0+''", sync = true)
+  @Cacheable(key = "#a0+''")
   public ENTITY getOne(long id) {
     return this.repository.findById(id).orElse(null);
   }
 
   @Override
-  @Cacheable(key = "'all'", sync = true)
+  @Cacheable(key = "'all'")
   public List<ENTITY> getAll() {
     return this.repository.findAll();
   }
 
   @Override
-  @Cacheable(sync = true)
+  @Cacheable
   public List<ENTITY> getAll(List<Long> ids) {
     Preconditions.checkArgument(ids != null);
     if (ids.isEmpty()) {
@@ -78,7 +78,7 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   }
 
   @Override
-  @Cacheable(sync = true)
+  @Cacheable
   public Page<ENTITY> getAll(Pageable pageable) {
     Preconditions.checkArgument(pageable != null);
     return repository.findAll(pageable);

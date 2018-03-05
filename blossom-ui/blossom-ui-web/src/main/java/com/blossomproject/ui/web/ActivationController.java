@@ -121,11 +121,16 @@ public class ActivationController {
     LOGGER.info(
       "Demande de réinitialisation du mot de passe de l'utilisateur " + form.getLoginOrEmail());
     if (!bindingResult.hasErrors()) {
-      Optional<UserDTO> userDTO = Optional.ofNullable(this.userService.getByIdentifier(form.getLoginOrEmail()).orElse(this.userService.getByEmail(form.getLoginOrEmail()).orElse(null)));
-      if(userDTO.isPresent()){
+      Optional<UserDTO> userDTO = this.userService.getByIdentifier(form.getLoginOrEmail());
+      if (userDTO.isPresent()) {
         this.userService.askPasswordChange(userDTO.get().getId());
-        model.addAttribute("resetPasswordMail", true);
+      } else {
+        userDTO = this.userService.getByEmail(form.getLoginOrEmail());
+        if (userDTO.isPresent()) {
+          this.userService.askPasswordChange(userDTO.get().getId());
+        }
       }
+      model.addAttribute("resetPasswordMail", true);
     }
 
     return new ModelAndView("blossom/activation/ask-password", model.asMap());

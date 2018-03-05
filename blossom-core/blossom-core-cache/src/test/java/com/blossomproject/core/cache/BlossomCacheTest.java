@@ -173,15 +173,13 @@ public class BlossomCacheTest {
   }
 
   @Test
-  public void should_get_object_with_value_loader_when_disabled() {
+  public void should_not_get_object_with_value_loader_when_disabled() {
     String key = "test";
-    String value = "testObj";
     blossomCache.put(key, key);
     blossomCache.disable();
 
-    String valueFromCache = blossomCache.get(key, () -> value);
-    assertNotNull("'Key' should return a null value", valueFromCache);
-    assertEquals(valueFromCache, value);
+    String valueFromCache = blossomCache.get(key, () -> "");
+    assertNull("'Key' should return a null value", valueFromCache);
   }
 
   @Test

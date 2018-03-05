@@ -40,6 +40,12 @@ public class ActuatorAutoConfiguration {
   }
 
   @Bean
+  public ClassLoaderMetrics classLoaderMetrics(){
+    return new ClassLoaderMetrics();
+  }
+
+
+  @Bean
   public TraceStatisticsMvcEndpoint traceStatisticsMvcEndpoint(
     ElasticsearchTraceRepository traceRepository) {
     return new TraceStatisticsMvcEndpoint(traceRepository);
