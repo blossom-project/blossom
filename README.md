@@ -6,4 +6,9 @@ Blossom is a Java framework base on Spring-Boot which enables you to realize you
 
 Documentation can be found here : https://blossom-project.com/documentation
 
+The initializr can be found here : https://blossom-project.com/initializr
+
+Samples can be found here : https://github.com/blossom-project/blossom-samples
+
+
 ![Screenshot](docs/blossom.png)

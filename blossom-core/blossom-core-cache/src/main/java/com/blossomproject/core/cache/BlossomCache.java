@@ -39,7 +39,12 @@ public class BlossomCache extends CaffeineCache {
   @Override
   public <T> T get(Object key, Callable<T> valueLoader) {
     if (!enabled) {
-      return null;
+      try {
+        return (T) toStoreValue(valueLoader.call());
+      }
+      catch (Exception ex) {
+        throw new ValueRetrievalException(key, valueLoader, ex);
+      }
     }
     return super.get(key, valueLoader);
   }
