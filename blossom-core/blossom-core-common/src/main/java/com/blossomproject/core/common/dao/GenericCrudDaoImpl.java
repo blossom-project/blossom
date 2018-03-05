@@ -71,6 +71,7 @@ public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends
 
     @Override
     @Transactional
+    @CacheEvict(allEntries = true)
     public List<ENTITY> update(Map<Long, ENTITY> toUpdates) {
         Preconditions.checkArgument(toUpdates != null);
         if (toUpdates.isEmpty()) {
