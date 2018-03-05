@@ -10,4 +10,5 @@ The initializr can be found here : https://blossom-project.com/initializr
 
 Samples can be found here : https://github.com/blossom-project/blossom-samples
 
+
 ![Screenshot](docs/blossom.png)
