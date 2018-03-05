@@ -6,30 +6,59 @@ import com.blossomproject.core.scheduler.job.ScheduledJobService;
 import com.blossomproject.core.scheduler.job.ScheduledJobServiceImpl;
 import com.blossomproject.core.scheduler.listener.GlobalTriggerListener;
 import org.quartz.Scheduler;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
+import org.springframework.boot.autoconfigure.quartz.SchedulerFactoryBeanCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
  */
 @Configuration
-public class SchedulerAutoConfiguration {
+public class SchedulerAutoConfiguration  {
 
-  @Bean
-  public TriggerHistoryDao triggerHistoryDao(JdbcTemplate jdbcTemplate) {
-    return new TriggerHistoryDaoImpl(jdbcTemplate, 10);
+  @Configuration
+  @AutoConfigureBefore(QuartzAutoConfiguration.class)
+  public static class GlobalListenerQuartzAutoConfiguration {
+    @Bean
+    public TriggerHistoryDao triggerHistoryDao(JdbcTemplate jdbcTemplate) {
+      return new TriggerHistoryDaoImpl(jdbcTemplate, 10);
+    }
+
+    @Bean
+    public GlobalTriggerListener globalTriggerListener(TriggerHistoryDao triggerHistoryDao) {
+      return new GlobalTriggerListener(triggerHistoryDao);
+    }
+
   }
 
-  @Bean
-  public GlobalTriggerListener globalTriggerListener(TriggerHistoryDao triggerHistoryDao) {
-    return new GlobalTriggerListener(triggerHistoryDao);
+  @Configuration
+  @AutoConfigureAfter(GlobalListenerQuartzAutoConfiguration.class)
+  public static class CustomizerQuartzAutoConfiguration implements SchedulerFactoryBeanCustomizer{
+    private final GlobalTriggerListener globalTriggerListener;
+
+    public CustomizerQuartzAutoConfiguration(GlobalTriggerListener globalTriggerListener) {
+      this.globalTriggerListener = globalTriggerListener;
+    }
+
+    @Override
+    public void customize(SchedulerFactoryBean schedulerFactoryBean) {
+      schedulerFactoryBean.setGlobalTriggerListeners(globalTriggerListener);
+    }
   }
 
-  @Bean
-  public ScheduledJobService scheduledJobService(Scheduler scheduler,
-    TriggerHistoryDao triggerHistoryDao) {
-    return new ScheduledJobServiceImpl(scheduler, triggerHistoryDao);
+
+  @Configuration
+  @AutoConfigureAfter(QuartzAutoConfiguration.class)
+  public static class JobServiceQuartzAutoConfiguration {
+    @Bean
+    public ScheduledJobService scheduledJobService(Scheduler scheduler, TriggerHistoryDao triggerHistoryDao) {
+      return new ScheduledJobServiceImpl(scheduler, triggerHistoryDao);
+    }
   }
 
 }
