@@ -1,5 +1,6 @@
 package com.blossomproject.ui.web;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.blossomproject.ui.stereotype.BlossomController;
 import java.util.List;
@@ -38,7 +39,8 @@ public class StatusController {
   }
 
 
-  private Health filteredDetails(Health health, List<String> excludes) {
+  @VisibleForTesting
+  Health filteredDetails(Health health, List<String> excludes) {
     Health.Builder builder = new Health.Builder(health.getStatus());
 
     health
