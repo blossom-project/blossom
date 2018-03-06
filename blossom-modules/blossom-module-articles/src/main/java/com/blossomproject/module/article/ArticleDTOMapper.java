@@ -14,6 +14,8 @@ public class ArticleDTOMapper extends AbstractDTOMapper<Article, ArticleDTO> {
     mapEntityCommonFields(dto, entity);
     dto.setName(entity.getName());
     dto.setDescription(entity.getDescription());
+    dto.setContent(entity.getContent());
+    dto.setViewable(entity.isViewable());
     return dto;
   }
 
@@ -27,6 +29,8 @@ public class ArticleDTOMapper extends AbstractDTOMapper<Article, ArticleDTO> {
     mapDtoCommonFields(entity, dto);
     entity.setName(dto.getName());
     entity.setDescription(dto.getDescription());
+    entity.setContent(dto.getContent());
+    entity.setViewable(dto.isViewable());
     return entity;
   }
 }

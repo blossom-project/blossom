@@ -18,6 +18,13 @@ public class Article extends AbstractEntity {
   @Column(name = "description")
   private String description;
 
+  @Lob
+  @Column(name = "content")
+  private String content;
+
+  @Column(name="viewable")
+  private boolean viewable;
+
   public String getName() {
     return name;
   }
@@ -32,5 +39,21 @@ public class Article extends AbstractEntity {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getContent() {
+    return content;
+  }
+
+  public void setContent(String content) {
+    this.content = content;
+  }
+
+  public boolean isViewable() {
+    return viewable;
+  }
+
+  public void setViewable(boolean viewable) {
+    this.viewable = viewable;
   }
 }

@@ -19,6 +19,14 @@
         <constraints nullable="true"/>
       </column>
 
+      <column name="content" type="clob">
+        <constraints nullable="true"/>
+      </column>
+
+      <column name="viewable" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+
       <column name="creation_date" type="timestamp">
         <constraints nullable="false"/>
       </column>

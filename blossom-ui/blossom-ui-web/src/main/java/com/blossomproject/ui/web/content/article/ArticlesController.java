@@ -163,9 +163,7 @@ public class ArticlesController {
     if (article == null) {
       throw new NoSuchElementException(String.format("Article=%s not found", id));
     }
-    article.setName(articleUpdateForm.getName());
-    ArticleDTO updatedArticle = this.articleService.update(id, article);
-
+    ArticleDTO updatedArticle = this.articleService.update(id, articleUpdateForm);
     return this.viewArticleInformationView(updatedArticle);
   }
 

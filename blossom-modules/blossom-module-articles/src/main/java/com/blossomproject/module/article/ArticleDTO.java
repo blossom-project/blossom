@@ -9,6 +9,8 @@ public class ArticleDTO extends AbstractDTO {
 
   private String name;
   private String description;
+  private String content;
+  private boolean viewable;
 
   public String getName() {
     return name;
@@ -24,5 +26,21 @@ public class ArticleDTO extends AbstractDTO {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getContent() {
+    return content;
+  }
+
+  public void setContent(String content) {
+    this.content = content;
+  }
+
+  public boolean isViewable() {
+    return viewable;
+  }
+
+  public void setViewable(boolean viewable) {
+    this.viewable = viewable;
   }
 }

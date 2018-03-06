@@ -132,7 +132,7 @@ public class ArticleAutoConfiguration {
 
       @Override
       public String[] getFields() {
-        return new String[]{"dto.name"};
+        return new String[]{"dto.name","dto.description","dto.content","dto.viewable"};
       }
 
       @Override
