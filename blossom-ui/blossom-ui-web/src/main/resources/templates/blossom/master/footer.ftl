@@ -77,4 +77,8 @@
 <!-- Dual listbox -->
 <script src="/blossom/public/js/plugins/dualListbox/jquery.bootstrap-duallistbox.js"></script>
 
+<!-- Summernote -->
+<script src="/blossom/public/js/plugins/summernote/summernote.min.js"></script>
+<script src="/blossom/public/js/plugins/summernote/lang/summernote-fr-FR.js"></script>
+
 </#macro>

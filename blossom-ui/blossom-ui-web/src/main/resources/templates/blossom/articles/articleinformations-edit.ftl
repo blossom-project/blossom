@@ -52,7 +52,7 @@
         <div class="form-group <#if spring.status.error>has-error</#if>">
             <label class="col-sm-2 control-label"><@spring.message"articles.article.properties.content"></@spring.message></label>
             <div class="col-sm-10">
-                <textarea name="content" class="form-control">${articleUpdateForm.content!''}</textarea>
+                <textarea id="summernote" name="content" class="form-control">${articleUpdateForm.content!''}</textarea>
         <#list spring.status.errorMessages as error>
           <span class="help-block text-danger m-b-none">${error}</span>
         </#list>
@@ -100,4 +100,21 @@
       $(targetSelector).removeClass("sk-loading");
     });
   };
+
+
+  $(document).ready(function() {
+      $('#summernote').summernote({
+          lang:'${translate}',
+          toolbar: [
+              // [groupName, [list of button]]
+              ['style', ['bold', 'italic', 'underline', 'clear']],
+              ['font', ['strikethrough', 'superscript', 'subscript']],
+              ['fontstyle', ['fontsize','fontname']],
+              ['color', ['color']],
+              ['para', ['ul', 'ol', 'paragraph']],
+              ['height', ['height']],
+              ['help',['help']]
+          ]
+      });
+  });
 </script>

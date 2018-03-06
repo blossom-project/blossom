@@ -142,21 +142,21 @@ public class ArticlesController {
 
   @GetMapping("/{id}/_informations/_edit")
   @PreAuthorize("hasAuthority('content:articles:write')")
-  public ModelAndView getArticleInformationsForm(@PathVariable Long id, Model model) {
+  public ModelAndView getArticleInformationsForm(@PathVariable Long id, Model model, Locale locale) {
     ArticleDTO article = this.articleService.getOne(id);
     if (article == null) {
       throw new NoSuchElementException(String.format("Article=%s not found", id));
     }
-    return this.updateArticleInformationView(new ArticleUpdateForm(article));
+    return this.updateArticleInformationView(new ArticleUpdateForm(article),model,locale);
   }
 
   @PostMapping("/{id}/_informations/_edit")
   @PreAuthorize("hasAuthority('content:articles:write')")
   public ModelAndView handleArticleInformationsForm(@PathVariable Long id, Model model,
     @Valid @ModelAttribute("articleUpdateForm") ArticleUpdateForm articleUpdateForm,
-    BindingResult bindingResult) {
+    BindingResult bindingResult,Locale locale) {
     if (bindingResult.hasErrors()) {
-      return this.updateArticleInformationView(articleUpdateForm);
+      return this.updateArticleInformationView(articleUpdateForm,model,locale);
     }
 
     ArticleDTO article = this.articleService.getOne(id);
@@ -171,8 +171,11 @@ public class ArticlesController {
     return new ModelAndView("blossom/articles/articleinformations", "article", article);
   }
 
-  private ModelAndView updateArticleInformationView(ArticleUpdateForm articleUpdateForm) {
-    return new ModelAndView("blossom/articles/articleinformations-edit", "articleUpdateForm",
-      articleUpdateForm);
+  private ModelAndView updateArticleInformationView(ArticleUpdateForm articleUpdateForm,Model model,Locale locale) {
+      if(locale.toString().equals("fr"))
+          model.addAttribute("translate",new String("fr-FR"));
+      else model.addAttribute("translate",new String("en-US"));
+      model.addAttribute("articleUpdateForm",articleUpdateForm);
+    return new ModelAndView("blossom/articles/articleinformations-edit", model.asMap());
   }
 }
