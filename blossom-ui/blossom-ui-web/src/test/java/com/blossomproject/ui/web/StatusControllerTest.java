@@ -36,9 +36,9 @@ public class StatusControllerTest {
     }
 
     @Test
-    public void should_display_status_with_health_up_no_exclude () throws Exception {
-        Map<String,String> map = new HashMap();
-        map.put("test","testMessage");
+    public void should_display_all_status_with_health_up() throws Exception {
+        Map<String, String> map = new HashMap();
+        map.put("test", "testMessage");
         Health.Builder builder = new Health.Builder(Status.UP, map);
         Health health = builder.build();
 
@@ -48,14 +48,14 @@ public class StatusControllerTest {
         ResponseEntity<Health> response = controllerSpy.status(Optional.empty());
 
         Assert.assertNotNull(response);
-        Assert.assertTrue(response.getStatusCode()== HttpStatus.OK);
+        Assert.assertTrue(response.getStatusCode() == HttpStatus.OK);
         Assert.assertEquals(health, response.getBody());
     }
 
     @Test
-    public void should_display_status_with_health_error_no_exclude () throws Exception {
-        Map<String,String> map = new HashMap();
-        map.put("test","testMessage");
+    public void should_display_all_status_with_health_down() throws Exception {
+        Map<String, String> map = new HashMap();
+        map.put("test", "testMessage");
         Health.Builder builder = new Health.Builder(Status.DOWN, map);
         Health health = builder.build();
 
@@ -65,14 +65,14 @@ public class StatusControllerTest {
         ResponseEntity<Health> response = controllerSpy.status(Optional.empty());
 
         Assert.assertNotNull(response);
-        Assert.assertTrue(response.getStatusCode()== HttpStatus.INTERNAL_SERVER_ERROR);
+        Assert.assertTrue(response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR);
         Assert.assertEquals(health, response.getBody());
     }
 
     @Test
-    public void should_display_status_with_health_up_with_excludes () throws Exception {
-        Map<String,String> map = new HashMap();
-        map.put("test","testMessage");
+    public void should_display_status_up_with_excludes() throws Exception {
+        Map<String, String> map = new HashMap();
+        map.put("test", "testMessage");
         Health.Builder builder = new Health.Builder(Status.UP, map);
         Health health = builder.build();
 
@@ -82,14 +82,14 @@ public class StatusControllerTest {
         ResponseEntity<Health> response = controllerSpy.status(Optional.of(Lists.newArrayList("test1", "test2")));
 
         Assert.assertNotNull(response);
-        Assert.assertTrue(response.getStatusCode()== HttpStatus.OK);
+        Assert.assertTrue(response.getStatusCode() == HttpStatus.OK);
         Assert.assertEquals(health, response.getBody());
     }
 
     @Test
-    public void should_display_status_with_health_error_without_excludes () throws Exception {
-        Map<String,String> map = new HashMap();
-        map.put("test","testMessage");
+    public void should_display_status_down_without_excludes() throws Exception {
+        Map<String, String> map = new HashMap();
+        map.put("test", "testMessage");
         Health.Builder builder = new Health.Builder(Status.DOWN, map);
         Health health = builder.build();
 
@@ -99,16 +99,16 @@ public class StatusControllerTest {
         ResponseEntity<Health> response = controllerSpy.status(Optional.of(Lists.newArrayList("test1", "test2")));
 
         Assert.assertNotNull(response);
-        Assert.assertTrue(response.getStatusCode()== HttpStatus.INTERNAL_SERVER_ERROR);
+        Assert.assertTrue(response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR);
         Assert.assertEquals(health, response.getBody());
     }
 
     @Test
-    public void should_filter_details_with_no_excludes () throws Exception {
+    public void should_filter_details_without_excludes() throws Exception {
         Health.Builder builder = new Health.Builder(Status.DOWN);
         Health healthChild = builder.build();
         Health.Builder builder2 = new Health.Builder(Status.DOWN);
-        builder2.withDetail("healthChild",healthChild);
+        builder2.withDetail("healthChild", healthChild);
         Health health = builder2.build();
 
         StatusController controllerSpy = spy(controller);
@@ -119,11 +119,11 @@ public class StatusControllerTest {
     }
 
     @Test
-    public void should_filter_details_with_excludes () throws Exception {
+    public void should_filter_details_with_excludes() throws Exception {
         Health.Builder builder = new Health.Builder(Status.DOWN);
         Health healthChild = builder.build();
         Health.Builder builder2 = new Health.Builder(Status.DOWN);
-        builder2.withDetail("healthChild",healthChild);
+        builder2.withDetail("healthChild", healthChild);
         Health health = builder2.build();
 
         StatusController controllerSpy = spy(controller);

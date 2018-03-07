@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
@@ -94,7 +95,7 @@ public class OmnisearchControllerTest {
         verify(registry, times(1)).getPlugins();
 
         Assert.assertNotNull(searchEngines);
-        assertTrue(searchEngines.size()==1);
+        assertTrue(searchEngines.size() == 1);
     }
 
     @Test
@@ -104,21 +105,51 @@ public class OmnisearchControllerTest {
         List<SearchEngine> searchEnginesMock = new ArrayList<>();
         searchEnginesMock.add(searchEngineNoOmniSearch);
 
-        IntStream.range(0,100).forEach(i -> {
-                    SearchEngine searchEngineOmniSearch = mock(SearchEngine.class);
-                    when(searchEngineOmniSearch.includeInOmnisearch()).thenReturn(true);
-                    searchEnginesMock.add(searchEngineOmniSearch);
-                });
+        IntStream.range(0, 100).forEach(i -> {
+            SearchEngine searchEngineOmniSearch = mock(SearchEngine.class);
+            when(searchEngineOmniSearch.includeInOmnisearch()).thenReturn(true);
+            searchEnginesMock.add(searchEngineOmniSearch);
+        });
 
         when(registry.getPlugins()).thenReturn(searchEnginesMock);
         List<SearchEngine> searchEngines = controller.filteredPlugins();
         verify(registry, times(1)).getPlugins();
 
         Assert.assertNotNull(searchEngines);
-        assertTrue(searchEngines.size()==100);
+        assertTrue(searchEngines.size() == 100);
 
         searchEnginesMock.remove(searchEngineNoOmniSearch);
         assertEquals(searchEnginesMock, searchEngines);
 
+    }
+
+    @Test
+    public void should_filter_and_return_plugins_with_plugins_includeInOmnisearch_and_without() throws Exception {
+        SearchEngine searchEngineNoOmniSearch = mock(SearchEngine.class);
+        when(searchEngineNoOmniSearch.includeInOmnisearch()).thenReturn(false);
+        List<SearchEngine> searchEnginesMock = new ArrayList<>();
+        searchEnginesMock.add(searchEngineNoOmniSearch);
+
+        IntStream.range(0, 100).forEach(i -> {
+            SearchEngine searchEngineOmniSearch = mock(SearchEngine.class);
+            when(searchEngineOmniSearch.includeInOmnisearch()).thenReturn(true);
+            searchEnginesMock.add(searchEngineOmniSearch);
+        });
+
+        IntStream.range(0, 30).forEach(i -> {
+            SearchEngine searchEngineOmniSearch = mock(SearchEngine.class);
+            when(searchEngineOmniSearch.includeInOmnisearch()).thenReturn(false);
+            searchEnginesMock.add(searchEngineOmniSearch);
+        });
+
+        when(registry.getPlugins()).thenReturn(searchEnginesMock);
+        List<SearchEngine> searchEngines = controller.filteredPlugins();
+        verify(registry, times(1)).getPlugins();
+
+        Assert.assertNotNull(searchEngines);
+        assertTrue(searchEngines.size() == 100);
+
+        searchEnginesMock.remove(searchEngineNoOmniSearch);
+        assertEquals(searchEnginesMock.stream().filter(searchEngine -> searchEngine.includeInOmnisearch()).collect(Collectors.toList()), searchEngines);
     }
 }
