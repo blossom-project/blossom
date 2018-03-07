@@ -20,29 +20,41 @@
     </div>
 </div>
 <div class="wrapper wrapper-content">
-  <form id="articleCreateForm" class="form form-horizontal" novalidate method="POST">
-    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-    <div class="ibox">
-      <div class="ibox-content">
+    <form id="articleCreateForm" class="form form-horizontal" novalidate method="POST">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        <div class="ibox">
+            <div class="ibox-content">
         <@spring.bind "articleCreateForm.name"/>
-        <div class="form-group <#if spring.status.error>has-error</#if>">
-          <label class="col-sm-2 control-label"><@spring.message "articles.article.properties.name"/></label>
-          <div class="col-sm-10">
-            <input type="text" name="name" class="form-control" value="${articleCreateForm.name}"
-                   placeholder="<@spring.message "articles.article.properties.name"/>">
+                <div class="form-group <#if spring.status.error>has-error</#if>">
+                    <label class="col-sm-2 control-label"><@spring.message "articles.article.properties.name"/></label>
+                    <div class="col-sm-10">
+                        <input type="text" name="name" class="form-control" value="${articleCreateForm.name!''}"
+                               placeholder="<@spring.message "articles.article.properties.name"/>">
             <#list spring.status.errorMessages as error>
               <span class="help-block text-danger m-b-none">${error}</span>
             </#list>
-          </div>
+                    </div>
+                </div>
+          <@spring.bind "articleCreateForm.summary"/>
+                <div class="form-group <#if spring.status.error>has-error</#if>">
+                    <label class="col-sm-2 control-label"><@spring.message"articles.article.properties.summary"></@spring.message></label>
+                    <div class="col-sm-10">
+                        <textarea name="summary" class="form-control">${articleCreateForm.summary!''}</textarea>
+        <#list spring.status.errorMessages as error>
+          <span class="help-block text-danger m-b-none">${error}</span>
+        </#list>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="ibox-footer">
+                <div class="text-right">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <@spring.message "save"/></button>
+                    <a href="." class="btn btn-default btn-sm"><i class="fa fa-remove"></i> <@spring.message "cancel"/></a>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="ibox-footer">
-        <div class="text-right">
-          <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <@spring.message "save"/></button>
-          <a href="." class="btn btn-default btn-sm"><i class="fa fa-remove"></i> <@spring.message "cancel"/></a>
-        </div>
-      </div>
-    </div>
-  </form>
+    </form>
 </div>
 </@master.default>

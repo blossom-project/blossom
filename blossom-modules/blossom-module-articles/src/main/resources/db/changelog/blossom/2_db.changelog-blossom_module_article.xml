@@ -15,7 +15,15 @@
         <constraints nullable="false"/>
       </column>
 
-      <column name="description" type="clob">
+      <column name="summary" type="clob">
+        <constraints nullable="true"/>
+      </column>
+
+      <column name="content" type="clob">
+        <constraints nullable="true"/>
+      </column>
+
+      <column name="status" type="varchar(20)">
         <constraints nullable="true"/>
       </column>
 

@@ -82,6 +82,19 @@
               "analyzer": "suggest",
               "search_analyzer": "default"
             },
+            "summary":{
+              "type":"string",
+              "analyzer":"suggest",
+              "search_analyzer":"default"
+            },
+            "status": {
+              "type": "string"
+            },
+            "content":{
+              "type":"string",
+              "analyzer":"suggest",
+              "search_analyzer":"default"
+            },
             "creationDate": {
               "type": "long"
             },

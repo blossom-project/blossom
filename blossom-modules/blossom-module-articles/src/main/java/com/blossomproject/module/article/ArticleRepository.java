@@ -3,6 +3,8 @@ package com.blossomproject.module.article;
 import com.blossomproject.core.common.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
  */

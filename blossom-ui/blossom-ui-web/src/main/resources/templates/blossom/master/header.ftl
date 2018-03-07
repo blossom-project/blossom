@@ -20,6 +20,7 @@
 <link href="/blossom/public/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
 <link href="/blossom/public/css/animate.css" rel="stylesheet">
 <link href="/blossom/public/css/style.css" rel="stylesheet">
+<link href="/blossom/public/css/plugins/summernote/summernote.css" rel="stylesheet">
 </#macro>
 
 <#macro scripts>
