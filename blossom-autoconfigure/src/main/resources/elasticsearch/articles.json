@@ -82,13 +82,13 @@
               "analyzer": "suggest",
               "search_analyzer": "default"
             },
-            "description":{
+            "summary":{
               "type":"string",
               "analyzer":"suggest",
               "search_analyzer":"default"
             },
-            "viewable": {
-              "type": "boolean"
+            "status": {
+              "type": "string"
             },
             "content":{
               "type":"string",

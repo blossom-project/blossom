@@ -15,7 +15,7 @@
         <constraints nullable="false"/>
       </column>
 
-      <column name="description" type="clob">
+      <column name="summary" type="clob">
         <constraints nullable="true"/>
       </column>
 
@@ -23,8 +23,8 @@
         <constraints nullable="true"/>
       </column>
 
-      <column name="viewable" type="boolean">
-        <constraints nullable="false"/>
+      <column name="status" type="varchar(20)">
+        <constraints nullable="true"/>
       </column>
 
       <column name="creation_date" type="timestamp">

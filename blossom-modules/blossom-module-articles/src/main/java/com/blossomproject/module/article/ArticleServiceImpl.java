@@ -31,8 +31,8 @@ public class ArticleServiceImpl extends GenericCrudServiceImpl<ArticleDTO, Artic
 
         Article articleToCreate = new Article();
         articleToCreate.setName(articleCreateForm.getName());
-        articleToCreate.setDescription(articleCreateForm.getDescription());
-        articleToCreate.setViewable(false);
+        articleToCreate.setSummary(articleCreateForm.getSummary());
+        articleToCreate.setStatus(Article.Status.DRAFT);
         ArticleDTO savedArticle = this.mapper.mapEntity(this.crudDao.create(articleToCreate));
 
         this.publisher.publishEvent(new CreatedEvent<ArticleDTO>(this, savedArticle));
@@ -46,19 +46,12 @@ public class ArticleServiceImpl extends GenericCrudServiceImpl<ArticleDTO, Artic
 
         ArticleDTO articleToUpdate = this.getOne(articleId);
         articleToUpdate.setName(articleUpdateForm.getName());
-        articleToUpdate.setDescription(articleUpdateForm.getDescription());
+        articleToUpdate.setStatus(articleUpdateForm.getStatus());
         articleToUpdate.setContent(articleUpdateForm.getContent());
-        articleToUpdate.setViewable(articleUpdateForm.isViewable());
+        articleToUpdate.setSummary(articleUpdateForm.getSummary());
 
-        ArticleDTO savedArticle = this.update(articleId,articleToUpdate);
-
-        this.publisher.publishEvent(new UpdatedEvent<ArticleDTO>(this, savedArticle));
-
-        return savedArticle;
+        return this.update(articleId,articleToUpdate);
     }
 
-    @Override
-    public List<ArticleDTO> getAllOrderedByCreationDate() {
-        return this.mapper.mapEntities(this.articleDao.getAllOrderedByCreationDate());
-    }
+
 }

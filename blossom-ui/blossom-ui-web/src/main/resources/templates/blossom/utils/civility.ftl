@@ -1,8 +1,6 @@
 <#import "/spring.ftl" as spring>
 
-<#macro pouet>
-pouet
-</#macro>
+
 <#macro label civility>
   <@spring.message "users.user.properties.civility."+civility/>
 </#macro>

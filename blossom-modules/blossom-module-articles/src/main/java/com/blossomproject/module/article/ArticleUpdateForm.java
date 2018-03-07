@@ -9,19 +9,19 @@ public class ArticleUpdateForm {
 
     public ArticleUpdateForm(ArticleDTO article) {
         this.name = article.getName();
-        this.description=article.getDescription();
-        this.viewable=article.isViewable();
-        this.content=article.getContent();
+        this.summary = article.getSummary();
+        this.status = article.getStatus();
+        this.content = article.getContent();
     }
 
     @NotBlank(message = "{articles.article.validation.name.NotBlank.message}")
     private String name = "";
 
-    private String description;
+    private String summary;
 
     private String content;
 
-    private boolean viewable;
+    private Article.Status status;
 
     public String getName() {
         return name;
@@ -31,12 +31,12 @@ public class ArticleUpdateForm {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getSummary() {
+        return summary;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public String getContent() {
@@ -47,11 +47,11 @@ public class ArticleUpdateForm {
         this.content = content;
     }
 
-    public boolean isViewable() {
-        return viewable;
+    public Article.Status getStatus() {
+        return status;
     }
 
-    public void setViewable(boolean viewable) {
-        this.viewable = viewable;
+    public void setStatus(Article.Status status) {
+        this.status = status;
     }
 }

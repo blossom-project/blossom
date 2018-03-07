@@ -20,14 +20,10 @@ public class ArticleDaoImpl extends GenericCrudDaoImpl<Article> implements Artic
   @Override
   protected Article updateEntity(Article originalEntity, Article modifiedEntity) {
     originalEntity.setName(modifiedEntity.getName());
-    originalEntity.setDescription(modifiedEntity.getDescription());
+    originalEntity.setSummary(modifiedEntity.getSummary());
     originalEntity.setContent(modifiedEntity.getContent());
-    originalEntity.setViewable(modifiedEntity.isViewable());
+    originalEntity.setStatus(modifiedEntity.getStatus());
     return originalEntity;
   }
 
-  @Override
-  public List<Article> getAllOrderedByCreationDate() {
-    return this.articleRepository.findAllByOrderByCreationDateDesc();
-  }
 }

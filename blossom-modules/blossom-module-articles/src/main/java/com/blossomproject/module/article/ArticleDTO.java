@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ArticleDTO extends AbstractDTO {
 
   private String name;
-  private String description;
+  private String summary;
   private String content;
-  private boolean viewable;
+  private Article.Status status;
 
   public String getName() {
     return name;
@@ -20,12 +20,12 @@ public class ArticleDTO extends AbstractDTO {
     this.name = name;
   }
 
-  public String getDescription() {
-    return description;
+  public String getSummary() {
+    return summary;
   }
 
-  public void setDescription(String description) {
-    this.description = description;
+  public void setSummary(String summary) {
+    this.summary = summary;
   }
 
   public String getContent() {
@@ -36,11 +36,11 @@ public class ArticleDTO extends AbstractDTO {
     this.content = content;
   }
 
-  public boolean isViewable() {
-    return viewable;
+  public Article.Status getStatus() {
+    return status;
   }
 
-  public void setViewable(boolean viewable) {
-    this.viewable = viewable;
+  public void setStatus(Article.Status status) {
+    this.status = status;
   }
 }

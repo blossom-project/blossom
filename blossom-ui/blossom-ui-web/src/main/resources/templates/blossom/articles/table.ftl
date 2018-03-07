@@ -8,7 +8,7 @@
   iconPath='fa fa-pencil'
   columns= {
   "name": { "label":"articles.article.properties.name", "sortable":true, "link":"/blossom/content/articles/{id}"},
-  "creationDate": {"label":"list.modification.date.head", "sortable":true, "type":"date"}
+  "creationDate": {"label":"list.creation.date.head", "sortable":true, "type":"date"}
   }
   filters=[]
   searchable=true

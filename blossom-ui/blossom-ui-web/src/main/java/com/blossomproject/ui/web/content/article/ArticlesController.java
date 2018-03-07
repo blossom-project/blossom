@@ -1,13 +1,10 @@
 package com.blossomproject.ui.web.content.article;
 
+import com.blossomproject.module.article.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.SearchEngineImpl;
-import com.blossomproject.module.article.ArticleCreateForm;
-import com.blossomproject.module.article.ArticleDTO;
-import com.blossomproject.module.article.ArticleService;
-import com.blossomproject.module.article.ArticleUpdateForm;
 import com.blossomproject.ui.menu.OpenedMenu;
 import com.blossomproject.ui.stereotype.BlossomController;
 import java.util.Locale;
@@ -132,12 +129,12 @@ public class ArticlesController {
 
   @GetMapping("/{id}/_informations")
   @PreAuthorize("hasAuthority('content:articles:read')")
-  public ModelAndView getArticleInformations(@PathVariable Long id, HttpServletRequest request) {
+  public ModelAndView getArticleInformations(@PathVariable Long id, Model model, HttpServletRequest request) {
     ArticleDTO article = this.articleService.getOne(id);
     if (article == null) {
       throw new NoSuchElementException(String.format("Article=%s not found", id));
     }
-    return this.viewArticleInformationView(article);
+    return this.viewArticleInformationView(article,model);
   }
 
   @GetMapping("/{id}/_informations/_edit")
@@ -164,17 +161,20 @@ public class ArticlesController {
       throw new NoSuchElementException(String.format("Article=%s not found", id));
     }
     ArticleDTO updatedArticle = this.articleService.update(id, articleUpdateForm);
-    return this.viewArticleInformationView(updatedArticle);
+    return this.viewArticleInformationView(updatedArticle,model);
   }
 
-  private ModelAndView viewArticleInformationView(ArticleDTO article) {
-    return new ModelAndView("blossom/articles/articleinformations", "article", article);
+  private ModelAndView viewArticleInformationView(ArticleDTO article,Model model) {
+    model.addAttribute("statuslist", Article.Status.values());
+    model.addAttribute("article", article);
+    return new ModelAndView("blossom/articles/articleinformations", model.asMap());
   }
 
   private ModelAndView updateArticleInformationView(ArticleUpdateForm articleUpdateForm,Model model,Locale locale) {
+    model.addAttribute("statuslist", Article.Status.values());
       if(locale.toString().equals("fr"))
-          model.addAttribute("translate",new String("fr-FR"));
-      else model.addAttribute("translate",new String("en-US"));
+          model.addAttribute("translate","fr-FR");
+      else model.addAttribute("translate","en-US");
       model.addAttribute("articleUpdateForm",articleUpdateForm);
     return new ModelAndView("blossom/articles/articleinformations-edit", model.asMap());
   }

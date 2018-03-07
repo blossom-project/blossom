@@ -35,11 +35,11 @@
             </#list>
                     </div>
                 </div>
-          <@spring.bind "articleCreateForm.description"/>
+          <@spring.bind "articleCreateForm.summary"/>
                 <div class="form-group <#if spring.status.error>has-error</#if>">
-                    <label class="col-sm-2 control-label"><@spring.message"articles.article.properties.description"></@spring.message></label>
+                    <label class="col-sm-2 control-label"><@spring.message"articles.article.properties.summary"></@spring.message></label>
                     <div class="col-sm-10">
-                        <textarea name="description" class="form-control">${articleCreateForm.description!''}</textarea>
+                        <textarea name="summary" class="form-control">${articleCreateForm.summary!''}</textarea>
         <#list spring.status.errorMessages as error>
           <span class="help-block text-danger m-b-none">${error}</span>
         </#list>

@@ -33,35 +33,35 @@ public class ArticleServiceImplTest {
   @Mock
   private PluginRegistry<AssociationServicePlugin, Class<? extends AbstractDTO>> associationRegistry;
 
+
   private ArticleServiceImpl articleService;
 
   @Before
-  public void setUp() throws Exception{
-    this.articleService= spy(
-            new ArticleServiceImpl(articleDao,articleDTOMapper,applicationEventPublisher,associationRegistry)
-    );
+  public void SetUp(){
+    this.articleService= new ArticleServiceImpl(articleDao,articleDTOMapper,applicationEventPublisher,associationRegistry);
   }
 
+
   @Test
-  public void test_create_article() {
+  public void test_create_article() throws Exception{
     ArticleCreateForm articleCreateForm = new ArticleCreateForm();
-    ArticleDTO articleSaved= new ArticleDTO();
+    ArticleDTO articleSaved = new ArticleDTO();
     given(articleDao.create(any(Article.class))).willReturn(new Article());
     given(articleDTOMapper.mapEntity(any(Article.class))).willReturn(articleSaved);
-    ArticleDTO result = this.articleService.create(articleCreateForm);
+    ArticleDTO result= articleService.create(articleCreateForm);
     Assert.assertEquals(articleSaved,result);
     verify(applicationEventPublisher,times(1)).publishEvent(any(CreatedEvent.class));
   }
 
   @Test
-  public void test_update_article(){
+  public void test_update_article() throws Exception{
     ArticleDTO articleToUpdate = new ArticleDTO();
-    articleToUpdate.setId(123456789l);
-    given(articleDao.update(anyLong(),any(Article.class))).willReturn(new Article());
-    given(articleDTOMapper.mapEntity(any(Article.class))).willReturn(articleToUpdate);
-    Assert.assertEquals(articleToUpdate,articleService.update(123456789l,new ArticleUpdateForm(articleToUpdate)));
-    verify(applicationEventPublisher,times(1)).publishEvent(any(UpdatedEvent.class));
+    articleToUpdate.setId(1l);
+    given(articleService.getOne(anyLong())).willReturn(articleToUpdate);
+    Assert.assertEquals(articleToUpdate,articleService.update(1l,new ArticleUpdateForm(articleToUpdate)));
+   verify(applicationEventPublisher,times(1)).publishEvent(any(UpdatedEvent.class));
   }
+
 
 
 

@@ -1,6 +1,7 @@
 <#import "/spring.ftl" as spring>
 <#import "/blossom/utils/buttons.ftl" as buttons>
 <#import "/blossom/utils/notification.ftl" as notification>
+<#import "/blossom/utils/status.ftl" as state>
 
 
 <form id="articleUpdateForm" class="form form-horizontal" onsubmit="submit_articleinformations(this);return false;">
@@ -27,11 +28,11 @@
         </div>
 
 
-      <@spring.bind "articleUpdateForm.description"/>
+      <@spring.bind "articleUpdateForm.summary"/>
         <div class="form-group <#if spring.status.error>has-error</#if>">
-            <label class="col-sm-2 control-label"><@spring.message"articles.article.properties.description"></@spring.message></label>
+            <label class="col-sm-2 control-label"><@spring.message"articles.article.properties.summary"></@spring.message></label>
             <div class="col-sm-10">
-                <textarea name="description" class="form-control">${articleUpdateForm.description!''}</textarea>
+                <textarea name="summary" class="form-control">${articleUpdateForm.summary!''}</textarea>
         <#list spring.status.errorMessages as error>
           <span class="help-block text-danger m-b-none">${error}</span>
         </#list>
@@ -40,11 +41,19 @@
 
         <div class="hr-line-dashed"></div>
 
-        <@spring.bind "articleUpdateForm.viewable"/>
+        <@spring.bind "articleUpdateForm.status"/>
         <div class="form-group">
-            <label class="col-sm-2 control-label"><@spring.message"articles.article.properties.viewable"/></label>
+            <label class="col-sm-2 control-label"><@spring.message"articles.article.properties.status"/></label>
             <div class="col-sm-10">
-                <@buttons.switch checked=articleUpdateForm.viewable name="viewable"/>
+        <#list statuslist as status>
+          <div class="radio radio-success radio-inline">
+              <input type="radio" class="radio" value="${status}" id="state_${status}" name="status" <#if articleUpdateForm.status == status>checked</#if>>
+              <label for="state_${status}"> <@state.label status=status/> </label>
+          </div>
+        </#list>
+        <#list spring.status.errorMessages as error>
+          <span class="help-block text-danger m-b-none">${error}</span>
+        </#list>
             </div>
         </div>
 

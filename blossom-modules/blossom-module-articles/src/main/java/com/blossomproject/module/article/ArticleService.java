@@ -13,5 +13,4 @@ public interface ArticleService extends CrudService<ArticleDTO> {
 
     ArticleDTO update(Long groupId, ArticleUpdateForm articleUpdateForm);
 
-    List<ArticleDTO> getAllOrderedByCreationDate();
 }

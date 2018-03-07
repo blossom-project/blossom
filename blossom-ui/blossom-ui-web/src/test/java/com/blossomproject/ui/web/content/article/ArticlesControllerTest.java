@@ -31,6 +31,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
 import org.springframework.web.servlet.ModelAndView;
@@ -62,6 +64,7 @@ public class ArticlesControllerTest {
 
 
     private Locale locale = new Locale("en");
+
 
     private ArticlesController articlesController;
 
@@ -162,7 +165,7 @@ public class ArticlesControllerTest {
         when(articleService.getOne(any(Long.class))).thenReturn(null);
         thrown.expect(NoSuchElementException.class);
         thrown.expectMessage(String.format("Article=%s not found", 1L));
-        articlesController.getArticleInformations(1L,req);
+        articlesController.getArticleInformations(1L, new ExtendedModelMap(),req);
     }
 
     @Test
@@ -171,7 +174,7 @@ public class ArticlesControllerTest {
         ArticleDTO articleDTO = new ArticleDTO();
         articleDTO.setId(1L);
         when(articleService.getOne(any(Long.class))).thenReturn(articleDTO);
-        ModelAndView modelAndView = articlesController.getArticleInformations(1L,req);
+        ModelAndView modelAndView = articlesController.getArticleInformations(1L,  new ExtendedModelMap(),req);
         assertTrue(modelAndView.getViewName().equals("blossom/articles/articleinformations"));
         assertTrue(EqualsBuilder.reflectionEquals(articleDTO, modelAndView.getModel().get("article")));
         verify(articleService, times(1)).getOne(eq(1L));
@@ -211,7 +214,7 @@ public class ArticlesControllerTest {
     public void should_handle_update_without_form_error() throws Exception {
         ArticleUpdateForm form = new ArticleUpdateForm();
         form.setName("name");
-        form.setViewable(false);
+
 
         BindingResult result = mock(BindingResult.class);
         when(result.hasErrors()).thenReturn(false);
@@ -219,12 +222,12 @@ public class ArticlesControllerTest {
         ArticleDTO articleToUpdate = new ArticleDTO();
         articleToUpdate.setId(1L);
         articleToUpdate.setName("eman");
-        articleToUpdate.setViewable(false);
+
 
         ArticleDTO articleUpdated = new ArticleDTO();
         articleUpdated.setId(1L);
         articleUpdated.setName("name");
-        articleToUpdate.setViewable(false);
+
 
         when(articleService.getOne(any(Long.class))).thenReturn(articleToUpdate);
         when(articleService.update(any(Long.class), any(ArticleUpdateForm.class))).thenReturn(articleUpdated);

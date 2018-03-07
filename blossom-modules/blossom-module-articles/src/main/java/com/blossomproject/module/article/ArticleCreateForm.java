@@ -8,7 +8,7 @@ public class ArticleCreateForm {
     @NotBlank(message = "{articles.article.validation.name.NotBlank.message}")
     private String name = "";
 
-    private String description;
+    private String summary;
 
     public String getName() {
         return name;
@@ -18,12 +18,11 @@ public class ArticleCreateForm {
         this.name = name;
     }
 
-
-    public String getDescription() {
-        return description;
+    public String getSummary() {
+        return summary;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 }

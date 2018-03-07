@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring>
-<#import "/blossom/utils/civility.ftl" as civility>
+<#import "/blossom/utils/status.ftl" as state>
 <#import "/blossom/utils/buttons.ftl" as buttons>
 <#import "/blossom/utils/tabulation.ftl" as tabulation>
 
@@ -19,9 +19,9 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label"><@spring.message "articles.article.properties.description"/></label>
+            <label class="col-sm-2 control-label"><@spring.message "articles.article.properties.summary"/></label>
             <div class="col-sm-10">
-                <p class="form-control-static">${article.description!''}</p>
+                <p class="form-control-static">${article.summary!''}</p>
             </div>
         </div>
         <div class="form-group">
@@ -38,9 +38,9 @@
         </div>
         <div class="hr-line-dashed"></div>
         <div class="form-group">
-            <label class="col-sm-2 control-label"><@spring.message "articles.article.properties.viewable"/></label>
+            <label class="col-sm-2 control-label"><@spring.message "articles.article.properties.status"/></label>
             <div class="col-sm-10">
-            <@buttons.switch checked=article.isViewable() disabled=true/>
+                <p class="form-control-static"> <@state.label status=article.status/></p>
             </div>
         </div>
         <div class="form-group">
