@@ -33,7 +33,7 @@ public class ArticleServiceImpl extends GenericCrudServiceImpl<ArticleDTO, Artic
         articleToCreate.setName(articleCreateForm.getName());
         articleToCreate.setSummary(articleCreateForm.getSummary());
         articleToCreate.setStatus(Article.Status.DRAFT);
-        ArticleDTO savedArticle = this.mapper.mapEntity(this.crudDao.create(articleToCreate));
+        ArticleDTO savedArticle = this.mapper.mapEntity(this.articleDao.create(articleToCreate));
 
         this.publisher.publishEvent(new CreatedEvent<ArticleDTO>(this, savedArticle));
 
@@ -41,8 +41,7 @@ public class ArticleServiceImpl extends GenericCrudServiceImpl<ArticleDTO, Artic
     }
 
     @Override
-    @Transactional
-    public ArticleDTO update(Long articleId, ArticleUpdateForm articleUpdateForm) {
+        public ArticleDTO update(Long articleId, ArticleUpdateForm articleUpdateForm) {
 
         ArticleDTO articleToUpdate = this.getOne(articleId);
         articleToUpdate.setName(articleUpdateForm.getName());

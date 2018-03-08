@@ -8,7 +8,7 @@
 <@master.default currentUser=currentUser>
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-8">
-    <h2><i class="fa fa-key"></i> ${article.name}</h2>
+    <h2><i class="fa fa-pencil"></i> ${article.name}</h2>
     <ol class="breadcrumb">
       <li>
         <a href="/blossom"><@spring.message "menu.home"/></a>
