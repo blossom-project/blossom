@@ -1,7 +1,6 @@
-package com.blossomproject.ui.web;
+package com.blossomproject.ui.api;
 
 import com.google.common.collect.Lists;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,29 +19,29 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StatusControllerTest {
-
+public class StatusApiControllerTest {
     @Mock
     HealthEndpoint healthEndpoint;
 
-    private StatusController controller;
+    private StatusApiController controller;
 
     @Before
     public void setUp() {
-        controller = new StatusController(healthEndpoint);
+        controller = new StatusApiController(healthEndpoint);
     }
 
     @Test
-    public void should_display_all_status_with_health_up() throws Exception {
+    public void should_return_all_status_with_health_up() throws Exception {
         Map<String, String> map = new HashMap();
         map.put("test", "testMessage");
         Health.Builder builder = new Health.Builder(Status.UP, map);
         Health health = builder.build();
 
-        StatusController controllerSpy = spy(controller);
+        StatusApiController controllerSpy = spy(controller);
         doReturn(health).when(controllerSpy).filteredDetails(any(), any(List.class));
 
         ResponseEntity<Health> response = controllerSpy.status(Optional.empty());
@@ -59,7 +58,7 @@ public class StatusControllerTest {
         Health.Builder builder = new Health.Builder(Status.DOWN, map);
         Health health = builder.build();
 
-        StatusController controllerSpy = spy(controller);
+        StatusApiController controllerSpy = spy(controller);
         doReturn(health).when(controllerSpy).filteredDetails(any(), any(List.class));
 
         ResponseEntity<Health> response = controllerSpy.status(Optional.empty());
@@ -76,7 +75,7 @@ public class StatusControllerTest {
         Health.Builder builder = new Health.Builder(Status.UP, map);
         Health health = builder.build();
 
-        StatusController controllerSpy = spy(controller);
+        StatusApiController controllerSpy = spy(controller);
         doReturn(health).when(controllerSpy).filteredDetails(any(), any(List.class));
 
         ResponseEntity<Health> response = controllerSpy.status(Optional.of(Lists.newArrayList("test1", "test2")));
@@ -93,7 +92,7 @@ public class StatusControllerTest {
         Health.Builder builder = new Health.Builder(Status.DOWN, map);
         Health health = builder.build();
 
-        StatusController controllerSpy = spy(controller);
+        StatusApiController controllerSpy = spy(controller);
         doReturn(health).when(controllerSpy).filteredDetails(any(), any(List.class));
 
         ResponseEntity<Health> response = controllerSpy.status(Optional.of(Lists.newArrayList("test1", "test2")));
@@ -111,7 +110,7 @@ public class StatusControllerTest {
         builder2.withDetail("healthChild", healthChild);
         Health health = builder2.build();
 
-        StatusController controllerSpy = spy(controller);
+        StatusApiController controllerSpy = spy(controller);
         Health healthResponse = controllerSpy.filteredDetails(health, Lists.newArrayList());
         Assert.assertNotNull(healthResponse);
         Assert.assertEquals(healthResponse, health);
@@ -126,12 +125,10 @@ public class StatusControllerTest {
         builder2.withDetail("healthChild", healthChild);
         Health health = builder2.build();
 
-        StatusController controllerSpy = spy(controller);
+        StatusApiController controllerSpy = spy(controller);
         Health healthResponse = controllerSpy.filteredDetails(health, Lists.newArrayList("healthChild"));
         Assert.assertNotNull(healthResponse);
         Assert.assertTrue(healthResponse.getDetails().isEmpty());
 
     }
-
-
 }

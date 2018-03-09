@@ -1,12 +1,9 @@
-package com.blossomproject.ui.web;
+package com.blossomproject.ui.api;
 
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.SearchEngine;
 import com.google.common.collect.Lists;
-import org.elasticsearch.action.search.MultiSearchRequestBuilder;
-import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.unit.TimeValue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,40 +17,42 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OmnisearchControllerTest {
-
+public class OmnisearchApiControllerTest {
     @Mock
     private Client client;
 
     @Mock
     private PluginRegistry<SearchEngine, Class<? extends AbstractDTO>> registry;
 
-    private OmnisearchController controller;
+    private OmnisearchApiController controller;
 
     @Before
     public void setUp() {
-        controller = new OmnisearchController(client, registry);
-
+        controller = new OmnisearchApiController(client, registry);
     }
 
     @Test
-    public void should_display_empty_paged_result_without_plugin() throws Exception {
-        OmnisearchController spyController = spy(controller);
+    public void should_return_empty_paged_result_without_plugin() throws Exception {
+        OmnisearchApiController spyController = spy(controller);
         when(controller.filteredPlugins())
                 .thenReturn(new ArrayList<SearchEngine>());
-        ModelAndView response = spyController.omniSearch("test", mock(Pageable.class), new ExtendedModelMap());
+        Map<String, Object> response = spyController.omniSearch("test", mock(Pageable.class));
         verify(spyController, times(1)).filteredPlugins();
         Assert.assertNotNull(response);
-        assertTrue(response.getViewName().equals("omnisearch/omnisearch"));
-        assertTrue(response.getModel().isEmpty());
+        assertEquals(response.get("q"),"test");
+        assertEquals(response.get("total"),0);
+        assertEquals(response.get("duration"),0L);
+        assertTrue(((Map)response.get("results")).isEmpty());
     }
 
     @Test
@@ -152,4 +151,5 @@ public class OmnisearchControllerTest {
         searchEnginesMock.remove(searchEngineNoOmniSearch);
         assertEquals(searchEnginesMock.stream().filter(searchEngine -> searchEngine.includeInOmnisearch()).collect(Collectors.toList()), searchEngines);
     }
+
 }
