@@ -2,10 +2,12 @@ package com.blossomproject.module.article;
 
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 public class ArticleCreateForm {
 
     @NotBlank(message = "{articles.article.validation.name.NotBlank.message}")
+    @Size(max=100,message="{articles.article.validation.name.Size.message}")
     private String name = "";
 
     private String summary;
