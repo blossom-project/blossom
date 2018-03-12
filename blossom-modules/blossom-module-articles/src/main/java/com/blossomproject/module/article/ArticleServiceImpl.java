@@ -35,6 +35,7 @@ public class ArticleServiceImpl extends GenericCrudServiceImpl<ArticleDTO, Artic
         articleToCreate.setStatus(Article.Status.DRAFT);
         ArticleDTO savedArticle = this.mapper.mapEntity(this.articleDao.create(articleToCreate));
 
+
         this.publisher.publishEvent(new CreatedEvent<ArticleDTO>(this, savedArticle));
 
         return savedArticle;

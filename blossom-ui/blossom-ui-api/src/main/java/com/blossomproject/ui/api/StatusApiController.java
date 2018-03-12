@@ -1,5 +1,6 @@
 package com.blossomproject.ui.api;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.blossomproject.ui.stereotype.BlossomApiController;
 import java.util.List;
@@ -37,7 +38,8 @@ public class StatusApiController {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(health);
   }
 
-  private Health filteredDetails(Health health, List<String> excludes) {
+  @VisibleForTesting
+  Health filteredDetails(Health health, List<String> excludes) {
     Health.Builder builder = new Health.Builder(health.getStatus());
 
     health
