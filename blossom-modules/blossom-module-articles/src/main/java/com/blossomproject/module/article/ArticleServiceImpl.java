@@ -42,6 +42,7 @@ public class ArticleServiceImpl extends GenericCrudServiceImpl<ArticleDTO, Artic
     }
 
     @Override
+    @Transactional
         public ArticleDTO update(Long articleId, ArticleUpdateForm articleUpdateForm) {
 
         ArticleDTO articleToUpdate = this.getOne(articleId);

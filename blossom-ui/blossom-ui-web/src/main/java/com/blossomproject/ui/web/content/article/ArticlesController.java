@@ -83,13 +83,8 @@ public class ArticlesController {
     if (bindingResult.hasErrors()) {
       return this.createView(articleCreateForm, model);
     }
-    try {
       ArticleDTO article = this.articleService.create(articleCreateForm);
       return new ModelAndView("redirect:../articles/" + article.getId());
-    } catch (Exception e) {
-      return this.createView(articleCreateForm, model);
-    }
-
   }
 
   private ModelAndView createView(ArticleCreateForm articleCreateForm, Model model) {
