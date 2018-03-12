@@ -6,7 +6,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthEndpoint;
@@ -19,8 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StatusControllerTest {
@@ -28,12 +34,9 @@ public class StatusControllerTest {
     @Mock
     HealthEndpoint healthEndpoint;
 
+    @InjectMocks
+    @Spy
     private StatusController controller;
-
-    @Before
-    public void setUp() {
-        controller = new StatusController(healthEndpoint);
-    }
 
     @Test
     public void should_display_all_status_with_health_up() throws Exception {
@@ -41,15 +44,14 @@ public class StatusControllerTest {
         map.put("test", "testMessage");
         Health.Builder builder = new Health.Builder(Status.UP, map);
         Health health = builder.build();
+        
+        doReturn(health).when(controller).filteredDetails(any(), any(List.class));
 
-        StatusController controllerSpy = spy(controller);
-        doReturn(health).when(controllerSpy).filteredDetails(any(), any(List.class));
+        ResponseEntity<Health> response = controller.status(Optional.empty());
 
-        ResponseEntity<Health> response = controllerSpy.status(Optional.empty());
-
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.getStatusCode() == HttpStatus.OK);
-        Assert.assertEquals(health, response.getBody());
+        assertNotNull(response);
+        assertTrue(response.getStatusCode() == HttpStatus.OK);
+        assertEquals(health, response.getBody());
     }
 
     @Test
@@ -58,15 +60,14 @@ public class StatusControllerTest {
         map.put("test", "testMessage");
         Health.Builder builder = new Health.Builder(Status.DOWN, map);
         Health health = builder.build();
+        
+        doReturn(health).when(controller).filteredDetails(any(), any(List.class));
 
-        StatusController controllerSpy = spy(controller);
-        doReturn(health).when(controllerSpy).filteredDetails(any(), any(List.class));
+        ResponseEntity<Health> response = controller.status(Optional.empty());
 
-        ResponseEntity<Health> response = controllerSpy.status(Optional.empty());
-
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR);
-        Assert.assertEquals(health, response.getBody());
+        assertNotNull(response);
+        assertTrue(response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR);
+        assertEquals(health, response.getBody());
     }
 
     @Test
@@ -76,14 +77,13 @@ public class StatusControllerTest {
         Health.Builder builder = new Health.Builder(Status.UP, map);
         Health health = builder.build();
 
-        StatusController controllerSpy = spy(controller);
-        doReturn(health).when(controllerSpy).filteredDetails(any(), any(List.class));
+        doReturn(health).when(controller).filteredDetails(any(), any(List.class));
 
-        ResponseEntity<Health> response = controllerSpy.status(Optional.of(Lists.newArrayList("test1", "test2")));
+        ResponseEntity<Health> response = controller.status(Optional.of(Lists.newArrayList("test1", "test2")));
 
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.getStatusCode() == HttpStatus.OK);
-        Assert.assertEquals(health, response.getBody());
+        assertNotNull(response);
+        assertTrue(response.getStatusCode() == HttpStatus.OK);
+        assertEquals(health, response.getBody());
     }
 
     @Test
@@ -93,14 +93,13 @@ public class StatusControllerTest {
         Health.Builder builder = new Health.Builder(Status.DOWN, map);
         Health health = builder.build();
 
-        StatusController controllerSpy = spy(controller);
-        doReturn(health).when(controllerSpy).filteredDetails(any(), any(List.class));
+        doReturn(health).when(controller).filteredDetails(any(), any(List.class));
 
-        ResponseEntity<Health> response = controllerSpy.status(Optional.of(Lists.newArrayList("test1", "test2")));
+        ResponseEntity<Health> response = controller.status(Optional.of(Lists.newArrayList("test1", "test2")));
 
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR);
-        Assert.assertEquals(health, response.getBody());
+        assertNotNull(response);
+        assertTrue(response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR);
+        assertEquals(health, response.getBody());
     }
 
     @Test
@@ -111,10 +110,9 @@ public class StatusControllerTest {
         builder2.withDetail("healthChild", healthChild);
         Health health = builder2.build();
 
-        StatusController controllerSpy = spy(controller);
-        Health healthResponse = controllerSpy.filteredDetails(health, Lists.newArrayList());
-        Assert.assertNotNull(healthResponse);
-        Assert.assertEquals(healthResponse, health);
+        Health healthResponse = controller.filteredDetails(health, Lists.newArrayList());
+        assertNotNull(healthResponse);
+        assertEquals(health, healthResponse);
 
     }
 
@@ -126,10 +124,9 @@ public class StatusControllerTest {
         builder2.withDetail("healthChild", healthChild);
         Health health = builder2.build();
 
-        StatusController controllerSpy = spy(controller);
-        Health healthResponse = controllerSpy.filteredDetails(health, Lists.newArrayList("healthChild"));
-        Assert.assertNotNull(healthResponse);
-        Assert.assertTrue(healthResponse.getDetails().isEmpty());
+        Health healthResponse = controller.filteredDetails(health, Lists.newArrayList("healthChild"));
+        assertNotNull(healthResponse);
+        assertTrue(healthResponse.getDetails().isEmpty());
 
     }
 

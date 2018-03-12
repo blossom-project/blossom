@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -25,10 +26,16 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({LoggerFactory.class})
@@ -46,20 +53,16 @@ public class FileManagerControllerTest {
     @Mock
     private SearchEngineImpl<FileDTO> searchEngine;
 
+    @InjectMocks
     private FileManagerController controller;
-
-    @Before
-    public void setUp() {
-        controller = new FileManagerController(service, searchEngine);
-    }
 
     @Test
     public void should_display_page() throws Exception {
         Model model = new ExtendedModelMap();
         ModelAndView result = controller.getPage(model);
 
-        Assert.assertEquals("blossom/filemanager/filemanager", result.getViewName());
-        Assert.assertEquals(model, result.getModel());
+        assertEquals("blossom/filemanager/filemanager", result.getViewName());
+        assertEquals(model, result.getModel());
     }
 
     @Test
@@ -71,8 +74,8 @@ public class FileManagerControllerTest {
 
         verify(service, times(1)).getAll(any(Pageable.class));
 
-        Assert.assertEquals("blossom/filemanager/filelist", result.getViewName());
-        Assert.assertTrue(result.getModelMap().containsKey("files"));
+        assertEquals("blossom/filemanager/filelist", result.getViewName());
+        assertTrue(result.getModelMap().containsKey("files"));
     }
 
     @Test
@@ -84,8 +87,8 @@ public class FileManagerControllerTest {
 
         verify(searchEngine, times(1)).search(eq("test"), any(Pageable.class));
 
-        Assert.assertEquals("blossom/filemanager/filelist", result.getViewName());
-        Assert.assertTrue(result.getModelMap().containsKey("files"));
+        assertEquals("blossom/filemanager/filelist", result.getViewName());
+        assertTrue(result.getModelMap().containsKey("files"));
     }
 
     @Test

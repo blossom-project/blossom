@@ -4,10 +4,9 @@ import com.blossomproject.core.scheduler.job.JobInfo;
 import com.blossomproject.core.scheduler.job.ScheduledJobService;
 import com.blossomproject.core.scheduler.job.SchedulerInfo;
 import com.google.common.collect.Lists;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.quartz.JobKey;
@@ -17,7 +16,16 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SchedulerControllerTest {
@@ -25,12 +33,8 @@ public class SchedulerControllerTest {
     @Mock
     ScheduledJobService scheduledJobService;
 
+    @InjectMocks
     private SchedulerController controller;
-
-    @Before
-    public void setUp() {
-        controller = new SchedulerController(scheduledJobService);
-    }
 
     @Test
     public void should_display_scheduler_and_groups() throws Exception {
@@ -42,9 +46,9 @@ public class SchedulerControllerTest {
 
         ModelAndView result = controller.scheduler(new ExtendedModelMap());
 
-        Assert.assertEquals("blossom/system/scheduler/scheduler", result.getViewName());
-        Assert.assertEquals(schedulerInfo, result.getModel().get("scheduler"));
-        Assert.assertEquals(groupsInfo, result.getModel().get("groups"));
+        assertEquals("blossom/system/scheduler/scheduler", result.getViewName());
+        assertEquals(schedulerInfo, result.getModel().get("scheduler"));
+        assertEquals(groupsInfo, result.getModel().get("groups"));
 
         verify(scheduledJobService, times(1)).getSchedulerInfo();
         verify(scheduledJobService, times(1)).getGroups();
@@ -59,9 +63,9 @@ public class SchedulerControllerTest {
 
         ModelAndView result = controller.scheduler(new ExtendedModelMap());
 
-        Assert.assertEquals("blossom/system/scheduler/scheduler", result.getViewName());
-        Assert.assertEquals(schedulerInfo, result.getModel().get("scheduler"));
-        Assert.assertTrue(((List) result.getModel().get("groups")).isEmpty());
+        assertEquals("blossom/system/scheduler/scheduler", result.getViewName());
+        assertEquals(schedulerInfo, result.getModel().get("scheduler"));
+        assertTrue(((List) result.getModel().get("groups")).isEmpty());
 
         verify(scheduledJobService, times(1)).getSchedulerInfo();
         verify(scheduledJobService, times(1)).getGroups();
@@ -79,9 +83,9 @@ public class SchedulerControllerTest {
 
         ModelAndView result = controller.tasks(new ExtendedModelMap(), "groups");
 
-        Assert.assertEquals("blossom/system/scheduler/list", result.getViewName());
-        Assert.assertEquals(schedulerInfo, result.getModel().get("scheduler"));
-        Assert.assertEquals(jobInfos, result.getModel().get("jobInfos"));
+        assertEquals("blossom/system/scheduler/list", result.getViewName());
+        assertEquals(schedulerInfo, result.getModel().get("scheduler"));
+        assertEquals(jobInfos, result.getModel().get("jobInfos"));
 
         verify(scheduledJobService, times(1)).getSchedulerInfo();
         verify(scheduledJobService, times(1)).getAll(any());
@@ -97,9 +101,9 @@ public class SchedulerControllerTest {
 
         ModelAndView result = controller.tasks(new ExtendedModelMap(), "groups");
 
-        Assert.assertEquals("blossom/system/scheduler/list", result.getViewName());
-        Assert.assertEquals(schedulerInfo, result.getModel().get("scheduler"));
-        Assert.assertTrue(((List) result.getModel().get("jobInfos")).isEmpty());
+        assertEquals("blossom/system/scheduler/list", result.getViewName());
+        assertEquals(schedulerInfo, result.getModel().get("scheduler"));
+        assertTrue(((List) result.getModel().get("jobInfos")).isEmpty());
 
         verify(scheduledJobService, times(1)).getSchedulerInfo();
         verify(scheduledJobService, times(1)).getAll(any());
@@ -115,9 +119,9 @@ public class SchedulerControllerTest {
 
         ModelAndView result = controller.task(new ExtendedModelMap(), "groups", "name");
 
-        Assert.assertEquals("blossom/system/scheduler/detail", result.getViewName());
-        Assert.assertEquals(schedulerInfo, result.getModel().get("scheduler"));
-        Assert.assertEquals(result.getModel().get("jobInfo"), jobInfos);
+        assertEquals("blossom/system/scheduler/detail", result.getViewName());
+        assertEquals(schedulerInfo, result.getModel().get("scheduler"));
+        assertEquals(result.getModel().get("jobInfo"), jobInfos);
 
         verify(scheduledJobService, times(1)).getSchedulerInfo();
         verify(scheduledJobService, times(1)).getOne(any());
@@ -132,9 +136,9 @@ public class SchedulerControllerTest {
 
         ModelAndView result = controller.task(new ExtendedModelMap(), "groups", "name");
 
-        Assert.assertEquals("blossom/system/scheduler/detail", result.getViewName());
-        Assert.assertEquals(schedulerInfo, result.getModel().get("scheduler"));
-        Assert.assertNull(result.getModel().get("jobInfo"));
+        assertEquals("blossom/system/scheduler/detail", result.getViewName());
+        assertEquals(schedulerInfo, result.getModel().get("scheduler"));
+        assertNull(result.getModel().get("jobInfo"));
 
         verify(scheduledJobService, times(1)).getSchedulerInfo();
         verify(scheduledJobService, times(1)).getOne(any());
