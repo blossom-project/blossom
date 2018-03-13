@@ -10,6 +10,7 @@ import com.blossomproject.module.article.ArticleDTO;
 import com.blossomproject.module.article.ArticleService;
 import com.blossomproject.module.article.ArticleUpdateForm;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
@@ -42,7 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
+import java.util.Optional;
 
 
 import static org.junit.Assert.*;
@@ -61,10 +62,6 @@ public class ArticlesControllerTest {
 
     @Mock
     private SearchEngineImpl<ArticleDTO> searchEngine;
-
-
-    private Locale locale = new Locale("en");
-
 
     private ArticlesController articlesController;
 
@@ -127,18 +124,6 @@ public class ArticlesControllerTest {
 
 
     @Test
-    public void should_handle_create_with_exception() throws Exception {
-        ArticleCreateForm form = new ArticleCreateForm();
-        form.setName("name");
-        BindingResult result = mock(BindingResult.class);
-        when(result.hasErrors()).thenReturn(false);
-        when(this.articleService.create(form)).thenThrow(new NullPointerException());
-        ModelAndView modelAndView = articlesController.handleArticleCreateForm(form, result, new ExtendedModelMap());
-        assertTrue(modelAndView.getViewName().equals("blossom/articles/create"));
-        assertTrue(EqualsBuilder.reflectionEquals(form, modelAndView.getModel().get("articleCreateForm")));
-    }
-
-    @Test
     public void should_display_one_with_id_not_found() throws Exception {
         HttpServletRequest req = mock(HttpServletRequest.class);
         when(articleService.getOne(any(Long.class))).thenReturn(null);
@@ -185,7 +170,7 @@ public class ArticlesControllerTest {
         when(articleService.getOne(any(Long.class))).thenReturn(null);
         thrown.expect(NoSuchElementException.class);
         thrown.expectMessage(String.format("Article=%s not found", 1L));
-        articlesController.getArticleInformationsForm(1L, new ExtendedModelMap(),locale);
+        articlesController.getArticleInformationsForm(1L, new ExtendedModelMap(),new Locale("en"));
     }
 
     @Test
@@ -194,7 +179,7 @@ public class ArticlesControllerTest {
         articleDTO.setId(1L);
         articleDTO.setName("name");
         when(articleService.getOne(any(Long.class))).thenReturn(articleDTO);
-        ModelAndView modelAndView = articlesController.getArticleInformationsForm(1L, new ExtendedModelMap(),locale);
+        ModelAndView modelAndView = articlesController.getArticleInformationsForm(1L, new ExtendedModelMap(),new Locale("fr"));
         assertTrue(modelAndView.getViewName().equals("blossom/articles/articleinformations-edit"));
         ArticleUpdateForm articleUpdateForm = (ArticleUpdateForm) modelAndView.getModel().get("articleUpdateForm");
         assertTrue(articleUpdateForm.getName().equals(articleDTO.getName()));
@@ -207,7 +192,7 @@ public class ArticlesControllerTest {
         when(articleService.getOne(any(Long.class))).thenReturn(null);
         thrown.expect(NoSuchElementException.class);
         thrown.expectMessage(String.format("Article=%s not found", 1L));
-        articlesController.handleArticleInformationsForm(1L, new ExtendedModelMap(), new ArticleUpdateForm(), result,locale);
+        articlesController.handleArticleInformationsForm(1L, new ExtendedModelMap(), new ArticleUpdateForm(), result,new Locale("en"));
     }
 
     @Test
@@ -232,7 +217,7 @@ public class ArticlesControllerTest {
         when(articleService.getOne(any(Long.class))).thenReturn(articleToUpdate);
         when(articleService.update(any(Long.class), any(ArticleUpdateForm.class))).thenReturn(articleUpdated);
 
-        ModelAndView modelAndView = articlesController.handleArticleInformationsForm(1L, new ExtendedModelMap(), form, result,locale);
+        ModelAndView modelAndView = articlesController.handleArticleInformationsForm(1L, new ExtendedModelMap(), form, result,new Locale("fr"));
         verify(articleService, times(1)).update(eq(1L), eq(form));
         assertTrue(modelAndView.getViewName().equals("blossom/articles/articleinformations"));
         assertTrue(EqualsBuilder.reflectionEquals(articleUpdated, modelAndView.getModel().get("article")));
@@ -246,7 +231,7 @@ public class ArticlesControllerTest {
         BindingResult result = mock(BindingResult.class);
         when(result.hasErrors()).thenReturn(true);
 
-        ModelAndView modelAndView = articlesController.handleArticleInformationsForm(1L, new ExtendedModelMap(), form, result,locale);
+        ModelAndView modelAndView = articlesController.handleArticleInformationsForm(1L, new ExtendedModelMap(), form, result,new Locale("en"));
         assertTrue(modelAndView.getViewName().equals("blossom/articles/articleinformations-edit"));
         assertTrue(EqualsBuilder.reflectionEquals(form, modelAndView.getModel().get("articleUpdateForm")));
     }
@@ -264,6 +249,21 @@ public class ArticlesControllerTest {
         Assert.assertTrue(response.getStatusCode() == HttpStatus.OK);
     }
 
+    @Test
+    public void should_delete_one_with_id_found_with_conflict() throws Exception {
+        Long id = 1L;
+        when(articleService.getOne(any(Long.class))).thenReturn(new ArticleDTO());
+        when(articleService.delete(any(ArticleDTO.class), eq(false))).thenReturn(Optional.of(ImmutableMap.<Class<? extends AbstractDTO>, Long>builder().put(ArticleDTO.class, 2L).build()));
+
+        ResponseEntity<Map<Class<? extends AbstractDTO>, Long>> response = articlesController.deleteArticle(id, false);
+        verify(articleService, times(1)).getOne(eq(id));
+        verify(articleService, times(1)).delete(any(ArticleDTO.class), anyBoolean());
+
+        Assert.assertNotNull(response);
+        Assert.assertNotNull(response.getBody());
+        Assert.assertFalse(response.getBody().isEmpty());
+        Assert.assertTrue(response.getStatusCode() == HttpStatus.CONFLICT);
+    }
 
 
 

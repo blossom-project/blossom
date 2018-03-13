@@ -120,8 +120,10 @@
               ['font', ['strikethrough', 'superscript', 'subscript']],
               ['fontstyle', ['fontsize','fontname']],
               ['color', ['color']],
-              ['para', ['ul', 'ol', 'paragraph']],
+              ['para', ['ul', 'ol', 'paragraph','style']],
               ['height', ['height']],
+              ['insert',['link','table','picture','hr']],
+              ['code',['codeview']],
               ['help',['help']]
           ]
       });
