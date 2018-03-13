@@ -3,15 +3,12 @@ package com.blossomproject.ui.web;
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.SearchEngine;
 import com.google.common.collect.Lists;
-import org.elasticsearch.action.search.MultiSearchRequestBuilder;
-import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.unit.TimeValue;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Pageable;
 import org.springframework.plugin.core.PluginRegistry;
@@ -24,8 +21,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class OmnisearchControllerTest {
@@ -36,23 +39,17 @@ public class OmnisearchControllerTest {
     @Mock
     private PluginRegistry<SearchEngine, Class<? extends AbstractDTO>> registry;
 
+    @InjectMocks
+    @Spy
     private OmnisearchController controller;
-
-    @Before
-    public void setUp() {
-        controller = new OmnisearchController(client, registry);
-
-    }
 
     @Test
     public void should_display_empty_paged_result_without_plugin() throws Exception {
-        OmnisearchController spyController = spy(controller);
-        when(controller.filteredPlugins())
-                .thenReturn(new ArrayList<SearchEngine>());
-        ModelAndView response = spyController.omniSearch("test", mock(Pageable.class), new ExtendedModelMap());
-        verify(spyController, times(1)).filteredPlugins();
-        Assert.assertNotNull(response);
-        assertTrue(response.getViewName().equals("omnisearch/omnisearch"));
+        doReturn(new ArrayList<SearchEngine>()).when(controller).filteredPlugins();
+        ModelAndView response = controller.omniSearch("test", mock(Pageable.class), new ExtendedModelMap());
+        verify(controller, times(1)).filteredPlugins();
+        assertNotNull(response);
+        assertEquals("omnisearch/omnisearch", response.getViewName());
         assertTrue(response.getModel().isEmpty());
     }
 
@@ -62,7 +59,7 @@ public class OmnisearchControllerTest {
         List<SearchEngine> searchEngines = controller.filteredPlugins();
         verify(registry, times(1)).getPlugins();
 
-        Assert.assertNotNull(searchEngines);
+        assertNotNull(searchEngines);
         assertTrue(searchEngines.isEmpty());
     }
 
@@ -78,7 +75,7 @@ public class OmnisearchControllerTest {
         List<SearchEngine> searchEngines = controller.filteredPlugins();
         verify(registry, times(1)).getPlugins();
 
-        Assert.assertNotNull(searchEngines);
+        assertNotNull(searchEngines);
         assertTrue(searchEngines.isEmpty());
     }
 
@@ -94,7 +91,7 @@ public class OmnisearchControllerTest {
         List<SearchEngine> searchEngines = controller.filteredPlugins();
         verify(registry, times(1)).getPlugins();
 
-        Assert.assertNotNull(searchEngines);
+        assertNotNull(searchEngines);
         assertTrue(searchEngines.size() == 1);
     }
 
@@ -115,7 +112,7 @@ public class OmnisearchControllerTest {
         List<SearchEngine> searchEngines = controller.filteredPlugins();
         verify(registry, times(1)).getPlugins();
 
-        Assert.assertNotNull(searchEngines);
+        assertNotNull(searchEngines);
         assertTrue(searchEngines.size() == 100);
 
         searchEnginesMock.remove(searchEngineNoOmniSearch);
@@ -146,7 +143,7 @@ public class OmnisearchControllerTest {
         List<SearchEngine> searchEngines = controller.filteredPlugins();
         verify(registry, times(1)).getPlugins();
 
-        Assert.assertNotNull(searchEngines);
+        assertNotNull(searchEngines);
         assertTrue(searchEngines.size() == 100);
 
         searchEnginesMock.remove(searchEngineNoOmniSearch);
