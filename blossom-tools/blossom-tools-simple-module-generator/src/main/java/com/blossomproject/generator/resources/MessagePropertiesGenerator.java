@@ -22,7 +22,7 @@ public class MessagePropertiesGenerator implements ResourceGenerator {
   @Override
   public void generate(Settings settings, Map<String, String> params) {
     try {
-      URL url = Resources.getResource("messages.properties");
+      URL url = Resources.getResource("messages_generator.properties");
       String content = Resources.toString(url, Charsets.UTF_8);
 
       for(Entry<String,String> entry : params.entrySet()){
