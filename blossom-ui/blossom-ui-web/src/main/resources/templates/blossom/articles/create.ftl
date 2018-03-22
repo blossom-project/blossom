@@ -5,7 +5,7 @@
 <@master.default currentUser=currentUser>
 <div class="row wrapper border-bottom white-bg page-heading">
      <div class="col-sm-8">
-        <h2><i class="fa fa-key"></i> <@spring.message "articles.title"/></h2>
+        <h2><i class="fa fa-pencil"></i> <@spring.message "articles.creation"/></h2>
         <ol class="breadcrumb">
             <li>
                 <a href="/blossom"><@spring.message "menu.home"/></a>
@@ -14,7 +14,7 @@
                 <@spring.message "menu.content"/>
             </li>
             <li class="active">
-                <strong><@spring.message "articles.title"/></strong>
+                <strong><@spring.message "articles.creation"/></strong>
             </li>
         </ol>
     </div>
