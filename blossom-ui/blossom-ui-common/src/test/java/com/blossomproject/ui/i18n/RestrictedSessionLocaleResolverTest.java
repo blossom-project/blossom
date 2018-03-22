@@ -1,5 +1,8 @@
 package com.blossomproject.ui.i18n;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -14,6 +17,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -103,5 +107,53 @@ public class RestrictedSessionLocaleResolverTest {
     this.resolver.setDefaultLocale(Locale.FRANCE);
     this.resolver.setLocale(request, response, locale);
     verify(this.resolver, times(1)).doSetLocale(eq(request), eq(response), eq(Locale.FRANCE));
+  }
+
+  @Test
+  public void should_determine_default_locale_if_available() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    Locale locale = Locale.FRANCE;
+    when(request.getLocale()).thenReturn(locale);
+
+    Locale response = this.resolver.determineDefaultLocale(request);
+
+    assertNotNull(response);
+    assertEquals(locale, response);
+
+    verify(request, times(1)).getLocale();
+  }
+
+  @Test
+  public void should_determine_default_locale_with_request_locale_null() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getLocale()).thenReturn(null);
+
+    Locale response = this.resolver.determineDefaultLocale(request);
+
+    assertNull(response);
+  }
+
+  @Test
+  public void should_determine_default_locale_if_no_closest_local() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    Locale locale = Locale.CHINA;
+    when(request.getLocale()).thenReturn(locale);
+
+    Locale response = this.resolver.determineDefaultLocale(request);
+
+    assertNotNull(response);
+    assertEquals(locale, response);
+  }
+
+  @Test
+  public void should_determine_default_locale_if_closest_local() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    Locale locale = Locale.FRENCH;
+    when(request.getLocale()).thenReturn(locale);
+
+    Locale response = this.resolver.determineDefaultLocale(request);
+
+    assertNotNull(response);
+    assertEquals(response, Locale.FRANCE);
   }
 }
