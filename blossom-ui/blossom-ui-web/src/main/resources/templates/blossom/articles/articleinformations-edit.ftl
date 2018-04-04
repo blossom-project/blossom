@@ -114,6 +114,11 @@
   $(document).ready(function() {
       $('#summernote').summernote({
           lang:'${translate}',
+          popover:{
+              link:[
+                  ["link", ["customlink", "unlink"]]
+              ]
+          },
           toolbar: [
               // [groupName, [list of button]]
               ['style', ['bold', 'italic', 'underline', 'clear']],
