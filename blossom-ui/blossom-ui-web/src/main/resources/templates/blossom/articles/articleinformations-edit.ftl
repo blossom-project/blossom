@@ -117,6 +117,16 @@
           popover:{
               link:[
                   ["link", ["customlink", "unlink"]]
+              ],image: [
+                  ["imagesize", ["imageSize100", "imageSize50", "imageSize25"]],
+                  ["float", ["floatLeft", "floatRight", "floatNone"]],
+                  ["remove", ["removeMedia"]]
+              ], air: [
+                  ["color", ["color"]],
+                  ["font", ["bold", "underline", "clear"]],
+                  ["para", ["ul", "paragraph"]],
+                  ["table", ["table"]],
+                  ["insert", ["link", "picture"]]
               ]
           },
           toolbar: [
