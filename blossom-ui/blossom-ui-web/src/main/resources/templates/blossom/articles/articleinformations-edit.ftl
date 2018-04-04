@@ -114,6 +114,21 @@
   $(document).ready(function() {
       $('#summernote').summernote({
           lang:'${translate}',
+          popover:{
+              link:[
+                  ["link", ["customlink", "unlink"]]
+              ],image: [
+                  ["imagesize", ["imageSize100", "imageSize50", "imageSize25"]],
+                  ["float", ["floatLeft", "floatRight", "floatNone"]],
+                  ["remove", ["removeMedia"]]
+              ], air: [
+                  ["color", ["color"]],
+                  ["font", ["bold", "underline", "clear"]],
+                  ["para", ["ul", "paragraph"]],
+                  ["table", ["table"]],
+                  ["insert", ["link", "picture"]]
+              ]
+          },
           toolbar: [
               // [groupName, [list of button]]
               ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -122,7 +137,7 @@
               ['color', ['color']],
               ['para', ['ul', 'ol', 'paragraph','style']],
               ['height', ['height']],
-              ['insert',['link','table','picture','hr']],
+              ['insert',['customlink','table','picture','hr']],
               ['code',['codeview']],
               ['help',['help']]
           ]

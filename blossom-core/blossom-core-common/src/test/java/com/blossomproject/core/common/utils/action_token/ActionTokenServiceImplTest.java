@@ -257,11 +257,11 @@ public class ActionTokenServiceImplTest {
   public void should_decrypt_invalid_token() throws Exception {
     Long userId = 1L;
     String action = "test";
-    Long timestamp = LocalDateTime.now().minusHours(1).toInstant(ZoneOffset.UTC).toEpochMilli();
+    Long timestamp = Instant.now().minus(1, ChronoUnit.HOURS).toEpochMilli();
 
     when(this.tokenService.verifyToken(anyString())).thenAnswer(
-      arg -> new DefaultToken(arg.getArgument(0), System.currentTimeMillis(),
-        arg.getArgument(0)));
+            arg -> new DefaultToken(arg.getArgument(0), System.currentTimeMillis(),
+                    arg.getArgument(0)));
     ActionToken token = service.decryptToken(userId + "|" + action + "|" + timestamp + "|");
 
     assertNotNull(token);
