@@ -122,7 +122,7 @@
               ['color', ['color']],
               ['para', ['ul', 'ol', 'paragraph','style']],
               ['height', ['height']],
-              ['insert',['link','table','picture','hr']],
+              ['insert',['customlink','table','picture','hr']],
               ['code',['codeview']],
               ['help',['help']]
           ]
