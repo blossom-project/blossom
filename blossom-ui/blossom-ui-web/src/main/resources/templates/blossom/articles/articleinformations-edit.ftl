@@ -1,3 +1,4 @@
+<#ftl output_format="HTML">
 <#import "/spring.ftl" as spring>
 <#import "/blossom/utils/buttons.ftl" as buttons>
 <#import "/blossom/utils/notification.ftl" as notification>
