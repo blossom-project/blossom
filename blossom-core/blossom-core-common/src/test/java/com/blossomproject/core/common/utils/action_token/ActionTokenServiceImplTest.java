@@ -260,8 +260,8 @@ public class ActionTokenServiceImplTest {
     Long timestamp = Instant.now().minus(1, ChronoUnit.HOURS).toEpochMilli();
 
     when(this.tokenService.verifyToken(anyString())).thenAnswer(
-      arg -> new DefaultToken(arg.getArgument(0), System.currentTimeMillis(),
-        arg.getArgument(0)));
+            arg -> new DefaultToken(arg.getArgument(0), System.currentTimeMillis(),
+                    arg.getArgument(0)));
     ActionToken token = service.decryptToken(userId + "|" + action + "|" + timestamp + "|");
 
     assertNotNull(token);
