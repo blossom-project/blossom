@@ -30,6 +30,7 @@
     <powermock.version>1.7.3</powermock.version>
     <elasticsearch.version>2.4.6</elasticsearch.version>
     <commons-lang3.version>3.7</commons-lang3.version>
+    <jsass.version>5.7.0</jsass.version>
   </properties>
 
   <dependencyManagement>
@@ -91,6 +92,11 @@
         <groupId>org.powermock</groupId>
         <artifactId>powermock-api-mockito2</artifactId>
         <version>${powermock.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.bit3</groupId>
+        <artifactId>jsass</artifactId>
+        <version>${jsass.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

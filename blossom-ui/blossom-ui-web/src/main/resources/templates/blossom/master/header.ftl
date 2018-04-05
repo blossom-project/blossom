@@ -1,3 +1,5 @@
+<#import "/spring.ftl" as spring>
+
 <#macro default>
 <meta charset="utf-8">
 <title>Blossom | Back-Office</title>
@@ -8,6 +10,7 @@
 
 
 <#macro styles>
+
 <link href="/blossom/public/css/bootstrap.min.css" rel="stylesheet">
 <link href="/blossom/public/font-awesome/css/font-awesome.css" rel="stylesheet">
 <link href="/blossom/public/css/plugins/toastr/toastr.min.css" rel="stylesheet">
@@ -18,9 +21,9 @@
 <link href="/blossom/public/css/plugins/cropper/cropper.min.css" rel="stylesheet">
 <link href="/blossom/public/css/plugins/dualListbox/bootstrap-duallistbox.min.css" rel="stylesheet">
 <link href="/blossom/public/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
-<link href="/blossom/public/css/animate.css" rel="stylesheet">
-<link href="/blossom/public/css/style.css" rel="stylesheet">
 <link href="/blossom/public/css/plugins/summernote/summernote.css" rel="stylesheet">
+<link href="/blossom/public/css/animate.css" rel="stylesheet">
+<link href="<@spring.theme "stylesheet"/>" rel="stylesheet">
 </#macro>
 
 <#macro scripts>

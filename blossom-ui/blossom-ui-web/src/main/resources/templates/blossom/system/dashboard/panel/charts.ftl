@@ -169,20 +169,20 @@
 
       var responseTimeBarChart = Morris.Bar({
         element: 'response-time-bar-chart',
-        data: [],
+        data: [{label:'100', value:1}],
         xkey: 'time',
         ykeys: ['count'],
         labels: ['Count'],
         hideHover: 'auto',
         resize: true,
-        barColors: ['#1ab394']
+        barColors: ['<@spring.theme "_primary"/>']
       });
 
       var responseStatusDonutChart = Morris.Donut({
         element: 'response-status-donut-chart',
         data: [{label: '200', value: 1}],
         resize: true,
-        colors: ['#87d6c6', '#54cdb4', '#1ab394'],
+        colors: ['<@spring.theme "_primary"/>'],
       });
 
 
@@ -190,7 +190,7 @@
         element: 'response-content-type-donut-chart',
         data: [{label: 'text/html', value: 1}],
         resize: true,
-        colors: ['#87d6c6', '#54cdb4', '#1ab394'],
+        colors: ['<@spring.theme "_primary"/>'],
       });
 
 
@@ -214,7 +214,7 @@
 
         if (chartData.length > 0) {
           var rainbow = new Rainbow();
-          rainbow.setSpectrumByArray(['#1ab394', '#d3d3d3']);
+          rainbow.setSpectrumByArray(['<@spring.theme "_primary"/>', '#d3d3d3']);
           rainbow.setNumberRange(0, keys.length);
           var colors = [];
           $.each(keys, function (index, key) {
@@ -253,7 +253,7 @@
         });
         if (chartData.length > 0) {
           var rainbow = new Rainbow();
-          rainbow.setSpectrumByArray(['#1ab394', '#d3d3d3']);
+          rainbow.setSpectrumByArray(['<@spring.theme "_primary"/>', '#d3d3d3']);
           rainbow.setNumberRange(0, chartData.length);
           var colors = [];
           $.each(chartData, function (index) {
@@ -279,7 +279,7 @@
         });
         if (chartData.length > 0) {
           var rainbow = new Rainbow();
-          rainbow.setSpectrumByArray(['#1ab394', '#d3d3d3']);
+          rainbow.setSpectrumByArray(['<@spring.theme "_primary"/>', '#d3d3d3']);
           rainbow.setNumberRange(0, chartData.length);
           var colors = [];
           $.each(chartData, function (index) {

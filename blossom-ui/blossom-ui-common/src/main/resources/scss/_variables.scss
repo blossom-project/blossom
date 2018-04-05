@@ -1,0 +1,39 @@
+// Basic Colors
+$navy: %_primary%;       // Primary color
+$dark-gray: %_default%;  // Default color
+$blue: %_success%;       // Success color
+$lazur: %_info%;      // Info color
+$yellow: %_warning%;     // Warning color
+$red: %_danger%;        // Danger color
+
+// Various colors
+$text-color: %_text%;   // Body text
+$gray: %_gray%;         // Background wrapper color
+$light-gray: %_lightGray%;   // Default label, badge
+$label-badge-color: %_labelBadgeColor%;
+
+// Spiner color and margin
+$spin-color: %_spinColor%;
+$spin-margin: %_spinMargin%;
+
+
+// IBOX colors ( default panel colors)
+$border-color: %_borderColor%;     // IBox border
+$ibox-title-bg: %_iboxTitleBg%;     // IBox Background header
+$ibox-content-bg: %_iboxContentBg%;   // IBox Background content
+
+//Sidebar width
+$sidebar-width: %_sidebarWidth%;
+
+// Boxed layout width
+$boxed-width: %_boxedWidth%;
+$boxed-background: %_boxedBackground%;
+
+//Border radius for buttons
+$btn-border-radius: %_btnBorderRadius%;
+
+//Navigation
+$nav-bg: %_navBg%;
+$nav-header-bg: %_navHeaderBg%;
+$nav-profile-pattern: %_navProfilePattern%;
+$nav-text-color: %_navTextColor%;

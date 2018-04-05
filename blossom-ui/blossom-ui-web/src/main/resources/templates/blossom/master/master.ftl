@@ -12,7 +12,7 @@
       <meta name="_csrf" content="${_csrf.token}"/>
       <meta name="_csrf_header" content="${_csrf.headerName}"/>
   </head>
-  <body class="fixed-navigation md-skin">
+  <body class="fixed-navigation <@spring.theme "bodyClass"/>">
     <div id="wrapper">
         <@navigation.drawer menu=menu currentUser=currentUser></@navigation.drawer>
 

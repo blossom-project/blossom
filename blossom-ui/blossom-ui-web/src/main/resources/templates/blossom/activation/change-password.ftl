@@ -13,7 +13,7 @@
   <link href="/blossom/public/font-awesome/css/font-awesome.css" rel="stylesheet">
 
   <link href="/blossom/public/css/animate.css" rel="stylesheet">
-  <link href="/blossom/public/css/style.css" rel="stylesheet">
+  <link href="<@spring.theme "stylesheet"/>" rel="stylesheet">
 
 </head>
 <body class="gray-bg">

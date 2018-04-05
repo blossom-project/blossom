@@ -17,6 +17,7 @@ com.blossomproject.autoconfigure.core.CryptoAutoConfiguration,\
 com.blossomproject.autoconfigure.module.FileManagerAutoConfiguration,\
 com.blossomproject.autoconfigure.module.ArticleAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.MenuAutoConfiguration,\
+com.blossomproject.autoconfigure.ui.ThemeAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.WebSecurityAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.web.WebInterfaceAutoConfiguration,\

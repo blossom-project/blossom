@@ -1,9 +1,8 @@
 package com.blossomproject.core.user;
 
+import com.blossomproject.core.common.utils.mail.MailSender;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.blossomproject.core.common.utils.mail.MailSender;
-
 import java.util.Map;
 
 public class UserMailServiceImpl implements UserMailService {

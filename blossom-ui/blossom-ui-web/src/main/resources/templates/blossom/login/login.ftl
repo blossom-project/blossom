@@ -4,7 +4,6 @@
 <html>
 
 <head>
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -12,10 +11,8 @@
 
   <link href="/blossom/public/css/bootstrap.min.css" rel="stylesheet">
   <link href="/blossom/public/font-awesome/css/font-awesome.css" rel="stylesheet">
-
   <link href="/blossom/public/css/animate.css" rel="stylesheet">
-  <link href="/blossom/public/css/style.css" rel="stylesheet">
-
+  <link href="<@spring.theme "stylesheet"/>" rel="stylesheet">
 </head>
 
 <body class="gray-bg">

@@ -17,8 +17,8 @@
             </span>
           </span>
         </div>
-        <div class="logo-element">
-          Blossom
+        <div class="logo-element" style="padding:0;">
+          <img src="<@spring.theme "navLogo"/>" height="60px" width="70px"/>
         </div>
       </li>
       <#list menu.filteredItems(currentUser) as menuItem>
@@ -65,9 +65,27 @@
 
     </div>
     <ul class="nav navbar-top-links navbar-right">
+      <#if themes?size gt 1>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <i class="fa fa-paint-brush"></i> ${currentTheme.name}
+          </a>
+          <ul class="dropdown-menu dropdown-alerts">
+            <#list themes as theme>
+              <#if theme.name != currentTheme.name>
+                <li>
+                  <a onclick="window.location.href = $.updateQueryStringParameter(window.location.href,'theme','${theme.name}');">
+                  <div>${theme.name}</div>
+                  </a>
+                </li>
+              </#if>
+            </#list>
+          </ul>
+        </li>
+      </#if>
       <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-        ${currentLocale.getDisplayLanguage(currentLocale)}<#if currentLocale.getDisplayCountry(currentLocale)?has_content> / ${currentLocale.getDisplayCountry(currentLocale)}</#if>
+          <i class="fa fa-language"></i> ${currentLocale.getDisplayLanguage(currentLocale)}<#if currentLocale.getDisplayCountry(currentLocale)?has_content> / ${currentLocale.getDisplayCountry(currentLocale)}</#if>
         </a>
         <ul class="dropdown-menu dropdown-alerts">
           <#list locales as locale>

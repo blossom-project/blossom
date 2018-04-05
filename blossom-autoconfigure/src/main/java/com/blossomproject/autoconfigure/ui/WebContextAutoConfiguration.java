@@ -1,9 +1,9 @@
 package com.blossomproject.autoconfigure.ui;
 
-import com.google.common.collect.Iterables;
 import com.blossomproject.ui.i18n.RestrictedSessionLocaleResolver;
 import com.blossomproject.ui.stereotype.BlossomApiController;
 import com.blossomproject.ui.stereotype.BlossomController;
+import com.google.common.collect.Iterables;
 import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Set;
