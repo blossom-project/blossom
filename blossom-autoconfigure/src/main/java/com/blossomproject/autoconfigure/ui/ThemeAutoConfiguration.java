@@ -96,6 +96,9 @@ public class ThemeAutoConfiguration {
     @Qualifier(value = PluginConstants.PLUGIN_THEME)
     private PluginRegistry<Theme, String> registry;
 
+    @Autowired
+    private BlossomThemeProperties blossomThemeProperties;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
       registry.addInterceptor(themeChangeInterceptor())
@@ -111,7 +114,7 @@ public class ThemeAutoConfiguration {
     @Bean
     public ThemeResolver themeResolver() {
       SessionThemeResolver themeResolver = new SessionThemeResolver();
-      themeResolver.setDefaultThemeName(BLOSSOM_THEME_NAME);
+      themeResolver.setDefaultThemeName(blossomThemeProperties.getDefaultName());
       return themeResolver;
     }
 
