@@ -7,6 +7,6 @@ public interface ThemeCompiler {
 
   void doCompileAll() throws Exception;
 
-  void getCss(String theme, OutputStream os) throws IOException;
+  void getCss(String theme, String filename, OutputStream os) throws IOException;
 
 }

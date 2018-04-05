@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>${message("change.password.subject")}</title>
-  <link href="${basePath}/mail/styles.css" media="all" rel="stylesheet" type="text/css">
+  <link href="${basePath}/blossom/public/theme/style_mail.css" media="all" rel="stylesheet" type="text/css">
 </head>
 
 <body>

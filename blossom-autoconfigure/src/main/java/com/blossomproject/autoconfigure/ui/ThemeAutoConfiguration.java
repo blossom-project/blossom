@@ -2,6 +2,7 @@ package com.blossomproject.autoconfigure.ui;
 
 import static com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
 import static com.blossomproject.ui.theme.Theme.BLOSSOM_THEME_NAME;
+import static com.blossomproject.ui.theme.ThemeServlet.BLOSSOM_THEME_MAIL_SCSS_SERVLET;
 import static com.blossomproject.ui.theme.ThemeServlet.BLOSSOM_THEME_SCSS_SERVLET;
 import static org.springframework.web.servlet.support.RequestContext.DEFAULT_THEME_NAME;
 
@@ -84,7 +85,7 @@ public class ThemeAutoConfiguration {
     ThemeCompiler themeCompiler) {
     ServletRegistrationBean registration = new ServletRegistrationBean();
     registration.setServlet(new ThemeServlet(themeResolver, themeSource, themeCompiler));
-    registration.setUrlMappings(Lists.newArrayList(BLOSSOM_THEME_SCSS_SERVLET));
+    registration.setUrlMappings(Lists.newArrayList(BLOSSOM_THEME_SCSS_SERVLET, BLOSSOM_THEME_MAIL_SCSS_SERVLET));
     registration.setLoadOnStartup(1);
     return registration;
   }

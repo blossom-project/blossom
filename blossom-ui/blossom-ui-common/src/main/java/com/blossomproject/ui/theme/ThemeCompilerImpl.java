@@ -1,5 +1,6 @@
 package com.blossomproject.ui.theme;
 
+import com.blossomproject.core.common.utils.misc.InMemoryURLFactory;
 import io.bit3.jsass.Compiler;
 import io.bit3.jsass.Options;
 import io.bit3.jsass.Output;
@@ -25,11 +26,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.plugin.core.PluginRegistry;
-import com.blossomproject.core.common.utils.misc.InMemoryURLFactory;
 
 public class ThemeCompilerImpl implements ThemeCompiler, CommandLineRunner {
 
-  private final static String SCSS_PATH = "classpath:/scss/style.scss";
+  private final static String SCSS_PATH = "classpath:/scss/%s.scss";
+  private final static String[] FILENAMES = new String[]{"style","style_mail"};
 
   private final PluginRegistry<Theme, String> registry;
   private final ResourceLoader resourceLoader;
@@ -53,31 +54,35 @@ public class ThemeCompilerImpl implements ThemeCompiler, CommandLineRunner {
     this.cache.clear();
 
     for (Theme theme : registry.getPlugins()) {
-      final URL scssResource = resourceLoader.getResource(SCSS_PATH).getURL();
+      for (String filename : FILENAMES) {
 
-      if (null != scssResource) {
-        final String scssCode = IOUtils.toString(scssResource, StandardCharsets.UTF_8);
+        final String scssPath = String.format("classpath:/scss/%s.scss", filename);
+        final URL scssResource = resourceLoader.getResource(scssPath).getURL();
 
-        Options options = new Options();
-        options.setImporters(Collections.singleton(new CustomImporter(theme)));
+        if (null != scssResource) {
+          final String scssCode = IOUtils.toString(scssResource, StandardCharsets.UTF_8);
 
-        final Compiler compiler = new Compiler();
-        final Output output = compiler.compileString(
-          scssCode,
-          new URI(SCSS_PATH),
-          null,
-          options
-        );
+          Options options = new Options();
+          options.setImporters(Collections.singleton(new CustomImporter(theme)));
 
-        cache.put(theme.getName(), output.getCss());
+          final Compiler compiler = new Compiler();
+          final Output output = compiler.compileString(
+            scssCode,
+            new URI(scssPath),
+            null,
+            options
+          );
+
+          cache.put(theme.getName() + "_" + filename, output.getCss());
+        }
       }
     }
   }
 
   @Override
-  public void getCss(String theme, OutputStream os) throws IOException {
-    if(this.cache.containsKey(theme)){
-      os.write(this.cache.get(theme).getBytes());
+  public void getCss(String theme, String filename, OutputStream os) throws IOException {
+    if (this.cache.containsKey(theme + "_" + filename)) {
+      os.write(this.cache.get(theme + "_" + filename).getBytes());
     }
   }
 
@@ -174,8 +179,9 @@ public class ThemeCompilerImpl implements ThemeCompiler, CommandLineRunner {
               }
               return InMemoryURLFactory.getInstance().build("memory", content);
             }
-            if(basename.equals("custom")){
-              return InMemoryURLFactory.getInstance().build("memory", theme.getMessages().get("additionnalScss"));
+            if (basename.equals("custom")) {
+              return InMemoryURLFactory.getInstance()
+                .build("memory", theme.getMessages().get("additionnalScss"));
             }
 
             return resource.getURL();
