@@ -13,37 +13,14 @@
             </li>
         </ol>
     </div>
-    <div class="col-sm-4">
-        <div class="title-action">
-            <a href="https://blossom-project.com/documentation"
-               class="btn btn-primary"><@spring.message "home.documentation"/></a>
-        </div>
-    </div>
 </div>
 <div class="wrapper wrapper-content">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox float-e-margins">
-                <div class="ibox-content text-center p-md">
-
-                    <h2><span
-                            class="text-navy"><@spring.message "home.content.title.span"/></span> <@spring.message "home.content.title"/>
-                    </h2>
-
-                    <p>
-                        <@spring.message "home.content.subtitle.1"/><br>
-                        <@spring.message "home.content.subtitle.2"/>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <#assign colorsWidget = ["navy-bg", "yellow-bg", "lazur-bg", "blue-bg"]>
         <#assign colorsPanel = ["panel-primary", "panel-warning", "panel-info", "panel-success"]>
         <#list menu.filteredItems(currentUser) as menuItem>
             <#if menuItem.filteredItems(currentUser)?size gt 0>
-                <div class="col-md-12">
+                <div class="col-sm-12 col-md-6">
                     <div class="panel <#if menuItem?index<=4>${colorsPanel[(menuItem?index)-1]}<#else>${colorsPanel[0]}</#if>">
                         <div class="panel-heading">
                             <@spring.messageText menuItem.label() menuItem.label()/>
@@ -51,7 +28,7 @@
                         <div class="panel-body gray-bg">
                             <#list menuItem.items() as subMenuItem>
                                 <#if !(subMenuItem.privilege()?has_content) || privilege.hasOne(currentUser, subMenuItem.privilege())>
-                                    <div class="col-xs-6 col-md-4 col-lg-2">
+                                    <div class="col-sm-12 col-md-6 col-lg-3">
                                         <#if subMenuItem.link()??><a href="${subMenuItem.link()}"></#if>
                                         <div class="widget <#if menuItem?index<=4>${colorsWidget[(menuItem?index)-1]}<#else>${colorsWidget[0]}</#if> p-lg text-center"
                                              style="height: 150px;">
