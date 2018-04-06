@@ -19,7 +19,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <springboot.version>git </springboot.version>
+    <springboot.version>2.0.1.RELEASE</springboot.version>
     <querydsl.version>3.7.0</querydsl.version>
     <jna.version>3.0.9</jna.version>
     <caffeine.version>2.5.0</caffeine.version>
