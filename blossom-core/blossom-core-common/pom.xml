@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.blossom-project</groupId>
     <artifactId>blossom-core</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.M2</version>
   </parent>
 
   <artifactId>blossom-core-common</artifactId>
