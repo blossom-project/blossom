@@ -45,7 +45,7 @@ public abstract class GenericCrudDaoImpl<ENTITY extends AbstractEntity> extends
 
     @Override
     @Transactional
-    @CachePut(key = "#a0+''")
+    @CacheEvict(allEntries = true)
     public ENTITY update(long id, ENTITY toUpdate) {
         Preconditions.checkArgument(toUpdate != null);
         ENTITY entity = this.repository.findById(id).orElse(null);
