@@ -20,7 +20,7 @@
     </div>
     <div class="col-md-6">
       <h4>Preview image</h4>
-      <div class="img-preview img-circle"></div>
+      <div class="img-preview img-circle" style="width:200px;heightgit add:200px;"></div>
     </div>
   </div>
 
@@ -120,7 +120,7 @@
             });
           <@notification.success/>
           },
-          error: function () {
+          error: function (xhr, ajaxOptions, thrownError) {
           <@notification.error/>
           }
         });

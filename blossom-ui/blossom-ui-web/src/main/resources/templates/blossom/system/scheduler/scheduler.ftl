@@ -23,7 +23,7 @@
 
 <div class="wrapper wrapper-content scheduler">
   <div class="row">
-    <div class="col-sm-8">
+    <div class="col-md-12 col-lg-8">
       <div class="ibox">
         <div class="ibox-content">
           <div class="scheduler-info m-t-md">
@@ -81,7 +81,7 @@
         </div>
       </div>
     </div>
-    <div id="scheduled-task-detail" class="col-sm-4">
+    <div id="scheduled-task-detail" class="col-md-12 col-lg-4">
       <div class="ibox">
         <div class="ibox-content">
           <div class="sk-spinner sk-spinner-wave">

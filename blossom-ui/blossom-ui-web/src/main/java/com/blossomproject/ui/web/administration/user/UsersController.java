@@ -19,6 +19,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.xml.ws.Response;
+
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,14 +203,15 @@ public class UsersController {
 
   @PostMapping("/{id}/_avatar/_edit")
   @PreAuthorize("hasAuthority('administration:users:write')")
-  public void handleUserAvatarUpdateForm(@PathVariable Long id,
-    @RequestParam("avatar") MultipartFile file)
+  public ResponseEntity<Void> handleUserAvatarUpdateForm(@PathVariable Long id,
+                                             @RequestParam("avatar") MultipartFile file)
     throws IOException {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
       throw new NoSuchElementException(String.format("User=%s not found", id));
     }
     this.userService.updateAvatar(id, file.getBytes());
+    return ResponseEntity.ok().build();
   }
 
   @PostMapping("/{id}/_delete")
