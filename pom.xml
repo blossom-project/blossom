@@ -8,8 +8,9 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Blossom Project</name>
-  <description>Blossom is a Java framework base on Spring-Boot which enables you to realize your
+  <name>Blossom</name>
+  <description>
+    Blossom is a Java framework base on Spring-Boot which enables you to realize your
     projects quickly and smoothly. It comes with several modules and tools made to ease and speed up
     your development process.
   </description>
@@ -17,22 +18,22 @@
 
   <organization>
     <name>CARDIWEB SA</name>
-    <url>http://www.cardiweb.com/</url>
+    <url>https://www.cardiweb.com/</url>
   </organization>
 
   <licenses>
-  <license>
-    <name>The Apache License, Version 2.0</name>
-    <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-  </license>
-</licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
 
   <developers>
     <developer>
       <name>Maël Gargadennec</name>
       <email>mael.gargadennec@gmail.com</email>
       <organization>CARDIWEB</organization>
-      <organizationUrl>http://www.cardiweb.com</organizationUrl>
+      <organizationUrl>https://www.cardiweb.com</organizationUrl>
     </developer>
   </developers>
 
