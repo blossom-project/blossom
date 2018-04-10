@@ -61,6 +61,7 @@
     $($image).cropper({
       autoCropArea:1,
       aspectRatio: 1,
+      zoomOnWheel:false,
       preview: ".img-preview"
     });
 
