@@ -1,17 +1,18 @@
 package com.blossomproject.autoconfigure.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.ByteStreams;
 import com.blossomproject.core.cache.CacheConfig;
 import com.blossomproject.core.cache.CacheConfig.CacheConfigBuilder;
 import com.blossomproject.core.common.PluginConstants;
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.IndexationEngineConfiguration;
 import com.blossomproject.core.common.search.IndexationEngineImpl;
+import com.blossomproject.core.common.search.SearchEngine;
 import com.blossomproject.core.common.search.SearchEngineConfiguration;
 import com.blossomproject.core.common.search.SearchEngineImpl;
 import com.blossomproject.core.common.search.SummaryDTO;
 import com.blossomproject.core.common.search.SummaryDTO.SummaryDTOBuilder;
+import com.blossomproject.core.common.search.facet.AggregationConverter;
+import com.blossomproject.core.common.search.facet.AggregationConverterTermImpl;
 import com.blossomproject.core.common.service.AssociationServicePlugin;
 import com.blossomproject.core.common.utils.action_token.ActionTokenService;
 import com.blossomproject.core.common.utils.mail.MailSender;
@@ -26,6 +27,8 @@ import com.blossomproject.core.user.UserMailServiceImpl;
 import com.blossomproject.core.user.UserRepository;
 import com.blossomproject.core.user.UserService;
 import com.blossomproject.core.user.UserServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.util.function.Function;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -82,7 +85,8 @@ public class UserAutoConfiguration {
     }
     return new UserServiceImpl(userDao, userDTOMapper, eventPublisher, associationServicePlugins,
       passwordEncoder,
-      actionTokenService, userMailService, ByteStreams.toByteArray(defaultAvatarFile.getInputStream()));
+      actionTokenService, userMailService,
+      ByteStreams.toByteArray(defaultAvatarFile.getInputStream()));
   }
 
   @Bean
@@ -176,8 +180,11 @@ public class UserAutoConfiguration {
 
   @Bean
   public SearchEngineImpl<UserDTO> userSearchEngine(Client client, ObjectMapper objectMapper,
-    SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration) {
-    return new SearchEngineImpl<>(client, objectMapper, userSearchEngineConfiguration);
+    SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration,
+    @Qualifier(PluginConstants.PLUGIN_SEARCH_ENGINE_AGGREGATION_CONVERTERS)
+      PluginRegistry<AggregationConverter, SearchEngine> aggregationConverters) {
+    return new SearchEngineImpl<>(client, objectMapper, aggregationConverters,
+      userSearchEngineConfiguration);
   }
 
   @Bean
@@ -208,4 +215,15 @@ public class UserAutoConfiguration {
     return factoryBean;
   }
 
+  @Bean
+  public AggregationConverter userCompanyAggregationConverter(
+    SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration) {
+    return new AggregationConverterTermImpl("users.search.facet.company", userSearchEngineConfiguration.getName(), "dto.company.raw");
+  }
+
+  @Bean
+  public AggregationConverter userFunctionAggregationConverter(
+    SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration) {
+    return new AggregationConverterTermImpl("users.search.facet.function", userSearchEngineConfiguration.getName(), "dto.function.raw");
+  }
 }

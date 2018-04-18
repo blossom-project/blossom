@@ -1,14 +1,15 @@
 package com.blossomproject.autoconfigure.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.blossomproject.core.common.PluginConstants;
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.IndexationEngineConfiguration;
 import com.blossomproject.core.common.search.IndexationEngineImpl;
+import com.blossomproject.core.common.search.SearchEngine;
 import com.blossomproject.core.common.search.SearchEngineConfiguration;
 import com.blossomproject.core.common.search.SearchEngineImpl;
 import com.blossomproject.core.common.search.SummaryDTO;
 import com.blossomproject.core.common.search.SummaryDTO.SummaryDTOBuilder;
+import com.blossomproject.core.common.search.facet.AggregationConverter;
 import com.blossomproject.core.common.service.AssociationServicePlugin;
 import com.blossomproject.core.common.utils.privilege.Privilege;
 import com.blossomproject.core.role.Role;
@@ -20,6 +21,7 @@ import com.blossomproject.core.role.RoleIndexationJob;
 import com.blossomproject.core.role.RoleRepository;
 import com.blossomproject.core.role.RoleService;
 import com.blossomproject.core.role.RoleServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.function.Function;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
@@ -152,8 +154,11 @@ public class RoleAutoConfiguration {
 
   @Bean
   public SearchEngineImpl<RoleDTO> roleSearchEngine(Client client, ObjectMapper objectMapper,
-    SearchEngineConfiguration<RoleDTO> roleSearchEngineConfiguration) {
-    return new SearchEngineImpl<>(client, objectMapper, roleSearchEngineConfiguration);
+    SearchEngineConfiguration<RoleDTO> roleSearchEngineConfiguration,
+    @Qualifier(PluginConstants.PLUGIN_SEARCH_ENGINE_AGGREGATION_CONVERTERS)
+      PluginRegistry<AggregationConverter, SearchEngine> aggregationConverters) {
+    return new SearchEngineImpl<>(client, objectMapper, aggregationConverters,
+      roleSearchEngineConfiguration);
   }
 
 

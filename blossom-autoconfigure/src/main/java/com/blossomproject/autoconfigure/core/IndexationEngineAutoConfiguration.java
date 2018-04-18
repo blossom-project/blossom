@@ -5,6 +5,7 @@ import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.IndexationEngine;
 import com.blossomproject.core.common.search.IndexationEventListeners;
 import com.blossomproject.core.common.search.SearchEngine;
+import com.blossomproject.core.common.search.facet.AggregationConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +17,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
  * Created by maelg on 07/05/2017.
  */
 @Configuration
-@EnablePluginRegistries({IndexationEngine.class, SearchEngine.class})
+@EnablePluginRegistries({IndexationEngine.class, SearchEngine.class, AggregationConverter.class})
 public class IndexationEngineAutoConfiguration {
 
   @Autowired

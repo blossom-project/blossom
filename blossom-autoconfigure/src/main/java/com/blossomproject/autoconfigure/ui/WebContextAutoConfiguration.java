@@ -1,10 +1,12 @@
 package com.blossomproject.autoconfigure.ui;
 
+import com.blossomproject.ui.filter.FilterHandlerMethodArgumentResolver;
 import com.blossomproject.ui.i18n.RestrictedSessionLocaleResolver;
 import com.blossomproject.ui.stereotype.BlossomApiController;
 import com.blossomproject.ui.stereotype.BlossomController;
 import com.google.common.collect.Iterables;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -47,6 +50,16 @@ public class WebContextAutoConfiguration implements WebMvcConfigurer {
       availableLocales);
     resolver.setDefaultLocale(Iterables.getFirst(availableLocales, Locale.ENGLISH));
     return resolver;
+  }
+
+  @Override
+  public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+    resolvers.add(filterHandlerMethodArgumentResolver());
+  }
+
+  @Bean
+  public FilterHandlerMethodArgumentResolver filterHandlerMethodArgumentResolver(){
+    return new FilterHandlerMethodArgumentResolver();
   }
 
   @Bean

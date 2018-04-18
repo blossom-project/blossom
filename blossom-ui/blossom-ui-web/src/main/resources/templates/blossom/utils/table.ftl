@@ -36,14 +36,14 @@
                  name="item_code_${item.code}_link"
                 </#if>
 
-                 <#assign itemId = item.id/>
-                 <#if properties.nestedIdPath??>
-                   <#assign resultId = item/>
-                   <#list properties.nestedIdPath as pathItem>
-                     <#assign resultId = resultId[pathItem]/>
-                   </#list>
-                   <#assign itemId = resultId/>
-                 </#if>
+                <#assign itemId = item.id/>
+                <#if properties.nestedIdPath??>
+                  <#assign resultId = item/>
+                  <#list properties.nestedIdPath as pathItem>
+                    <#assign resultId = resultId[pathItem]/>
+                  </#list>
+                  <#assign itemId = resultId/>
+                </#if>
                  href="<@spring.url relativeUrl=properties.link id=itemId />">
               <strong>
               </#if>
@@ -96,7 +96,7 @@
 </div>
 </#macro>
 
-<#macro pagetable page columns label filters=[] iconPath="" searchable=false q="" tableId="">
+<#macro pagetable page columns label facets=[] filters=[]  iconPath="" searchable=false q="" tableId="">
 <div class="ibox float-e-margins">
   <div class="ibox-title">
     <h5><@spring.messageText label label/></h5>
@@ -108,8 +108,9 @@
   </div>
 
   <div class="ibox-content">
-    <div class="row">
+    <div class="row table-search">
       <div class="col-sm-9 m-b-xs">
+        <@displayFacets facets=facets filters=filters/>
       </div>
       <div class="col-sm-3">
         <#if searchable>
@@ -117,17 +118,17 @@
             <input type="text"
                    placeholder="<@spring.message "list.searchbar.placeholder"/>"
                    class="table-search input-sm form-control"
-                   onkeyup="var which = event.which || event.keyCode;if(which === 13) {$(this).closest('.input-group').find('button.table-search').first().click();}"
+                   onkeyup="var which = event.which || event.keyCode;if(which === 13) {$(this).closest('.row.table-search').find('button.table-search').first().click();}"
               <#if q?has_content> value="${q}"</#if>
             />
 
             <span class="input-group-btn">
-                        <button type="button"
-                                class="btn btn-sm btn-primary table-search"
-                                onclick="var value = $(this).closest('.input-group').children('input.table-search').first().val();var resetPage = $.updateQueryStringParameter(window.location.href,'page',0);window.location.href = $.updateQueryStringParameter(resetPage,'q',value);">
-                            <i class="fa fa-search"></i>
-                        </button>
-                      </span>
+                <button type="button"
+                        class="btn btn-sm btn-primary table-search"
+                        onclick="var value = $(this).closest('.input-group').children('input.table-search').first().val();var resetPage = $.updateQueryStringParameter(window.location.href,'page',0); var filters = buildFilters(resetPage); window.location.href = $.updateQueryStringParameter(filters,'q', value);">
+                    <i class="fa fa-search"></i>
+                </button>
+              </span>
           </div>
         </#if>
 
@@ -149,8 +150,81 @@
     </div>
   </footer>
 </div>
+<script>
+  var buildFilters = function (location) {
+    var filters = "";
+    var facets = $(".table-search-filter-terms");
+    facets.each(function (i) {
+      var that = $(this);
+      var values = that.select2('data');
+      filters += that.data("path") + '//';
+      $.each(values, function (index, value) {
+        filters += value.id;
+        if (index < (values.length - 1)) {
+          filters += "/";
+        }
+      });
+      if (i < (facets.length - 1)) {
+        filters += ";";
+      }
+    });
+    console.log(filters);
+    return $.updateQueryStringParameter(location, 'filters', filters);
+  };
+
+  $(document).ready(function () {
+    $(".table-search-filter-terms").each(function (index) {
+      var that = $(this);
+      that.select2({
+        closeOnSelect: false
+      });
+      var params = $.getQueryParameters();
+      var filterParams = params.filters;
+      if(filterParams){
+        var filters= filterParams.split(';');
+        $.each(filters,function(index, value){
+          var filterPathAndValues = value.split("//");
+          if(filterPathAndValues[0] === that.data("path")){
+            if(filterPathAndValues.length==2 && filterPathAndValues[1].length > 0){
+              that.val(filterPathAndValues[1].split("/"));
+              that.trigger('change');
+            }
+          }
+        });
+      }
+    });
+
+    $(".table-search-filter").show();
+  });
+</script>
 </#macro>
 
+
+<#macro displayFacets facets=[] filters=[]>
+<div class="row">
+  <#list facets as facet>
+    <#if facet??>
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <#if facet.type == 'TERMS'>
+          <@displayTermsFacet facet=facet/>
+        <#else>
+          Unmanaged facet type
+        </#if>
+      </div>
+    </#if>
+  </#list>
+</div>
+</#macro>
+
+<#macro displayTermsFacet facet>
+<select class="table-search-filter table-search-filter-terms form-control" multiple="multiple"
+        data-path="${facet.path}"
+        data-placeholder="<@spring.messageText facet.name facet.name />" style="display:none;">
+  <#list facet.results as result>
+    <option value="${result.value}">${result.term} (${result.count?c})</option>
+  </#list>
+</select>
+</#macro>
 
 <#macro displayProperty value="" label="" type="" >
   <#if type?has_content>
@@ -181,6 +255,6 @@
     </ul>
     </#if>
   <#else>
-    ${value!""}
+  ${value!""}
   </#if>
 </#macro>

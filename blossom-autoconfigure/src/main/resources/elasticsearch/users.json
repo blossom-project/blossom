@@ -107,13 +107,25 @@
               "type": "string"
             },
             "company": {
-              "type": "string"
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type":  "string",
+                  "index": "not_analyzed"
+                }
+              }
             },
             "description": {
               "type": "string"
             },
             "function": {
-              "type": "string"
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type":  "string",
+                  "index": "not_analyzed"
+                }
+              }
             },
             "lastConnection": {
               "type": "long"

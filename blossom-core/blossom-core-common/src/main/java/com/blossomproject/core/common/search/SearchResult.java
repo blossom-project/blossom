@@ -1,8 +1,8 @@
 package com.blossomproject.core.common.search;
 
+import com.blossomproject.core.common.search.facet.Facet;
 import com.google.common.collect.Lists;
 import java.util.List;
-import org.elasticsearch.search.aggregations.Aggregation;
 import org.springframework.data.domain.Page;
 
 /**
@@ -11,16 +11,16 @@ import org.springframework.data.domain.Page;
 public class SearchResult<DTO> {
   private final long duration;
   private final Page<DTO> page;
-  private final List<Aggregation> aggregations;
+  private final List<Facet> facets;
 
   public SearchResult(long duration,Page<DTO> page) {
     this(duration, page, Lists.newArrayList());
   }
 
-  public SearchResult(long duration, Page<DTO> page, List<Aggregation> aggregations) {
+  public SearchResult(long duration, Page<DTO> page, List<Facet> facets) {
     this.duration=duration;
     this.page = page;
-    this.aggregations = aggregations;
+    this.facets = facets;
   }
 
   public long getDuration() {
@@ -31,7 +31,7 @@ public class SearchResult<DTO> {
     return page;
   }
 
-  public List<Aggregation> getAggregations() {
-    return aggregations;
+  public List<Facet> getFacets() {
+    return facets;
   }
 }

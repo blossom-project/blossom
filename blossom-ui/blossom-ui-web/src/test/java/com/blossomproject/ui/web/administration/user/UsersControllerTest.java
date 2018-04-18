@@ -1,13 +1,34 @@
 package com.blossomproject.ui.web.administration.user;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.SearchEngineImpl;
 import com.blossomproject.core.common.search.SearchResult;
 import com.blossomproject.core.group.GroupDTO;
 import com.blossomproject.core.role.RoleDTO;
-import com.blossomproject.core.user.*;
+import com.blossomproject.core.user.User;
+import com.blossomproject.core.user.UserCreateForm;
+import com.blossomproject.core.user.UserDTO;
+import com.blossomproject.core.user.UserService;
+import com.blossomproject.core.user.UserUpdateForm;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Locale;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.tika.Tika;
 import org.junit.Assert;
@@ -30,19 +51,6 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UsersControllerTest {
@@ -68,9 +76,8 @@ public class UsersControllerTest {
 
     @Test
     public void should_display_paged_users_without_query_parameter() throws Exception {
-        when(service.getAll(any(Pageable.class)))
-                .thenAnswer(a -> new PageImpl<UserDTO>(Lists.newArrayList()));
-        ModelAndView modelAndView = controller.getUsersPage(null, PageRequest.of(0, 20), new ExtendedModelMap());
+        when(service.getAll(any(Pageable.class))).thenAnswer(a -> new PageImpl<UserDTO>(Lists.newArrayList()));
+        ModelAndView modelAndView = controller.getUsersPage(null, PageRequest.of(0, 20), null,  new ExtendedModelMap());
         assertTrue(modelAndView.getViewName().equals("blossom/users/users"));
         assertTrue(modelAndView.getModel().get("users") instanceof Page);
         verify(service, times(1)).getAll(any(Pageable.class));
@@ -78,12 +85,11 @@ public class UsersControllerTest {
 
     @Test
     public void should_display_paged_users_with_query_parameter() throws Exception {
-        when(searchEngine.search(any(String.class), any(Pageable.class)))
-                .thenAnswer(a -> new SearchResult<>(0, new PageImpl<UserDTO>(Lists.newArrayList())));
-        ModelAndView modelAndView = controller.getUsersPage("test", PageRequest.of(0, 10), new ExtendedModelMap());
+        when(searchEngine.search(any(String.class), any(Pageable.class), any(), anyList())).thenAnswer(a -> new SearchResult<>(0, new PageImpl<UserDTO>(Lists.newArrayList())));
+        ModelAndView modelAndView = controller.getUsersPage("test", PageRequest.of(0, 10), null, new ExtendedModelMap());
         assertTrue(modelAndView.getViewName().equals("blossom/users/users"));
         assertTrue(modelAndView.getModel().get("users") instanceof Page);
-        verify(searchEngine, times(1)).search(eq("test"), any(Pageable.class));
+        verify(searchEngine, times(1)).search(eq("test"), any(Pageable.class), any(), anyList());
     }
 
     @Test

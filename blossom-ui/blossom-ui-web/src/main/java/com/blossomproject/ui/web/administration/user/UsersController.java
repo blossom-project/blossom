@@ -1,27 +1,32 @@
 package com.blossomproject.ui.web.administration.user;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.SearchEngineImpl;
+import com.blossomproject.core.common.search.SearchResult;
+import com.blossomproject.core.common.search.facet.Facet;
+import com.blossomproject.core.common.search.facet.TermsFacetConfiguration;
 import com.blossomproject.core.user.User;
 import com.blossomproject.core.user.UserCreateForm;
 import com.blossomproject.core.user.UserDTO;
 import com.blossomproject.core.user.UserService;
 import com.blossomproject.core.user.UserUpdateForm;
+import com.blossomproject.ui.filter.FilterDefault;
 import com.blossomproject.ui.menu.OpenedMenu;
 import com.blossomproject.ui.stereotype.BlossomController;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.xml.ws.Response;
-
 import org.apache.tika.Tika;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
@@ -68,19 +73,39 @@ public class UsersController {
   @GetMapping
   @PreAuthorize("hasAuthority('administration:users:read')")
   public ModelAndView getUsersPage(@RequestParam(value = "q", required = false) String q,
-    @PageableDefault(size = 25) Pageable pageable, Model model) {
-    return tableView(q, pageable, model, "blossom/users/users");
+    @PageableDefault(size = 25) Pageable pageable,
+    @FilterDefault QueryBuilder queryBuilder,
+    Model model) {
+    return tableView(q, pageable, queryBuilder, model, "blossom/users/users");
   }
 
-  private ModelAndView tableView(String q, Pageable pageable, Model model, String viewName) {
+  private ModelAndView tableView(String q, Pageable pageable, QueryBuilder filterBuilder,
+    Model model, String viewName) {
     Page<UserDTO> users;
+    List<Facet> facets;
 
-    if (Strings.isNullOrEmpty(q)) {
+    if (Strings.isNullOrEmpty(q) && filterBuilder == null) {
       users = this.userService.getAll(pageable);
+      facets = Lists.newArrayList();
     } else {
-      users = this.searchEngine.search(q, pageable).getPage();
+      List<QueryBuilder> filters = Lists.newArrayList();
+      if(filterBuilder!=null){
+        filters.add(filterBuilder);
+      }
+
+      SearchResult<UserDTO> searchResult = this.searchEngine
+        .search(q,
+          pageable,
+          filters,
+          Lists.newArrayList(
+            new TermsFacetConfiguration<>("users.search.facet.company", 50),
+            new TermsFacetConfiguration<>("users.search.facet.function", 50)
+          ));
+      users = searchResult.getPage();
+      facets = searchResult.getFacets();
     }
 
+    model.addAttribute("facets", facets);
     model.addAttribute("users", users);
     model.addAttribute("q", q);
 
@@ -176,7 +201,8 @@ public class UsersController {
     model.addAttribute("userUpdateForm", userUpdateForm);
     model.addAttribute("user", user);
     model.addAttribute("civilities", User.Civility.values());
-    ModelAndView modelAndView = new ModelAndView("blossom/users/userinformations-edit", model.asMap());
+    ModelAndView modelAndView = new ModelAndView("blossom/users/userinformations-edit",
+      model.asMap());
     modelAndView.setStatus(status.orElse(HttpStatus.OK));
     return modelAndView;
   }
@@ -204,7 +230,7 @@ public class UsersController {
   @PostMapping("/{id}/_avatar/_edit")
   @PreAuthorize("hasAuthority('administration:users:write')")
   public ResponseEntity<Void> handleUserAvatarUpdateForm(@PathVariable Long id,
-                                             @RequestParam("avatar") MultipartFile file)
+    @RequestParam("avatar") MultipartFile file)
     throws IOException {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {

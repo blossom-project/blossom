@@ -80,7 +80,9 @@
 <!-- Summernote -->
 <script src="/blossom/public/js/plugins/summernote/summernote.min.js"></script>
 <script src="/blossom/public/js/plugins/summernote/custom/linkDialogPlugin.js"></script>
-
 <script src="/blossom/public/js/plugins/summernote/lang/summernote-fr-FR.js"></script>
+
+<!-- Select 2 -->
+<script src="/blossom/public/js/plugins/select2/select2.full.min.js"></script>
 
 </#macro>

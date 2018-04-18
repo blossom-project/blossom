@@ -2414,7 +2414,6 @@ a.forum-item-title:hover {
 }
 
 /* Select2 custom styles */
-
 .select2-container--default .select2-selection--single,
 .select2-container--default .select2-selection--multiple {
   border-color: $border-color;
@@ -2427,6 +2426,17 @@ a.forum-item-title:hover {
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
   background-color: $navy;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  background-color: $navy;
+  border: $border-color;
+  color: white;
+}
+
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+  color: white;
 }
 
 .select2-container--default .select2-search--dropdown .select2-search__field {

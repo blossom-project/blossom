@@ -1,5 +1,7 @@
 package com.blossomproject.autoconfigure.module;
 
+import com.blossomproject.core.common.search.SearchEngine;
+import com.blossomproject.core.common.search.facet.AggregationConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.blossomproject.autoconfigure.core.CommonAutoConfiguration;
 import com.blossomproject.core.common.PluginConstants;
@@ -170,8 +172,9 @@ public class FileManagerAutoConfiguration {
 
   @Bean
   public SearchEngineImpl<FileDTO> fileSearchEngine(Client client, ObjectMapper objectMapper,
-    SearchEngineConfiguration<FileDTO> fileSearchEngineConfiguration) {
-    return new SearchEngineImpl<>(client, objectMapper, fileSearchEngineConfiguration);
+    SearchEngineConfiguration<FileDTO> fileSearchEngineConfiguration,@Qualifier(PluginConstants.PLUGIN_SEARCH_ENGINE_AGGREGATION_CONVERTERS)
+    PluginRegistry<AggregationConverter, SearchEngine> aggregationConverters) {
+    return new SearchEngineImpl<>(client, objectMapper, aggregationConverters, fileSearchEngineConfiguration);
   }
 
   @Bean

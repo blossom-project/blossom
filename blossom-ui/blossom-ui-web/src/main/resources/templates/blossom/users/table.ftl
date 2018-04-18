@@ -18,6 +18,7 @@
   "modificationDate": {"label":"list.modification.date.head", "sortable":true, "type":"datetime"}
   }
   filters=[]
+  facets=facets
   searchable=true
   q=q
 />

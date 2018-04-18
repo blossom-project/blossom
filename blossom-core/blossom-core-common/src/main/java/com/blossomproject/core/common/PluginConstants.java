@@ -19,6 +19,8 @@ public interface PluginConstants {
 
   String PLUGIN_SEARCH_ENGINE = "searchEnginePlugin";
 
+  String PLUGIN_SEARCH_ENGINE_AGGREGATION_CONVERTERS ="searchEngineAggregationConverterPlugin";
+
   String PLUGIN_PRIVILEGES = "privilegesPlugin";
 
   String PLUGIN_CACHE_CONFIGURATION= "cacheConfigurationPlugin";
