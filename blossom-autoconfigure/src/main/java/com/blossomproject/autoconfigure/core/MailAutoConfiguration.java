@@ -56,8 +56,11 @@ public class MailAutoConfiguration {
   @Bean
   @ConditionalOnBean(JavaMailSender.class)
   @ConditionalOnMissingBean(MailSender.class)
-  public MailSender blossomMailSender(JavaMailSender javaMailSender, MessageSource messageSource,
-                                      freemarker.template.Configuration configuration, Set<Locale> availableLocales, MailsenderProperties properties) {
+  public MailSender blossomMailSender(JavaMailSender javaMailSender,
+                                      MessageSource messageSource,
+                                      freemarker.template.Configuration configuration,
+                                      Set<Locale> availableLocales,
+                                      MailsenderProperties properties) {
     return new MailSenderImpl(javaMailSender,
       configuration,
       properties.getFilters(),
