@@ -227,10 +227,4 @@ public class UserAutoConfiguration {
     SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration) {
     return new AggregationConverterTermImpl("users.search.facet.function", userSearchEngineConfiguration.getName(), "dto.function.raw");
   }
-
-  @Bean
-  public AggregationConverter userLastConnexionDateAggregationConverter(
-    SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration) {
-    return new AggregationConverterDatesImpl("users.search.facet.lastConnection", userSearchEngineConfiguration.getName(), "dto.lastConnection");
-  }
 }
