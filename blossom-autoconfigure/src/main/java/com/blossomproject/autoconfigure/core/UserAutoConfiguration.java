@@ -12,6 +12,7 @@ import com.blossomproject.core.common.search.SearchEngineImpl;
 import com.blossomproject.core.common.search.SummaryDTO;
 import com.blossomproject.core.common.search.SummaryDTO.SummaryDTOBuilder;
 import com.blossomproject.core.common.search.facet.AggregationConverter;
+import com.blossomproject.core.common.search.facet.AggregationConverterDatesImpl;
 import com.blossomproject.core.common.search.facet.AggregationConverterTermImpl;
 import com.blossomproject.core.common.service.AssociationServicePlugin;
 import com.blossomproject.core.common.utils.action_token.ActionTokenService;
@@ -225,5 +226,11 @@ public class UserAutoConfiguration {
   public AggregationConverter userFunctionAggregationConverter(
     SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration) {
     return new AggregationConverterTermImpl("users.search.facet.function", userSearchEngineConfiguration.getName(), "dto.function.raw");
+  }
+
+  @Bean
+  public AggregationConverter userLastConnexionDateAggregationConverter(
+    SearchEngineConfiguration<UserDTO> userSearchEngineConfiguration) {
+    return new AggregationConverterDatesImpl("users.search.facet.lastConnection", userSearchEngineConfiguration.getName(), "dto.lastConnection");
   }
 }

@@ -3,6 +3,8 @@ package com.blossomproject.ui.web.administration.user;
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.SearchEngineImpl;
 import com.blossomproject.core.common.search.SearchResult;
+import com.blossomproject.core.common.search.facet.DatesFacetConfiguration;
+import com.blossomproject.core.common.search.facet.DatesFacetConfiguration.PeriodConfiguration;
 import com.blossomproject.core.common.search.facet.Facet;
 import com.blossomproject.core.common.search.facet.TermsFacetConfiguration;
 import com.blossomproject.core.user.User;
@@ -18,6 +20,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -99,7 +103,12 @@ public class UsersController {
           filters,
           Lists.newArrayList(
             new TermsFacetConfiguration<>("users.search.facet.company", 50),
-            new TermsFacetConfiguration<>("users.search.facet.function", 50)
+            new TermsFacetConfiguration<>("users.search.facet.function", 50),
+            new DatesFacetConfiguration("users.search.facet.lastConnection",
+              Lists.newArrayList(
+                new PeriodConfiguration("users.search.facet.lastConnection.never", null, null),
+                new PeriodConfiguration("users.search.facet.lastConnection.last_24h", Instant.now().minus(24, ChronoUnit.HOURS), null)
+            ))
           ));
       users = searchResult.getPage();
       facets = searchResult.getFacets();

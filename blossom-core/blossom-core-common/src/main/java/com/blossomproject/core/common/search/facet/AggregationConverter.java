@@ -14,8 +14,6 @@ public interface AggregationConverter extends Plugin<SearchEngine> {
 
   String name();
 
-  String supportedSearchEngine();
-
   List<AggregationBuilder> encode(FacetConfiguration configuration);
 
   Facet decode(Supplier<Aggregations> parent, FacetConfiguration configuration);

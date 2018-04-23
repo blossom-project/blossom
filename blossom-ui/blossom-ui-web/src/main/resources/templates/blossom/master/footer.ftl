@@ -85,4 +85,7 @@
 <!-- Select 2 -->
 <script src="/blossom/public/js/plugins/select2/select2.full.min.js"></script>
 
+<!-- Daterangepicker -->
+<script src="/blossom/public/js/plugins/daterangepicker/daterangepicker.js"></script>
+
 </#macro>

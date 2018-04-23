@@ -2642,3 +2642,16 @@ body.tour-open .animated {
     margin-right: 2px;
   }
 }
+
+.daterangepicker td.in-range {
+  background-color: lightness($navy);
+  border-color: transparent;
+  color: #000;
+  border-radius: 0;
+}
+
+.daterangepicker td.active, .daterangepicker td.active:hover {
+  background-color: $navy;
+  border-color: transparent;
+  color: #fff;
+}

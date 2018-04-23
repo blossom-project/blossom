@@ -1,6 +1,6 @@
 package com.blossomproject.core.common.search.facet;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 public class DatesFacetConfiguration extends FacetConfiguration {
@@ -30,8 +30,16 @@ public class DatesFacetConfiguration extends FacetConfiguration {
   public static class PeriodConfiguration {
 
     private String name;
-    private Date from;
-    private Date to;
+    private Instant from;
+    private Instant to;
+
+    public PeriodConfiguration(){}
+
+    public PeriodConfiguration(String name, Instant from, Instant to) {
+      this.name = name;
+      this.from = from;
+      this.to = to;
+    }
 
     public String getName() {
       return name;
@@ -41,19 +49,19 @@ public class DatesFacetConfiguration extends FacetConfiguration {
       this.name = name;
     }
 
-    public Date getFrom() {
+    public Instant getFrom() {
       return from;
     }
 
-    public void setFrom(Date from) {
+    public void setFrom(Instant from) {
       this.from = from;
     }
 
-    public Date getTo() {
+    public Instant getTo() {
       return to;
     }
 
-    public void setTo(Date to) {
+    public void setTo(Instant to) {
       this.to = to;
     }
 

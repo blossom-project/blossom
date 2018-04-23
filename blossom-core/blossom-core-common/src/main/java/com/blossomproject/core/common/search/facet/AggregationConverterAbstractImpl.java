@@ -20,11 +20,6 @@ public abstract class AggregationConverterAbstractImpl implements AggregationCon
   }
 
   @Override
-  public String supportedSearchEngine() {
-    return this.supportedSearchEngine;
-  }
-
-  @Override
   public boolean supports(SearchEngine delimiter) {
     return delimiter.getName().equals(this.supportedSearchEngine);
   }

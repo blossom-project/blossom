@@ -1,6 +1,6 @@
 package com.blossomproject.core.common.search.facet;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 public class DatesFacet extends Facet{
@@ -21,8 +21,8 @@ public class DatesFacet extends Facet{
 
   public static class DatesFacetResult{
     private String term;
-    private Date from;
-    private Date to;
+    private Instant from;
+    private Instant to;
     private Long count;
 
     public String getTerm() {
@@ -41,19 +41,19 @@ public class DatesFacet extends Facet{
       this.count = count;
     }
 
-    public Date getFrom() {
+    public Instant getFrom() {
       return from;
     }
 
-    public void setFrom(Date from) {
+    public void setFrom(Instant from) {
       this.from = from;
     }
 
-    public Date getTo() {
+    public Instant getTo() {
       return to;
     }
 
-    public void setTo(Date to) {
+    public void setTo(Instant to) {
       this.to = to;
     }
   }
