@@ -3,10 +3,10 @@ package com.blossomproject.core.common.search;
 
 import com.blossomproject.core.common.PluginConstants;
 import com.blossomproject.core.common.dto.AbstractDTO;
+import com.blossomproject.core.common.search.facet.FacetConfiguration;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.plugin.core.Plugin;
@@ -22,9 +22,11 @@ public interface SearchEngine extends Plugin<Class<? extends AbstractDTO>> {
 
   SearchRequestBuilder prepareSearch(String q, Pageable pageable, Iterable<QueryBuilder> filters);
 
-  SearchRequestBuilder prepareSearch(String q, Pageable pageable, Iterable<QueryBuilder> filters, Iterable<AggregationBuilder> aggregations);
+  SearchRequestBuilder prepareSearch(String q, Pageable pageable, Iterable<QueryBuilder> filters, Iterable<FacetConfiguration> facetConfigurations);
 
   SearchResult<?> parseResults(SearchResponse response, Pageable pageable);
+
+  SearchResult<?> parseResults(SearchResponse response, Pageable pageable, Iterable<FacetConfiguration> facetConfigurations);
 
   SearchResult<SummaryDTO> parseSummaryResults(SearchResponse response, Pageable pageable);
 
@@ -32,6 +34,6 @@ public interface SearchEngine extends Plugin<Class<? extends AbstractDTO>> {
 
   SearchResult<?> search(String q, Pageable pageable, Iterable<QueryBuilder> filters);
 
-  SearchResult<?> search(String q, Pageable pageable, Iterable<QueryBuilder> filters, Iterable<AggregationBuilder> aggregations);
+  SearchResult<?> search(String q, Pageable pageable, Iterable<QueryBuilder> filters, Iterable<FacetConfiguration> aggregations);
 
 }

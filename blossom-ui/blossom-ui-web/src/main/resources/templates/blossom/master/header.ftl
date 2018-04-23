@@ -22,6 +22,8 @@
 <link href="/blossom/public/css/plugins/dualListbox/bootstrap-duallistbox.min.css" rel="stylesheet">
 <link href="/blossom/public/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
 <link href="/blossom/public/css/plugins/summernote/summernote.css" rel="stylesheet">
+<link href="/blossom/public/css/plugins/select2/select2.min.css" rel="stylesheet">
+<link href="/blossom/public/css/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
 <link href="/blossom/public/css/animate.css" rel="stylesheet">
 <link href="<@spring.theme "stylesheet"/>" rel="stylesheet">
 </#macro>

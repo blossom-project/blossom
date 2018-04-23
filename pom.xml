@@ -17,8 +17,8 @@
   <url>http://blossom-project.com</url>
 
   <organization>
-    <name>CARDIWEB SA</name>
-    <url>https://www.cardiweb.com/</url>
+    <name>Blossom Project</name>
+    <url>https://blossom-project.com/</url>
   </organization>
 
   <licenses>
@@ -34,6 +34,10 @@
       <email>mael.gargadennec@gmail.com</email>
       <organization>CARDIWEB</organization>
       <organizationUrl>https://www.cardiweb.com</organizationUrl>
+      <roles>
+        <role>Creator</role>
+        <role>Lead developer</role>
+      </roles>
     </developer>
   </developers>
 

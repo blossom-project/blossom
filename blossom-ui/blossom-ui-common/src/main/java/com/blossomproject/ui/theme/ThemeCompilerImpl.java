@@ -23,11 +23,12 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.io.IOUtils;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.plugin.core.PluginRegistry;
 
-public class ThemeCompilerImpl implements ThemeCompiler, CommandLineRunner {
+public class ThemeCompilerImpl implements ThemeCompiler, CommandLineRunner, Ordered {
 
   private final static String SCSS_PATH = "classpath:/scss/%s.scss";
   private final static String[] FILENAMES = new String[]{"style","style_mail"};
@@ -84,6 +85,11 @@ public class ThemeCompilerImpl implements ThemeCompiler, CommandLineRunner {
     if (this.cache.containsKey(theme + "_" + filename)) {
       os.write(this.cache.get(theme + "_" + filename).getBytes());
     }
+  }
+
+  @Override
+  public int getOrder() {
+    return Ordered.HIGHEST_PRECEDENCE;
   }
 
   private class CustomImporter implements Importer {

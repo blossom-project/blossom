@@ -1,14 +1,15 @@
 package com.blossomproject.autoconfigure.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.blossomproject.core.common.PluginConstants;
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.IndexationEngineConfiguration;
 import com.blossomproject.core.common.search.IndexationEngineImpl;
+import com.blossomproject.core.common.search.SearchEngine;
 import com.blossomproject.core.common.search.SearchEngineConfiguration;
 import com.blossomproject.core.common.search.SearchEngineImpl;
 import com.blossomproject.core.common.search.SummaryDTO;
 import com.blossomproject.core.common.search.SummaryDTO.SummaryDTOBuilder;
+import com.blossomproject.core.common.search.facet.AggregationConverter;
 import com.blossomproject.core.common.service.AssociationServicePlugin;
 import com.blossomproject.core.group.Group;
 import com.blossomproject.core.group.GroupDTO;
@@ -19,6 +20,7 @@ import com.blossomproject.core.group.GroupIndexationJob;
 import com.blossomproject.core.group.GroupRepository;
 import com.blossomproject.core.group.GroupService;
 import com.blossomproject.core.group.GroupServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.function.Function;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -147,8 +149,11 @@ public class GroupAutoConfiguration {
 
   @Bean
   public SearchEngineImpl<GroupDTO> groupSearchEngine(Client client, ObjectMapper objectMapper,
-    SearchEngineConfiguration<GroupDTO> groupSearchEngineConfiguration) {
-    return new SearchEngineImpl<>(client, objectMapper, groupSearchEngineConfiguration);
+    SearchEngineConfiguration<GroupDTO> groupSearchEngineConfiguration,
+    @Qualifier(PluginConstants.PLUGIN_SEARCH_ENGINE_AGGREGATION_CONVERTERS)
+      PluginRegistry<AggregationConverter, SearchEngine> aggregationConverters) {
+    return new SearchEngineImpl<>(client, objectMapper, aggregationConverters,
+      groupSearchEngineConfiguration);
   }
 
 

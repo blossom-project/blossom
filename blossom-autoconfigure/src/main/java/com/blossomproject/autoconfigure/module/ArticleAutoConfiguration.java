@@ -1,15 +1,16 @@
 package com.blossomproject.autoconfigure.module;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.blossomproject.autoconfigure.core.CommonAutoConfiguration;
 import com.blossomproject.core.common.PluginConstants;
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.IndexationEngineConfiguration;
 import com.blossomproject.core.common.search.IndexationEngineImpl;
+import com.blossomproject.core.common.search.SearchEngine;
 import com.blossomproject.core.common.search.SearchEngineConfiguration;
 import com.blossomproject.core.common.search.SearchEngineImpl;
 import com.blossomproject.core.common.search.SummaryDTO;
 import com.blossomproject.core.common.search.SummaryDTO.SummaryDTOBuilder;
+import com.blossomproject.core.common.search.facet.AggregationConverter;
 import com.blossomproject.core.common.service.AssociationServicePlugin;
 import com.blossomproject.module.article.Article;
 import com.blossomproject.module.article.ArticleDTO;
@@ -20,6 +21,7 @@ import com.blossomproject.module.article.ArticleIndexationJob;
 import com.blossomproject.module.article.ArticleRepository;
 import com.blossomproject.module.article.ArticleService;
 import com.blossomproject.module.article.ArticleServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.function.Function;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
@@ -132,7 +134,7 @@ public class ArticleAutoConfiguration {
 
       @Override
       public String[] getFields() {
-        return new String[]{"dto.name","dto.summary","dto.content","dto.status"};
+        return new String[]{"dto.name", "dto.summary", "dto.content", "dto.status"};
       }
 
       @Override
@@ -145,8 +147,11 @@ public class ArticleAutoConfiguration {
   @Bean
   public SearchEngineImpl<ArticleDTO> articleSearchEngine(Client client,
     ObjectMapper objectMapper,
-    SearchEngineConfiguration<ArticleDTO> articleSearchEngineConfiguration) {
-    return new SearchEngineImpl<>(client, objectMapper, articleSearchEngineConfiguration);
+    SearchEngineConfiguration<ArticleDTO> articleSearchEngineConfiguration,
+    @Qualifier(PluginConstants.PLUGIN_SEARCH_ENGINE_AGGREGATION_CONVERTERS)
+      PluginRegistry<AggregationConverter, SearchEngine> aggregationConverters) {
+    return new SearchEngineImpl<>(client, objectMapper, aggregationConverters,
+      articleSearchEngineConfiguration);
   }
 
   @Bean
