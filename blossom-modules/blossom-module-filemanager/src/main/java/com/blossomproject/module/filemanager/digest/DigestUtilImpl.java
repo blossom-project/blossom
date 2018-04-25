@@ -14,7 +14,7 @@ public class DigestUtilImpl implements DigestUtil {
 
   @Override
   public String getHash(DigestOutputStream digestOutputStream) {
-    return digestToString(digestOutputStream.getDigest());
+    return new String(Hex.encode(digestOutputStream.getDigest()));
   }
 
   private String digestToString(Digest digest) {
