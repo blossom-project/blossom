@@ -41,6 +41,11 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
   private final SearchEngineConfiguration<DTO> configuration;
 
   public SearchEngineImpl(Client client, ObjectMapper objectMapper,
+    SearchEngineConfiguration<DTO> configuration) {
+   this(client,objectMapper,null,configuration);
+  }
+
+  public SearchEngineImpl(Client client, ObjectMapper objectMapper,
     PluginRegistry<AggregationConverter, SearchEngine> aggregationRegistry,
     SearchEngineConfiguration<DTO> configuration) {
     this.client = client;
@@ -120,17 +125,20 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
       GlobalBuilder global = AggregationBuilders.global(GLOBAL_AGGREGATION);
       boolean addGlobal = false;
 
-      List<AggregationConverter> aggregationConverters = aggregationRegistry.getPluginsFor(this);
-      for(FacetConfiguration facetConfiguration : facetConfigurations){
-        if (!aggregationConverters.isEmpty()) {
-          Optional<AggregationConverter> converter = aggregationConverters.stream().filter(c -> c.name().equals(facetConfiguration.getName())).findAny();
-          if (converter.isPresent()) {
-            List<AggregationBuilder> builders = converter.get().encode(facetConfiguration);
-            if(facetConfiguration.isGlobal()){
-              builders.forEach(global::subAggregation);
-              addGlobal=true;
-            }else{
-              builders.forEach(searchRequest::addAggregation);
+      if(aggregationRegistry!=null) {
+        List<AggregationConverter> aggregationConverters = aggregationRegistry.getPluginsFor(this);
+        for (FacetConfiguration facetConfiguration : facetConfigurations) {
+          if (!aggregationConverters.isEmpty()) {
+            Optional<AggregationConverter> converter = aggregationConverters.stream()
+              .filter(c -> c.name().equals(facetConfiguration.getName())).findAny();
+            if (converter.isPresent()) {
+              List<AggregationBuilder> builders = converter.get().encode(facetConfiguration);
+              if (facetConfiguration.isGlobal()) {
+                builders.forEach(global::subAggregation);
+                addGlobal = true;
+              } else {
+                builders.forEach(searchRequest::addAggregation);
+              }
             }
           }
         }
@@ -183,7 +191,7 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
       }
     }
 
-    if (facetConfigurations!=null) {
+    if (this.aggregationRegistry!=null && facetConfigurations!=null) {
       List<Facet> facets = Lists.newArrayList();
       for (FacetConfiguration facetConfiguration : facetConfigurations) {
         List<AggregationConverter> converters = aggregationRegistry.getPluginsFor(this);
