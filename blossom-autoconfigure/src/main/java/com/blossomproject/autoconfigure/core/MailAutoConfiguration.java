@@ -28,16 +28,16 @@ public class MailAutoConfiguration {
   @ConfigurationProperties("blossom.mail")
   @PropertySource({"classpath:/mailsender.properties"})
   public static class MailsenderProperties {
-    private String baseUrl;
+    private String url;
     private String from;
     private final Set<String> filters = new HashSet<>();
 
-    public String getBaseUrl() {
-      return baseUrl;
+    public String getUrl() {
+      return url;
     }
 
-    public void setBaseUrl(String baseUrl) {
-      this.baseUrl = baseUrl;
+    public void setUrl(String url) {
+      this.url = url;
     }
 
     public String getFrom() {
@@ -66,7 +66,7 @@ public class MailAutoConfiguration {
       properties.getFilters(),
       messageSource,
       properties.getFrom(),
-      properties.getBaseUrl(),
+      properties.getUrl(),
       Iterables.getFirst(availableLocales, Locale.ENGLISH));
   }
 
