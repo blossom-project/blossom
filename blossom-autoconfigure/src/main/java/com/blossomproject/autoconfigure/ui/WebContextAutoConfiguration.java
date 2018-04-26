@@ -1,5 +1,7 @@
 package com.blossomproject.autoconfigure.ui;
 
+import com.blossomproject.core.common.utils.privilege.Privilege;
+import com.blossomproject.core.common.utils.privilege.SimplePrivilege;
 import com.blossomproject.ui.filter.FilterHandlerMethodArgumentResolver;
 import com.blossomproject.ui.i18n.RestrictedSessionLocaleResolver;
 import com.blossomproject.ui.stereotype.BlossomApiController;
@@ -80,6 +82,11 @@ public class WebContextAutoConfiguration implements WebMvcConfigurer {
     LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
     validator.setValidationMessageSource(messageSource);
     return validator;
+  }
+
+  @Bean
+  public Privilege switchUserPrivilege() {
+    return new SimplePrivilege("administration", "admin", "impersonate");
   }
 
   @Bean

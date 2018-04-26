@@ -50,11 +50,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.plugin.core.config.EnablePluginRegistries;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.StringUtils;
 
@@ -208,6 +210,10 @@ public class CommonAutoConfiguration {
         return Optional.of("anonymous");
       }
       String username = auth.getName();
+      Optional<? extends GrantedAuthority> switchUserAuthorities = auth.getAuthorities().stream().filter(a -> a instanceof SwitchUserGrantedAuthority).findAny();
+      if(switchUserAuthorities.isPresent()){
+        username = ((SwitchUserGrantedAuthority)switchUserAuthorities.get()).getSource().getName();
+      }
       return Optional.of(username);
     }
   }

@@ -27,6 +27,15 @@
   </div>
   <div class="col-sm-4">
     <div class="title-action">
+
+      <#if user.activated>
+        <@privilege.has currentUser=currentUser privilege="administration:admin:impersonate">
+          <a type="button" href="/blossom/administration/_impersonate?username=${user.identifier}" class="btn btn-primary">
+            <i class="fa fa-eye"></i>
+          </a>
+        </@privilege.has>
+      </#if>
+
       <@privilege.has currentUser=currentUser privilege="administration:users:delete">
        <@button.delete id=user.id?c uri='/blossom/administration/users/'+user.id?c+'/_delete'/>
       </@privilege.has>

@@ -5,6 +5,7 @@ import static com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration.BL
 import com.blossomproject.core.association_user_role.AssociationUserRoleService;
 import com.blossomproject.core.common.PluginConstants;
 import com.blossomproject.core.common.utils.privilege.Privilege;
+import com.blossomproject.core.common.utils.privilege.SimplePrivilege;
 import com.blossomproject.core.user.UserService;
 import com.blossomproject.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
 import com.blossomproject.ui.security.AuthenticationFailureListener;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -34,6 +36,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.

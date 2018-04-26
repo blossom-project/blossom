@@ -2,6 +2,7 @@
 <#import "header.ftl" as header />
 <#import "footer.ftl" as footer />
 <#import "navigation.ftl" as navigation />
+<#import "impersonation.ftl" as impersonation />
 
 <#macro default currentUser>
 <!DOCTYPE html>
@@ -14,6 +15,11 @@
       <meta name="_csrf_header" content="${_csrf.headerName}"/>
   </head>
   <body class="fixed-navigation <@spring.theme "bodyClass"/>">
+
+    <#if impersonating>
+      <@impersonation.default currentUser=currentUser originalUser=originalUser/>
+    </#if>
+
     <div id="wrapper">
         <@navigation.drawer menu=menu currentUser=currentUser></@navigation.drawer>
 

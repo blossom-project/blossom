@@ -10,6 +10,8 @@ import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.SearchEngine;
 import com.blossomproject.core.common.service.AssociationServicePlugin;
 import com.blossomproject.core.common.utils.action_token.ActionTokenService;
+import com.blossomproject.core.common.utils.privilege.Privilege;
+import com.blossomproject.core.common.utils.privilege.SimplePrivilege;
 import com.blossomproject.core.user.UserService;
 import com.blossomproject.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
 import com.blossomproject.ui.current_user.CurrentUserControllerAdvice;
@@ -17,13 +19,13 @@ import com.blossomproject.ui.i18n.LocaleControllerAdvice;
 import com.blossomproject.ui.menu.Menu;
 import com.blossomproject.ui.menu.MenuControllerAdvice;
 import com.blossomproject.ui.security.LimitLoginAuthenticationProvider;
+import com.blossomproject.ui.theme.Theme;
+import com.blossomproject.ui.theme.ThemeControllerAdvice;
 import com.blossomproject.ui.web.ActivationController;
 import com.blossomproject.ui.web.HomeController;
 import com.blossomproject.ui.web.LoginController;
 import com.blossomproject.ui.web.OmnisearchController;
 import com.blossomproject.ui.web.StatusController;
-import com.blossomproject.ui.theme.Theme;
-import com.blossomproject.ui.theme.ThemeControllerAdvice;
 import com.blossomproject.ui.web.error.BlossomErrorViewResolver;
 import com.blossomproject.ui.web.error.ErrorControllerAdvice;
 import com.blossomproject.ui.web.utils.session.BlossomSessionRegistryImpl;
@@ -50,8 +52,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.session.SessionInformationExpiredEvent;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
@@ -165,23 +170,41 @@ public class WebInterfaceAutoConfiguration {
   @Configuration
   public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
+    private final UserDetailsService userDetailsService;
     private final LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler;
     private final SessionRegistry sessionRegistry;
-    public final LimitLoginAuthenticationProvider limitLoginAuthenticationProvider;
+    private final Privilege switchUserPrivilege;
+    private final LimitLoginAuthenticationProvider limitLoginAuthenticationProvider;
 
 
     public FormLoginWebSecurityConfigurerAdapter(
+      UserDetailsService userDetailsService,
       LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler,
       SessionRegistry sessionRegistry,
-      LimitLoginAuthenticationProvider limitLoginAuthenticationProvider) {
+      LimitLoginAuthenticationProvider limitLoginAuthenticationProvider,
+      @Qualifier("switchUserPrivilege") Privilege switchUserPrivilege) {
+      this.userDetailsService = userDetailsService;
       this.lastConnectionUpdateAuthenticationSuccessHandler = lastConnectionUpdateAuthenticationSuccessHandler;
       this.sessionRegistry = sessionRegistry;
       this.limitLoginAuthenticationProvider = limitLoginAuthenticationProvider;
+      this.switchUserPrivilege=switchUserPrivilege;
     }
 
     @Bean
     public static ServletListenerRegistrationBean httpSessionEventPublisher() {
       return new ServletListenerRegistrationBean(new HttpSessionEventPublisher());
+    }
+
+    @Bean
+    public SwitchUserFilter switchUserProcessingFilter() {
+      SwitchUserFilter filter = new SwitchUserFilter();
+      filter.setUserDetailsService(userDetailsService);
+      filter.setSwitchAuthorityRole(switchUserPrivilege.privilege());
+      filter.setSwitchUserUrl("/" + BLOSSOM_BASE_PATH + "/administration/_impersonate");
+      filter.setExitUserUrl("/" + BLOSSOM_BASE_PATH + "/administration/_impersonate/logout");
+      filter.setTargetUrl("/" + BLOSSOM_BASE_PATH);
+      filter.setSwitchFailureUrl("/" + BLOSSOM_BASE_PATH);
+      return filter;
     }
 
     @Override
@@ -191,6 +214,8 @@ public class WebInterfaceAutoConfiguration {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+      http.addFilterAfter(switchUserProcessingFilter(), FilterSecurityInterceptor.class);
+
       http.antMatcher("/" + BLOSSOM_BASE_PATH + "/**")
         .authorizeRequests().anyRequest().fullyAuthenticated()
         .and().formLogin().loginPage("/" + BLOSSOM_BASE_PATH + "/login")
@@ -209,6 +234,7 @@ public class WebInterfaceAutoConfiguration {
         .expiredSessionStrategy(
           new BlossomInvalidSessionStrategy("/" + BLOSSOM_BASE_PATH + "/login"))
         .sessionRegistry(sessionRegistry);
+
     }
   }
 

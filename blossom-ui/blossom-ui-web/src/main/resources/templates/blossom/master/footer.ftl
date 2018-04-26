@@ -44,9 +44,6 @@
 <!-- ChartJS-->
 <script src="/blossom/public/js/plugins/chartJs/Chart.min.js"></script>
 
-<!-- Pace -->
-<script src="/blossom/public/js/plugins/pace/pace.min.js"></script>
-
 <!-- Vue.js -->
 <script src="/blossom/public/js/plugins/vue/vue.min.js"></script>
 
