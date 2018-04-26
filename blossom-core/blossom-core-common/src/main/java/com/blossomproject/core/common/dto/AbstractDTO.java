@@ -22,6 +22,16 @@ public abstract class AbstractDTO {
   private Date modificationDate;
   private String modificationUser;
 
+  public AbstractDTO() {}
+
+  public AbstractDTO(AbstractDTO toCopy) {
+    this.id = toCopy.id;
+    this.creationDate = new Date(toCopy.creationDate.getTime());
+    this.creationUser = toCopy.creationUser;
+    this.modificationDate = new Date(toCopy.modificationDate.getTime());
+    this.modificationUser = toCopy.modificationUser;
+  }
+
   public Long getId() {
     return id;
   }
