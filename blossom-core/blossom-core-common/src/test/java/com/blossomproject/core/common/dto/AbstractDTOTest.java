@@ -56,4 +56,16 @@ public class AbstractDTOTest {
 
   }
 
+  @Test
+  public void should_be_able_to_copy_empty_dto() {
+    TestDTO aDTO = new TestDTO();
+    TestDTO anotherDTO = new TestDTO(aDTO);
+
+    assertEquals("Id should be the same for the copy", aDTO.getId(), anotherDTO.getId());
+    assertEquals("Creation date should be the same for the copy", aDTO.getCreationDate(), anotherDTO.getCreationDate());
+    assertEquals("Creation user should be the same for the copy", aDTO.getCreationUser(), anotherDTO.getCreationUser());
+    assertEquals("Modification date should be the same for the copy", aDTO.getModificationDate(), anotherDTO.getModificationDate());
+    assertEquals("Modification user should be the same for the copy", aDTO.getModificationUser(), anotherDTO.getModificationUser());
+  }
+
 }

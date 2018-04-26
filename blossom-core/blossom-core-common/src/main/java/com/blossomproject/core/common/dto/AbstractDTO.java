@@ -22,13 +22,18 @@ public abstract class AbstractDTO {
   private Date modificationDate;
   private String modificationUser;
 
-  public AbstractDTO() {}
+  public AbstractDTO() {
+  }
 
   public AbstractDTO(AbstractDTO toCopy) {
     this.id = toCopy.id;
-    this.creationDate = new Date(toCopy.creationDate.getTime());
+    if (toCopy.creationDate != null) {
+      this.creationDate = new Date(toCopy.creationDate.getTime());
+    }
     this.creationUser = toCopy.creationUser;
-    this.modificationDate = new Date(toCopy.modificationDate.getTime());
+    if (toCopy.modificationDate != null) {
+      this.modificationDate = new Date(toCopy.modificationDate.getTime());
+    }
     this.modificationUser = toCopy.modificationUser;
   }
 
@@ -72,14 +77,14 @@ public abstract class AbstractDTO {
     this.modificationUser = modificationUser;
   }
 
-    @Override
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
     AbstractDTO that = (AbstractDTO) o;
 
-    return id  == null  || that.id == null ? false :  id.equals(that.id);
+    return id == null || that.id == null ? false : id.equals(that.id);
   }
 
   @Override
