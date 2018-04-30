@@ -2,6 +2,7 @@ package com.blossomproject.core.common.utils.mail;
 
 import static org.mockito.Mockito.mock;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import freemarker.template.Configuration;
@@ -138,4 +139,37 @@ public class MailSenderImplTest {
     this.mailSender.sendMail(htmlTemplate, parameters, subject,mailTo);
   }
 
+
+
+  @Test
+  public void should_not_send_mail_without_context_with_highpriority() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
+
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = null;
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+
+    this.mailSender.sendMail(htmlTemplate, parameters, subject,this.locale, Lists.newArrayList(), mailTo, null,null,true);
+  }
+
+  @Test
+  public void should_not_send_mail_without_context_with_cc_bcc() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = null;
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+    this.mailSender.sendMail(htmlTemplate,parameters,subject,this.locale,mailTo, mailTo, mailTo);
+  }
+
+  @Test
+  public void should_not_send_mail_without_context_with_cc_bcc_without_locale() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = null;
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo, mailTo, null);
+  }
 }

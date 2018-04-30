@@ -31,4 +31,28 @@ public class NoopMailSenderImplTest {
   public void should_not_send_mail_with_locale_and_attached_files() throws Exception {
     mailSender.sendMail("test", Maps.newHashMap(), "", Locale.FRANCE, Lists.newArrayList(), "");
   }
+
+  @Test
+  public void should_not_send_mail_with_cc_bcc() throws Exception {
+    String[] tabMail={""};
+    mailSender.sendMail("test", Maps.newHashMap(), "", tabMail,tabMail,tabMail);
+  }
+
+  @Test
+  public void should_not_send_mail_with_locale_cc_bcc() throws Exception {
+    String[] tabMail={""};
+    mailSender.sendMail("test", Maps.newHashMap(), "", Locale.FRANCE, tabMail,null,null);
+  }
+
+  @Test
+  public void should_not_send_mail_with_locale_and_attached_files_cc_bcc() throws Exception {
+    String[] tabMail={""};
+    mailSender.sendMail("test", Maps.newHashMap(), "", Locale.FRANCE, Lists.newArrayList(), tabMail,null,null);
+  }
+
+  @Test
+  public void should_not_send_mail_with_locale_and_attached_files_cc_bcc_highpriority() throws Exception {
+    String[] tabMail={""};
+    mailSender.sendMail("test", Maps.newHashMap(), "", Locale.FRANCE, Lists.newArrayList(), tabMail,null,null,true);
+  }
 }
