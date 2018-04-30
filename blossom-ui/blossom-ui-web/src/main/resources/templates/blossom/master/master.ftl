@@ -2,7 +2,7 @@
 <#import "header.ftl" as header />
 <#import "footer.ftl" as footer />
 <#import "navigation.ftl" as navigation />
-<#import "impersonation.ftl" as impersonation />
+<#import "/blossom/utils/impersonation.ftl" as impersonation />
 
 <#macro default currentUser>
 <!DOCTYPE html>
