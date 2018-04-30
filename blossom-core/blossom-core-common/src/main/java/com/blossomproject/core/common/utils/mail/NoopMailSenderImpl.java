@@ -28,6 +28,26 @@ public class NoopMailSenderImpl implements MailSender {
   }
 
   @Override
+  public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
+    this.sendMail(htmlTemplate, ctx, mailSubject, Locale.getDefault(), mailTo);
+  }
+
+  @Override
+  public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
+    this.sendMail(htmlTemplate, ctx, mailSubject, Locale.getDefault(), mailTo);
+  }
+
+  @Override
+  public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
+    this.sendMail(htmlTemplate, ctx, mailSubject, Locale.getDefault(), mailTo);
+  }
+
+  @Override
+  public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, String[] mailTo, String[] mailCc, String[] mailBcc, boolean highPriority) throws Exception {
+    this.sendMail(htmlTemplate, ctx, mailSubject, Locale.getDefault(), mailTo);
+  }
+
+  @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale,
     String... mailTo) throws Exception {
     if (LOGGER.isInfoEnabled()) {
