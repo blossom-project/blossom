@@ -37,9 +37,13 @@ public class MailFilterImpl implements MailFilter {
 
             if (recipientsFiltered.get(Message.RecipientType.BCC) != null && recipientsFiltered.get(Message.RecipientType.BCC).length > 0) {
                 mimeMessageHelper.setBcc(recipientsFiltered.get(Message.RecipientType.BCC));
+            }else{
+                mimeMessageHelper.setBcc(new String[0]);
             }
             if (recipientsFiltered.get(Message.RecipientType.CC) != null && recipientsFiltered.get(Message.RecipientType.CC).length > 0) {
                 mimeMessageHelper.setCc(recipientsFiltered.get(Message.RecipientType.CC));
+            }else{
+                mimeMessageHelper.setCc(new String[0]);
             }
 
             return mimeMessageHelper.getMimeMessage();
