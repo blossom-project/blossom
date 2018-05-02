@@ -55,4 +55,11 @@ public class NoopMailSenderImplTest {
     String[] tabMail={""};
     mailSender.sendMail("test", Maps.newHashMap(), "", Locale.FRANCE, Lists.newArrayList(), tabMail,null,null,true);
   }
+
+  @Test
+  public void should_not_send_mail_inputstream_attachment() throws Exception{
+    String[] tabMail={""};
+    mailSender.sendMail("test", Maps.newHashMap(), "", Locale.FRANCE, null,null,null, tabMail,null,null,true);
+
+  }
 }

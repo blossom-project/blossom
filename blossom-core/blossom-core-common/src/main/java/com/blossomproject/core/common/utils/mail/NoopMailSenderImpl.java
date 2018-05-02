@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamSource;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
@@ -48,6 +49,12 @@ public class NoopMailSenderImpl implements MailSender {
   }
 
   @Override
+  public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String attachmentName, InputStreamSource attachmentInputStreamSource, String attachmentContentType, String[] mailTo, String[] mailCc, String[] mailBcc, boolean highPriority) throws Exception {
+    this.sendMail(htmlTemplate, ctx, mailSubject, Locale.getDefault(), mailTo);
+  }
+
+
+  @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale,
     String... mailTo) throws Exception {
     if (LOGGER.isInfoEnabled()) {
@@ -57,4 +64,6 @@ public class NoopMailSenderImpl implements MailSender {
         Arrays.toString(mailTo), mailSubject);
     }
   }
+
+
 }

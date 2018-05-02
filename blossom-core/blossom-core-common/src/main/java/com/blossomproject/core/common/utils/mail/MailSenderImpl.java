@@ -6,6 +6,7 @@ import freemarker.template.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -90,7 +91,7 @@ public class MailSenderImpl implements MailSender {
         Preconditions.checkArgument(locale != null);
         Preconditions.checkArgument(ctx != null);
         Preconditions.checkArgument(mailTo != null && mailTo.length > 0);
-        Preconditions.checkArgument(mailSubject !=null);
+        Preconditions.checkArgument(mailSubject != null);
 
         this.enrichContext(ctx, locale);
 
@@ -115,10 +116,61 @@ public class MailSenderImpl implements MailSender {
                 message.setBcc(mailBcc);
             }
 
+            if (highPriority) {
+                //https://www.chilkatsoft.com/p/p_471.asp
+                mimeMessage.addHeader("X-Priority", "1");
+                mimeMessage.addHeader("X-MSMail-Priority", "High");
+                mimeMessage.addHeader("Importance", "High");
+            }
+
             if (!CollectionUtils.isEmpty(attachedFiles)) {
                 for (File file : attachedFiles) {
                     message.addAttachment(file.getName(), file);
                 }
+            }
+
+            try {
+                this.javaMailSender.send(this.filter.filter(message));
+            } catch (Exception e) {
+                LOGGER.error("Error when sending", e);
+            }
+
+            LOGGER.info("Mail with recipient(s) {} sent.", Arrays.toString(mailTo));
+        } else {
+            LOGGER.info(
+                    "A mail with recipient(s) '{}' and subject '{}' was not sent because no java mail sender is configured",
+                    Arrays.toString(mailTo), mailSubject);
+        }
+    }
+
+    @Override
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String attachmentName, InputStreamSource attachmentInputStreamSource, String attachmentContentType, String[] mailTo, String[] mailCc, String[] mailBcc, boolean highPriority) throws Exception {
+        Preconditions.checkArgument(locale != null);
+        Preconditions.checkArgument(ctx != null);
+        Preconditions.checkArgument(mailTo != null && mailTo.length > 0);
+        Preconditions.checkArgument(mailSubject != null);
+
+        this.enrichContext(ctx, locale);
+
+        final Template template = this.freemarkerConfiguration
+                .getTemplate("mail/" + htmlTemplate + ".ftl");
+        final String htmlContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx);
+        final String subject = this.messageSource
+                .getMessage(mailSubject, new Object[]{}, mailSubject, locale);
+
+        if (mailTo != null && mailTo.length > 0) {
+            final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
+            final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            message.setSubject(subject);
+            message.setText(htmlContent, true);
+            message.setTo(mailTo);
+
+            if (mailCc != null && mailCc.length > 0) {
+                message.setCc(mailCc);
+            }
+
+            if (mailBcc != null && mailBcc.length > 0) {
+                message.setBcc(mailBcc);
             }
 
             if (highPriority) {
@@ -127,6 +179,11 @@ public class MailSenderImpl implements MailSender {
                 mimeMessage.addHeader("X-MSMail-Priority", "High");
                 mimeMessage.addHeader("Importance", "High");
             }
+
+            if (attachmentName != null) {
+                message.addAttachment(attachmentName, attachmentInputStreamSource, attachmentContentType);
+            }
+
             try {
                 this.javaMailSender.send(this.filter.filter(message));
             } catch (Exception e) {

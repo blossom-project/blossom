@@ -1,5 +1,7 @@
 package com.blossomproject.core.common.utils.mail;
 
+import org.springframework.core.io.InputStreamSource;
+
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
@@ -29,5 +31,8 @@ public interface MailSender {
 
     void sendMail (String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale,
                    List<File> attachedFiles,String[] mailTo, String[] mailCc, String[] mailBcc, boolean highPriority) throws Exception;
+
+    void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String attachmentName, InputStreamSource attachmentInputStreamSource,
+                  String attachmentContentType,String[] mailTo, String[] mailCc, String[] mailBcc, boolean highPriority ) throws Exception;
 
 }

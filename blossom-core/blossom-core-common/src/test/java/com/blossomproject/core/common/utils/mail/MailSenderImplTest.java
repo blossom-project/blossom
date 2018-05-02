@@ -172,4 +172,14 @@ public class MailSenderImplTest {
     String[] mailTo = {"test@test.test"};
     this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo, mailTo, null);
   }
+
+  @Test
+  public void should_not_send_mail_without_context_with_inputstream_attachment() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = null;
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+    this.mailSender.sendMail(htmlTemplate, parameters, subject,this.locale,null,null,null, mailTo, mailTo, null,true);
+  }
 }
