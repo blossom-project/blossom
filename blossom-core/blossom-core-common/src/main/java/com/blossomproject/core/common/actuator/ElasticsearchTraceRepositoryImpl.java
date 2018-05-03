@@ -14,8 +14,11 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import org.elasticsearch.action.ActionListener;
-import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.bulk.BulkProcessor;
+import org.elasticsearch.action.bulk.BulkProcessor.Listener;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -40,6 +43,7 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
   private final static Logger logger = LoggerFactory.getLogger(ElasticsearchTraceRepository.class);
   private final static String TIMESTAMP_FIELD = "timestamp";
   private final Client client;
+  private final BulkProcessor bulkProcessor;
   private final String index;
   private final List<Pattern> ignoredPatterns;
   private final String settings;
@@ -75,6 +79,22 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
     this.objectWriter = objectMapper.writer(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
       SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS,
       SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
+    this.bulkProcessor = BulkProcessor.builder(this.client, new Listener() {
+      @Override
+      public void beforeBulk(long executionId, BulkRequest request) {
+        logger.debug("Before index {} http traces", request.numberOfActions());
+      }
+
+      @Override
+      public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+        logger.debug("After index {} http traces", request.numberOfActions());
+}
+
+      @Override
+      public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
+        logger.error("Failed to index http traces", failure);
+      }
+    }).build();
   }
 
   /**
@@ -113,19 +133,11 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
   void indexTrace(HttpTrace httpTrace) throws JsonProcessingException {
     ObjectNode document = objectMapper.valueToTree(httpTrace);
     document.put(TIMESTAMP_FIELD, httpTrace.getTimestamp().toEpochMilli());
-    this.client.prepareIndex(index, index)
-      .setSource(objectWriter.writeValueAsString(document))
-      .execute(new ActionListener<IndexResponse>() {
-        @Override
-        public void onResponse(IndexResponse indexResponse) {
-          logger.trace("Indexed trace into elasticsearch {}", httpTrace);
-        }
 
-        @Override
-        public void onFailure(Throwable t) {
-          logger.error("Indexed trace into elasticsearch {} {}", httpTrace, t);
-        }
-      });
+    IndexRequestBuilder request = this.client.prepareIndex(index, index)
+      .setSource(objectWriter.writeValueAsString(document));
+
+    bulkProcessor.add(request.request());
   }
 
   @Override
