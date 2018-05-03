@@ -1,14 +1,14 @@
 package com.blossomproject.autoconfigure.core;
 
+import com.blossomproject.core.common.actuator.ElasticsearchTraceRepository;
+import com.blossomproject.core.common.actuator.ElasticsearchTraceRepositoryImpl;
+import com.blossomproject.core.common.actuator.TraceStatisticsMvcEndpoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
-import com.blossomproject.core.common.actuator.ElasticsearchTraceRepository;
-import com.blossomproject.core.common.actuator.ElasticsearchTraceRepositoryImpl;
-import com.blossomproject.core.common.actuator.TraceStatisticsMvcEndpoint;
-import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import java.io.IOException;
+import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.trace.http.HttpTraceAutoConfiguration;
@@ -29,12 +29,12 @@ import org.springframework.core.io.Resource;
 public class ActuatorAutoConfiguration {
 
   @Bean
-  public ElasticsearchTraceRepository traceRepository(Client client,
+  public ElasticsearchTraceRepository traceRepository(Client client, BulkProcessor bulkProcessor,
     @Value("classpath:/elasticsearch/traces.json") Resource resource, ObjectMapper objectMapper)
     throws IOException {
     String settings = Resources.toString(resource.getURL(), Charsets.UTF_8);
 
-    return new ElasticsearchTraceRepositoryImpl(client, "traces", Lists
+    return new ElasticsearchTraceRepositoryImpl(client, bulkProcessor,"traces", Lists
       .newArrayList("/blossom.*", "/favicon.*", "/js.*", "/css.*", "/fonts.*", "/img.*",
         "/font-awesome.*"), settings, objectMapper);
   }

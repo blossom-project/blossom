@@ -15,9 +15,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import org.elasticsearch.action.bulk.BulkProcessor;
-import org.elasticsearch.action.bulk.BulkProcessor.Listener;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -62,7 +59,7 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
    * @param settings the Elasticsearch index setting as json serialized string
    * @param objectMapper a jackson ObjectMapper to serialize the HttpTrace objects
    */
-  public ElasticsearchTraceRepositoryImpl(Client client, String index, List<String> ignoredUris,
+  public ElasticsearchTraceRepositoryImpl(Client client, BulkProcessor bulkProcessor, String index, List<String> ignoredUris,
     String settings, ObjectMapper objectMapper) {
     Preconditions.checkArgument(client != null);
     Preconditions.checkArgument(!Strings.isNullOrEmpty(index));
@@ -75,26 +72,11 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
     this.ignoredPatterns = ignoredUris.stream().map(pattern -> Pattern.compile(pattern))
       .collect(Collectors.toList());
     this.settings = settings;
-    this.objectMapper=objectMapper;
+    this.objectMapper = objectMapper;
     this.objectWriter = objectMapper.writer(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
       SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS,
       SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
-    this.bulkProcessor = BulkProcessor.builder(this.client, new Listener() {
-      @Override
-      public void beforeBulk(long executionId, BulkRequest request) {
-        logger.debug("Before index {} http traces", request.numberOfActions());
-      }
-
-      @Override
-      public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-        logger.debug("After index {} http traces", request.numberOfActions());
-}
-
-      @Override
-      public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-        logger.error("Failed to index http traces", failure);
-      }
-    }).build();
+    this.bulkProcessor = bulkProcessor;
   }
 
   /**
@@ -165,10 +147,14 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
         AggregationBuilders.histogram("response_time_histogram").field("timeTaken").interval(100))
       .addAggregation(AggregationBuilders.extendedStats("response_time_stats").field("timeTaken"))
       .addAggregation(AggregationBuilders.terms("response_status_stats").field("response.status"))
-      .addAggregation(AggregationBuilders.terms("response_content_type_stats").field("response.headers.Content-Type"))
-      .addAggregation(AggregationBuilders.terms("top_uris").field("request.uri").order(Terms.Order.aggregation("_count", false)).size(10))
-      .addAggregation(AggregationBuilders.terms("flop_uris").field("request.uri").order(Terms.Order.aggregation("_count", true)).size(10))
-      .addAggregation(AggregationBuilders.dateHistogram("request_histogram").field("timestamp").interval(new DateHistogramInterval(precision))
+      .addAggregation(AggregationBuilders.terms("response_content_type_stats")
+        .field("response.headers.Content-Type"))
+      .addAggregation(AggregationBuilders.terms("top_uris").field("request.uri")
+        .order(Terms.Order.aggregation("_count", false)).size(10))
+      .addAggregation(AggregationBuilders.terms("flop_uris").field("request.uri")
+        .order(Terms.Order.aggregation("_count", true)).size(10))
+      .addAggregation(AggregationBuilders.dateHistogram("request_histogram").field("timestamp")
+        .interval(new DateHistogramInterval(precision))
         .subAggregation(AggregationBuilders.terms("methods").field("request.method")));
     SearchResponse response = request.execute().actionGet();
 

@@ -1,7 +1,7 @@
 package com.blossomproject.core.common.actuator;
 
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -17,7 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import java.util.List;
-import org.elasticsearch.action.ActionListener;
+import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.junit.Before;
@@ -33,6 +33,7 @@ import org.springframework.boot.actuate.trace.http.HttpTraceCreator;
 public class ElasticsearchTraceRepositoryImplTest {
 
   private Client client;
+  private BulkProcessor bulkProcessor;
   private List<String> ignoredPatterns;
   private String alias = "test";
   private ElasticsearchTraceRepositoryImpl repository;
@@ -41,11 +42,12 @@ public class ElasticsearchTraceRepositoryImplTest {
   @Before
   public void setUp() {
     this.client = mock(Client.class);
+    this.bulkProcessor = mock(BulkProcessor.class);
     this.ignoredPatterns = spy(Lists.newArrayList("/ignored.*"));
     this.alias = "test";
     this.objectMapper = new ObjectMapper();
     this.repository = spy(
-      new ElasticsearchTraceRepositoryImpl(client, "test", ignoredPatterns, "{}", objectMapper));
+      new ElasticsearchTraceRepositoryImpl(client, bulkProcessor,"test", ignoredPatterns, "{}", objectMapper));
 
     doNothing().when(this.repository).initializeIndex();
   }
@@ -69,14 +71,12 @@ public class ElasticsearchTraceRepositoryImplTest {
 
     IndexRequestBuilder mockedRequest = mock(IndexRequestBuilder.class);
     when(mockedRequest.setSource(anyString())).thenReturn(mockedRequest);
-    doNothing().when(mockedRequest).execute(any(ActionListener.class));
 
     when(this.client.prepareIndex(eq(alias), eq(alias))).thenReturn(mockedRequest);
 
     this.repository.add(traceInfo);
     verify(this.repository, times(1)).indexTrace(eq(traceInfo));
     verify(mockedRequest, times(1)).setSource(anyString());
-    verify(mockedRequest, times(1)).execute(any(ActionListener.class));
   }
 
   @Test
@@ -95,7 +95,6 @@ public class ElasticsearchTraceRepositoryImplTest {
 
     IndexRequestBuilder mockedRequest = mock(IndexRequestBuilder.class);
     when(mockedRequest.setSource(anyString())).thenReturn(mockedRequest);
-    doNothing().when(mockedRequest).execute(any(ActionListener.class));
 
     when(this.client.prepareIndex(eq(alias), eq(alias))).thenReturn(mockedRequest);
 
