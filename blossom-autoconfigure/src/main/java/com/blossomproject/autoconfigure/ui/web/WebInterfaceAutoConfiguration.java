@@ -11,7 +11,6 @@ import com.blossomproject.core.common.search.SearchEngine;
 import com.blossomproject.core.common.service.AssociationServicePlugin;
 import com.blossomproject.core.common.utils.action_token.ActionTokenService;
 import com.blossomproject.core.common.utils.privilege.Privilege;
-import com.blossomproject.core.common.utils.privilege.SimplePrivilege;
 import com.blossomproject.core.user.UserService;
 import com.blossomproject.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
 import com.blossomproject.ui.current_user.CurrentUserControllerAdvice;
@@ -25,6 +24,7 @@ import com.blossomproject.ui.web.ActivationController;
 import com.blossomproject.ui.web.HomeController;
 import com.blossomproject.ui.web.LoginController;
 import com.blossomproject.ui.web.OmnisearchController;
+import com.blossomproject.ui.web.ProfileController;
 import com.blossomproject.ui.web.StatusController;
 import com.blossomproject.ui.web.error.BlossomErrorViewResolver;
 import com.blossomproject.ui.web.error.ErrorControllerAdvice;
@@ -114,6 +114,11 @@ public class WebInterfaceAutoConfiguration {
   public OmnisearchController searchController(Client client,
     @Qualifier(PluginConstants.PLUGIN_SEARCH_ENGINE) PluginRegistry<SearchEngine, Class<? extends AbstractDTO>> registry) {
     return new OmnisearchController(client, registry);
+  }
+
+  @Bean
+  public ProfileController profileController(UserService userService) {
+    return new ProfileController(userService);
   }
 
   @Bean

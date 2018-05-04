@@ -52,7 +52,6 @@
       <@spring.message "save"/>
     </button>
 </div>
-</div>
 
 <script>
   $(document).ready(function(){

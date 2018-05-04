@@ -1,5 +1,6 @@
 package com.blossomproject.ui.security;
 
+import com.blossomproject.core.user.User.Civility;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.blossomproject.core.common.utils.privilege.Privilege;
@@ -48,14 +49,19 @@ public class SystemUserDetailsServiceImpl implements UserDetailsService {
       user.setLastname(this.identifier.toUpperCase());
       user.setIdentifier(this.identifier);
       user.setPasswordHash(this.password);
-      user.setFunction("System");
+      user.setFunction("Administrator");
+      user.setCompany("");
       user.setPhone("");
+      user.setEmail("");
+      user.setCivility(Civility.UNKNOWN);
 
       Set<String> privileges = privilegeRegistry.getPlugins().stream()
         .map(Privilege::privilege).collect(
           Collectors.toSet());
 
-      return new CurrentUser(user, privileges);
+      CurrentUser currentUser = new CurrentUser(user, privileges);
+      currentUser.setUpdatable(false);
+      return currentUser;
     }
 
     throw new UsernameNotFoundException(

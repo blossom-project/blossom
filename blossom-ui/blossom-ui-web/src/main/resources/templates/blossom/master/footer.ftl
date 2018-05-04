@@ -2,7 +2,7 @@
 <div class="footer">
 
   <div class="pull-right">
-    <strong>Copyright</strong> Blossom © 2017
+    <strong>Copyright</strong> Blossom © 2018
   </div>
 </div>
 </#macro>

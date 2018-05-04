@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 public class CurrentUser extends org.springframework.security.core.userdetails.User {
 
   private static final long serialVersionUID = 1L;
+  private boolean updatable = true;
   private UserDTO user;
 
   public CurrentUser(UserDTO user) {
@@ -28,6 +29,14 @@ public class CurrentUser extends org.springframework.security.core.userdetails.U
 
   public UserDTO getUser() {
     return this.user;
+  }
+
+  public void setUpdatable(boolean updatable) {
+    this.updatable = updatable;
+  }
+
+  public boolean isUpdatable() {
+    return updatable;
   }
 
   @Override

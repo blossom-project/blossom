@@ -9,11 +9,13 @@
       <li class="nav-header">
         <div class="dropdown profile-element text-center">
           <span>
-            <img alt="image" class="img-circle" width="80" height="80" src="/blossom/administration/users/${currentUser.user.id?c}/avatar">
+            <a href="/blossom/profile"><img alt="image" class="img-circle" width="80" height="80" src="/blossom/administration/users/${currentUser.user.id?c}/avatar"/></a>
           </span>
           <span class="clear text-white">
             <span class="block m-t-xs">
-              <strong class="font-bold">${currentUser.user.firstname +' '+currentUser.user.lastname}</strong>
+              <strong class="font-bold">
+                <a href="/blossom/profile">${currentUser.user.firstname +' '+currentUser.user.lastname}</a>
+              </strong>
             </span>
           </span>
         </div>

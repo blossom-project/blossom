@@ -27,7 +27,7 @@
   margin-bottom: 20px;
 }
 
-.contact-box > a {
+.contact-box > .content {
   color: inherit;
 }
 
@@ -37,16 +37,16 @@
   padding: 0;
 }
 
-.contact-box.center-version > a {
+.contact-box.center-version > .content {
   display: block;
   background-color: #ffffff;
   padding: 20px;
   text-align: center;
 }
 
-.contact-box.center-version > a img {
-  width: 80px;
-  height: 80px;
+.contact-box.center-version > .content img {
+  width: 160px;
+  height: 160px;
   margin-top: 10px;
   margin-bottom: 10px;
 }
