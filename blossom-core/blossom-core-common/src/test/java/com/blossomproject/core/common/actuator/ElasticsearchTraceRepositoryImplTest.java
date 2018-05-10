@@ -1,22 +1,8 @@
 package com.blossomproject.core.common.actuator;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import java.util.List;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
@@ -26,6 +12,15 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.actuate.trace.http.HttpTrace;
 import org.springframework.boot.actuate.trace.http.HttpTraceCreator;
+
+import java.util.Collections;
+import java.util.List;
+
+import static junit.framework.TestCase.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 ;
 
@@ -47,7 +42,7 @@ public class ElasticsearchTraceRepositoryImplTest {
     this.alias = "test";
     this.objectMapper = new ObjectMapper();
     this.repository = spy(
-      new ElasticsearchTraceRepositoryImpl(client, bulkProcessor,"test", ignoredPatterns, "{}", objectMapper));
+      new ElasticsearchTraceRepositoryImpl(client, bulkProcessor, "test", ignoredPatterns, Collections.emptySet(), Collections.emptySet(), "{}", objectMapper));
 
     doNothing().when(this.repository).initializeIndex();
   }

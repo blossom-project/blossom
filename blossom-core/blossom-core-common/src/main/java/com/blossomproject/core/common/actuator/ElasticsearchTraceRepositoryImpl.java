@@ -7,13 +7,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -28,6 +21,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.trace.http.HttpTrace;
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.util.AntPathMatcher;
+
+import javax.annotation.PostConstruct;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * An implementation of {@link ElasticsearchTraceRepository}
@@ -43,6 +49,9 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
   private final BulkProcessor bulkProcessor;
   private final String index;
   private final List<Pattern> ignoredPatterns;
+  private final Set<String> requestHeaderFiltered;
+  private final Set<String> responseHeadersFiltered;
+  private final AntPathMatcher matcher;
   private final String settings;
   private final ObjectWriter objectWriter;
   private final ObjectMapper objectMapper;
@@ -53,23 +62,30 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
    * excluded in the ignoredUris list of patterns. If the index doesn't exists on the Elasticsearch
    * cluster, a new one will be created with the given settings.
    *
-   * @param client the elasticsearch client
-   * @param index the index name (serves as alias)
-   * @param ignoredUris a list of regexp patterns to ignore request uris
-   * @param settings the Elasticsearch index setting as json serialized string
-   * @param objectMapper a jackson ObjectMapper to serialize the HttpTrace objects
+   * @param client                  the elasticsearch client
+   * @param bulkProcessor           elasticsearch bulkprocessor
+   * @param index                   the index name (serves as alias)
+   * @param ignoredUris             a list of regexp patterns to ignore request uris
+   * @param requestHeaderFiltered   List of AntMatcher patterns to ignore in request headers
+   * @param responseHeadersFiltered List of AntMatcher patterns to ignore in response headers
+   * @param settings                the Elasticsearch index setting as json serialized string
+   * @param objectMapper            a jackson ObjectMapper to serialize the HttpTrace objects
    */
   public ElasticsearchTraceRepositoryImpl(Client client, BulkProcessor bulkProcessor, String index, List<String> ignoredUris,
-    String settings, ObjectMapper objectMapper) {
+                                          Set<String> requestHeaderFiltered, Set<String> responseHeadersFiltered,
+                                          String settings, ObjectMapper objectMapper) {
     Preconditions.checkArgument(client != null);
     Preconditions.checkArgument(!Strings.isNullOrEmpty(index));
     Preconditions.checkArgument(ignoredUris != null);
     Preconditions.checkArgument(!Strings.isNullOrEmpty(settings));
     Preconditions.checkArgument(objectMapper != null);
+    Preconditions.checkArgument(bulkProcessor != null);
+    Preconditions.checkArgument(requestHeaderFiltered != null);
+    Preconditions.checkArgument(responseHeadersFiltered != null);
 
     this.client = client;
     this.index = index;
-    this.ignoredPatterns = ignoredUris.stream().map(pattern -> Pattern.compile(pattern))
+    this.ignoredPatterns = ignoredUris.stream().map(Pattern::compile)
       .collect(Collectors.toList());
     this.settings = settings;
     this.objectMapper = objectMapper;
@@ -77,6 +93,9 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
       SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS,
       SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS);
     this.bulkProcessor = bulkProcessor;
+    this.requestHeaderFiltered = requestHeaderFiltered;
+    this.responseHeadersFiltered = responseHeadersFiltered;
+    this.matcher = new AntPathMatcher(".");
   }
 
   /**
@@ -90,13 +109,25 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
   }
 
   /**
+   * Check if a header should be indexed in this trace repository, and keeps the result in cache
+   *
+   * @param exludedAntPatterns AntPattern Set of headers that should not be indexed
+   * @param headerName         Header name to check against exludedAntPatterns
+   * @return true if the header should be removed from indexation
+   */
+  @Cacheable
+  public boolean cachedFilterHeaderOut(Set<String> exludedAntPatterns, String headerName) {
+    return exludedAntPatterns.stream().anyMatch(pattern -> matcher.match(pattern.toLowerCase(), headerName.toLowerCase()));
+  }
+
+  /**
    * Adds a new {@code HttpTrace} to the repository
    *
    * @param httpTrace the HttpTrace
    */
   @Override
   public void add(HttpTrace httpTrace) {
-    String path = httpTrace.getRequest().getUri().getPath().toString();
+    String path = httpTrace.getRequest().getUri().getPath();
     if (Strings.isNullOrEmpty(path)) {
       return;
     }
@@ -115,6 +146,24 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
   void indexTrace(HttpTrace httpTrace) throws JsonProcessingException {
     ObjectNode document = objectMapper.valueToTree(httpTrace);
     document.put(TIMESTAMP_FIELD, httpTrace.getTimestamp().toEpochMilli());
+
+    if (document.get("request") != null && document.get("request").get("headers") != null) {
+      for (Iterator<String> i = document.get("request").get("headers").fieldNames(); i.hasNext(); ) {
+        String header = i.next();
+        if (cachedFilterHeaderOut(requestHeaderFiltered, header)) {
+          i.remove();
+        }
+      }
+    }
+
+    if (document.get("response") != null && document.get("response").get("headers") != null) {
+      for (Iterator<String> i = document.get("response").get("headers").fieldNames(); i.hasNext(); ) {
+        String header = i.next();
+        if (cachedFilterHeaderOut(responseHeadersFiltered, header)) {
+          i.remove();
+        }
+      }
+    }
 
     IndexRequestBuilder request = this.client.prepareIndex(index, index)
       .setSource(objectWriter.writeValueAsString(document));
