@@ -1,8 +1,6 @@
 package com.blossomproject.autoconfigure.core;
 
-import com.blossomproject.core.common.utils.mail.MailSender;
-import com.blossomproject.core.common.utils.mail.MailSenderImpl;
-import com.blossomproject.core.common.utils.mail.NoopMailSenderImpl;
+import com.blossomproject.core.common.utils.mail.*;
 import com.google.common.collect.Iterables;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -24,56 +22,62 @@ import java.util.Set;
 @AutoConfigureAfter(MailSenderAutoConfiguration.class)
 public class MailAutoConfiguration {
 
-  @Configuration
-  @ConfigurationProperties("blossom.mail")
-  @PropertySource({"classpath:/mailsender.properties"})
-  public static class MailsenderProperties {
-    private String url;
-    private String from;
-    private final Set<String> filters = new HashSet<>();
+    @Configuration
+    @ConfigurationProperties("blossom.mail")
+    @PropertySource({"classpath:/mailsender.properties"})
+    public static class MailsenderProperties {
+        private String url;
+        private String from;
+        private final Set<String> filters = new HashSet<>();
 
-    public String getUrl() {
-      return url;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getFrom() {
+            return from;
+        }
+
+        public void setFrom(String from) {
+            this.from = from;
+        }
+
+        public Set<String> getFilters() {
+            return filters;
+        }
+
     }
 
-    public void setUrl(String url) {
-      this.url = url;
+    @Bean
+    @ConditionalOnBean(JavaMailSender.class)
+    @ConditionalOnMissingBean(MailSender.class)
+    public MailSender blossomMailSender(JavaMailSender javaMailSender,
+                                        MessageSource messageSource,
+                                        freemarker.template.Configuration configuration,
+                                        Set<Locale> availableLocales,
+                                        MailsenderProperties properties, MailFilter mailFilter) {
+        return new MailSenderImpl(javaMailSender,
+                configuration,
+                messageSource,
+                properties.getUrl(),
+                Iterables.getFirst(availableLocales, Locale.ENGLISH), mailFilter);
     }
 
-    public String getFrom() {
-      return from;
+    @Bean
+    @ConditionalOnMissingBean(MailFilter.class)
+    public MailFilter blossomDefaultMailFilter(MailsenderProperties properties) {
+        return new MailFilterImpl(properties.getFilters(), properties.getFrom());
     }
 
-    public void setFrom(String from) {
-      this.from = from;
+    @Bean
+    @ConditionalOnMissingBean(JavaMailSender.class)
+    public MailSender blossomNoopMailSender() {
+        return new NoopMailSenderImpl();
     }
-
-    public Set<String> getFilters() {
-      return filters;
-    }
-  }
-
-  @Bean
-  @ConditionalOnBean(JavaMailSender.class)
-  @ConditionalOnMissingBean(MailSender.class)
-  public MailSender blossomMailSender(JavaMailSender javaMailSender,
-                                      MessageSource messageSource,
-                                      freemarker.template.Configuration configuration,
-                                      Set<Locale> availableLocales,
-                                      MailsenderProperties properties) {
-    return new MailSenderImpl(javaMailSender,
-      configuration,
-      properties.getFilters(),
-      messageSource,
-      properties.getFrom(),
-      properties.getUrl(),
-      Iterables.getFirst(availableLocales, Locale.ENGLISH));
-  }
-
-  @Bean
-  @ConditionalOnMissingBean(JavaMailSender.class)
-  public MailSender blossomNoopMailSender() {
-    return new NoopMailSenderImpl();
-  }
 
 }
