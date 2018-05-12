@@ -70,7 +70,7 @@ public class ElasticsearchTraceRepositoryImpl extends InMemoryHttpTraceRepositor
    * @param settings                the Elasticsearch index setting as json serialized string
    * @param objectMapper            a jackson ObjectMapper to serialize the HttpTrace objects
    */
-  public ElasticsearchTraceRepositoryImpl(Client client, BulkProcessor bulkProcessor, String index, List<String> ignoredUris,
+  public ElasticsearchTraceRepositoryImpl(Client client, BulkProcessor bulkProcessor, String index, Set<String> ignoredUris,
                                           Set<String> requestHeaderFiltered, Set<String> responseHeadersFiltered,
                                           String settings, ObjectMapper objectMapper) {
     Preconditions.checkArgument(client != null);

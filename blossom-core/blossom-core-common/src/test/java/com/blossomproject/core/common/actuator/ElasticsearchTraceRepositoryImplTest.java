@@ -2,7 +2,7 @@ package com.blossomproject.core.common.actuator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
@@ -13,10 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.actuate.trace.http.HttpTrace;
 import org.springframework.boot.actuate.trace.http.HttpTraceCreator;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static junit.framework.TestCase.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,14 +21,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-;
-
 @RunWith(MockitoJUnitRunner.class)
 public class ElasticsearchTraceRepositoryImplTest {
 
   private Client client;
   private BulkProcessor bulkProcessor;
-  private List<String> ignoredPatterns;
+  private Set<String> ignoredPatterns;
   private String alias = "test";
   private ElasticsearchTraceRepositoryImpl repository;
   private ObjectMapper objectMapper;
@@ -40,7 +35,7 @@ public class ElasticsearchTraceRepositoryImplTest {
   public void setUp() {
     this.client = mock(Client.class);
     this.bulkProcessor = mock(BulkProcessor.class);
-    this.ignoredPatterns = spy(Lists.newArrayList("/ignored.*"));
+    this.ignoredPatterns = spy(Sets.newHashSet("/ignored.*"));
     this.alias = "test";
     this.objectMapper = new ObjectMapper();
     this.repository = spy(

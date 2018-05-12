@@ -5,7 +5,6 @@ import com.blossomproject.core.common.actuator.ElasticsearchTraceRepositoryImpl;
 import com.blossomproject.core.common.actuator.TraceStatisticsMvcEndpoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.client.Client;
@@ -36,8 +35,13 @@ public class ActuatorAutoConfiguration {
   @ConfigurationProperties("blossom.actuator.traces")
   @PropertySource("classpath:/actuator.properties")
   public static class TraceProperties {
+    private final Set<String> excludedUris = new HashSet<>();
     private final Set<String> excludedRequestHeaders = new HashSet<>();
     private final Set<String> excludedResponseHeaders = new HashSet<>();
+
+    public Set<String> getExcludedUris() {
+      return excludedUris;
+    }
 
     public Set<String> getExcludedRequestHeaders() {
       return excludedRequestHeaders;
@@ -57,10 +61,9 @@ public class ActuatorAutoConfiguration {
     throws IOException {
     String settings = Resources.toString(resource.getURL(), Charsets.UTF_8);
 
-    return new ElasticsearchTraceRepositoryImpl(client, bulkProcessor, "traces", Lists
-      .newArrayList("/blossom.*", "/favicon.*", "/js.*", "/css.*", "/fonts.*", "/img.*",
-        "/font-awesome.*"), traceProperties.getExcludedRequestHeaders(), traceProperties.getExcludedResponseHeaders(),
-      settings, objectMapper);
+    return new ElasticsearchTraceRepositoryImpl(
+      client, bulkProcessor, "traces", traceProperties.getExcludedUris(),
+      traceProperties.getExcludedRequestHeaders(), traceProperties.getExcludedResponseHeaders(), settings, objectMapper);
   }
 
   @Bean
