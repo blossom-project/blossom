@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,8 +34,19 @@ public class StatusController {
 
   @GetMapping
   @ResponseBody
-  public ResponseEntity<Health> status(@RequestParam(value = "exclude", required = false, defaultValue = "") Optional<List<String>> excludes) {
+  public ResponseEntity<Health> status(
+    @RequestParam(value = "exclude", required = false, defaultValue = "") Optional<List<String>> excludes,
+    @RequestParam(value = "include", required = false, defaultValue = "") Optional<List<String>> includes) {
     Health health = filteredDetails(healthEndpoint.health(), excludes.orElse(Lists.newArrayList()));
+    if (includes.isPresent() && !includes.get().isEmpty()) {
+      health = includedDetails(health, includes
+          .get()
+          .stream()
+          .map(String::toLowerCase)
+          .map(s -> toString().isEmpty() ? "." : (s.startsWith(".") ? s.toLowerCase() : "." + s.toLowerCase()))
+          .collect(Collectors.toList()),
+        "");
+    }
     if (health.getStatus().equals(Status.UP)) {
       return ResponseEntity.ok(health);
     }
@@ -54,6 +66,30 @@ public class StatusController {
       .stream()
       .filter(mapEntry -> mapEntry.getValue() instanceof Health && !excludes.contains(mapEntry.getKey()))
       .collect(Collectors.toMap(Map.Entry::getKey, e -> filteredDetails((Health) e.getValue(), excludes)));
+
+    return healthAggregator.aggregate(filteredHealth);
+  }
+
+  @VisibleForTesting
+  Health includedDetails(Health health, List<String> includes, String currentDepth) {
+
+    if (health.getDetails().isEmpty()) {
+      return health;
+    }
+
+    Map<String, Health> filteredHealth = health
+      .getDetails()
+      .entrySet()
+      .stream()
+      .filter(mapEntry -> mapEntry.getValue() instanceof Health && includes.stream().anyMatch(pattern -> pattern.startsWith(currentDepth + "." + mapEntry.getKey().toLowerCase())))
+      .map(mapEntry -> {
+        if (includes.stream().anyMatch(pattern -> pattern.startsWith(currentDepth + "." + mapEntry.getKey().toLowerCase()))) {
+          return new AbstractMap.SimpleEntry<>(mapEntry.getKey(), (Health) mapEntry.getValue());
+        } else {
+          return new AbstractMap.SimpleEntry<>(mapEntry.getKey(), includedDetails((Health) mapEntry.getValue(), includes, currentDepth + "." + mapEntry.getKey().toLowerCase()));
+        }
+      })
+      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     return healthAggregator.aggregate(filteredHealth);
   }

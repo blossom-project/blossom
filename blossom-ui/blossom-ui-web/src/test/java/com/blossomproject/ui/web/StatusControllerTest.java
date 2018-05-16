@@ -47,7 +47,7 @@ public class StatusControllerTest {
         
         doReturn(health).when(controller).filteredDetails(any(), any(List.class));
 
-        ResponseEntity<Health> response = controller.status(Optional.empty());
+        ResponseEntity<Health> response = controller.status(Optional.empty(), Optional.empty());
 
         assertNotNull(response);
         assertTrue(response.getStatusCode() == HttpStatus.OK);
@@ -63,7 +63,7 @@ public class StatusControllerTest {
         
         doReturn(health).when(controller).filteredDetails(any(), any(List.class));
 
-        ResponseEntity<Health> response = controller.status(Optional.empty());
+        ResponseEntity<Health> response = controller.status(Optional.empty(), Optional.empty());
 
         assertNotNull(response);
         assertTrue(response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR);
@@ -79,7 +79,7 @@ public class StatusControllerTest {
 
         doReturn(health).when(controller).filteredDetails(any(), any(List.class));
 
-        ResponseEntity<Health> response = controller.status(Optional.of(Lists.newArrayList("test1", "test2")));
+        ResponseEntity<Health> response = controller.status(Optional.of(Lists.newArrayList("test1", "test2")), Optional.empty());
 
         assertNotNull(response);
         assertTrue(response.getStatusCode() == HttpStatus.OK);
@@ -95,7 +95,7 @@ public class StatusControllerTest {
 
         doReturn(health).when(controller).filteredDetails(any(), any(List.class));
 
-        ResponseEntity<Health> response = controller.status(Optional.of(Lists.newArrayList("test1", "test2")));
+        ResponseEntity<Health> response = controller.status(Optional.of(Lists.newArrayList("test1", "test2")), Optional.empty());
 
         assertNotNull(response);
         assertTrue(response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR);
