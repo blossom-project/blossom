@@ -56,16 +56,16 @@ public class StatusController {
 
   @VisibleForTesting
   Health filteredDetails(Health health, List<String> excludes) {
-    if (health.getDetails().isEmpty()) {
-      return health;
-    }
-
     Map<String, Health> filteredHealth = health
       .getDetails()
       .entrySet()
       .stream()
       .filter(mapEntry -> mapEntry.getValue() instanceof Health && !excludes.contains(mapEntry.getKey()))
       .collect(Collectors.toMap(Map.Entry::getKey, e -> filteredDetails((Health) e.getValue(), excludes)));
+
+    if (filteredHealth.isEmpty()) {
+      return Health.status(health.getStatus()).build();
+    }
 
     return healthAggregator.aggregate(filteredHealth);
   }
