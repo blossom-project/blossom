@@ -1,15 +1,11 @@
 package com.blossomproject.ui.web;
 
+import com.blossomproject.ui.stereotype.BlossomController;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-import com.blossomproject.ui.stereotype.BlossomController;
-import java.util.List;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthEndpoint;
-import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.actuate.health.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,15 +13,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @BlossomController
 @RequestMapping("/public/status")
 public class StatusController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(StatusController.class);
   private final HealthEndpoint healthEndpoint;
+  private final HealthAggregator healthAggregator;
 
   public StatusController(HealthEndpoint healthEndpoint) {
     this.healthEndpoint = healthEndpoint;
+    healthAggregator = new OrderedHealthAggregator();
   }
 
   @GetMapping
@@ -41,17 +44,17 @@ public class StatusController {
 
   @VisibleForTesting
   Health filteredDetails(Health health, List<String> excludes) {
-    Health.Builder builder = new Health.Builder(health.getStatus());
+    if (health.getDetails().isEmpty()) {
+      return health;
+    }
 
-    health
+    Map<String, Health> filteredHealth = health
       .getDetails()
       .entrySet()
       .stream()
-      .filter(e -> e.getValue() instanceof Health && !excludes.contains(e.getKey()))
-      .forEach(
-        e -> builder.withDetail(e.getKey(), filteredDetails((Health) e.getValue(), excludes))
-      );
+      .filter(mapEntry -> mapEntry.getValue() instanceof Health && !excludes.contains(mapEntry.getKey()))
+      .collect(Collectors.toMap(Map.Entry::getKey, e -> filteredDetails((Health) e.getValue(), excludes)));
 
-    return builder.build();
+    return healthAggregator.aggregate(filteredHealth);
   }
 }

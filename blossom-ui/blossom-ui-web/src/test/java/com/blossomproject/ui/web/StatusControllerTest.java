@@ -40,7 +40,7 @@ public class StatusControllerTest {
 
     @Test
     public void should_display_all_status_with_health_up() throws Exception {
-        Map<String, String> map = new HashMap();
+        Map<String, String> map = new HashMap<>();
         map.put("test", "testMessage");
         Health.Builder builder = new Health.Builder(Status.UP, map);
         Health health = builder.build();
@@ -56,7 +56,7 @@ public class StatusControllerTest {
 
     @Test
     public void should_display_all_status_with_health_down() throws Exception {
-        Map<String, String> map = new HashMap();
+        Map<String, String> map = new HashMap<>();
         map.put("test", "testMessage");
         Health.Builder builder = new Health.Builder(Status.DOWN, map);
         Health health = builder.build();
@@ -72,7 +72,7 @@ public class StatusControllerTest {
 
     @Test
     public void should_display_status_up_with_excludes() throws Exception {
-        Map<String, String> map = new HashMap();
+        Map<String, String> map = new HashMap<>();
         map.put("test", "testMessage");
         Health.Builder builder = new Health.Builder(Status.UP, map);
         Health health = builder.build();
@@ -88,7 +88,7 @@ public class StatusControllerTest {
 
     @Test
     public void should_display_status_down_without_excludes() throws Exception {
-        Map<String, String> map = new HashMap();
+        Map<String, String> map = new HashMap<>();
         map.put("test", "testMessage");
         Health.Builder builder = new Health.Builder(Status.DOWN, map);
         Health health = builder.build();
