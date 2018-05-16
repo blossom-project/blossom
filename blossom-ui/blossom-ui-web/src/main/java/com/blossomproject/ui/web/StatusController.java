@@ -43,7 +43,7 @@ public class StatusController {
           .get()
           .stream()
           .map(String::toLowerCase)
-          .map(s -> toString().isEmpty() ? "." : (s.startsWith(".") ? s.toLowerCase() : "." + s.toLowerCase()))
+          .map(s -> toString().isEmpty() ? "." : "." + s.toLowerCase())
           .collect(Collectors.toList()),
         "");
     }
