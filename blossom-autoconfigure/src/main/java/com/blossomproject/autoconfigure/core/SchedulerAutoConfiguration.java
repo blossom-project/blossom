@@ -5,7 +5,9 @@ import com.blossomproject.core.scheduler.history.TriggerHistoryDaoImpl;
 import com.blossomproject.core.scheduler.job.ScheduledJobService;
 import com.blossomproject.core.scheduler.job.ScheduledJobServiceImpl;
 import com.blossomproject.core.scheduler.listener.GlobalTriggerListener;
+import com.blossomproject.core.scheduler.supervision.JobExecutionHealthIndicator;
 import org.quartz.Scheduler;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
@@ -19,7 +21,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  * Created by Maël Gargadennnec on 04/05/2017.
  */
 @Configuration
-public class SchedulerAutoConfiguration  {
+public class SchedulerAutoConfiguration {
 
   @Configuration
   @AutoConfigureBefore(QuartzAutoConfiguration.class)
@@ -38,7 +40,7 @@ public class SchedulerAutoConfiguration  {
 
   @Configuration
   @AutoConfigureAfter(GlobalListenerQuartzAutoConfiguration.class)
-  public static class CustomizerQuartzAutoConfiguration implements SchedulerFactoryBeanCustomizer{
+  public static class CustomizerQuartzAutoConfiguration implements SchedulerFactoryBeanCustomizer {
     private final GlobalTriggerListener globalTriggerListener;
 
     public CustomizerQuartzAutoConfiguration(GlobalTriggerListener globalTriggerListener) {
@@ -58,6 +60,11 @@ public class SchedulerAutoConfiguration  {
     @Bean
     public ScheduledJobService scheduledJobService(Scheduler scheduler, TriggerHistoryDao triggerHistoryDao) {
       return new ScheduledJobServiceImpl(scheduler, triggerHistoryDao);
+    }
+
+    @Bean
+    public HealthIndicator quartzJobExecutionHealthIndicator(ScheduledJobService scheduledJobService) {
+      return new JobExecutionHealthIndicator(scheduledJobService);
     }
   }
 
