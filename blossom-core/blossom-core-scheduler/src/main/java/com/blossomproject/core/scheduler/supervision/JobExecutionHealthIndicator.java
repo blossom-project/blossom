@@ -27,6 +27,11 @@ public class JobExecutionHealthIndicator implements HealthIndicator {
 
   @Override
   public Health health() {
+
+    if (!jobService.getSchedulerInfo().isStarted() || jobService.getSchedulerInfo().isStandBy()) {
+      return Health.up().build();
+    }
+
     Map<String, Health> groupHealthMap = new HashMap<>();
 
     for (String group : jobService.getGroups()) {

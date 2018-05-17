@@ -2,6 +2,7 @@ package com.blossomproject.core.scheduler.supervision;
 
 import com.blossomproject.core.scheduler.job.JobInfo;
 import com.blossomproject.core.scheduler.job.ScheduledJobService;
+import com.blossomproject.core.scheduler.job.SchedulerInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.JobKey;
@@ -31,7 +32,13 @@ public class JobExecutionHealthIndicatorTest {
     indicator = new JobExecutionHealthIndicator(jobService);
   }
 
-  private void mockJob(boolean active, boolean executing, Date nextFireTime) {
+  private void mockJob(boolean schedulerStarted, boolean schedulerStandby, boolean active,
+                       boolean executing, Date nextFireTime) {
+    SchedulerInfo schedulerInfo = mock(SchedulerInfo.class);
+    doReturn(schedulerStarted).when(schedulerInfo).isStarted();
+    doReturn(schedulerStandby).when(schedulerInfo).isStandBy();
+    doReturn(schedulerInfo).when(jobService).getSchedulerInfo();
+
     JobInfo jobInfo = mock(JobInfo.class);
     doReturn(new JobKey("test")).when(jobInfo).getKey();
     doReturn(active).when(jobInfo).isActive();
@@ -44,8 +51,24 @@ public class JobExecutionHealthIndicatorTest {
   }
 
   @Test
+  public void should_return_up_when_scheduler_not_started() {
+    mockJob(false, false, false, false, null);
+    Health health = indicator.health();
+    assertNotNull(health);
+    assertEquals(Status.UP, health.getStatus());
+  }
+
+  @Test
+  public void should_return_up_when_scheduler_standby() {
+    mockJob(true, true, false, false, null);
+    Health health = indicator.health();
+    assertNotNull(health);
+    assertEquals(Status.UP, health.getStatus());
+  }
+
+  @Test
   public void should_return_up_when_job_inactive() {
-    mockJob(false, false, null);
+    mockJob(true, false, false, false, null);
     Health health = indicator.health();
     assertNotNull(health);
     assertEquals(Status.UP, health.getStatus());
@@ -53,7 +76,7 @@ public class JobExecutionHealthIndicatorTest {
 
   @Test
   public void should_return_up_when_job_executing() {
-    mockJob(true, true, null);
+    mockJob(true, false, true, true, null);
     Health health = indicator.health();
     assertNotNull(health);
     assertEquals(Status.UP, health.getStatus());
@@ -61,7 +84,7 @@ public class JobExecutionHealthIndicatorTest {
 
   @Test
   public void should_return_up_when_job_manual() {
-    mockJob(true, false, null);
+    mockJob(true, false, true, false, null);
     Health health = indicator.health();
     assertNotNull(health);
     assertEquals(Status.UP, health.getStatus());
@@ -69,7 +92,7 @@ public class JobExecutionHealthIndicatorTest {
 
   @Test
   public void should_return_down_when_job_should_have_executed_before() {
-    mockJob(true, false, Date.from(Instant.now().minus(1, ChronoUnit.MINUTES)));
+    mockJob(true, false, true, false, Date.from(Instant.now().minus(1, ChronoUnit.MINUTES)));
     Health health = indicator.health();
     assertNotNull(health);
     assertEquals(Status.DOWN, health.getStatus());
@@ -77,7 +100,7 @@ public class JobExecutionHealthIndicatorTest {
 
   @Test
   public void should_return_up_when_job_will_execute_in_the_future() {
-    mockJob(true, false, Date.from(Instant.now().plus(1, ChronoUnit.MINUTES)));
+    mockJob(true, false, true, false, Date.from(Instant.now().plus(1, ChronoUnit.MINUTES)));
     Health health = indicator.health();
     assertNotNull(health);
     assertEquals(Status.UP, health.getStatus());
