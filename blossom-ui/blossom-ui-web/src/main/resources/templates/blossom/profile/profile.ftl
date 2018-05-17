@@ -32,11 +32,11 @@
 
           <h3 class="m-b-xs"><strong>${currentUser.user.firstname} ${currentUser.user.lastname}</strong></h3>
 
-          <div class="font-bold">${currentUser.user.function}</div>
-          <div class="font-bold">${currentUser.user.company}</div>
+          <div class="font-bold">${currentUser.user.function!''}</div>
+          <div class="font-bold">${currentUser.user.company!''}</div>
           <address class="m-t-md">
-            <abbr title="Email"><i class="fa fa-envelope"></i> : </abbr> ${currentUser.user.email}<br/>
-            <abbr title="Phone"><i class="fa fa-phone"></i> : </abbr> ${currentUser.user.phone}<br/>
+            <abbr title="Email"><i class="fa fa-envelope"></i> : </abbr> ${currentUser.user.email!''}<br/>
+            <abbr title="Phone"><i class="fa fa-phone"></i> : </abbr> ${currentUser.user.phone!''}<br/>
           </address>
         </div>
       </div>
