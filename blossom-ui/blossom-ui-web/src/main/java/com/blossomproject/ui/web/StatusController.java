@@ -83,7 +83,7 @@ public class StatusController {
       .stream()
       .filter(mapEntry -> mapEntry.getValue() instanceof Health && includes.stream().anyMatch(pattern -> pattern.startsWith(currentDepth + "." + mapEntry.getKey().toLowerCase())))
       .map(mapEntry -> {
-        if (includes.stream().anyMatch(pattern -> pattern.startsWith(currentDepth + "." + mapEntry.getKey().toLowerCase()))) {
+        if (includes.stream().anyMatch(pattern -> pattern.equals(currentDepth + "." + mapEntry.getKey().toLowerCase()))) {
           return new AbstractMap.SimpleEntry<>(mapEntry.getKey(), (Health) mapEntry.getValue());
         } else {
           return new AbstractMap.SimpleEntry<>(mapEntry.getKey(), includedDetails((Health) mapEntry.getValue(), includes, currentDepth + "." + mapEntry.getKey().toLowerCase()));
