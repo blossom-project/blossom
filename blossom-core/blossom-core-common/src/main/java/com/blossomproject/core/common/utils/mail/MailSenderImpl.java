@@ -9,6 +9,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -22,6 +23,7 @@ import java.util.Map;
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
  */
+@Async
 public class MailSenderImpl implements MailSender {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MailSenderImpl.class);
