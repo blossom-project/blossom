@@ -116,3 +116,8 @@ fabric.properties
 
 .idea/
 *.iml
+.okhttpcache
+
+# Ignore duplicate changelogs created for submodules
+CHANGELOG.md
+!/CHANGELOG.md

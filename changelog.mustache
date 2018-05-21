@@ -1,0 +1,24 @@
+# Changelog
+
+{{#tags}}
+## {{name}}
+ {{#issues}}
+  {{#hasIssue}}
+   {{#hasLink}}
+- {{title}} [{{issue}}]({{link}}) {{#hasIssueType}} *{{issueType}}* {{/hasIssueType}} {{#hasLabels}} {{#labels}} *{{.}}* {{/labels}} {{/hasLabels}}
+   {{/hasLink}}
+   {{^hasLink}}
+- {{title}} {{issue}} {{#hasIssueType}} *{{issueType}}* {{/hasIssueType}} {{#hasLabels}} {{#labels}} *{{.}}* {{/labels}} {{/hasLabels}}
+   {{/hasLink}}
+  {{/hasIssue}}
+  {{^hasIssue}}
+
+### {{name}}
+    {{#commits}}
+- {{{messageTitle}}}
+    {{/commits}}
+  {{/hasIssue}}
+ {{/issues}}
+
+
+{{/tags}}
