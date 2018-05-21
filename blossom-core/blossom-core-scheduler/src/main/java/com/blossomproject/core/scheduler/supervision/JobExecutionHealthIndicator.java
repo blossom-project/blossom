@@ -22,7 +22,7 @@ public class JobExecutionHealthIndicator implements HealthIndicator {
 
   public JobExecutionHealthIndicator(ScheduledJobService jobService) {
     this.jobService = jobService;
-    aggregator = new OrderedHealthAggregator();
+    this.aggregator = new OrderedHealthAggregator();
   }
 
   @Override
