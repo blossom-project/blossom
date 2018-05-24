@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -21,7 +20,6 @@ import java.util.Set;
 @Configuration
 @ConditionalOnMissingBean(MailSender.class)
 @AutoConfigureAfter(MailSenderAutoConfiguration.class)
-@EnableAsync
 public class MailAutoConfiguration {
 
     @Configuration
