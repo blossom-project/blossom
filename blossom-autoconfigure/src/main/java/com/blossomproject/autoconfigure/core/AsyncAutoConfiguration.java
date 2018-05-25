@@ -10,12 +10,12 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @EnableAsync
-@Configuration("BlossomAsyncConfiguration")
-public class AsyncConfiguration {
+@Configuration("BlossomAsyncAutoConfiguration")
+public class AsyncAutoConfiguration {
 
   @Configuration("BlossomAsyncProperties")
   @ConfigurationProperties("blossom.async.thread-pool")
-  public class AsyncProperties {
+  public static class AsyncProperties {
     private Integer corePoolSize;
     private Integer maxPoolSize;
     private Integer keepAliveSeconds;
