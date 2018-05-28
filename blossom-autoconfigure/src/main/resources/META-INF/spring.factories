@@ -1,5 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.blossomproject.autoconfigure.core.CommonAutoConfiguration,\
+com.blossomproject.autoconfigure.core.AsyncAutoConfiguration,\
 com.blossomproject.autoconfigure.core.LiquibaseAutoConfiguration,\
 com.blossomproject.autoconfigure.core.IndexationEngineAutoConfiguration,\
 com.blossomproject.autoconfigure.core.UserAutoConfiguration,\
