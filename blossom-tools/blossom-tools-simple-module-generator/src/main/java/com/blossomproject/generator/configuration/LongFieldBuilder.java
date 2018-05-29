@@ -6,7 +6,7 @@ import com.blossomproject.generator.configuration.model.impl.DefaultField;
 public class LongFieldBuilder extends FieldBuilder<LongFieldBuilder> {
 
   LongFieldBuilder(FieldsBuilder parent, String name) {
-    super(parent, name, Long.class, "long");
+    super(parent, name, Long.class, "bigint");
   }
 
   @Override
