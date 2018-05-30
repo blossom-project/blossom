@@ -43,7 +43,8 @@
             </tr>
           </thead>
           <tbody>
-            <#list report.changeSets as changeSet>
+            <#assign changeSetsReverse = report.changeSets?reverse>
+            <#list changeSetsReverse as changeSet>
               <tr>
                 <td>${changeSet["id"]!''}</td>
                 <td>${changeSet["author"]!''}</td>
