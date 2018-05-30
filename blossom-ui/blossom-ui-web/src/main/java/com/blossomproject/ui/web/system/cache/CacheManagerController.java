@@ -7,6 +7,8 @@ import com.blossomproject.core.cache.BlossomCacheManager;
 import com.blossomproject.ui.menu.OpenedMenu;
 import com.blossomproject.ui.stereotype.BlossomController;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -40,22 +42,20 @@ public class CacheManagerController {
   @GetMapping
   public ModelAndView caches(
     @RequestParam(name = "q", defaultValue = "", required = false) String q, Model model) {
-    Map<String, Map<String, Object>> caches = Maps.newHashMap();
-    cacheManager.getCacheNames().stream()
-      .map(n -> (BlossomCache) this.cacheManager.getCache(n))
-      .filter(cache -> StringUtils.isEmpty(q) || cache.getName().contains(q))
-      .forEach(cache -> {
-          CacheStats stats = cache.getNativeCache().stats();
-          Map<String, Object> data = Maps.newHashMap();
-          data.put("cache", cache);
-          data.put("size", cache.getNativeCache().estimatedSize());
-          data.put("hits", stats.hitCount());
-          data.put("misses", stats.missCount());
-          data.put("evictions", stats.evictionCount());
-
-          caches.put(cache.getName(), data);
-        }
-      );
+    final String query = StringUtils.isEmpty(q) ? null : q.toLowerCase();
+    final Map<String, Map<String, Object>> caches = cacheManager.getCacheNames().stream()
+        .map(n -> (BlossomCache) this.cacheManager.getCache(n))
+        .filter(cache -> query == null || cache.getName().toLowerCase().contains(query))
+        .collect(Collectors.toMap(c -> c.getName(), cache -> {
+            CacheStats stats = cache.getNativeCache().stats();
+            Map<String, Object> data = Maps.newHashMap();
+            data.put("cache", cache);
+            data.put("size", cache.getNativeCache().estimatedSize());
+            data.put("hits", stats.hitCount());
+            data.put("misses", stats.missCount());
+            data.put("evictions", stats.evictionCount());
+            return data;
+        }));
 
     model.addAttribute("caches", caches);
     model.addAttribute("q", q);
