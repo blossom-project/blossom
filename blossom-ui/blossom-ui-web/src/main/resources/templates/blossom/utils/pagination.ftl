@@ -66,12 +66,14 @@
 
 
 <#macro renderPosition page label>
-    <#assign index = (page.number * page.size) >
-    <#assign indexMin = index + 1>
-    <#assign indexMax = index + page.numberOfElements>
     <#assign totalElements = page.totalElements>
-    <#assign paginationArgs = [index + 1, index + page.numberOfElements, page.totalElements]>
+    <#if totalElements gt 0>
+        <#assign index = (page.number * page.size) >
+        <#assign indexMin = index + 1>
+        <#assign indexMax = index + page.numberOfElements>
+        <#assign paginationArgs = [index + 1, index + page.numberOfElements, page.totalElements]>
 <small class="text-muted inline m-t-sm m-b-sm"><@spring.messageText label label /> <@spring.messageText "list.pagination.detail.label" paginationArgs /></small>
+    </#if>
 </#macro>
 
 
