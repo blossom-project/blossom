@@ -183,11 +183,11 @@ public class ThemeCompilerImpl implements ThemeCompiler, CommandLineRunner, Orde
               for (Entry<String, String> message : theme.getMessages().entrySet()) {
                 content = content.replace("%" + message.getKey() + "%", message.getValue());
               }
-              return InMemoryURLFactory.getInstance().build("memory", content);
+              return InMemoryURLFactory.getInstance().build("variables", content);
             }
             if (basename.equals("custom")) {
-              return InMemoryURLFactory.getInstance()
-                .build("memory", theme.getMessages().get("additionnalScss"));
+                return InMemoryURLFactory.getInstance()
+                .build("custom", theme.getMessages().get("additionnalScss"));
             }
 
             return resource.getURL();
