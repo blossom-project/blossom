@@ -170,6 +170,12 @@
 
     var dateFacets = $(".table-search-filter-dates");
     dateFacets.each(function (i) {
+      if($(this).data('startDate') === undefined) {
+          $(this).data("startDate", "");
+      }
+      if($(this).data('endDate') === undefined) {
+          $(this).data("endDate", "");
+      }
       filters.push($(this).data("path") + '//' + $(this).data("type") + '//' + $(this).data('startDate') + '/' + $(this).data('endDate'));
     });
     return $.updateQueryStringParameter(location, 'filters', filters.join(";"));
