@@ -193,6 +193,14 @@
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>se.bjurr.gitchangelog</groupId>
+        <artifactId>git-changelog-maven-plugin</artifactId>
+        <version>1.54</version>
+        <configuration>
+          <file>CHANGELOG.md</file>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
