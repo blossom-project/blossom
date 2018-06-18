@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.util.CollectionUtils;
 
+import javax.mail.Message;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.Arrays;
@@ -150,7 +151,7 @@ public class MailSenderImpl implements MailSender {
                 LOGGER.error("Error when sending", e);
             }
 
-            LOGGER.info("Mail with recipient(s) {} sent.", Arrays.toString(mailTo));
+            LOGGER.info("Mail with recipient(s) {} sent.", Arrays.toString(message.getMimeMessage().getRecipients(Message.RecipientType.TO)));
         } else {
             LOGGER.info(
                     "A mail with recipient(s) '{}' and subject '{}' was not sent because no java mail sender is configured",
