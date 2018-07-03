@@ -1,6 +1,15 @@
 package com.blossomproject.core.common.utils.mail;
 
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+
 import com.google.common.collect.Sets;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -8,17 +17,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mail.javamail.MimeMessageHelper;
-
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
-import java.rmi.server.ExportException;
-
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -30,8 +28,8 @@ public class MailFilterImplTest {
 
 
     @Before
-    public void SetUp() {
-        this.mailFilter = new MailFilterImpl(Sets.newHashSet(".*@test.com"), "blossom-project@blossom.com");
+    public void setUp() throws AddressException {
+        this.mailFilter = new MailFilterImpl(Sets.newHashSet(".*@test.com"), new InternetAddress("blossom-project@blossom.com"));
 
     }
 
@@ -75,7 +73,7 @@ public class MailFilterImplTest {
 
     @Test
     public void no_filter() throws Exception{
-        MailFilter mailFilterNoFilter = new MailFilterImpl(null,"blossom-project@blossom.com");
+        MailFilter mailFilterNoFilter = new MailFilterImpl(null,new InternetAddress("blossom-project@blossom.com"));
         final MimeMessage mimeMessage = mock(MimeMessage.class);
         final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
         doReturn(new Address[]{new InternetAddress("test@test.com")}).when(mimeMessage).getRecipients(Message.RecipientType.TO);

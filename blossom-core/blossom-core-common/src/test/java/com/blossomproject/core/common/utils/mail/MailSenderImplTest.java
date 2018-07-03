@@ -9,6 +9,7 @@ import freemarker.template.Configuration;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import javax.mail.internet.InternetAddress;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -111,7 +112,7 @@ public class MailSenderImplTest {
     Map<String, Object> parameters = Maps.newHashMap();
     String subject = "subject";
 
-    this.mailSender.sendMail(htmlTemplate, parameters, subject, null);
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, new InternetAddress[]{});
   }
 
   @Test
@@ -121,7 +122,7 @@ public class MailSenderImplTest {
     String htmlTemplate = "htmlTemplate";
     Map<String, Object> parameters = null;
     String subject = "subject";
-    String[] mailTo = {"test@test.test"};
+    InternetAddress[] mailTo = {new InternetAddress("test@test.test")};
 
     this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo);
   }
@@ -134,9 +135,9 @@ public class MailSenderImplTest {
     String htmlTemplate = "htmlTemplate";
     Map<String, Object> parameters =Maps.newHashMap();
     String subject =null ;
-    String[] mailTo = {"test@test.test"};
+    InternetAddress[] mailTo = {new InternetAddress("test@test.test")};
 
-    this.mailSender.sendMail(htmlTemplate, parameters, subject,mailTo);
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo);
   }
 
 
@@ -148,7 +149,7 @@ public class MailSenderImplTest {
     String htmlTemplate = "htmlTemplate";
     Map<String, Object> parameters = null;
     String subject = "subject";
-    String[] mailTo = {"test@test.test"};
+    InternetAddress[] mailTo = {new InternetAddress("test@test.test")};
 
     this.mailSender.sendMail(htmlTemplate, parameters, subject,this.locale, Lists.newArrayList(), mailTo, null,null,true);
   }
@@ -159,7 +160,7 @@ public class MailSenderImplTest {
     String htmlTemplate = "htmlTemplate";
     Map<String, Object> parameters = null;
     String subject = "subject";
-    String[] mailTo = {"test@test.test"};
+    InternetAddress[] mailTo = {new InternetAddress("test@test.test")};
     this.mailSender.sendMail(htmlTemplate,parameters,subject,this.locale,mailTo, mailTo, mailTo);
   }
 
@@ -169,12 +170,93 @@ public class MailSenderImplTest {
     String htmlTemplate = "htmlTemplate";
     Map<String, Object> parameters = null;
     String subject = "subject";
-    String[] mailTo = {"test@test.test"};
+    InternetAddress[] mailTo = {new InternetAddress("test@test.test")};
     this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo, mailTo, null);
   }
 
   @Test
   public void should_not_send_mail_without_context_with_inputstream_attachment() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = null;
+    String subject = "subject";
+    InternetAddress[] mailTo = {new InternetAddress("test@test.test")};
+    this.mailSender.sendMail(htmlTemplate, parameters, subject,this.locale,null,null,null, mailTo, mailTo, null,true);
+  }
+
+
+
+  @Test
+  public void should_not_send_mail_without_mailtos_string() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = Maps.newHashMap();
+    String subject = "subject";
+
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, new String[]{});
+  }
+
+  @Test
+  public void should_not_send_mail_without_context_string() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
+
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = null;
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo);
+  }
+
+
+  @Test
+  public void should_not_send_mail_without_subject_string() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
+
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters =Maps.newHashMap();
+    String subject =null ;
+    String[] mailTo = {"test@test.test"};
+
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo);
+  }
+
+
+
+  @Test
+  public void should_not_send_mail_without_context_with_highpriority_string() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
+
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = null;
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+
+    this.mailSender.sendMail(htmlTemplate, parameters, subject,this.locale, Lists.newArrayList(), mailTo, null,null,true);
+  }
+
+  @Test
+  public void should_not_send_mail_without_context_with_cc_bcc_string() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = null;
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+    this.mailSender.sendMail(htmlTemplate,parameters,subject,this.locale,mailTo, mailTo, mailTo);
+  }
+
+  @Test
+  public void should_not_send_mail_without_context_with_cc_bcc_without_locale_string() throws Exception {
+    thrown.expect(IllegalArgumentException.class);
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = null;
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo, mailTo, null);
+  }
+
+  @Test
+  public void should_not_send_mail_without_context_with_inputstream_attachment_string() throws Exception {
     thrown.expect(IllegalArgumentException.class);
     String htmlTemplate = "htmlTemplate";
     Map<String, Object> parameters = null;

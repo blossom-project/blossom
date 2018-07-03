@@ -7,8 +7,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.SearchEngineImpl;
 import com.blossomproject.core.common.search.SearchResult;
@@ -18,6 +16,8 @@ import com.blossomproject.core.role.RoleDTO;
 import com.blossomproject.core.role.RoleService;
 import com.blossomproject.core.role.RoleUpdateForm;
 import com.blossomproject.core.user.UserDTO;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.Assert;
@@ -27,12 +27,14 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RolesApiControllerTest {

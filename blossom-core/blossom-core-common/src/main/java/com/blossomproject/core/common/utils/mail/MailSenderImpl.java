@@ -3,6 +3,8 @@ package com.blossomproject.core.common.utils.mail;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import freemarker.template.*;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -54,53 +56,91 @@ public class MailSenderImpl implements MailSender {
         this.filter = filter;
     }
 
+
     @Override
     public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject,
-                         String... mailTo)
+      String... mailTo)
+      throws Exception {
+      this.sendMail(htmlTemplate, ctx, mailSubject, this.defaultLocale, mailTo);
+    }
+
+    @Override
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String... mailTo) throws Exception {
+      this.sendMail(htmlTemplate, ctx, mailSubject, locale, Lists.newArrayList(), mailTo);
+    }
+
+    @Override
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, String... mailTo) throws Exception {
+      this.sendMail(htmlTemplate, ctx, mailSubject, locale, attachedFiles, mailTo, null, null);
+    }
+
+    @Override
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
+      this.sendMail(htmlTemplate, ctx, mailSubject, this.defaultLocale, mailTo, mailCc, mailBcc);
+    }
+
+    @Override
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
+      this.sendMail(htmlTemplate, ctx, mailSubject, locale, Lists.newArrayList(), mailTo, mailCc, mailBcc);
+    }
+
+    @Override
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
+      this.sendMail(htmlTemplate, ctx, mailSubject, locale, attachedFiles, mailTo, mailCc, mailBcc, false);
+    }
+
+    @Override
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, String[] mailTo, String[] mailCc, String[] mailBcc, boolean highPriority) throws Exception {
+      this.sendMail(locale,ctx, convertToInternetAddress(mailTo),mailSubject,htmlTemplate,convertToInternetAddress(mailCc),convertToInternetAddress(mailBcc),highPriority,null,null,null, attachedFiles);
+    }
+
+    @Override
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String attachmentName, InputStreamSource attachmentInputStreamSource, String attachmentContentType, String[] mailTo, String[] mailCc, String[] mailBcc, boolean highPriority) throws Exception {
+      this.sendMail(locale,ctx,convertToInternetAddress(mailTo),mailSubject,htmlTemplate,convertToInternetAddress(mailCc),convertToInternetAddress(mailBcc),highPriority,attachmentName,attachmentInputStreamSource,attachmentContentType,null);
+    }
+
+    @Override
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, InternetAddress... mailTo)
             throws Exception {
         this.sendMail(htmlTemplate, ctx, mailSubject, this.defaultLocale, mailTo);
     }
 
     @Override
-    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject,
-                         Locale locale,
-                         String... mailTo) throws Exception {
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale,InternetAddress... mailTo) throws Exception {
         this.sendMail(htmlTemplate, ctx, mailSubject, locale, Lists.newArrayList(), mailTo);
     }
 
     @Override
-    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject,
-                         Locale locale,
-                         List<File> attachedFiles, String... mailTo) throws Exception {
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, InternetAddress... mailTo) throws Exception {
         this.sendMail(htmlTemplate, ctx, mailSubject, locale, attachedFiles, mailTo, null, null);
     }
 
     @Override
-    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, InternetAddress[] mailTo, InternetAddress[] mailCc, InternetAddress[] mailBcc) throws Exception {
         this.sendMail(htmlTemplate, ctx, mailSubject, this.defaultLocale, mailTo, mailCc, mailBcc);
     }
 
     @Override
-    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, InternetAddress[] mailTo, InternetAddress[] mailCc, InternetAddress[] mailBcc) throws Exception {
         this.sendMail(htmlTemplate, ctx, mailSubject, locale, Lists.newArrayList(), mailTo, mailCc, mailBcc);
     }
 
     @Override
-    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, InternetAddress[] mailTo, InternetAddress[] mailCc, InternetAddress[] mailBcc) throws Exception {
         this.sendMail(htmlTemplate, ctx, mailSubject, locale, attachedFiles, mailTo, mailCc, mailBcc, false);
     }
 
     @Override
-    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, String[] mailTo, String[] mailCc, String[] mailBcc, boolean highPriority) throws Exception {
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, InternetAddress[] mailTo, InternetAddress[] mailCc, InternetAddress[] mailBcc, boolean highPriority) throws Exception {
         this.sendMail(locale,ctx,mailTo,mailSubject,htmlTemplate,mailCc,mailBcc,highPriority,null,null,null,attachedFiles);
     }
 
     @Override
-    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String attachmentName, InputStreamSource attachmentInputStreamSource, String attachmentContentType, String[] mailTo, String[] mailCc, String[] mailBcc, boolean highPriority) throws Exception {
+    public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String attachmentName, InputStreamSource attachmentInputStreamSource, String attachmentContentType, InternetAddress[] mailTo, InternetAddress[] mailCc, InternetAddress[] mailBcc, boolean highPriority) throws Exception {
         this.sendMail(locale,ctx,mailTo,mailSubject,htmlTemplate,mailCc,mailBcc,highPriority,attachmentName,attachmentInputStreamSource,attachmentContentType,null);
     }
 
-    private void sendMail(Locale locale, Map<String, Object> ctx, String[] mailTo, String mailSubject, String htmlTemplate, String[] mailCc, String[] mailBcc, boolean highPriority, String attachmentName, InputStreamSource attachmentInputStreamSource, String attachmentContentType, List<File> attachedFiles) throws Exception {
+    private void sendMail(Locale locale, Map<String, Object> ctx, InternetAddress[] mailTo, String mailSubject, String htmlTemplate, InternetAddress[] mailCc, InternetAddress[] mailBcc, boolean highPriority, String attachmentName, InputStreamSource attachmentInputStreamSource, String attachmentContentType, List<File> attachedFiles) throws Exception {
         Preconditions.checkArgument(locale != null);
         Preconditions.checkArgument(ctx != null);
         Preconditions.checkArgument(mailTo != null && mailTo.length > 0);
@@ -188,4 +228,18 @@ public class MailSenderImpl implements MailSender {
             return messageSource.getMessage(code, null, locale);
         }
     }
+
+  private InternetAddress[] convertToInternetAddress(String[] mails) throws AddressException {
+    if(mails == null){
+      return null;
+    }
+
+    int i=0;
+    InternetAddress[] addresses = new InternetAddress[mails.length];
+    for(String mail : mails){
+      addresses[i] = new InternetAddress(mail);
+    }
+
+    return addresses;
+  }
 }

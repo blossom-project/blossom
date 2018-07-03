@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import com.blossomproject.core.common.utils.action_token.ActionTokenService;
 import com.blossomproject.core.common.utils.mail.MailSender;
 import java.util.Locale;
+import javax.mail.internet.InternetAddress;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -39,7 +40,7 @@ public class UserMailServiceImplTest {
   public void test_send_change_password_email_user_not_null_token_not_null() throws Exception {
     UserDTO userDTO = new UserDTO();
     userDTO.setLocale(Locale.FRANCE);
-    userDTO.setEmail("test");
+    userDTO.setEmail("test@test.test");
     userMailService.sendChangePasswordEmail(userDTO , "token !");
 
     verify(mailSender, times(1))
@@ -47,7 +48,7 @@ public class UserMailServiceImplTest {
         any(),
         anyString(),
         any(Locale.class),
-        anyString());
+        any(InternetAddress.class));
   }
 
   @Test
@@ -60,7 +61,7 @@ public class UserMailServiceImplTest {
   public void test_send_change_password_email_token_null() throws Exception {
     UserDTO userDTO = new UserDTO();
     userDTO.setLocale(Locale.FRANCE);
-    userDTO.setEmail("test");
+    userDTO.setEmail("test@test.test");
 
     thrown.expect(NullPointerException.class);
     userMailService.sendChangePasswordEmail(userDTO, null);
@@ -70,13 +71,13 @@ public class UserMailServiceImplTest {
   public void test_send_account_creation_email_user_not_null_token_not_null() throws Exception {
     UserDTO userDTO = new UserDTO();
     userDTO.setLocale(Locale.FRANCE);
-    userDTO.setEmail("test");
+    userDTO.setEmail("test@test.test");
 
     userMailService.sendAccountCreationEmail(userDTO, "token !");
 
     verify(mailSender, times(1))
       .sendMail(anyString(), any(),
-        anyString(), any(Locale.class), anyString());
+        anyString(), any(Locale.class), any(InternetAddress.class));
   }
 
   @Test

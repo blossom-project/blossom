@@ -2,6 +2,9 @@ package com.blossomproject.autoconfigure.core;
 
 import com.blossomproject.core.common.utils.mail.*;
 import com.google.common.collect.Iterables;
+import java.io.UnsupportedEncodingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,8 +31,8 @@ public class MailAutoConfiguration {
     public static class MailsenderProperties {
         private String url;
         private String from;
+        private String fromName;
         private final Set<String> filters = new HashSet<>();
-
 
         public String getUrl() {
             return url;
@@ -47,10 +50,17 @@ public class MailAutoConfiguration {
             this.from = from;
         }
 
+        public String getFromName() {
+          return fromName;
+        }
+
+        public void setFromName(String fromName) {
+          this.fromName = fromName;
+        }
+
         public Set<String> getFilters() {
             return filters;
         }
-
     }
 
     @Bean
@@ -70,8 +80,8 @@ public class MailAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(MailFilter.class)
-    public MailFilter blossomDefaultMailFilter(MailsenderProperties properties) {
-        return new MailFilterImpl(properties.getFilters(), properties.getFrom());
+    public MailFilter blossomDefaultMailFilter(MailsenderProperties properties) throws AddressException, UnsupportedEncodingException {
+        return new MailFilterImpl(properties.getFilters(), new InternetAddress(properties.getFrom(), properties.getFromName()));
     }
 
     @Bean

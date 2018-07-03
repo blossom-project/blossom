@@ -1,31 +1,30 @@
 package com.blossomproject.core.common.utils.mail;
 
 import com.google.common.base.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.mail.javamail.MimeMessageHelper;
-
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
 public class MailFilterImpl implements MailFilter {
     private final static Logger LOGGER = LoggerFactory.getLogger(MailFilterImpl.class);
     private final Set<String> filters;
-    private final String from;
+    private final InternetAddress from;
 
-    public MailFilterImpl(Set<String> filters, String from) {
+    public MailFilterImpl(Set<String> filters, InternetAddress from) {
         Preconditions.checkNotNull(from);
         this.filters = filters;
         this.from = from;
     }
-
 
     @Override
     public MimeMessage filter(MimeMessageHelper mimeMessageHelper) throws MessagingException {
