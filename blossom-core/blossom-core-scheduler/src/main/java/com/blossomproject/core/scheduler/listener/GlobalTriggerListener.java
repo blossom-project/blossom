@@ -1,16 +1,16 @@
 package com.blossomproject.core.scheduler.listener;
 
-import com.google.common.base.Preconditions;
 import com.blossomproject.core.scheduler.history.TriggerHistory;
 import com.blossomproject.core.scheduler.history.TriggerHistoryDao;
-import java.sql.Timestamp;
+import com.google.common.base.Preconditions;
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
 import org.quartz.Trigger.CompletedExecutionInstruction;
 import org.quartz.TriggerListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
 
 public class GlobalTriggerListener implements TriggerListener {
 
@@ -40,9 +40,8 @@ public class GlobalTriggerListener implements TriggerListener {
   }
 
   @Override
-  @Transactional
   public void triggerFired(Trigger trigger, JobExecutionContext context) {
-    if(logger.isDebugEnabled()){
+    if (logger.isDebugEnabled()) {
       logger.debug("Trigger fired with id {} for triggerKey ({} - {}) for jobKey ({} - {})",
         context.getFireInstanceId(), trigger.getKey().getGroup(), trigger.getKey().getName(),
         trigger.getJobKey().getGroup(), trigger.getJobKey().getName());
@@ -56,14 +55,17 @@ public class GlobalTriggerListener implements TriggerListener {
     history.setStartTime(new Timestamp(context.getFireTime().getTime()));
     history.setEndTime(null);
 
-    triggerHistoryDao.create(history);
+    try {
+      triggerHistoryDao.create(history);
+    } catch (Exception e) {
+      logger.error("Error trying to save trigger firing information", e);
+    }
   }
 
   @Override
-  @Transactional
   public void triggerComplete(Trigger trigger, JobExecutionContext context,
-    CompletedExecutionInstruction triggerInstructionCode) {
-    if(logger.isDebugEnabled()) {
+                              CompletedExecutionInstruction triggerInstructionCode) {
+    if (logger.isDebugEnabled()) {
       logger
         .debug("Trigger completed with id {} for triggerKey ({} - {}) for jobKey ({} - {})",
           context.getFireInstanceId(), trigger.getKey().getGroup(), trigger.getKey().getName(),
@@ -71,6 +73,10 @@ public class GlobalTriggerListener implements TriggerListener {
     }
 
     String fireInstanceId = context.getFireInstanceId();
-    triggerHistoryDao.updateEndDate(fireInstanceId);
+    try {
+      triggerHistoryDao.updateEndDate(fireInstanceId);
+    } catch (Exception e) {
+      logger.error("Error trying to save trigger completion information", e);
+    }
   }
 }
