@@ -4,12 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.blossomproject.core.scheduler.history.TriggerHistory;
 import com.blossomproject.core.scheduler.history.TriggerHistoryDao;
@@ -94,6 +89,41 @@ public class GlobalTriggerListenerTest {
     when(context.getFireInstanceId()).thenReturn("fireInstanceId");
 
     CompletedExecutionInstruction instruction = CompletedExecutionInstruction.SET_TRIGGER_COMPLETE;
+
+    this.listener.triggerComplete(trigger, context, instruction);
+
+    verify(this.triggerHistoryDao, times(1)).updateEndDate(eq(context.getFireInstanceId()));
+  }
+
+  @Test
+  public void should_not_throw_any_exception_on_trigger_fired() {
+    Trigger trigger = mock(Trigger.class);
+    when(trigger.getKey()).thenReturn(new TriggerKey("trigger","group"));
+    when(trigger.getJobKey()).thenReturn(new JobKey("job","group"));
+
+    JobExecutionContext context = mock(JobExecutionContext.class);
+    when(context.getFireInstanceId()).thenReturn("fireInstanceId");
+    when(context.getFireTime()).thenReturn(new Date(System.currentTimeMillis()));
+
+    doThrow(new RuntimeException()).when(this.triggerHistoryDao).create(any());
+
+    this.listener.triggerFired(trigger, context);
+
+    verify(this.triggerHistoryDao, times(1)).create(any(TriggerHistory.class));
+  }
+
+  @Test
+  public void should_not_throw_any_exception_on_trigger_completed() throws Exception{
+    Trigger trigger = mock(Trigger.class);
+    when(trigger.getKey()).thenReturn(new TriggerKey("trigger","group"));
+    when(trigger.getJobKey()).thenReturn(new JobKey("job","group"));
+
+    JobExecutionContext context = mock(JobExecutionContext.class);
+    when(context.getFireInstanceId()).thenReturn("fireInstanceId");
+
+    CompletedExecutionInstruction instruction = CompletedExecutionInstruction.SET_TRIGGER_COMPLETE;
+
+    doThrow(new RuntimeException()).when(this.triggerHistoryDao).updateEndDate(any());
 
     this.listener.triggerComplete(trigger, context, instruction);
 
