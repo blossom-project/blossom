@@ -6,7 +6,7 @@ import com.blossomproject.generator.configuration.model.impl.BlobField;
 public class BlobFieldBuilder extends FieldBuilder<BlobFieldBuilder> {
 
   BlobFieldBuilder(FieldsBuilder parent, String name) {
-    super(parent, name, Byte[].class, "blob");
+    super(parent, name, Byte[].class, "longblob");
   }
 
   @Override
