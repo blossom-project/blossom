@@ -3,12 +3,14 @@ package com.blossomproject.core.scheduler.history;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.quartz.JobKey;
 import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 public class TriggerHistoryDaoImpl implements TriggerHistoryDao {
 
@@ -73,6 +75,7 @@ public class TriggerHistoryDaoImpl implements TriggerHistoryDao {
   }
 
   @Override
+  @Transactional
   public void create(TriggerHistory triggerHistory) {
     Timestamp now = new Timestamp(System.currentTimeMillis());
     jdbcTemplate.update(
@@ -94,6 +97,7 @@ public class TriggerHistoryDaoImpl implements TriggerHistoryDao {
   }
 
   @Override
+  @Transactional
   public void updateEndDate(String fireInstanceId) {
     jdbcTemplate.update(
       "update " + TABLE_NAME + " set end_time=? where fire_instance_id=?",
