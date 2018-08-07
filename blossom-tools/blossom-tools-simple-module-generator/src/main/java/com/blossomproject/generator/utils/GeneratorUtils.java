@@ -4,6 +4,7 @@ import com.blossomproject.generator.configuration.model.Field;
 import com.blossomproject.generator.configuration.model.Settings;
 import com.blossomproject.generator.configuration.model.StringField;
 import com.blossomproject.generator.configuration.model.TemporalField;
+import com.blossomproject.generator.configuration.model.impl.BlobField;
 import com.blossomproject.generator.configuration.model.impl.EnumField;
 import com.helger.jcodemodel.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -204,6 +205,9 @@ public class GeneratorUtils {
     }
     else if(field instanceof StringField && ((StringField) field).isLob()) {
       formField = generateFormFieldTextarea(field, formFieldTemplateTextarea);
+    }
+    else if (field instanceof BlobField) {
+      return "";
     }
     else {
       String htmlType = getHtmlType(field);
