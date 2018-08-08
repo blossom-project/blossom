@@ -1,27 +1,20 @@
 package com.blossomproject.autoconfigure.ui;
 
-import static com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
-
+import com.blossomproject.autoconfigure.ui.common.privileges.ResponsabilityPrivilegesConfiguration;
+import com.blossomproject.autoconfigure.ui.common.privileges.RolePrivilegesConfiguration;
+import com.blossomproject.core.association_user_role.AssociationUserRoleDao;
 import com.blossomproject.core.association_user_role.AssociationUserRoleService;
 import com.blossomproject.core.common.PluginConstants;
 import com.blossomproject.core.common.utils.privilege.Privilege;
-import com.blossomproject.core.common.utils.privilege.SimplePrivilege;
 import com.blossomproject.core.user.UserService;
 import com.blossomproject.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
-import com.blossomproject.ui.security.AuthenticationFailureListener;
-import com.blossomproject.ui.security.AuthenticationSuccessListener;
-import com.blossomproject.ui.security.CompositeUserDetailsServiceImpl;
-import com.blossomproject.ui.security.CurrentUserDetailsServiceImpl;
-import com.blossomproject.ui.security.LimitLoginAuthenticationProvider;
-import com.blossomproject.ui.security.LoginAttemptServiceImpl;
-import com.blossomproject.ui.security.LoginAttemptsService;
-import com.blossomproject.ui.security.SystemUserDetailsServiceImpl;
-import java.util.List;
+import com.blossomproject.ui.security.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -36,7 +29,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
@@ -48,6 +45,8 @@ import org.springframework.security.web.authentication.switchuser.SwitchUserFilt
 @EnableConfigurationProperties(DefaultAccountProperties.class)
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityAutoConfiguration {
+
+  private static final Logger logger = LoggerFactory.getLogger(WebSecurityAutoConfiguration.class);
 
   public static final String BLOSSOM_REMEMBER_ME_COOKIE_NAME = "blossom";
 
@@ -77,11 +76,28 @@ public class WebSecurityAutoConfiguration {
   @Bean
   public UserDetailsService systemUserDetailsService(
     @Qualifier(PluginConstants.PLUGIN_PRIVILEGES) PluginRegistry<Privilege, String> privilegeRegistry,
-    DefaultAccountProperties properties, PasswordEncoder passwordEncoder) {
-    if (properties.isEnabled()) {
+    DefaultAccountProperties properties,
+    PasswordEncoder passwordEncoder,
+    AssociationUserRoleDao associationUserRoleDao,
+    RolePrivilegesConfiguration rolePrivilegesConfiguration,
+    ResponsabilityPrivilegesConfiguration responsabilityPrivilegesConfiguration) {
+
+    if ((properties.isEnabled() != null && properties.isEnabled()) ||
+      (properties.isEnabled() == null && !associationUserRoleDao.getUserExistsByPrivilege(
+        Arrays.asList(rolePrivilegesConfiguration.rolesReadPrivilegePlugin(),
+          rolePrivilegesConfiguration.rolesWritePrivilegePlugin(),
+          responsabilityPrivilegesConfiguration.responsabilitiesReadPrivilegePlugin(),
+          responsabilityPrivilegesConfiguration.responsabilitiesChangePrivilegePlugin()
+        )))) {
+
+      logger.warn("Enabling blossom '{}' account with password '{}'",
+        properties.getIdentifier(),
+        properties.getPassword()
+      );
       return new SystemUserDetailsServiceImpl(privilegeRegistry, properties.getIdentifier(),
         passwordEncoder.encode(properties.getPassword()));
     }
+
     return identifier -> {
       throw new UsernameNotFoundException(String.format("User with identifier=%s was not found", identifier));
     };
