@@ -2,12 +2,13 @@ package com.blossomproject.autoconfigure.ui;
 
 import com.blossomproject.autoconfigure.ui.common.privileges.ResponsabilityPrivilegesConfiguration;
 import com.blossomproject.autoconfigure.ui.common.privileges.RolePrivilegesConfiguration;
+import com.blossomproject.autoconfigure.ui.web.BlossomWebBackOfficeProperties;
 import com.blossomproject.core.association_user_role.AssociationUserRoleDao;
 import com.blossomproject.core.association_user_role.AssociationUserRoleService;
 import com.blossomproject.core.common.PluginConstants;
 import com.blossomproject.core.common.utils.privilege.Privilege;
 import com.blossomproject.core.user.UserService;
-import com.blossomproject.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
+import com.blossomproject.ui.BlossomAuthenticationSuccessHandlerImpl;
 import com.blossomproject.ui.security.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +70,7 @@ public class WebSecurityAutoConfiguration {
 
   @Bean
   public UserDetailsService dbUserDetailsService(UserService userService,
-    AssociationUserRoleService associationUserRoleService) {
+                                                 AssociationUserRoleService associationUserRoleService) {
     return new CurrentUserDetailsServiceImpl(userService, associationUserRoleService);
   }
 
@@ -112,9 +113,10 @@ public class WebSecurityAutoConfiguration {
   }
 
   @Bean
-  public LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler(
-    UserService userService) {
-    return new LastConnectionUpdateAuthenticationSuccessHandlerImpl(userService);
+  public BlossomAuthenticationSuccessHandlerImpl blossomAuthenticationSuccessHandler(
+    UserService userService,
+    BlossomWebBackOfficeProperties properties) {
+    return new BlossomAuthenticationSuccessHandlerImpl(userService, properties.getMaxInactiveIntervalSeconds());
   }
 
   @Bean

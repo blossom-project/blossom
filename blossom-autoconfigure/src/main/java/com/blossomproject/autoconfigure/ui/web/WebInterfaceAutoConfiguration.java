@@ -12,7 +12,7 @@ import com.blossomproject.core.common.service.AssociationServicePlugin;
 import com.blossomproject.core.common.utils.action_token.ActionTokenService;
 import com.blossomproject.core.common.utils.privilege.Privilege;
 import com.blossomproject.core.user.UserService;
-import com.blossomproject.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
+import com.blossomproject.ui.BlossomAuthenticationSuccessHandlerImpl;
 import com.blossomproject.ui.current_user.CurrentUserControllerAdvice;
 import com.blossomproject.ui.i18n.LocaleControllerAdvice;
 import com.blossomproject.ui.menu.Menu;
@@ -43,10 +43,12 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -73,6 +75,8 @@ import org.springframework.web.servlet.ThemeResolver;
 @ConditionalOnWebApplication
 @ConditionalOnClass(HomeController.class)
 @AutoConfigureAfter(WebContextAutoConfiguration.class)
+@PropertySource("classpath:/security.properties")
+@EnableConfigurationProperties(BlossomWebBackOfficeProperties.class)
 public class WebInterfaceAutoConfiguration {
 
   private final AssociationUserRoleService associationUserRoleService;
@@ -176,23 +180,26 @@ public class WebInterfaceAutoConfiguration {
   public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
-    private final LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler;
+    private final BlossomAuthenticationSuccessHandlerImpl blossomAuthenticationSuccessHandler;
     private final SessionRegistry sessionRegistry;
     private final Privilege switchUserPrivilege;
     private final LimitLoginAuthenticationProvider limitLoginAuthenticationProvider;
+    private final BlossomWebBackOfficeProperties webBackOfficeProperties;
 
 
     public FormLoginWebSecurityConfigurerAdapter(
       UserDetailsService userDetailsService,
-      LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler,
+      BlossomAuthenticationSuccessHandlerImpl blossomAuthenticationSuccessHandler,
       SessionRegistry sessionRegistry,
       LimitLoginAuthenticationProvider limitLoginAuthenticationProvider,
-      @Qualifier("switchUserPrivilege") Privilege switchUserPrivilege) {
+      @Qualifier("switchUserPrivilege") Privilege switchUserPrivilege,
+      BlossomWebBackOfficeProperties webBackOfficeProperties) {
       this.userDetailsService = userDetailsService;
-      this.lastConnectionUpdateAuthenticationSuccessHandler = lastConnectionUpdateAuthenticationSuccessHandler;
+      this.blossomAuthenticationSuccessHandler = blossomAuthenticationSuccessHandler;
       this.sessionRegistry = sessionRegistry;
       this.limitLoginAuthenticationProvider = limitLoginAuthenticationProvider;
       this.switchUserPrivilege=switchUserPrivilege;
+      this.webBackOfficeProperties = webBackOfficeProperties;
     }
 
     @Bean
@@ -225,7 +232,7 @@ public class WebInterfaceAutoConfiguration {
         .authorizeRequests().anyRequest().fullyAuthenticated()
         .and().formLogin().loginPage("/" + BLOSSOM_BASE_PATH + "/login")
         .failureUrl("/" + BLOSSOM_BASE_PATH + "/login?error")
-        .successHandler(lastConnectionUpdateAuthenticationSuccessHandler).permitAll()
+        .successHandler(blossomAuthenticationSuccessHandler).permitAll()
         .and().logout()
         .logoutRequestMatcher(new AntPathRequestMatcher("/" + BLOSSOM_BASE_PATH + "/logout"))
         .deleteCookies(BLOSSOM_REMEMBER_ME_COOKIE_NAME)
@@ -235,7 +242,7 @@ public class WebInterfaceAutoConfiguration {
         (request, response, authException) -> response.sendError(401),
         new RequestHeaderRequestMatcher("X-Requested-With", "XMLHttpRequest"))
         .and().sessionManagement()
-        .maximumSessions(10).maxSessionsPreventsLogin(true)
+        .maximumSessions(webBackOfficeProperties.getMaxSessionsPerUser()).maxSessionsPreventsLogin(true)
         .expiredSessionStrategy(
           new BlossomInvalidSessionStrategy("/" + BLOSSOM_BASE_PATH + "/login"))
         .sessionRegistry(sessionRegistry);

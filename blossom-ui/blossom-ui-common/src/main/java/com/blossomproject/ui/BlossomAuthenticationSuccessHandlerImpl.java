@@ -11,12 +11,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-public class LastConnectionUpdateAuthenticationSuccessHandlerImpl extends SavedRequestAwareAuthenticationSuccessHandler {
+public class BlossomAuthenticationSuccessHandlerImpl extends SavedRequestAwareAuthenticationSuccessHandler {
 
   private final UserService userService;
+  private final Integer maxInactiveInterval;
 
-  public LastConnectionUpdateAuthenticationSuccessHandlerImpl(UserService userService) {
+  public BlossomAuthenticationSuccessHandlerImpl(UserService userService, Integer maxInactiveInterval) {
     this.userService = userService;
+    this.maxInactiveInterval = maxInactiveInterval;
+
     this.setDefaultTargetUrl("/blossom");
     this.setAlwaysUseDefaultTargetUrl(false);
   }
@@ -24,6 +27,10 @@ public class LastConnectionUpdateAuthenticationSuccessHandlerImpl extends SavedR
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
     throws IOException, ServletException {
+
+    if (request.getSession(false) != null) {
+      request.getSession(false).setMaxInactiveInterval(maxInactiveInterval);
+    }
 
     CurrentUser currentUser = (CurrentUser) authentication.getPrincipal();
     userService.updateLastConnection(currentUser.getUser().getId(), new Date(System.currentTimeMillis()));

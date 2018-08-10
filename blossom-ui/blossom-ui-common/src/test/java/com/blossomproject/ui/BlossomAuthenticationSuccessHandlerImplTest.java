@@ -25,12 +25,12 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class LastConnectionUpdateAuthenticationSuccessHandlerImplTest {
+public class BlossomAuthenticationSuccessHandlerImplTest {
     @Mock
     UserService userService;
 
     @InjectMocks
-    private LastConnectionUpdateAuthenticationSuccessHandlerImpl handler;
+    private BlossomAuthenticationSuccessHandlerImpl handler;
 
     @Test
     public void should_update_last_connection() throws Exception {
