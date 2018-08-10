@@ -44,7 +44,7 @@ public class User extends AbstractEntity {
   @Column(name = "company")
   private String company;
 
-  @Column(name = "function")
+  @Column(name = "job_title")
   private String function;
 
   @Lob
