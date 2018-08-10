@@ -58,12 +58,20 @@ public class MailFilterImpl implements MailFilter {
     private String[] filterMails(Address[] recipients) {
         if (recipients != null) {
             if (this.filters != null && !this.filters.isEmpty()) {
-                return Stream.of(recipients).map(Address::toString).filter(s -> this.filters.stream().anyMatch(s::matches)).toArray(String[]::new);
+                return Stream.of(recipients).map(this::getEmailAdress).filter(s -> this.filters.stream().anyMatch(s::matches)).toArray(String[]::new);
             } else {
-                return Stream.of(recipients).map(Address::toString).toArray(String[]::new);
+                return Stream.of(recipients).map(this::getEmailAdress).toArray(String[]::new);
             }
         } else {
             return null;
+        }
+    }
+
+    private String getEmailAdress(Address recipient) {
+        if (!(recipient instanceof InternetAddress)) {
+            return recipient.toString();
+        } else {
+            return ((InternetAddress) recipient).getAddress();
         }
     }
 
