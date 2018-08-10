@@ -4,7 +4,12 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-  <changeSet id="blossom_core_user_create_table" author="mgargadennec">
+  <changeSet id="blossom_core_user_create_table_v2" author="rlejolivet">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="blossom_user"/>
+      </not>
+    </preConditions>
 
     <createTable tableName="blossom_user">
       <column name="id" type="bigint">
@@ -43,7 +48,7 @@
       <column name="company" type="varchar(50)">
         <constraints nullable="true"/>
       </column>
-      <column name="function" type="varchar(50)">
+      <column name="job_title" type="varchar(50)">
         <constraints nullable="true"/>
       </column>
       <column name="avatar" type="longblob">
@@ -65,5 +70,34 @@
         <constraints nullable="false"/>
       </column>
     </createTable>
+
   </changeSet>
+
+  <changeSet id="blossom_core_user_create_job_title_column" author="rlejolivet">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists tableName="blossom_user" columnName="job_title"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="blossom_user">
+      <column name="job_title" type="varchar(50)">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="blossom_core_user_copy_from_function_column" author="rlejolivet">
+    <preConditions>
+      <and>
+        <not>
+          <columnExists tableName="blossom_user" columnName="job_title"/>
+        </not>
+        <columnExists tableName="blossom_user" columnName="function"/>
+      </and>
+    </preConditions>
+
+    <sql>UPDATE blossom_user SET job_title = function</sql>
+  </changeSet>
+
 </databaseChangeLog>
