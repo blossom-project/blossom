@@ -43,7 +43,7 @@ import static com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration.BL
 @ConditionalOnWebApplication
 @Order(SecurityProperties.DEFAULT_FILTER_ORDER)
 @PropertySource("classpath:/security.properties")
-@EnableConfigurationProperties(DefaultAccountProperties.class)
+@EnableConfigurationProperties({DefaultAccountProperties.class, BlossomWebBackOfficeProperties.class})
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityAutoConfiguration {
 

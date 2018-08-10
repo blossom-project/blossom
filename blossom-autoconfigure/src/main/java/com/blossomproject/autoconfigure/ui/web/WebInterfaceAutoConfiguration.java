@@ -75,8 +75,6 @@ import org.springframework.web.servlet.ThemeResolver;
 @ConditionalOnWebApplication
 @ConditionalOnClass(HomeController.class)
 @AutoConfigureAfter(WebContextAutoConfiguration.class)
-@PropertySource("classpath:/security.properties")
-@EnableConfigurationProperties(BlossomWebBackOfficeProperties.class)
 public class WebInterfaceAutoConfiguration {
 
   private final AssociationUserRoleService associationUserRoleService;
