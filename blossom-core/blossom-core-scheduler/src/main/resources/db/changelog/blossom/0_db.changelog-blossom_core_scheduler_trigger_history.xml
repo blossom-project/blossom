@@ -5,7 +5,12 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 
-  <changeSet id="blossom_core_scheduler_create_table_trigger_history" author="mgargadennec">
+  <changeSet id="blossom_core_scheduler_create_table_trigger_history_v2" author="rlejolivet">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="qrtz_trigger_history"/>
+      </not>
+    </preConditions>
 
     <createTable tableName="qrtz_trigger_history">
       <column name="id" type="bigint">
@@ -49,18 +54,35 @@
       </column>
 
       <column name="modification_date" type="timestamp">
-        <constraints nullable="false" />
+        <constraints nullable="false"/>
       </column>
 
       <column name="modification_user" type="varchar(25)">
         <constraints nullable="false"/>
       </column>
     </createTable>
+  </changeSet>
 
-    <createIndex indexName="index_trigger_history_job"
-      tableName="qrtz_trigger_history">
+  <changeSet id="blossom_core_scheduler_mysql_trigger_history_types_mariadb10.1" author="rlejolivet" dbms="mysql">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="10.1">select substr(version(), 1, 4)</sqlCheck>
+    </preConditions>
+    <modifyDataType tableName="qrtz_trigger_history" columnName="job_name"
+      newDataType="varchar(200) character set latin1 not null"/>
+    <modifyDataType tableName="qrtz_trigger_history" columnName="job_group"
+      newDataType="varchar(200) character set latin1"/>
+  </changeSet>
+
+  <changeSet id="blossom_core_scheduler_trigger_history_index" author="rlejolivet">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <indexExists tableName="qrtz_trigger_history" indexName="index_trigger_history_job"/>
+      </not>
+    </preConditions>
+    <createIndex indexName="index_trigger_history_job" tableName="qrtz_trigger_history">
       <column name="job_group" type="varchar(200)"/>
       <column name="job_name" type="varchar(200)"/>
     </createIndex>
   </changeSet>
+
 </databaseChangeLog>
