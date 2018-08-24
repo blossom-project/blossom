@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0.M2
+## 1.1.0.M3
 - Fix filter for InternetAddress with personnal  [#189](https://github.com/blossom-project/blossom/pull/189)
 - Upgrade spring boot to 2.0.4-RELEASE [#190](https://github.com/blossom-project/blossom/pull/190)
 - Rename "function" column to "job_title" to avoid reserved keywords on SQL Server and MySQL 8 [#187](https://github.com/blossom-project/blossom/pull/187)
