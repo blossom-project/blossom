@@ -88,7 +88,7 @@
   </changeSet>
 
   <changeSet id="blossom_core_user_copy_from_function_column" author="rlejolivet">
-    <preConditions>
+    <preConditions onFail="MARK_RAN">
       <and>
         <not>
           <columnExists tableName="blossom_user" columnName="job_title"/>
