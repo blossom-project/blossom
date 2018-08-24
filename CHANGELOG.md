@@ -1,6 +1,30 @@
 # Changelog
 
-## Unreleased
+## 1.1.0.M2
+- Fix filter for InternetAddress with personnal  [#189](https://github.com/blossom-project/blossom/pull/189)
+- Upgrade spring boot to 2.0.4-RELEASE [#190](https://github.com/blossom-project/blossom/pull/190)
+- Rename "function" column to "job_title" to avoid reserved keywords on SQL Server and MySQL 8 [#187](https://github.com/blossom-project/blossom/pull/187)
+- Module generator mysql [#183](https://github.com/blossom-project/blossom/pull/183)
+- Force latin1 encoding for job names and groups in trigger history [#186](https://github.com/blossom-project/blossom/pull/186)
+- Randomize system account password and by default deactivate it when another account exists [#184](https://github.com/blossom-project/blossom/pull/184)
+- Do not throw any exception in GlobalTriggerListener [#182](https://github.com/blossom-project/blossom/pull/182)
+- Allow the use of InternetAddress instead of String for emails [#159](https://github.com/blossom-project/blossom/issues/159)  
+- Automated changelog [#160](https://github.com/blossom-project/blossom/pull/160)  
+- LongFieldBuilder JDBC type &quot;long&quot; badly translate to mediumtext on MySQL [#164](https://github.com/blossom-project/blossom/pull/164)  
+- Display db migration in reverse order so last changes appears first [#168](https://github.com/blossom-project/blossom/pull/168)  
+- If there is no page, remove pagiation instead of displaying 1-0 of 0 [#169](https://github.com/blossom-project/blossom/pull/169)  
+- make cache search case insensitive [#170](https://github.com/blossom-project/blossom/pull/170)  
+- AdditionnalScss not taken into account in Theme [#173](https://github.com/blossom-project/blossom/issues/173)  
+- Fixes #173 [#174](https://github.com/blossom-project/blossom/pull/174)  
+- fix date filter initialization [#176](https://github.com/blossom-project/blossom/pull/176)  
+- In the log, display only the actual recipients after filtering is applied on a mail [#177](https://github.com/blossom-project/blossom/pull/177)  
+- Add ability to configure session length and max session per user [#188](https://github.com/blossom-project/blossom/pull/188)  
+
+### No issue
+- Create CONTRIBUTING.md
+
+
+## 1.1.0.M1
 - Add the missing import spring in master.ftl [#139](https://github.com/blossom-project/blossom/pull/139)  
 - User profile page [#142](https://github.com/blossom-project/blossom/issues/142)  
 - User impersonation [#143](https://github.com/blossom-project/blossom/issues/143)  
@@ -12,6 +36,8 @@
 - Add filter on request/response headers indexed in Elasticsearch [#152](https://github.com/blossom-project/blossom/pull/152)  
 - Supervision status page improvements [#156](https://github.com/blossom-project/blossom/pull/156)  
 - Fix profile page for users with empty values [#157](https://github.com/blossom-project/blossom/pull/157)  
+- Add job supervision to detect when jobs stop firing [#158](https://github.com/blossom-project/blossom/pull/158)  
+- Async mail sender [#161](https://github.com/blossom-project/blossom/pull/161)  
 
 ### No issue
 - Removing the sample generator
@@ -116,270 +142,4 @@
 - &quot;404 not found&quot; on item where I can click [#98](https://github.com/blossom-project/blossom/issues/98)    *enhancement*  
 - Disconnect doesn&#39;t properly redirect to login. [#99](https://github.com/blossom-project/blossom/issues/99)  
 -  utf-8  
-
-### No issue
-- Prepare release
-- TravisCI correction
-- Prepare release
-- Prepare release
-- Travis deploy
-- Correction
-- Upgrade to Spring-Boot 2.0.1.RELEASE
-- New favicon
-- Add logo to blossom
-- Customize SchedulerFactoryBean to add custom TriggerListener
-- Using spring-boot-starter-quartz instead of custom built
-- Evict all cache on multiple updates
-- Update README.md
-- Fix Dashboard Autoconfiguration
-- Upgrade to SpringBoot 2.0.0.RC2
-- Package renaming (again !)
-- Change JIRA password
-- test travis
-- Linked Hashset for liquibase scripts ordering
-- Pom correction
-- Test
-- Removing pseudo-integration test project
-- Test
-- Pom correction
-- Pom correction
-- Pom correction
-- Code signing for maven central
-- Code signing for maven central
-- Code signing for maven central
-- Signed-off-by: Maël Gargadennec <mael.gargadennec@gmail.com>
-- Signed-off-by: Maël Gargadennec <mael.gargadennec@gmail.com>
-- test
-- Make shell script executable
-- Make shell script executable
-- Make shell script executable
-- Test
-- Continuous deployment
-- Renaming all packages
-- Removing samples, added into their own repository (blossom-project/blossom-samples)
-- Default Avatar fixed
-- Moving the initializr into it's own repository
-- Travis
-- Travis correction
-- Autoconfiguration and examples
-- Autoconfiguration correction
-- Documentation improvement
-- Error on project without interface
-- Initializr correction on POST
-- Don't fail on principal different than CurrentUser class
-- Change version
-- Unit test correction
-- Unit test correction
-- unit tests
-- Unit tests
-- Change autoconfiguration of default cache configuration
-- Upgrade Jacoco
-- Corrections on generated @Configuration
-- Added bigdecimal and float columns
-- Removing soap client from sample
-- Manage multiple field types in generator
-- Generator builder mecanism (instead of runtime System.in)
-- Url encoding of stateless secret token service's generated tokens
-- Notification + history of triggers executions in job detail
-- Debugging logs
-- Credit author  when credit is due
-- Cryptography autoconfiguration and cleanup
-- Unit tests
-- Unit tests for daos
-- Unit tests for daos
-- Unit tests
-- Unit tests for daos
-- adding unit tests dependencies to modules
-- Unit test for web ui
-- Unit tests
-- Unit tests
-- Unit tests
-- Unit tests
-- Correct after_success test coverage build
-- Unit tests on MenuItemBuilder
-- Update README.md
-- Javadoc + Unit testing + Coveralls/JaCoCo integration in travisci build
-- Added javadoc
-- Override the configuration of date format for all IndexationEngines  (WRITE_DATE_AS_TIMESTAMP should always be true)
-- Override the configuration of date format for all IndexationEngines  (WRITE_DATE_AS_TIMESTAMP should always be true)
-- Avatar content type detection (firefox doesn't like image/* type)
-- FileManager Rest API + tests
-- Added privileges to controllers
-- Refactoring of Controllers + Rest API + tests
-- Related-entity forced deletion before main entity is deleted
-- Scheduler manual execution
-- Blossom image to readme
-- Removing jrebel-jar
-- Major refactoring of SearchEngine and IndexationEngine and Omnisearch page !
-- Major refactoring of SearchEngine and IndexationEngine and Omnisearch page !
-- Major refactoring of SearchEngine and IndexationEngine and Omnisearch page !
-- Major refactoring of SearchEngine and IndexationEngine and Omnisearch page !
-- Major refactoring of SearchEngine and IndexationEngine and Omnisearch page !
-- Major refactoring of SearchEngine and IndexationEngine and Omnisearch page !
-- Changing import for Preconditions
-- Bringing unit test coverage of bo-user-core to 89%
-- UserServiceImpl, testing the constructor
-- UserServiceImpl fully tested + moving some badly placed unit tests
-- Debut TU UserService
-- Update README.md
-- Update .travis.yml
-- Update .travis.yml
-- Update README.md
-- Update README.md
-- Change packages names to fr.blossom instead of fr.mgargadennec.blossom
-- Change packages names to fr.blossom instead of fr.mgargadennec.blossom
-- Activate account Mail Template
-- Mailsender configuration
-- Two objects with null ids are not equals
-- Documentation : Elasticsearch
-- Quartz init script with Liquibase for multiple databases types (h2, mysql, oracle, postgresql, hsqldb)
-- Add generated-sources to the maven resources folders
-- Revert: Fix blossom-module-filemanager compilation
-- Add blossom banner
-- Changing blob types to longblob in liquibase scripts
-- Fix blossom-module-filemanager compilation
-- Add mandatory db changelog to all samples
-- Adding specification pattern utilitary classes
-- Documentation + refactoring of loggers management screen
-- Ordering of ES Trace Repository
-- Update index.md
-- Update index.md
-- Update README.md
-- Restraint Controller advices to BlossomControllers
-- Added Camunda as a Business Process Manager engine
-- Create LICENSE
-- Update index.md
-- Update index.md
-- Update index.md
-- Set theme jekyll-theme-tactile
-- Create index.md
-- Page reseted when search is executed (to prevent empty page of results)
-- Renaming Modification dates
-- Ignore error or missing generated liquibase changelog
-- Generate changelog file with module generator and use it in generated project
-- Liquibase problem when in jar embedded application + initializr update to add the master changelog
-- Liquibase usage instead of Hibernate generate ddl
-- Pom updates and formatting
-- Code coverage
-- Code coverage
-- Duplicate dependency
-- Module generator (resources)
-- Module generator (resources)
-- Module Generator
-- MailSender configuration
-- Adding system user sessions management
-- Renaming file-manager to filemanager module
-- Article module (ultra basic :-) )
-- Dependencies correction for associations
-- Privileges in effect on interfaces
-- Global feature enabling
-- Refactoring of privileges
-- NPE on freemarker
-- Empty date correction
-- Null taken into account
-- Association management User/Role/Group
-- Avatar update
-- Tabs refactoring
-- Parametrized version of the Default Account (system by default)
-- Refacto nom variable
-- Correction bouton cancel
-- Correction email
-- Correction creation
-- Correction déclaration fichier de properties
-- Correction freemarker usergroups
-- Signed-off-by: Maël Gargadennec <mael.gargadennec@gmail.com>
-- Global Exception Handling
-- Transactional event listeners
-- Associations user/roles user/groups
-- Association of group or role to user in the tab
-- Uniformisation
-- User with tabs of groups and roles
-- Correction sur choix enabling module
-- Groups CRUD
-- Role, formattage
-- Correction coquille
-- CRUD for Roles
-- Possibilite de disable un module
-- Table responsive
-- Forgotten password cancellation
-- Indexation event handler
-- Indexation event handler
-- User creation and reset workflow
-- Unit test correction : unused unit test removal
-- UserBuilder correction : add Locale
-- Pull
-- Integration test
-- User creation flow
-- Account activation
-- Multiple features around users
-- pom.xml versions update and project generator started
-- User + dashboard evolution
-- Avatar image
-- Page title sizing
-- Menu Opening on page load (configurable on @Controllers with @OpenedMenu
-- scheduler standby mode and triggers display
-- i18n improvements and configuration
-- i18n improvements and configuration
-- File manager
-- Refactor - Extract functions in dedicated method
-- File manager
-- File manager
-- Integration tests : Users module
-- filemanager
-- LastConnectionUpdateAuthenticationSuccessHandler : defining default url.
-- Integration test correction
-- Integration testing : login. Fail on LOG_002 because user inactivation doesn't seems to be implemented
-- Using user initialized by dataset generator in first integration test
-- Correction
-- Integration test on login page with system user
-- File manager
-- Tag cloud
-- Index mappings/settings
-- Dashboard charts
-- Dashboard charts
-- Slack notification
-- Dashboard requests
-- Dashboard requests
-- Tracking code coverage
-- Tracking code coverage with JaCoCo
-- Traces in ES
-- Tracking code coverage with JaCoCo
-- Unit testing on UserDaoImpl class
-- Traces in ES
-- Elasticsearch display index and index http traces
-- loggers
-- [TU] Couverture de CurrentUserDetailsServiceImpl
-- Code coverage
-- Cobertura
-- Cobertura
-- Cache manager
-- Cache manager
-- merge
-- Caches
-- loggers
-- Dashboard
-- scheduler
-- Scheduler interface
-- Added Quartz Scheduler
-- Added Quartz Scheduler
-- Added Quartz Scheduler
-- Indexation engines scheduling
-- Associations user role
-- Associations user role
-- Association user group
-- Association user group
-- Association user group
-- commit
-- Update README.md
-- Inspinia usage
-- Inspinia usage
-- Blossom v2
-- Cleanup
-- Signed-off-by: Maël Gargadennec <mael.gargadennec@gmail.com>
-- Signed-off-by: Maël Gargadennec <mael.gargadennec@gmail.com>
-- Build with JDK 8
-- Signed-off-by: Maël Gargadennec <mael.gargadennec@gmail.com>
-- Signed-off-by: Maël Gargadennec <mael.gargadennec@gmail.com>
-- TravisCI
-
 
