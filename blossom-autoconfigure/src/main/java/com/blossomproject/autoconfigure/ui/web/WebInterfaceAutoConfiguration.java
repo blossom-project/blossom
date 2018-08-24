@@ -1,8 +1,5 @@
 package com.blossomproject.autoconfigure.ui.web;
 
-import static com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
-import static com.blossomproject.autoconfigure.ui.WebSecurityAutoConfiguration.BLOSSOM_REMEMBER_ME_COOKIE_NAME;
-
 import com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration;
 import com.blossomproject.core.association_user_role.AssociationUserRoleService;
 import com.blossomproject.core.common.PluginConstants;
@@ -12,7 +9,7 @@ import com.blossomproject.core.common.service.AssociationServicePlugin;
 import com.blossomproject.core.common.utils.action_token.ActionTokenService;
 import com.blossomproject.core.common.utils.privilege.Privilege;
 import com.blossomproject.core.user.UserService;
-import com.blossomproject.ui.LastConnectionUpdateAuthenticationSuccessHandlerImpl;
+import com.blossomproject.ui.BlossomAuthenticationSuccessHandlerImpl;
 import com.blossomproject.ui.current_user.CurrentUserControllerAdvice;
 import com.blossomproject.ui.i18n.LocaleControllerAdvice;
 import com.blossomproject.ui.menu.Menu;
@@ -20,19 +17,10 @@ import com.blossomproject.ui.menu.MenuControllerAdvice;
 import com.blossomproject.ui.security.LimitLoginAuthenticationProvider;
 import com.blossomproject.ui.theme.Theme;
 import com.blossomproject.ui.theme.ThemeControllerAdvice;
-import com.blossomproject.ui.web.ActivationController;
-import com.blossomproject.ui.web.HomeController;
-import com.blossomproject.ui.web.LoginController;
-import com.blossomproject.ui.web.OmnisearchController;
-import com.blossomproject.ui.web.ProfileController;
-import com.blossomproject.ui.web.StatusController;
+import com.blossomproject.ui.web.*;
 import com.blossomproject.ui.web.error.BlossomErrorViewResolver;
 import com.blossomproject.ui.web.error.ErrorControllerAdvice;
 import com.blossomproject.ui.web.utils.session.BlossomSessionRegistryImpl;
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Set;
-import javax.servlet.ServletException;
 import org.elasticsearch.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +53,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ThemeResolver;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Set;
+
+import static com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
+import static com.blossomproject.autoconfigure.ui.WebSecurityAutoConfiguration.BLOSSOM_REMEMBER_ME_COOKIE_NAME;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
@@ -112,7 +108,7 @@ public class WebInterfaceAutoConfiguration {
 
   @Bean
   public OmnisearchController searchController(Client client,
-    @Qualifier(PluginConstants.PLUGIN_SEARCH_ENGINE) PluginRegistry<SearchEngine, Class<? extends AbstractDTO>> registry) {
+                                               @Qualifier(PluginConstants.PLUGIN_SEARCH_ENGINE) PluginRegistry<SearchEngine, Class<? extends AbstractDTO>> registry) {
     return new OmnisearchController(client, registry);
   }
 
@@ -123,7 +119,7 @@ public class WebInterfaceAutoConfiguration {
 
   @Bean
   public ActivationController activationController(ActionTokenService tokenService,
-    UserService userService) {
+                                                   UserService userService) {
     return new ActivationController(tokenService, userService);
   }
 
@@ -160,8 +156,8 @@ public class WebInterfaceAutoConfiguration {
     private final ResourceProperties resourceProperties;
 
     BlossomErrorViewResolverConfiguration(ApplicationContext applicationContext,
-      ResourceProperties resourceProperties,
-      AssociationUserRoleService associationUserRoleService) {
+                                          ResourceProperties resourceProperties,
+                                          AssociationUserRoleService associationUserRoleService) {
       this.applicationContext = applicationContext;
       this.resourceProperties = resourceProperties;
     }
@@ -176,23 +172,26 @@ public class WebInterfaceAutoConfiguration {
   public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
-    private final LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler;
+    private final BlossomAuthenticationSuccessHandlerImpl blossomAuthenticationSuccessHandler;
     private final SessionRegistry sessionRegistry;
     private final Privilege switchUserPrivilege;
     private final LimitLoginAuthenticationProvider limitLoginAuthenticationProvider;
+    private final BlossomWebBackOfficeProperties webBackOfficeProperties;
 
 
     public FormLoginWebSecurityConfigurerAdapter(
       UserDetailsService userDetailsService,
-      LastConnectionUpdateAuthenticationSuccessHandlerImpl lastConnectionUpdateAuthenticationSuccessHandler,
+      BlossomAuthenticationSuccessHandlerImpl blossomAuthenticationSuccessHandler,
       SessionRegistry sessionRegistry,
       LimitLoginAuthenticationProvider limitLoginAuthenticationProvider,
-      @Qualifier("switchUserPrivilege") Privilege switchUserPrivilege) {
+      @Qualifier("switchUserPrivilege") Privilege switchUserPrivilege,
+      BlossomWebBackOfficeProperties webBackOfficeProperties) {
       this.userDetailsService = userDetailsService;
-      this.lastConnectionUpdateAuthenticationSuccessHandler = lastConnectionUpdateAuthenticationSuccessHandler;
+      this.blossomAuthenticationSuccessHandler = blossomAuthenticationSuccessHandler;
       this.sessionRegistry = sessionRegistry;
       this.limitLoginAuthenticationProvider = limitLoginAuthenticationProvider;
-      this.switchUserPrivilege=switchUserPrivilege;
+      this.switchUserPrivilege = switchUserPrivilege;
+      this.webBackOfficeProperties = webBackOfficeProperties;
     }
 
     @Bean
@@ -225,7 +224,7 @@ public class WebInterfaceAutoConfiguration {
         .authorizeRequests().anyRequest().fullyAuthenticated()
         .and().formLogin().loginPage("/" + BLOSSOM_BASE_PATH + "/login")
         .failureUrl("/" + BLOSSOM_BASE_PATH + "/login?error")
-        .successHandler(lastConnectionUpdateAuthenticationSuccessHandler).permitAll()
+        .successHandler(blossomAuthenticationSuccessHandler).permitAll()
         .and().logout()
         .logoutRequestMatcher(new AntPathRequestMatcher("/" + BLOSSOM_BASE_PATH + "/logout"))
         .deleteCookies(BLOSSOM_REMEMBER_ME_COOKIE_NAME)
@@ -235,7 +234,7 @@ public class WebInterfaceAutoConfiguration {
         (request, response, authException) -> response.sendError(401),
         new RequestHeaderRequestMatcher("X-Requested-With", "XMLHttpRequest"))
         .and().sessionManagement()
-        .maximumSessions(10).maxSessionsPreventsLogin(true)
+        .maximumSessions(webBackOfficeProperties.getMaxSessionsPerUser()).maxSessionsPreventsLogin(true)
         .expiredSessionStrategy(
           new BlossomInvalidSessionStrategy("/" + BLOSSOM_BASE_PATH + "/login"))
         .sessionRegistry(sessionRegistry);
@@ -254,7 +253,7 @@ public class WebInterfaceAutoConfiguration {
     }
 
     public BlossomInvalidSessionStrategy(String invalidSessionUrl,
-      RedirectStrategy redirectStrategy) {
+                                         RedirectStrategy redirectStrategy) {
       Assert.isTrue(UrlUtils.isValidRedirectUrl(invalidSessionUrl),
         "url must start with '/' or with 'http(s)'");
       this.destinationUrl = invalidSessionUrl;
