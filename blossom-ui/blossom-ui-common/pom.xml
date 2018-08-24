@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.blossom-project</groupId>
     <artifactId>blossom-ui</artifactId>
-    <version>1.1.0.M3</version>
+    <version>1.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>blossom-ui-common</artifactId>
@@ -20,47 +20,47 @@
     <dependency>
       <groupId>com.blossom-project</groupId>
       <artifactId>blossom-core-common</artifactId>
-      <version>1.1.0.M3</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.blossom-project</groupId>
       <artifactId>blossom-core-user</artifactId>
-      <version>1.1.0.M3</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.blossom-project</groupId>
       <artifactId>blossom-core-group</artifactId>
-      <version>1.1.0.M3</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.blossom-project</groupId>
       <artifactId>blossom-core-role</artifactId>
-      <version>1.1.0.M3</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.blossom-project</groupId>
       <artifactId>blossom-core-association-user-group</artifactId>
-      <version>1.1.0.M3</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.blossom-project</groupId>
       <artifactId>blossom-core-association-user-role</artifactId>
-      <version>1.1.0.M3</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.blossom-project</groupId>
       <artifactId>blossom-core-scheduler</artifactId>
-      <version>1.1.0.M3</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.blossom-project</groupId>
       <artifactId>blossom-core-cache</artifactId>
-      <version>1.1.0.M3</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.blossom-project</groupId>
       <artifactId>blossom-core-validation</artifactId>
-      <version>1.1.0.M3</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
