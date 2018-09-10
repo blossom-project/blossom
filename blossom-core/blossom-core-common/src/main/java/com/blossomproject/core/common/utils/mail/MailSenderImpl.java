@@ -194,7 +194,7 @@ public class MailSenderImpl implements MailSender {
 
             LOGGER.info("Mail with recipient(s) {} sent.", Arrays.toString(message.getMimeMessage().getRecipients(Message.RecipientType.TO)));
         } else {
-            LOGGER.info(
+            LOGGER.warn(
                     "A mail with recipient(s) '{}' and subject '{}' was not sent because no java mail sender is configured",
                     Arrays.toString(mailTo), mailSubject);
         }
