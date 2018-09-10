@@ -78,22 +78,13 @@ public class ServiceImplGenerator implements ClassGenerator {
     JVar form = create.param(createFormClass, "createForm");
 
     JBlock body = create.body();
-    JVar toCreate = body.decl(entityClass, "toCreate", JExpr._new(entityClass));
+    JVar toCreate = body.decl(dtoClass, "toCreate", JExpr._new(dtoClass));
     for (Field field : settings.getFields()) {
       if (field.isRequiredCreate()) {
         body.add(toCreate.invoke(field.getSetterName()).arg(form.invoke(field.getGetterName())));
       }
     }
-    JVar savedEntity = body
-      .decl(entityClass, "savedEntity", JExpr.refthis("crudDao").invoke("create").arg(toCreate));
-    JVar savedDto = body
-      .decl(dtoClass, "savedDto", JExpr.refthis("mapper").invoke("mapEntity").arg(savedEntity));
-
-    body.add(JExpr.refthis("publisher").invoke("publishEvent").arg(
-      JExpr._new(codeModel.ref(CreatedEvent.class).narrow(dtoClass)).arg(JExpr._this())
-        .arg(savedDto)));
-
-    body._return(savedDto);
+    body._return(JExpr._this().invoke("create").arg(toCreate));
   }
 
   private void buildUpdate(Settings settings, JDefinedClass definedClass, JCodeModel codeModel) {
@@ -110,14 +101,7 @@ public class ServiceImplGenerator implements ClassGenerator {
       }
     }
 
-    JVar savedDto = body
-      .decl(dtoClass, "savedDto", JExpr._this().invoke("update").arg(id).arg(toUpdate));
-
-    body.add(JExpr.refthis("publisher").invoke("publishEvent").arg(
-      JExpr._new(codeModel.ref(UpdatedEvent.class).narrow(dtoClass)).arg(JExpr._this())
-        .arg(savedDto)));
-
-    body._return(savedDto);
+    body._return(JExpr._this().invoke("update").arg(id).arg(toUpdate));
 
   }
 
