@@ -1,15 +1,10 @@
 package com.blossomproject.core.common.utils.mail;
 
-import static org.mockito.Mockito.mock;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.sun.mail.smtp.SMTPMessage;
 import freemarker.template.Configuration;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import javax.mail.internet.InternetAddress;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,6 +13,18 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactory;
+
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MailSenderImplTest {
@@ -37,9 +44,18 @@ public class MailSenderImplTest {
   @Before
   public void setUp() throws Exception {
     this.javaMailSender = mock(JavaMailSender.class);
-    this.configuration = mock(Configuration.class);
+    when(javaMailSender.createMimeMessage()).thenReturn(new SMTPMessage((Session) null));
+
+    FreeMarkerConfigurationFactory factory = new FreeMarkerConfigurationFactory();
+    factory.setTemplateLoaderPath("/templates");
+    this.configuration = factory.createConfiguration();
+
     this.messageSource = mock(MessageSource.class);
+    when(messageSource.getMessage(any(), any(), any(), any())).thenReturn("Subject");
+
     this.mailFilter = mock(MailFilterImpl.class);
+    when(mailFilter.filter(any())).thenReturn(new SMTPMessage((Session) null));
+
     this.from = "blossom-test@test.fr";
     this.basePath = "basePath";
     this.filters = Sets.newHashSet("*@blossom-project.com");
@@ -77,7 +93,7 @@ public class MailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      null,  "basePath", this.locale, this.mailFilter);
+      null, "basePath", this.locale, this.mailFilter);
   }
 
   @Test
@@ -85,7 +101,7 @@ public class MailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      mock(MessageSource.class),  null, this.locale, this.mailFilter);
+      mock(MessageSource.class), null, this.locale, this.mailFilter);
   }
 
   @Test
@@ -93,7 +109,7 @@ public class MailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      mock(MessageSource.class),  "basePath", null, this.mailFilter);
+      mock(MessageSource.class), "basePath", null, this.mailFilter);
   }
 
   @Test
@@ -101,7 +117,7 @@ public class MailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-            mock(MessageSource.class), "basePath", this.locale,null );
+      mock(MessageSource.class), "basePath", this.locale, null);
   }
 
 
@@ -133,13 +149,12 @@ public class MailSenderImplTest {
     thrown.expect(IllegalArgumentException.class);
 
     String htmlTemplate = "htmlTemplate";
-    Map<String, Object> parameters =Maps.newHashMap();
-    String subject =null ;
+    Map<String, Object> parameters = Maps.newHashMap();
+    String subject = null;
     InternetAddress[] mailTo = {new InternetAddress("test@test.test")};
 
     this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo);
   }
-
 
 
   @Test
@@ -151,7 +166,7 @@ public class MailSenderImplTest {
     String subject = "subject";
     InternetAddress[] mailTo = {new InternetAddress("test@test.test")};
 
-    this.mailSender.sendMail(htmlTemplate, parameters, subject,this.locale, Lists.newArrayList(), mailTo, null,null,true);
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, this.locale, Lists.newArrayList(), mailTo, null, null, true);
   }
 
   @Test
@@ -161,7 +176,7 @@ public class MailSenderImplTest {
     Map<String, Object> parameters = null;
     String subject = "subject";
     InternetAddress[] mailTo = {new InternetAddress("test@test.test")};
-    this.mailSender.sendMail(htmlTemplate,parameters,subject,this.locale,mailTo, mailTo, mailTo);
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, this.locale, mailTo, mailTo, mailTo);
   }
 
   @Test
@@ -181,9 +196,8 @@ public class MailSenderImplTest {
     Map<String, Object> parameters = null;
     String subject = "subject";
     InternetAddress[] mailTo = {new InternetAddress("test@test.test")};
-    this.mailSender.sendMail(htmlTemplate, parameters, subject,this.locale,null,null,null, mailTo, mailTo, null,true);
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, this.locale, null, null, null, mailTo, mailTo, null, true);
   }
-
 
 
   @Test
@@ -214,13 +228,12 @@ public class MailSenderImplTest {
     thrown.expect(IllegalArgumentException.class);
 
     String htmlTemplate = "htmlTemplate";
-    Map<String, Object> parameters =Maps.newHashMap();
-    String subject =null ;
+    Map<String, Object> parameters = Maps.newHashMap();
+    String subject = null;
     String[] mailTo = {"test@test.test"};
 
     this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo);
   }
-
 
 
   @Test
@@ -232,7 +245,7 @@ public class MailSenderImplTest {
     String subject = "subject";
     String[] mailTo = {"test@test.test"};
 
-    this.mailSender.sendMail(htmlTemplate, parameters, subject,this.locale, Lists.newArrayList(), mailTo, null,null,true);
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, this.locale, Lists.newArrayList(), mailTo, null, null, true);
   }
 
   @Test
@@ -242,7 +255,7 @@ public class MailSenderImplTest {
     Map<String, Object> parameters = null;
     String subject = "subject";
     String[] mailTo = {"test@test.test"};
-    this.mailSender.sendMail(htmlTemplate,parameters,subject,this.locale,mailTo, mailTo, mailTo);
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, this.locale, mailTo, mailTo, mailTo);
   }
 
   @Test
@@ -262,6 +275,50 @@ public class MailSenderImplTest {
     Map<String, Object> parameters = null;
     String subject = "subject";
     String[] mailTo = {"test@test.test"};
-    this.mailSender.sendMail(htmlTemplate, parameters, subject,this.locale,null,null,null, mailTo, mailTo, null,true);
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, this.locale, null, null, null, mailTo, mailTo, null, true);
+  }
+
+  @Test
+  public void should_send_mail_with_mailTo() throws Exception {
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = new HashMap<>();
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo, null, null);
+
+    verify(javaMailSender, times(1)).send(any(MimeMessage.class));
+  }
+
+  @Test
+  public void should_send_mail_with_mailCC() throws Exception {
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = new HashMap<>();
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo, mailTo, null);
+
+    verify(javaMailSender, times(1)).send(any(MimeMessage.class));
+  }
+
+  @Test
+  public void should_send_mail_with_mailBCC() throws Exception {
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = new HashMap<>();
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo, mailTo, mailTo);
+
+    verify(javaMailSender, times(1)).send(any(MimeMessage.class));
+  }
+
+  @Test
+  public void should_send_mail_with_only_mailBCC() throws Exception {
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = new HashMap<>();
+    String subject = "subject";
+    String[] mailTo = {"test@test.test"};
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, (String[])null, (String[])null, mailTo);
+
+    verify(javaMailSender, times(1)).send(any(MimeMessage.class));
   }
 }
