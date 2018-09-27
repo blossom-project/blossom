@@ -13,6 +13,7 @@
   <link href="/blossom/public/font-awesome/css/font-awesome.css" rel="stylesheet">
   <link href="/blossom/public/css/animate.css" rel="stylesheet">
   <link href="<@spring.theme "stylesheet"/>" rel="stylesheet">
+  <link href="/blossom/public/css/microsoft.css" rel="stylesheet">
 </head>
 
 <body class="gray-bg">
@@ -38,6 +39,12 @@
       </#if>
       <a href="/blossom/public/forgotten_password"><small><@spring.message "login.forgotten.password"/></small></a>
     </form>
+
+      <#if azureUrl??>
+      <a class='button-office365 block full-width m-b'  href= "${azureUrl}"><div class='button-wrapper'><img src='/blossom/public/img/MicrosoftSquares.svg'/><span class='button-content'><@spring.message "login.page.form.microsoft.login"/></span></div></a>
+      </#if>
+
+
     <p class="m-t"> <small>Blossom &copy; 2017</small> </p>
   </div>
 </div>
@@ -45,6 +52,9 @@
 <!-- Mainly scripts -->
 <script src="/blossom/public/js/jquery-3.1.1.min.js"></script>
 <script src="/blossom/public/js/bootstrap.min.js"></script>
+<script>
+
+</script>
 
 </body>
 

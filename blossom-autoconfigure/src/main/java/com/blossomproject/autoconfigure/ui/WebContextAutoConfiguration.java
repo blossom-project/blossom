@@ -1,5 +1,6 @@
 package com.blossomproject.autoconfigure.ui;
 
+import com.blossomproject.autoconfigure.ui.web.AzureADAuthenticationProperties;
 import com.blossomproject.core.common.utils.privilege.Privilege;
 import com.blossomproject.core.common.utils.privilege.SimplePrivilege;
 import com.blossomproject.ui.filter.FilterHandlerMethodArgumentResolver;
@@ -17,6 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +40,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @Configuration
 @ConditionalOnWebApplication
 @AutoConfigureBefore({WebMvcAutoConfiguration.class, ErrorMvcAutoConfiguration.class})
+@EnableConfigurationProperties(AzureADAuthenticationProperties.class)
 public class WebContextAutoConfiguration implements WebMvcConfigurer {
 
   public final static String BLOSSOM_BASE_PATH = "blossom";

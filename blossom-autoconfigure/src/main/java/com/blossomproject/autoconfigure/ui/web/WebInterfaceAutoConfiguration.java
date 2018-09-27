@@ -9,6 +9,8 @@ import com.blossomproject.core.common.service.AssociationServicePlugin;
 import com.blossomproject.core.common.utils.action_token.ActionTokenService;
 import com.blossomproject.core.common.utils.privilege.Privilege;
 import com.blossomproject.core.user.UserService;
+import com.blossomproject.model.azureactivedirectory.AzureADLoginAuthenticationFilter;
+import com.blossomproject.model.azureactivedirectory.AzureADLoginAuthenticationProvider;
 import com.blossomproject.ui.BlossomAuthenticationSuccessHandlerImpl;
 import com.blossomproject.ui.current_user.CurrentUserControllerAdvice;
 import com.blossomproject.ui.i18n.LocaleControllerAdvice;
@@ -28,14 +30,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.plugin.core.PluginRegistry;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -44,6 +48,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.session.SessionInformationExpiredEvent;
@@ -56,11 +61,13 @@ import org.springframework.web.servlet.ThemeResolver;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
 
 import static com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration.BLOSSOM_BASE_PATH;
 import static com.blossomproject.autoconfigure.ui.WebSecurityAutoConfiguration.BLOSSOM_REMEMBER_ME_COOKIE_NAME;
+import static com.blossomproject.autoconfigure.ui.web.WebInterfaceAutoConfiguration.AzureLoginWebSecurityConfigurerAdapter.AZURE_CALLBACK;
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
@@ -72,6 +79,7 @@ import static com.blossomproject.autoconfigure.ui.WebSecurityAutoConfiguration.B
 public class WebInterfaceAutoConfiguration {
 
   private final AssociationUserRoleService associationUserRoleService;
+
 
   @Qualifier(PluginConstants.PLUGIN_ASSOCIATION_SERVICE)
   @Autowired
@@ -92,8 +100,22 @@ public class WebInterfaceAutoConfiguration {
   }
 
   @Bean
+  public AzureADController azureADBlossomController(){
+      return new AzureADController();
+  }
+
+
+
+  @Bean
+  @ConditionalOnMissingClass("AzureADLoginAuthenticationFilter")
   public LoginController loginController() {
-    return new LoginController();
+    return new LoginController(null, AZURE_CALLBACK ,null);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(LoginController.class)
+  public LoginController loginControllerAzure(AzureADAuthenticationProperties azureADAuthenticationProperties) {
+    return new LoginController(azureADAuthenticationProperties.getClientId(), AZURE_CALLBACK ,azureADAuthenticationProperties.getTenantId());
   }
 
   @Bean
@@ -176,6 +198,7 @@ public class WebInterfaceAutoConfiguration {
     private final SessionRegistry sessionRegistry;
     private final Privilege switchUserPrivilege;
     private final LimitLoginAuthenticationProvider limitLoginAuthenticationProvider;
+
     private final BlossomWebBackOfficeProperties webBackOfficeProperties;
 
 
@@ -222,6 +245,7 @@ public class WebInterfaceAutoConfiguration {
 
       http.antMatcher("/" + BLOSSOM_BASE_PATH + "/**")
         .authorizeRequests().anyRequest().fullyAuthenticated()
+
         .and().formLogin().loginPage("/" + BLOSSOM_BASE_PATH + "/login")
         .failureUrl("/" + BLOSSOM_BASE_PATH + "/login?error")
         .successHandler(blossomAuthenticationSuccessHandler).permitAll()
@@ -242,7 +266,76 @@ public class WebInterfaceAutoConfiguration {
     }
   }
 
-  public static class BlossomInvalidSessionStrategy implements SessionInformationExpiredStrategy {
+
+    @Configuration
+    @ConditionalOnBean(name = "loginControllerAzure")
+    @ConditionalOnProperty({"blossom.azure.ad.client-id","blossom.azure.ad.client-secret"})
+    @Order(99)
+    public static class AzureLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+
+      public static final String AZURE_CALLBACK = "/blossom/azure/callback";
+
+        private final  UserDetailsService userDetailsService;
+        private final UserService userService;
+        private final Privilege switchUserPrivilege;
+        private final LimitLoginAuthenticationProvider limitLoginAuthenticationProvider;
+        private final AzureADAuthenticationProperties azureADAuthenticationProperties;
+
+        public AzureLoginWebSecurityConfigurerAdapter(
+                UserDetailsService userDetailsService,
+                UserService userService,
+                LimitLoginAuthenticationProvider limitLoginAuthenticationProvider,
+                @Qualifier("switchUserPrivilege") Privilege switchUserPrivilege,
+                AzureADAuthenticationProperties azureADAuthenticationProperties) {
+            this.userDetailsService = userDetailsService;
+            this.userService = userService;
+            this.limitLoginAuthenticationProvider = limitLoginAuthenticationProvider;
+            this.switchUserPrivilege = switchUserPrivilege;
+            this.azureADAuthenticationProperties = azureADAuthenticationProperties;
+        }
+
+        @Bean
+        public static ServletListenerRegistrationBean httpSessionEventPublisher() {
+            return new ServletListenerRegistrationBean(new HttpSessionEventPublisher());
+        }
+
+        @Bean
+        public SwitchUserFilter switchUserProcessingFilter() {
+            SwitchUserFilter filter = new SwitchUserFilter();
+            filter.setUserDetailsService(userDetailsService);
+            filter.setSwitchAuthorityRole(switchUserPrivilege.privilege());
+            filter.setSwitchUserUrl("/" + BLOSSOM_BASE_PATH + "/administration/_impersonate");
+            filter.setExitUserUrl("/" + BLOSSOM_BASE_PATH + "/administration/_impersonate/logout");
+            filter.setTargetUrl("/" + BLOSSOM_BASE_PATH);
+            filter.setSwitchFailureUrl("/" + BLOSSOM_BASE_PATH);
+            return filter;
+        }
+
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            auth.authenticationProvider(limitLoginAuthenticationProvider);
+        }
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+
+            AzureADLoginAuthenticationProvider azureADLoginAuthenticationProvider = new AzureADLoginAuthenticationProvider(userService, userDetailsService);
+            AzureADLoginAuthenticationFilter azureFilter = new AzureADLoginAuthenticationFilter(new ProviderManager(Collections.singletonList(azureADLoginAuthenticationProvider)), azureADAuthenticationProperties.getClientId(), azureADAuthenticationProperties.getClientSecret(), AZURE_CALLBACK, azureADAuthenticationProperties.getTenantId());
+
+            http.addFilterAfter(switchUserProcessingFilter(), FilterSecurityInterceptor.class);
+
+            http.antMatcher("/" + BLOSSOM_BASE_PATH + "/azure/callback")
+                    .authorizeRequests().anyRequest().fullyAuthenticated()
+                    .and()
+                    .addFilterBefore(azureFilter,UsernamePasswordAuthenticationFilter.class)
+                    ;
+
+        }
+    }
+
+
+
+    public static class BlossomInvalidSessionStrategy implements SessionInformationExpiredStrategy {
 
     private final Logger logger = LoggerFactory.getLogger(BlossomInvalidSessionStrategy.class);
     private final String destinationUrl;

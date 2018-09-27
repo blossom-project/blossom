@@ -2,6 +2,7 @@ package com.blossomproject.autoconfigure.ui;
 
 import com.blossomproject.autoconfigure.ui.common.privileges.ResponsabilityPrivilegesConfiguration;
 import com.blossomproject.autoconfigure.ui.common.privileges.RolePrivilegesConfiguration;
+import com.blossomproject.autoconfigure.ui.web.AzureADAuthenticationProperties;
 import com.blossomproject.autoconfigure.ui.web.BlossomWebBackOfficeProperties;
 import com.blossomproject.core.association_user_role.AssociationUserRoleDao;
 import com.blossomproject.core.association_user_role.AssociationUserRoleService;
