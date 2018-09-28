@@ -53,7 +53,7 @@ public class LoginController {
       }
         model.addAttribute("azureUrl", url.toUriString());
       HttpSession session = req.getSession(false);
-      if(session.getAttribute("errorAzure")!=null){
+      if(session!=null && session.getAttribute("errorAzure")!=null){
         model.addAttribute("errorAzure",true);
         session.removeAttribute("errorAzure");
       }

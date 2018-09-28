@@ -112,7 +112,7 @@ public class WebInterfaceAutoConfiguration {
 
   }
 
-  @Bean(name = "loginControllerAzure")
+  @Bean
   @ConditionalOnMissingBean(LoginController.class)
   public LoginController loginControllerAzure(AzureADAuthenticationProperties azureADAuthenticationProperties) {
     return new LoginController(azureADAuthenticationProperties.getClientId(), AZURE_CALLBACK ,azureADAuthenticationProperties.getTenantId(), azureADAuthenticationProperties.getClientSecret()!=null);
@@ -269,6 +269,7 @@ public class WebInterfaceAutoConfiguration {
 
     @Configuration
     @Order(99)
+    @ConditionalOnMissingBean(name = "loginController")
     public static class AzureLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
       public static final String AZURE_CALLBACK = "/blossom/azure/callback";
@@ -278,19 +279,24 @@ public class WebInterfaceAutoConfiguration {
         private final Privilege switchUserPrivilege;
         private final LimitLoginAuthenticationProvider limitLoginAuthenticationProvider;
         private final AzureADAuthenticationProperties azureADAuthenticationProperties;
+        private final SessionRegistry sessionRegistry;
+        private final BlossomWebBackOfficeProperties webBackOfficeProperties;
 
-        public AzureLoginWebSecurityConfigurerAdapter(
-                UserDetailsService userDetailsService,
-                UserService userService,
-                LimitLoginAuthenticationProvider limitLoginAuthenticationProvider,
-                @Qualifier("switchUserPrivilege") Privilege switchUserPrivilege,
-                AzureADAuthenticationProperties azureADAuthenticationProperties) {
+
+      public AzureLoginWebSecurityConfigurerAdapter(
+              UserDetailsService userDetailsService,
+              UserService userService,
+              LimitLoginAuthenticationProvider limitLoginAuthenticationProvider,
+              @Qualifier("switchUserPrivilege") Privilege switchUserPrivilege,
+              AzureADAuthenticationProperties azureADAuthenticationProperties, SessionRegistry sessionRegistry, BlossomWebBackOfficeProperties webBackOfficeProperties) {
             this.userDetailsService = userDetailsService;
             this.userService = userService;
             this.limitLoginAuthenticationProvider = limitLoginAuthenticationProvider;
             this.switchUserPrivilege = switchUserPrivilege;
             this.azureADAuthenticationProperties = azureADAuthenticationProperties;
-        }
+            this.sessionRegistry = sessionRegistry;
+            this.webBackOfficeProperties = webBackOfficeProperties;
+      }
 
         @Bean
         public static ServletListenerRegistrationBean httpSessionEventPublisher() {
@@ -326,6 +332,20 @@ public class WebInterfaceAutoConfiguration {
                     .authorizeRequests().anyRequest().fullyAuthenticated()
                     .and()
                     .addFilterBefore(azureFilter,UsernamePasswordAuthenticationFilter.class)
+                    .exceptionHandling()
+                    .and().logout()
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/" + BLOSSOM_BASE_PATH + "/logout"))
+                    .deleteCookies(BLOSSOM_REMEMBER_ME_COOKIE_NAME)
+                    .logoutSuccessUrl("/" + BLOSSOM_BASE_PATH + "/login").permitAll()
+                    .and().rememberMe().rememberMeCookieName(BLOSSOM_REMEMBER_ME_COOKIE_NAME)
+                    .and().exceptionHandling().defaultAuthenticationEntryPointFor(
+                    (request, response, authException) -> response.sendError(401),
+                    new RequestHeaderRequestMatcher("X-Requested-With", "XMLHttpRequest"))
+                    .and().sessionManagement()
+                    .maximumSessions(webBackOfficeProperties.getMaxSessionsPerUser()).maxSessionsPreventsLogin(true)
+                    .expiredSessionStrategy(
+                            new BlossomInvalidSessionStrategy("/" + BLOSSOM_BASE_PATH + "/login"))
+                    .sessionRegistry(sessionRegistry)
                     ;
 
         }
