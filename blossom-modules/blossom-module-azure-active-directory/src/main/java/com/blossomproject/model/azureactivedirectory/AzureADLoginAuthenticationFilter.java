@@ -98,7 +98,7 @@ public class AzureADLoginAuthenticationFilter extends GenericFilterBean {
                     new String(Base64.decodeBase64(oidcAccessTokenResponseEntity.getBody().getIdToken().split("\\.")[1]), "UTF-8"),
                     AzureADIdTokenResponse.class);
         } catch (HttpClientErrorException e) {
-            logger.error("Error with response: {}", e.getResponseBodyAsString(), e);
+            logger.error("Error with response, check your azure active directory configuration: {}", e.getResponseBodyAsString(), e);
         } catch (Exception e) {
             logger.error("", e);
         }
