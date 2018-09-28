@@ -31,7 +31,7 @@ public class LoginControllerTest {
   private UriComponentsBuilder builder;
   @Before
   public void setUp() throws Exception {
-    this.controller = new LoginController(null, null, null);
+    this.controller = new LoginController(null, null, null, false);
   }
 
   @Test

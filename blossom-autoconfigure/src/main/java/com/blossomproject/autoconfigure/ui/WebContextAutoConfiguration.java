@@ -40,7 +40,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @Configuration
 @ConditionalOnWebApplication
 @AutoConfigureBefore({WebMvcAutoConfiguration.class, ErrorMvcAutoConfiguration.class})
-@EnableConfigurationProperties(AzureADAuthenticationProperties.class)
 public class WebContextAutoConfiguration implements WebMvcConfigurer {
 
   public final static String BLOSSOM_BASE_PATH = "blossom";

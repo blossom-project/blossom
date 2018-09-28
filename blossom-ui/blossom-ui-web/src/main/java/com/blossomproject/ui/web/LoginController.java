@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,16 +24,18 @@ public class LoginController {
   private String clientId;
   private String azureCallback;
   private String tenantId;
+  private boolean hasClientSecret;
 
-  public LoginController(String clientId, String azureCallback, String tenantId) {
+  public LoginController(String clientId, String azureCallback, String tenantId, boolean hasClientSecret) {
     this.clientId = clientId;
     this.azureCallback = azureCallback;
     this.tenantId = tenantId;
+    this.hasClientSecret = hasClientSecret;
   }
 
   @GetMapping
   public ModelAndView getLoginPage( HttpServletRequest req, HttpServletResponse response, @RequestParam Optional<String> error, Model model) {
-    if(clientId!=null && !clientId.equals("")){
+    if(clientId!=null && !clientId.equals("") && hasClientSecret){
       UriComponentsBuilder url = UriComponentsBuilder.fromUriString("https://login.microsoftonline.com/"+tenantId+"/oauth2/authorize");
       url.queryParam("client_id", clientId);
       url.queryParam("response_type", "code");

@@ -41,4 +41,5 @@ com.blossomproject.autoconfigure.ui.api.administration.ApiAdministrationGroupAut
 com.blossomproject.autoconfigure.ui.api.administration.ApiAdministrationMembershipAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.api.administration.ApiAdministrationResponsabilityAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.api.administration.ApiAdministrationRoleAutoConfiguration,\
-com.blossomproject.autoconfigure.ui.api.administration.ApiAdministrationUserAutoConfiguration
+com.blossomproject.autoconfigure.ui.api.administration.ApiAdministrationUserAutoConfiguration,\
+com.blossomproject.autoconfigure.ui.web.AzureADAuthenticationProperties

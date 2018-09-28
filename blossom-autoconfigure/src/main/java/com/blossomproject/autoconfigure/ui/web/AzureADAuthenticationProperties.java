@@ -1,11 +1,14 @@
 package com.blossomproject.autoconfigure.ui.web;
 
 import com.blossomproject.model.azureactivedirectory.AzureADLoginAuthenticationFilter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConditionalOnClass(AzureADLoginAuthenticationFilter.class)
+@AutoConfigureBefore(WebInterfaceAutoConfiguration.class)
 @ConfigurationProperties("blossom.azure.ad")
 public class AzureADAuthenticationProperties {
     private String clientId;

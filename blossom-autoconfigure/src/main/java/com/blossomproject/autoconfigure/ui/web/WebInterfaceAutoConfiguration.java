@@ -32,7 +32,6 @@ import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -75,7 +74,7 @@ import static com.blossomproject.autoconfigure.ui.web.WebInterfaceAutoConfigurat
 @Configuration
 @ConditionalOnWebApplication
 @ConditionalOnClass(HomeController.class)
-@AutoConfigureAfter(WebContextAutoConfiguration.class)
+@AutoConfigureAfter({WebContextAutoConfiguration.class,AzureADAuthenticationProperties.class})
 public class WebInterfaceAutoConfiguration {
 
   private final AssociationUserRoleService associationUserRoleService;
@@ -107,15 +106,16 @@ public class WebInterfaceAutoConfiguration {
 
 
   @Bean
-  @ConditionalOnMissingClass("AzureADLoginAuthenticationFilter")
+  @ConditionalOnMissingBean(AzureADAuthenticationProperties.class)
   public LoginController loginController() {
-    return new LoginController(null, AZURE_CALLBACK ,null);
+    return new LoginController(null, AZURE_CALLBACK, null, false);
+
   }
 
   @Bean
   @ConditionalOnMissingBean(LoginController.class)
   public LoginController loginControllerAzure(AzureADAuthenticationProperties azureADAuthenticationProperties) {
-    return new LoginController(azureADAuthenticationProperties.getClientId(), AZURE_CALLBACK ,azureADAuthenticationProperties.getTenantId());
+    return new LoginController(azureADAuthenticationProperties.getClientId(), AZURE_CALLBACK ,azureADAuthenticationProperties.getTenantId(), azureADAuthenticationProperties.getClientSecret()!=null);
   }
 
   @Bean
