@@ -44,6 +44,10 @@
       <a class='button-office365 block full-width m-b'  href= "${azureUrl}"><div class='button-wrapper'><img src='/blossom/public/img/MicrosoftSquares.svg'/><span class='button-content'><@spring.message "login.page.form.microsoft.login"/></span></div></a>
       </#if>
 
+      <#if errorAzure??>
+       <p class="alert alert-danger"><@spring.message "login.page.error.azure"/></p>
+      </#if>
+
 
     <p class="m-t"> <small>Blossom &copy; 2017</small> </p>
   </div>

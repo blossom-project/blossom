@@ -112,7 +112,7 @@ public class WebInterfaceAutoConfiguration {
 
   }
 
-  @Bean
+  @Bean(name = "loginControllerAzure")
   @ConditionalOnMissingBean(LoginController.class)
   public LoginController loginControllerAzure(AzureADAuthenticationProperties azureADAuthenticationProperties) {
     return new LoginController(azureADAuthenticationProperties.getClientId(), AZURE_CALLBACK ,azureADAuthenticationProperties.getTenantId(), azureADAuthenticationProperties.getClientSecret()!=null);
@@ -268,8 +268,6 @@ public class WebInterfaceAutoConfiguration {
 
 
     @Configuration
-    @ConditionalOnBean(name = "loginControllerAzure")
-    @ConditionalOnProperty({"blossom.azure.ad.client-id","blossom.azure.ad.client-secret"})
     @Order(99)
     public static class AzureLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 

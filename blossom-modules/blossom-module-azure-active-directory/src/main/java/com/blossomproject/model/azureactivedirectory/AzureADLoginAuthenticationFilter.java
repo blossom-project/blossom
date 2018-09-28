@@ -23,6 +23,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class AzureADLoginAuthenticationFilter extends GenericFilterBean {
@@ -55,6 +56,8 @@ public class AzureADLoginAuthenticationFilter extends GenericFilterBean {
                     }
                 }catch (Exception e){
                     logger.debug("Authentication error: ", e);
+                    HttpSession session = ((HttpServletRequest) request).getSession(false);
+                    session.setAttribute("errorAzure", e.getMessage());
                     ((HttpServletResponse) response).sendRedirect("/blossom/login");
                     return;
                 }

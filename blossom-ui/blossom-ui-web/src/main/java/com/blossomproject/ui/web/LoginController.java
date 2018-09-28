@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @BlossomController
@@ -51,6 +52,11 @@ public class LoginController {
           url.queryParam("state","/blossom");
       }
         model.addAttribute("azureUrl", url.toUriString());
+      HttpSession session = req.getSession(false);
+      if(session.getAttribute("errorAzure")!=null){
+        model.addAttribute("errorAzure",true);
+        session.removeAttribute("errorAzure");
+      }
     }
 
     return new ModelAndView("blossom/login/login", "error", error);
