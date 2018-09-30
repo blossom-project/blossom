@@ -15,6 +15,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactory;
 
+import javax.mail.Address;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -23,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -45,6 +47,13 @@ public class MailSenderImplTest {
   public void setUp() throws Exception {
     this.javaMailSender = mock(JavaMailSender.class);
     when(javaMailSender.createMimeMessage()).thenReturn(new SMTPMessage((Session) null));
+    doAnswer(invocationOnMock -> {
+      MimeMessage mimeMessage = invocationOnMock.getArgument(0);
+      for (Address address: mimeMessage.getAllRecipients()) {
+        assertNotNull(address);
+      }
+      return null;
+    }).when(javaMailSender).send(any(MimeMessage.class));
 
     FreeMarkerConfigurationFactory factory = new FreeMarkerConfigurationFactory();
     factory.setTemplateLoaderPath("/templates");
@@ -317,6 +326,39 @@ public class MailSenderImplTest {
     Map<String, Object> parameters = new HashMap<>();
     String subject = "subject";
     String[] mailTo = {"test@test.test"};
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, (String[])null, (String[])null, mailTo);
+
+    verify(javaMailSender, times(1)).send(any(MimeMessage.class));
+  }
+
+  @Test
+  public void should_send_mail_with_multiple_mailTo() throws Exception {
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = new HashMap<>();
+    String subject = "subject";
+    String[] mailTo = {"test@test.test", "test2@test.test"};
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo, null, null);
+
+    verify(javaMailSender, times(1)).send(any(MimeMessage.class));
+  }
+
+  @Test
+  public void should_send_mail_with_multiple_mailCC() throws Exception {
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = new HashMap<>();
+    String subject = "subject";
+    String[] mailTo = {"test@test.test", "test2@test.test"};
+    this.mailSender.sendMail(htmlTemplate, parameters, subject, mailTo, mailTo, null);
+
+    verify(javaMailSender, times(1)).send(any(MimeMessage.class));
+  }
+
+  @Test
+  public void should_send_mail_with_multiple_mailBCC() throws Exception {
+    String htmlTemplate = "htmlTemplate";
+    Map<String, Object> parameters = new HashMap<>();
+    String subject = "subject";
+    String[] mailTo = {"test@test.test", "test2@test.test"};
     this.mailSender.sendMail(htmlTemplate, parameters, subject, (String[])null, (String[])null, mailTo);
 
     verify(javaMailSender, times(1)).send(any(MimeMessage.class));

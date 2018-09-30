@@ -237,7 +237,7 @@ public class MailSenderImpl implements MailSender {
     int i=0;
     InternetAddress[] addresses = new InternetAddress[mails.length];
     for(String mail : mails){
-      addresses[i] = new InternetAddress(mail);
+      addresses[i++] = new InternetAddress(mail);
     }
 
     return addresses;
