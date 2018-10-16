@@ -31,29 +31,19 @@ public class MailFilterImpl implements MailFilter {
   public MimeMessage filter(MimeMessageHelper mimeMessageHelper) throws MessagingException {
     Map<Message.RecipientType, String[]> recipientsFiltered = this.getFilteredRecipients(mimeMessageHelper.getMimeMessage());
 
-    if (recipientsFiltered.get(Message.RecipientType.TO) != null && recipientsFiltered.get(Message.RecipientType.TO).length > 0 ||
-      recipientsFiltered.get(Message.RecipientType.CC) != null && recipientsFiltered.get(Message.RecipientType.CC).length > 0 ||
-      recipientsFiltered.get(Message.RecipientType.BCC) != null && recipientsFiltered.get(Message.RecipientType.BCC).length > 0
+    String[] recipientsTo = recipientsFiltered.get(Message.RecipientType.TO);
+    String[] recipientsCc = recipientsFiltered.get(Message.RecipientType.CC);
+    String[] recipientsBcc = recipientsFiltered.get(Message.RecipientType.BCC);
+
+    if (isRecipientsArrayNotEmpty(recipientsTo) ||
+      isRecipientsArrayNotEmpty(recipientsCc) ||
+      isRecipientsArrayNotEmpty(recipientsBcc)
     ) {
       mimeMessageHelper.setFrom(from);
 
-      if (recipientsFiltered.get(Message.RecipientType.TO) != null && recipientsFiltered.get(Message.RecipientType.TO).length > 0) {
-        mimeMessageHelper.setTo(recipientsFiltered.get(Message.RecipientType.TO));
-      } else {
-        mimeMessageHelper.setTo(new String[0]);
-      }
-
-      if (recipientsFiltered.get(Message.RecipientType.CC) != null && recipientsFiltered.get(Message.RecipientType.CC).length > 0) {
-        mimeMessageHelper.setCc(recipientsFiltered.get(Message.RecipientType.CC));
-      } else {
-        mimeMessageHelper.setCc(new String[0]);
-      }
-
-      if (recipientsFiltered.get(Message.RecipientType.BCC) != null && recipientsFiltered.get(Message.RecipientType.BCC).length > 0) {
-        mimeMessageHelper.setBcc(recipientsFiltered.get(Message.RecipientType.BCC));
-      } else {
-        mimeMessageHelper.setBcc(new String[0]);
-      }
+      mimeMessageHelper.setTo(isRecipientsArrayNotEmpty(recipientsTo) ? recipientsTo : new String[0]);
+      mimeMessageHelper.setCc(isRecipientsArrayNotEmpty(recipientsTo) ? recipientsCc : new String[0]);
+      mimeMessageHelper.setBcc(isRecipientsArrayNotEmpty(recipientsTo) ? recipientsBcc : new String[0]);
 
       return mimeMessageHelper.getMimeMessage();
     } else {
@@ -94,6 +84,10 @@ public class MailFilterImpl implements MailFilter {
       result.put(recipientType, filterMails(mimeMessage.getRecipients(recipientType)));
     }
     return result;
+  }
+
+  private boolean isRecipientsArrayNotEmpty(String[] recipients) {
+    return recipients != null && recipients.length > 0;
   }
 
 }
