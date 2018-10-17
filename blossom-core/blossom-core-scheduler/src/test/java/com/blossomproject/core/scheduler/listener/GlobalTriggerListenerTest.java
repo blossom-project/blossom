@@ -82,8 +82,6 @@ public class GlobalTriggerListenerTest {
   @Test
   public void should_update_history_on_trigger_completed() throws Exception{
     Trigger trigger = mock(Trigger.class);
-    when(trigger.getKey()).thenReturn(new TriggerKey("trigger","group"));
-    when(trigger.getJobKey()).thenReturn(new JobKey("job","group"));
 
     JobExecutionContext context = mock(JobExecutionContext.class);
     when(context.getFireInstanceId()).thenReturn("fireInstanceId");
@@ -98,8 +96,6 @@ public class GlobalTriggerListenerTest {
   @Test
   public void should_not_throw_any_exception_on_trigger_fired() {
     Trigger trigger = mock(Trigger.class);
-    when(trigger.getKey()).thenReturn(new TriggerKey("trigger","group"));
-    when(trigger.getJobKey()).thenReturn(new JobKey("job","group"));
 
     JobExecutionContext context = mock(JobExecutionContext.class);
     when(context.getFireInstanceId()).thenReturn("fireInstanceId");
@@ -115,8 +111,6 @@ public class GlobalTriggerListenerTest {
   @Test
   public void should_not_throw_any_exception_on_trigger_completed() throws Exception{
     Trigger trigger = mock(Trigger.class);
-    when(trigger.getKey()).thenReturn(new TriggerKey("trigger","group"));
-    when(trigger.getJobKey()).thenReturn(new JobKey("job","group"));
 
     JobExecutionContext context = mock(JobExecutionContext.class);
     when(context.getFireInstanceId()).thenReturn("fireInstanceId");
