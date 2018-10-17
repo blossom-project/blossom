@@ -141,63 +141,63 @@ public class MailSenderImpl implements MailSender {
     }
 
     private void sendMail(Locale locale, Map<String, Object> ctx, InternetAddress[] mailTo, String mailSubject, String htmlTemplate, InternetAddress[] mailCc, InternetAddress[] mailBcc, boolean highPriority, String attachmentName, InputStreamSource attachmentInputStreamSource, String attachmentContentType, List<File> attachedFiles) throws Exception {
-        Preconditions.checkArgument(locale != null);
-        Preconditions.checkArgument(ctx != null);
-        Preconditions.checkArgument(mailTo != null && mailTo.length > 0);
-        Preconditions.checkArgument(mailSubject != null);
+      Preconditions.checkArgument(locale != null);
+      Preconditions.checkArgument(ctx != null);
+      Preconditions.checkArgument(mailTo != null && mailTo.length > 0 || mailBcc != null && mailBcc.length > 0);
+      Preconditions.checkArgument(mailSubject != null);
 
-        this.enrichContext(ctx, locale);
+      this.enrichContext(ctx, locale);
 
-        final Template template = this.freemarkerConfiguration
-                .getTemplate("mail/" + htmlTemplate + ".ftl");
-        final String htmlContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx);
-        final String subject = this.messageSource
-                .getMessage(mailSubject, new Object[]{}, mailSubject, locale);
+      final Template template = this.freemarkerConfiguration
+        .getTemplate("mail/" + htmlTemplate + ".ftl");
+      final String htmlContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx);
+      final String subject = this.messageSource
+        .getMessage(mailSubject, new Object[]{}, mailSubject, locale);
 
-        if (mailTo != null && mailTo.length > 0) {
-            final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
-            final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-            message.setSubject(subject);
-            message.setText(htmlContent, true);
-            message.setTo(mailTo);
+      final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
+      final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+      message.setSubject(subject);
+      message.setText(htmlContent, true);
 
-            if (mailCc != null && mailCc.length > 0) {
-                message.setCc(mailCc);
-            }
+      if (mailTo != null && mailTo.length > 0) {
+        message.setTo(mailTo);
+      }
 
-            if (mailBcc != null && mailBcc.length > 0) {
-                message.setBcc(mailBcc);
-            }
+      if (mailCc != null && mailCc.length > 0) {
+        message.setCc(mailCc);
+      }
 
-            if (highPriority) {
-                //https://www.chilkatsoft.com/p/p_471.asp
-                mimeMessage.addHeader("X-Priority", "1");
-                mimeMessage.addHeader("X-MSMail-Priority", "High");
-                mimeMessage.addHeader("Importance", "High");
-            }
+      if (mailBcc != null && mailBcc.length > 0) {
+        message.setBcc(mailBcc);
+      }
 
-            if (attachmentName != null) {
-                message.addAttachment(attachmentName, attachmentInputStreamSource, attachmentContentType);
-            }else{
-                if (attachedFiles!= null && !CollectionUtils.isEmpty(attachedFiles)) {
-                    for (File file : attachedFiles) {
-                        message.addAttachment(file.getName(), file);
-                    }
-                }
-            }
+      if (highPriority) {
+        //https://www.chilkatsoft.com/p/p_471.asp
+        mimeMessage.addHeader("X-Priority", "1");
+        mimeMessage.addHeader("X-MSMail-Priority", "High");
+        mimeMessage.addHeader("Importance", "High");
+      }
 
-            try {
-                this.javaMailSender.send(this.filter.filter(message));
-            } catch (Exception e) {
-                LOGGER.error("Error when sending", e);
-            }
-
-            LOGGER.info("Mail with recipient(s) {} sent.", Arrays.toString(message.getMimeMessage().getRecipients(Message.RecipientType.TO)));
-        } else {
-            LOGGER.warn(
-                    "A mail with recipient(s) '{}' and subject '{}' was not sent because no java mail sender is configured",
-                    Arrays.toString(mailTo), mailSubject);
+      if (attachmentName != null) {
+        message.addAttachment(attachmentName, attachmentInputStreamSource, attachmentContentType);
+      } else {
+        if (attachedFiles != null && !CollectionUtils.isEmpty(attachedFiles)) {
+          for (File file : attachedFiles) {
+            message.addAttachment(file.getName(), file);
+          }
         }
+      }
+
+      try {
+        this.javaMailSender.send(this.filter.filter(message));
+      } catch (Exception e) {
+        LOGGER.error("Error when sending", e);
+      }
+
+      LOGGER.info("Mail with recipient(s) {To: '{}', CC: '{}', BCC: '{}'} sent.",
+        Arrays.toString(message.getMimeMessage().getRecipients(Message.RecipientType.TO)),
+        Arrays.toString(message.getMimeMessage().getRecipients(Message.RecipientType.CC)),
+        Arrays.toString(message.getMimeMessage().getRecipients(Message.RecipientType.BCC)));
     }
 
     private void enrichContext(Map<String, Object> ctx, Locale locale) {
@@ -237,7 +237,7 @@ public class MailSenderImpl implements MailSender {
     int i=0;
     InternetAddress[] addresses = new InternetAddress[mails.length];
     for(String mail : mails){
-      addresses[i] = new InternetAddress(mail);
+      addresses[i++] = new InternetAddress(mail);
     }
 
     return addresses;
