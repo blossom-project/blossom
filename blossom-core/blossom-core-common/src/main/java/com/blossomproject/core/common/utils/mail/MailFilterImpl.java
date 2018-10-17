@@ -42,8 +42,8 @@ public class MailFilterImpl implements MailFilter {
       mimeMessageHelper.setFrom(from);
 
       mimeMessageHelper.setTo(isRecipientsArrayNotEmpty(recipientsTo) ? recipientsTo : new String[0]);
-      mimeMessageHelper.setCc(isRecipientsArrayNotEmpty(recipientsTo) ? recipientsCc : new String[0]);
-      mimeMessageHelper.setBcc(isRecipientsArrayNotEmpty(recipientsTo) ? recipientsBcc : new String[0]);
+      mimeMessageHelper.setCc(isRecipientsArrayNotEmpty(recipientsCc) ? recipientsCc : new String[0]);
+      mimeMessageHelper.setBcc(isRecipientsArrayNotEmpty(recipientsBcc) ? recipientsBcc : new String[0]);
 
       return mimeMessageHelper.getMimeMessage();
     } else {
