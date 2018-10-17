@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+- Upgrade spring boot to 2.0.6 [#197](https://github.com/blossom-project/blossom/pull/197)
+- Upgrade Apache Tika to 1.19.1 [#198](https://github.com/blossom-project/blossom/pull/198)
+- MailSender allow BCC-only and multiple recipients & MailSender fixes [#196](https://github.com/blossom-project/blossom/pull/196)
+
 ## 1.1.0
 - Mail: better default [#180](https://github.com/blossom-project/blossom/issues/180)  
 - Generation improvements [#191](https://github.com/blossom-project/blossom/pull/191)  
@@ -35,13 +40,6 @@
 - Async mail sender [#161](https://github.com/blossom-project/blossom/pull/161)  
 
 ### No issue
-- Create CONTRIBUTING.md
-- Removing the sample generator (see [blossom-samples](https://github.com/blossom-project/blossom-samples/pull/2))
-- Use BulkProcessor for http traces (Elasticsearch)
-- Moving impersonation freemarker to utils
-- Facultative aggregation registry
-- Update bcprov & bcmail versions
-- Update README.md
+- Prepare 1.1.1-SNAPSHOT
 
-## 1.0.0
-Initial release
+
