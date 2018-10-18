@@ -19,14 +19,14 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <springboot.version>2.0.4.RELEASE</springboot.version>
+    <springboot.version>2.0.6.RELEASE</springboot.version>
     <querydsl.version>3.7.0</querydsl.version>
     <jna.version>3.0.9</jna.version>
     <caffeine.version>2.5.0</caffeine.version>
     <bouncycastle.version>1.59</bouncycastle.version>
     <liquibase.version>3.5.3</liquibase.version>
     <camunda.version>2.2.0</camunda.version>
-    <tika.version>1.17</tika.version>
+    <tika.version>1.19.1</tika.version>
     <powermock.version>1.7.3</powermock.version>
     <elasticsearch.version>2.4.6</elasticsearch.version>
     <commons-lang3.version>3.7</commons-lang3.version>
