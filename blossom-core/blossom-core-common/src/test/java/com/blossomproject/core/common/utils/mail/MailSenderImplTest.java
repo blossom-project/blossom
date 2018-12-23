@@ -37,11 +37,12 @@ public class MailSenderImplTest {
   private JavaMailSender javaMailSender;
   private Configuration configuration;
   private MessageSource messageSource;
-  private String from;
+  private InternetAddress from;
   private String basePath;
   private Set<String> filters;
   private Locale locale;
   private MailFilter mailFilter;
+  private AsyncMailSender asyncMailSender;
 
   @Before
   public void setUp() throws Exception {
@@ -65,19 +66,20 @@ public class MailSenderImplTest {
     this.mailFilter = mock(MailFilterImpl.class);
     when(mailFilter.filter(any())).thenReturn(new SMTPMessage((Session) null));
 
-    this.from = "blossom-test@test.fr";
+    this.from = new InternetAddress("blossom-test@test.fr");
     this.basePath = "basePath";
     this.filters = Sets.newHashSet("*@blossom-project.com");
     this.locale = Locale.ENGLISH;
+    this.asyncMailSender = mock(AsyncMailSender.class);
     this.mailSender = new MailSenderImpl(this.javaMailSender, this.configuration,
       this.messageSource,
-      this.basePath, this.locale, this.mailFilter);
+      this.basePath, this.locale, this.mailFilter, asyncMailSender, from);
   }
 
   @Test
   public void should_succeed_instanciate() throws Exception {
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      mock(MessageSource.class), "basePath", this.locale, this.mailFilter);
+      mock(MessageSource.class), "basePath", this.locale, this.mailFilter, asyncMailSender, from);
   }
 
   @Test
@@ -85,7 +87,7 @@ public class MailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(null, mock(Configuration.class),
-      mock(MessageSource.class), "basePath", this.locale, this.mailFilter);
+      mock(MessageSource.class), "basePath", this.locale, this.mailFilter, asyncMailSender, from);
   }
 
   @Test
@@ -93,7 +95,7 @@ public class MailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), null,
-      mock(MessageSource.class), "basePath", this.locale, this.mailFilter);
+      mock(MessageSource.class), "basePath", this.locale, this.mailFilter, asyncMailSender, from);
   }
 
 
@@ -102,7 +104,7 @@ public class MailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      null, "basePath", this.locale, this.mailFilter);
+      null, "basePath", this.locale, this.mailFilter, asyncMailSender, from);
   }
 
   @Test
@@ -110,7 +112,7 @@ public class MailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      mock(MessageSource.class), null, this.locale, this.mailFilter);
+      mock(MessageSource.class), null, this.locale, this.mailFilter, asyncMailSender, from);
   }
 
   @Test
@@ -118,7 +120,7 @@ public class MailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      mock(MessageSource.class), "basePath", null, this.mailFilter);
+      mock(MessageSource.class), "basePath", null, this.mailFilter, asyncMailSender, from);
   }
 
   @Test
@@ -126,7 +128,7 @@ public class MailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      mock(MessageSource.class), "basePath", this.locale, null);
+      mock(MessageSource.class), "basePath", this.locale, null, asyncMailSender, from);
   }
 
 

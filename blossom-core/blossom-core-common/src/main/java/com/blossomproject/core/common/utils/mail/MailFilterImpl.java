@@ -19,12 +19,9 @@ import java.util.stream.Stream;
 public class MailFilterImpl implements MailFilter {
   private final static Logger LOGGER = LoggerFactory.getLogger(MailFilterImpl.class);
   private final Set<String> filters;
-  private final InternetAddress from;
 
-  public MailFilterImpl(Set<String> filters, InternetAddress from) {
-    Preconditions.checkNotNull(from);
+  public MailFilterImpl(Set<String> filters) {
     this.filters = filters;
-    this.from = from;
   }
 
   @Override
@@ -39,8 +36,6 @@ public class MailFilterImpl implements MailFilter {
       isRecipientsArrayNotEmpty(recipientsCc) ||
       isRecipientsArrayNotEmpty(recipientsBcc)
     ) {
-      mimeMessageHelper.setFrom(from);
-
       mimeMessageHelper.setTo(isRecipientsArrayNotEmpty(recipientsTo) ? recipientsTo : new String[0]);
       mimeMessageHelper.setCc(isRecipientsArrayNotEmpty(recipientsCc) ? recipientsCc : new String[0]);
       mimeMessageHelper.setBcc(isRecipientsArrayNotEmpty(recipientsBcc) ? recipientsBcc : new String[0]);

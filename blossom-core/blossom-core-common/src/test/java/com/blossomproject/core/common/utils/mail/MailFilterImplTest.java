@@ -30,7 +30,7 @@ public class MailFilterImplTest {
 
   @Before
   public void setUp() throws AddressException {
-    this.mailFilter = new MailFilterImpl(Sets.newHashSet(".*@test.com"), new InternetAddress("Blossom Project <blossom-project@blossom.com>"));
+    this.mailFilter = new MailFilterImpl(Sets.newHashSet(".*@test.com"));
 
   }
 
@@ -80,7 +80,7 @@ public class MailFilterImplTest {
 
   @Test
   public void no_filter() throws Exception {
-    MailFilter mailFilterNoFilter = new MailFilterImpl(null, new InternetAddress("blossom-project@blossom.com"));
+    MailFilter mailFilterNoFilter = new MailFilterImpl(null);
     final MimeMessageHelper helper = new MimeMessageHelper(new MimeMessage((Session) null));
     helper.setTo("test@test.com");
     helper.setCc("filter@filter.com");
