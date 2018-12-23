@@ -10,6 +10,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Email builder with Blossom functionalities: freemarker templating, filters
+ * Note: Default implementation is not thread-safe.
+ *
+ * @author rlejolivet
+ */
 public interface BlossomMailBuilder {
 
   /**

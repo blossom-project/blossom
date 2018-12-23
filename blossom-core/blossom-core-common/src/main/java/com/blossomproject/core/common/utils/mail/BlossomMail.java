@@ -2,6 +2,11 @@ package com.blossomproject.core.common.utils.mail;
 
 import org.springframework.util.concurrent.ListenableFuture;
 
+/**
+ * An email ready to be sent
+ *
+ * @author rlejolivet
+ */
 public interface BlossomMail {
 
   /**
@@ -11,6 +16,8 @@ public interface BlossomMail {
 
   /**
    * Send the email asynchronously, using an AsyncMailSender
+   *
+   * @return
    */
   ListenableFuture<BlossomMail> asyncSend();
 
