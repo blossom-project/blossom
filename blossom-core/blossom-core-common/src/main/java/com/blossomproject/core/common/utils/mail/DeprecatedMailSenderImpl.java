@@ -10,33 +10,35 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 
 /**
  * Created by Maël Gargadennnec on 04/05/2017.
  */
-@Async
 public abstract class DeprecatedMailSenderImpl implements DeprecatedMailSender {
 
   protected abstract BlossomMailBuilder builder();
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, String... mailTo) throws Exception {
     BlossomMailBuilder builder = defaultArgs(htmlTemplate, ctx, mailSubject);
     recipients(builder, mailTo).build().send();
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String... mailTo) throws Exception {
     this.sendMail(htmlTemplate, ctx, mailSubject, locale, Lists.newArrayList(), mailTo);
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, String... mailTo) throws Exception {
     this.sendMail(htmlTemplate, ctx, mailSubject, locale, attachedFiles, mailTo, null, null);
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
     BlossomMailBuilder builder = defaultArgs(htmlTemplate, ctx, mailSubject);
@@ -44,16 +46,19 @@ public abstract class DeprecatedMailSenderImpl implements DeprecatedMailSender {
     recipients(builder, mailCc, mailBcc).build().send();
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
     this.sendMail(htmlTemplate, ctx, mailSubject, locale, Lists.newArrayList(), mailTo, mailCc, mailBcc);
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, String[] mailTo, String[] mailCc, String[] mailBcc) throws Exception {
     this.sendMail(htmlTemplate, ctx, mailSubject, locale, attachedFiles, mailTo, mailCc, mailBcc, false);
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, String[] mailTo, String[] mailCc, String[] mailBcc, boolean highPriority) throws Exception {
     BlossomMailBuilder builder = defaultArgs(htmlTemplate, ctx, mailSubject);
@@ -65,6 +70,7 @@ public abstract class DeprecatedMailSenderImpl implements DeprecatedMailSender {
       .build().send();
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String attachmentName, InputStreamSource attachmentInputStreamSource, String attachmentContentType, String[] mailTo, String[] mailCc, String[] mailBcc, boolean highPriority) throws Exception {
     BlossomMailBuilder builder = defaultArgs(htmlTemplate, ctx, mailSubject);
@@ -76,6 +82,7 @@ public abstract class DeprecatedMailSenderImpl implements DeprecatedMailSender {
       .build().send();
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, InternetAddress... mailTo)
     throws Exception {
@@ -83,16 +90,19 @@ public abstract class DeprecatedMailSenderImpl implements DeprecatedMailSender {
     recipients(builder, mailTo).build().send();
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, InternetAddress... mailTo) throws Exception {
     this.sendMail(htmlTemplate, ctx, mailSubject, locale, Lists.newArrayList(), mailTo);
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, InternetAddress... mailTo) throws Exception {
     this.sendMail(htmlTemplate, ctx, mailSubject, locale, attachedFiles, mailTo, null, null);
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, InternetAddress[] mailTo, InternetAddress[] mailCc, InternetAddress[] mailBcc) throws Exception {
     BlossomMailBuilder builder = defaultArgs(htmlTemplate, ctx, mailSubject);
@@ -100,16 +110,19 @@ public abstract class DeprecatedMailSenderImpl implements DeprecatedMailSender {
     recipients(builder, mailCc, mailBcc).build().send();
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, InternetAddress[] mailTo, InternetAddress[] mailCc, InternetAddress[] mailBcc) throws Exception {
     this.sendMail(htmlTemplate, ctx, mailSubject, locale, Lists.newArrayList(), mailTo, mailCc, mailBcc);
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, InternetAddress[] mailTo, InternetAddress[] mailCc, InternetAddress[] mailBcc) throws Exception {
     this.sendMail(htmlTemplate, ctx, mailSubject, locale, attachedFiles, mailTo, mailCc, mailBcc, false);
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, List<File> attachedFiles, InternetAddress[] mailTo, InternetAddress[] mailCc, InternetAddress[] mailBcc, boolean highPriority) throws Exception {
     BlossomMailBuilder builder = defaultArgs(htmlTemplate, ctx, mailSubject);
@@ -121,6 +134,7 @@ public abstract class DeprecatedMailSenderImpl implements DeprecatedMailSender {
       .build().send();
   }
 
+  @Async
   @Override
   public void sendMail(String htmlTemplate, Map<String, Object> ctx, String mailSubject, Locale locale, String attachmentName, InputStreamSource attachmentInputStreamSource, String attachmentContentType, InternetAddress[] mailTo, InternetAddress[] mailCc, InternetAddress[] mailBcc, boolean highPriority) throws Exception {
     BlossomMailBuilder builder = defaultArgs(htmlTemplate, ctx, mailSubject);
