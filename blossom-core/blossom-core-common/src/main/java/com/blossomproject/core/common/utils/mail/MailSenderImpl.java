@@ -107,20 +107,28 @@ public class MailSenderImpl extends DeprecatedMailSenderImpl implements MailSend
     final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
     final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
+    String htmlContent = null;
     if (mail.getHtmlTemplate() != null) {
       final Template template = this.freemarkerConfiguration.getTemplate("mail/" + mail.getHtmlTemplate() + ".ftl");
-      final String htmlContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx);
-      message.setText(htmlContent, true);
+      htmlContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx);
     } else if (mail.getHtmlBody() != null) {
-      message.setText(mail.getHtmlBody(), true);
+      htmlContent = mail.getHtmlBody();
     }
 
+    String textContent = null;
     if (mail.getTextTemplate() != null) {
       final Template template = this.freemarkerConfiguration.getTemplate("mail/" + mail.getTextTemplate() + ".ftl");
-      final String textContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx);
-      message.setText(textContent, false);
+      textContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, ctx);
     } else if (mail.getTextBody() != null) {
-      message.setText(mail.getTextBody(), false);
+      textContent = mail.getTextBody();
+    }
+
+    if (htmlContent != null && textContent != null) {
+      message.setText(textContent, htmlContent);
+    } else if (htmlContent != null) {
+      message.setText(htmlContent, true);
+    } else if (textContent != null) {
+      message.setText(textContent, false);
     }
 
     message.setFrom(mail.getFrom());
