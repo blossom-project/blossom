@@ -1,0 +1,1 @@
+Text template with variable ${variable}
