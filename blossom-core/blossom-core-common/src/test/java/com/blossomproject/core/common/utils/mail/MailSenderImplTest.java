@@ -65,7 +65,7 @@ public class MailSenderImplTest {
     this.defaultTo = new InternetAddress("test@blossom-project.com");
     this.basePath = "basePath";
     this.locale = Locale.ENGLISH;
-    this.asyncMailSender = mock(AsyncMailSender.class);
+    this.asyncMailSender = spy(new AsyncMailSenderImpl());
   }
 
   private interface Consumer<T> {
@@ -257,9 +257,7 @@ public class MailSenderImplTest {
   @Test
   public void should_send_mail_with_internetAddress_sender() throws Exception {
     InternetAddress from = new InternetAddress("sender@blossom-project.com", "Test sender");
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(mimeMessage.getFrom()[0], from);
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(mimeMessage.getFrom()[0], from));
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").from(from).addTo(defaultTo).build().send();
     verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
@@ -268,9 +266,7 @@ public class MailSenderImplTest {
   @Test
   public void should_send_mail_with_string_sender() throws Exception {
     String from = "sender@blossom-project.com";
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(((InternetAddress) mimeMessage.getFrom()[0]).getAddress(), from);
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(((InternetAddress) mimeMessage.getFrom()[0]).getAddress(), from));
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").from(from).addTo(defaultTo).build().send();
     verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
@@ -292,9 +288,7 @@ public class MailSenderImplTest {
   @Test
   public void should_send_mail_with_internetAddress_replyTo() throws Exception {
     InternetAddress replyTo = new InternetAddress("sender@blossom-project.com", "Test sender");
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(mimeMessage.getReplyTo()[0], replyTo);
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(mimeMessage.getReplyTo()[0], replyTo));
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").replyTo(replyTo).addTo(defaultTo).build().send();
     verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
@@ -303,9 +297,7 @@ public class MailSenderImplTest {
   @Test
   public void should_send_mail_with_string_replyTo() throws Exception {
     String replyTo = "sender@blossom-project.com";
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress(), replyTo);
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress(), replyTo));
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").replyTo(replyTo).addTo(defaultTo).build().send();
     verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
@@ -329,9 +321,7 @@ public class MailSenderImplTest {
     URL resource = MailSenderImplTest.class.getResource("/templates/mail/textTemplate.ftl");
     File file = Paths.get(resource.toURI()).toFile();
 
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(2, ((MimeMultipart) mimeMessage.getContent()).getCount());
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(2, ((MimeMultipart) mimeMessage.getContent()).getCount()));
 
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").addAttachment(file).addTo(defaultTo).build().send();
@@ -344,9 +334,7 @@ public class MailSenderImplTest {
     File file = Paths.get(resource.toURI()).toFile();
     InputStreamSource is = new FileSystemResource(file);
 
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(2, ((MimeMultipart) mimeMessage.getContent()).getCount());
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(2, ((MimeMultipart) mimeMessage.getContent()).getCount()));
 
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").addAttachment(file.getName(), is, "text/plain").addTo(defaultTo).build().send();
@@ -385,9 +373,7 @@ public class MailSenderImplTest {
 
   @Test
   public void should_send_mail_with_internetAddress_to() throws Exception {
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(mimeMessage.getRecipients(Message.RecipientType.TO)[0], defaultTo);
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(mimeMessage.getRecipients(Message.RecipientType.TO)[0], defaultTo));
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").addTo(defaultTo).build().send();
     verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
@@ -395,9 +381,7 @@ public class MailSenderImplTest {
 
   @Test
   public void should_send_mail_with_string_to() throws Exception {
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(((InternetAddress) mimeMessage.getRecipients(Message.RecipientType.TO)[0]).getAddress(), defaultTo.getAddress());
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(((InternetAddress) mimeMessage.getRecipients(Message.RecipientType.TO)[0]).getAddress(), defaultTo.getAddress()));
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").addTo(defaultTo.getAddress()).build().send();
     verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
@@ -429,9 +413,7 @@ public class MailSenderImplTest {
   @Test
   public void should_send_mail_with_internetAddress_cc() throws Exception {
     InternetAddress cc = new InternetAddress("cc@blossom-project.com", "CC");
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(mimeMessage.getRecipients(Message.RecipientType.CC)[0], cc);
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(mimeMessage.getRecipients(Message.RecipientType.CC)[0], cc));
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").addTo(defaultTo).addCc(cc).build().send();
     verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
@@ -440,9 +422,7 @@ public class MailSenderImplTest {
   @Test
   public void should_send_mail_with_string_cc() throws Exception {
     InternetAddress cc = new InternetAddress("cc@blossom-project.com", "CC");
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(((InternetAddress) mimeMessage.getRecipients(Message.RecipientType.CC)[0]).getAddress(), cc.getAddress());
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(((InternetAddress) mimeMessage.getRecipients(Message.RecipientType.CC)[0]).getAddress(), cc.getAddress()));
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").addTo(defaultTo).addCc(cc.getAddress()).build().send();
     verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
@@ -476,9 +456,7 @@ public class MailSenderImplTest {
   @Test
   public void should_send_mail_with_internetAddress_bcc() throws Exception {
     InternetAddress bcc = new InternetAddress("bcc@blossom-project.com", "BCC");
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(mimeMessage.getRecipients(Message.RecipientType.BCC)[0], bcc);
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(mimeMessage.getRecipients(Message.RecipientType.BCC)[0], bcc));
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").addTo(defaultTo).addBcc(bcc).build().send();
     verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
@@ -487,9 +465,7 @@ public class MailSenderImplTest {
   @Test
   public void should_send_mail_with_string_bcc() throws Exception {
     InternetAddress bcc = new InternetAddress("bcc@blossom-project.com", "BCC");
-    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> {
-      assertEquals(((InternetAddress) mimeMessage.getRecipients(Message.RecipientType.BCC)[0]).getAddress(), bcc.getAddress());
-    });
+    JavaMailSender mockJavaMailSender = mockJavaMailSender(mimeMessage -> assertEquals(((InternetAddress) mimeMessage.getRecipients(Message.RecipientType.BCC)[0]).getAddress(), bcc.getAddress()));
     MailSender mailSender = testedMailSender(mockJavaMailSender);
     mailSender.builder().mailSubject("Test").addTo(defaultTo).addBcc(bcc.getAddress()).build().send();
     verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
@@ -598,6 +574,15 @@ public class MailSenderImplTest {
       .addTo(filteredAddress).addCc(filteredAddress).addBcc(filteredAddress)
       .build().send();
     verify(mockJavaMailSender, never()).send(any(MimeMessage.class));
+  }
+
+  @Test()
+  public void should_async_send_use_asyncMailSender() throws Exception {
+    JavaMailSender mockJavaMailSender = mockJavaMailSender();
+    MailSender mailSender = testedMailSender(mockJavaMailSender);
+    mailSender.builder().mailSubject("Test").addTo(defaultTo).build().asyncSend();
+    verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
+    verify(asyncMailSender, times(1)).asyncSend(any());
   }
 
 }
