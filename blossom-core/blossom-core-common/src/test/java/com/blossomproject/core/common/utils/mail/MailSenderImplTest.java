@@ -109,8 +109,9 @@ public class MailSenderImplTest {
   public void should_send_mail_with_minimum_requirements() throws Exception {
     JavaMailSender mockJavaMailSender = mockJavaMailSender();
     MailSender mailSender = testedMailSender(mockJavaMailSender);
-    mailSender.builder().mailSubject("Test").addTo(defaultTo).build().send();
+    mailSender.builder().mailSubject("Test Subject").addTo(defaultTo).build().send();
     verify(mockJavaMailSender, atLeastOnce()).send(any(MimeMessage.class));
+    verify(messageSource, atLeastOnce()).getMessage(eq("Test Subject"), any(), any(), any());
   }
 
   @Test
