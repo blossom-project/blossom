@@ -14,6 +14,7 @@ import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class MailSenderImpl extends DeprecatedMailSenderImpl implements MailSender {
 
@@ -100,6 +101,7 @@ public class MailSenderImpl extends DeprecatedMailSenderImpl implements MailSend
     Preconditions.checkArgument(mail.getCtx() != null);
     Preconditions.checkArgument(mail.getTo() != null && !mail.getTo().isEmpty() || mail.getBcc() != null && !mail.getBcc().isEmpty());
     Preconditions.checkArgument(mail.getMailSubject() != null);
+    Preconditions.checkArgument(Stream.of(mail.getHtmlTemplate(), mail.getHtmlBody(), mail.getTextBody(), mail.getTextTemplate()).anyMatch(Objects::nonNull));
 
     final Map<String, Object> ctx = new HashMap<>(mail.getCtx());
     this.enrichContext(ctx, mail.getLocale());
