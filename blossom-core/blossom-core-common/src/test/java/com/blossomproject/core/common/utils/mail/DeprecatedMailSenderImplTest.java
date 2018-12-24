@@ -19,10 +19,7 @@ import javax.mail.Address;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -74,13 +71,15 @@ public class DeprecatedMailSenderImplTest {
     this.asyncMailSender = mock(AsyncMailSender.class);
     this.mailSender = new MailSenderImpl(this.javaMailSender, this.configuration,
       this.messageSource,
-      this.basePath, this.locale, this.mailFilter, asyncMailSender, from);
+      this.basePath, this.locale, this.mailFilter,
+      asyncMailSender, from, Collections.emptySet());
   }
 
   @Test
   public void should_succeed_instanciate() throws Exception {
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      mock(MessageSource.class), "basePath", this.locale, this.mailFilter, asyncMailSender, from);
+      mock(MessageSource.class), "basePath", this.locale, this.mailFilter,
+      asyncMailSender, from, Collections.emptySet());
   }
 
   @Test
@@ -88,7 +87,8 @@ public class DeprecatedMailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(null, mock(Configuration.class),
-      mock(MessageSource.class), "basePath", this.locale, this.mailFilter, asyncMailSender, from);
+      mock(MessageSource.class), "basePath", this.locale, this.mailFilter,
+      asyncMailSender, from, Collections.emptySet());
   }
 
   @Test
@@ -96,7 +96,8 @@ public class DeprecatedMailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), null,
-      mock(MessageSource.class), "basePath", this.locale, this.mailFilter, asyncMailSender, from);
+      mock(MessageSource.class), "basePath", this.locale, this.mailFilter,
+      asyncMailSender, from, Collections.emptySet());
   }
 
 
@@ -105,7 +106,8 @@ public class DeprecatedMailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      null, "basePath", this.locale, this.mailFilter, asyncMailSender, from);
+      null, "basePath", this.locale, this.mailFilter,
+      asyncMailSender, from, Collections.emptySet());
   }
 
   @Test
@@ -113,7 +115,8 @@ public class DeprecatedMailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      mock(MessageSource.class), null, this.locale, this.mailFilter, asyncMailSender, from);
+      mock(MessageSource.class), null, this.locale, this.mailFilter,
+      asyncMailSender, from, Collections.emptySet());
   }
 
   @Test
@@ -121,7 +124,8 @@ public class DeprecatedMailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      mock(MessageSource.class), "basePath", null, this.mailFilter, asyncMailSender, from);
+      mock(MessageSource.class), "basePath", null, this.mailFilter,
+      asyncMailSender, from, Collections.emptySet());
   }
 
   @Test
@@ -129,7 +133,8 @@ public class DeprecatedMailSenderImplTest {
     thrown.expect(NullPointerException.class);
 
     new MailSenderImpl(mock(JavaMailSender.class), mock(Configuration.class),
-      mock(MessageSource.class), "basePath", this.locale, null, asyncMailSender, from);
+      mock(MessageSource.class), "basePath", this.locale, null,
+      asyncMailSender, from, Collections.emptySet());
   }
 
 

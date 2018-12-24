@@ -80,7 +80,8 @@ public class MailAutoConfiguration {
       Iterables.getFirst(availableLocales, Locale.ENGLISH),
       mailFilter,
       asyncMailSender,
-      new InternetAddress(properties.getFrom(), properties.getFromName())
+      new InternetAddress(properties.getFrom(), properties.getFromName()),
+      properties.getFilters()
     );
   }
 

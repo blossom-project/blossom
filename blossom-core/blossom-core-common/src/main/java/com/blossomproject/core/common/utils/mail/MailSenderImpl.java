@@ -14,6 +14,8 @@ import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MailSenderImpl extends DeprecatedMailSenderImpl implements MailSender {
@@ -28,10 +30,12 @@ public class MailSenderImpl extends DeprecatedMailSenderImpl implements MailSend
   private final MailFilter filter;
   private final AsyncMailSender asyncMailSender;
   private final InternetAddress from;
+  private final Set<Pattern> filters;
 
   public MailSenderImpl(JavaMailSender javaMailSender, Configuration freemarkerConfiguration,
                         MessageSource messageSource, String basePath, Locale defaultLocale,
-                        MailFilter filter, AsyncMailSender asyncMailSender, InternetAddress from) {
+                        MailFilter filter, AsyncMailSender asyncMailSender, InternetAddress from,
+                        Set<String> filters) {
     Preconditions.checkNotNull(javaMailSender);
     Preconditions.checkNotNull(freemarkerConfiguration);
     Preconditions.checkNotNull(messageSource);
@@ -46,6 +50,7 @@ public class MailSenderImpl extends DeprecatedMailSenderImpl implements MailSend
     this.filter = filter;
     this.asyncMailSender = asyncMailSender;
     this.from = from;
+    this.filters = filters.stream().map(Pattern::compile).collect(Collectors.toSet());
   }
 
   private class BlossomMailBuilder extends BlossomMailBuilderImpl {
@@ -93,6 +98,11 @@ public class MailSenderImpl extends DeprecatedMailSenderImpl implements MailSend
     BlossomMailBuilder ret = new BlossomMailBuilder(this);
     ret.locale(defaultLocale);
     ret.from(from);
+    if (filters != null) {
+      for (Pattern filter : filters) {
+        ret.addFilter(filter);
+      }
+    }
     return ret;
   }
 

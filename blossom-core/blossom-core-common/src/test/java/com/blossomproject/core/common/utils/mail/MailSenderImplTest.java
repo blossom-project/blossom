@@ -98,7 +98,8 @@ public class MailSenderImplTest {
       this.locale,
       this.mailFilter,
       asyncMailSender,
-      from);
+      from,
+      Collections.emptySet());
   }
 
   /*
