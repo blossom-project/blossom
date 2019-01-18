@@ -79,7 +79,7 @@ public class IndexationEngineImpl<DTO extends AbstractDTO> implements Indexation
       this.bulkProcessor.flush();
       this.switchIndex(newIndexName);
 
-      logger.info("Full indexing of {} {} ended.", pagedDTOs.getTotalElements(),
+      logger.debug("Full indexing of {} {} ended.", pagedDTOs.getTotalElements(),
         this.configuration.getAlias());
 
     } catch (Exception e) {
