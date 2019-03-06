@@ -2,9 +2,6 @@ package com.blossomproject.core.user;
 
 import com.blossomproject.core.common.utils.mail.MailSender;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import java.util.Map;
-import javax.mail.internet.InternetAddress;
 
 public class UserMailServiceImpl implements UserMailService {
 
@@ -20,11 +17,15 @@ public class UserMailServiceImpl implements UserMailService {
     Preconditions.checkNotNull(user);
     Preconditions.checkNotNull(token);
 
-    Map<String, Object> ctx = Maps.newHashMap();
-    ctx.put("user", user);
-    ctx.put("token", token);
-
-    this.mailSender.sendMail("user-activation", ctx, "activation.subject", user.getLocale(), new InternetAddress(user.getEmail(), user.getFirstname()+" "+user.getLastname()));
+    this.mailSender.builder()
+      .htmlTemplate("user-activation")
+      .addContext("user", user)
+      .addContext("token", token)
+      .mailSubject("activation.subject")
+      .locale(user.getLocale())
+      .addTo(user.getEmail(), user.getFirstname() + " " + user.getLastname())
+      .build()
+      .asyncSend();
   }
 
   @Override
@@ -32,10 +33,14 @@ public class UserMailServiceImpl implements UserMailService {
     Preconditions.checkNotNull(user);
     Preconditions.checkNotNull(token);
 
-    Map<String, Object> ctx = Maps.newHashMap();
-    ctx.put("user", user);
-    ctx.put("token", token);
-
-    this.mailSender.sendMail("user-change-password", ctx, "change.password.subject", user.getLocale(), new InternetAddress(user.getEmail(), user.getFirstname()+" "+user.getLastname()));
+    this.mailSender.builder()
+      .htmlTemplate("user-change-password")
+      .addContext("user", user)
+      .addContext("token", token)
+      .mailSubject("change.password.subject")
+      .locale(user.getLocale())
+      .addTo(user.getEmail(), user.getFirstname() + " " + user.getLastname())
+      .build()
+      .asyncSend();
   }
 }

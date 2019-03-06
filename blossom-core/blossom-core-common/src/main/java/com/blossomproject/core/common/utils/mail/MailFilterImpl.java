@@ -1,6 +1,5 @@
 package com.blossomproject.core.common.utils.mail;
 
-import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -19,12 +18,9 @@ import java.util.stream.Stream;
 public class MailFilterImpl implements MailFilter {
   private final static Logger LOGGER = LoggerFactory.getLogger(MailFilterImpl.class);
   private final Set<String> filters;
-  private final InternetAddress from;
 
-  public MailFilterImpl(Set<String> filters, InternetAddress from) {
-    Preconditions.checkNotNull(from);
+  public MailFilterImpl(Set<String> filters) {
     this.filters = filters;
-    this.from = from;
   }
 
   @Override
@@ -39,8 +35,6 @@ public class MailFilterImpl implements MailFilter {
       isRecipientsArrayNotEmpty(recipientsCc) ||
       isRecipientsArrayNotEmpty(recipientsBcc)
     ) {
-      mimeMessageHelper.setFrom(from);
-
       mimeMessageHelper.setTo(isRecipientsArrayNotEmpty(recipientsTo) ? recipientsTo : new String[0]);
       mimeMessageHelper.setCc(isRecipientsArrayNotEmpty(recipientsCc) ? recipientsCc : new String[0]);
       mimeMessageHelper.setBcc(isRecipientsArrayNotEmpty(recipientsBcc) ? recipientsBcc : new String[0]);
