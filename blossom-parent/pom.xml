@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.blossom-project</groupId>
     <artifactId>blossom</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>blossom-parent</artifactId>
