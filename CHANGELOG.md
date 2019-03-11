@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0
+- Mailsender interface rework [#204](https://github.com/blossom-project/blossom/pull/204)  
+- Toggle unuseful log to debug level [#207](https://github.com/blossom-project/blossom/pull/207)  
+- Java 11 compatibility & Spring boot 2.1 [#205](https://github.com/blossom-project/blossom/pull/205)
+- Check for logger manager authority for LoggerManagerController [#203](https://github.com/blossom-project/blossom/issues/201)
+
+
 ## 1.1.3
 - Upgrade spring boot to 2.0.6 [#197](https://github.com/blossom-project/blossom/pull/197)
 - Upgrade Apache Tika to 1.19.1 [#198](https://github.com/blossom-project/blossom/pull/198)
@@ -40,7 +47,6 @@
 - Add job supervision to detect when jobs stop firing [#158](https://github.com/blossom-project/blossom/pull/158)  
 - Async mail sender [#161](https://github.com/blossom-project/blossom/pull/161)  
 
-### No issue
-- Prepare 1.1.1-SNAPSHOT
+## 1.0.0
 
-
+Initial release
