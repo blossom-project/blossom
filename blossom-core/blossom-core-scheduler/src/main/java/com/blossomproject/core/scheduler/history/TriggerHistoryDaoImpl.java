@@ -26,7 +26,6 @@ public class TriggerHistoryDaoImpl implements TriggerHistoryDao {
   @Override
   @Transactional
   public List<TriggerHistory> getJobHistory(JobKey jobKey) {
-    List<TriggerHistory> history;
     try {
       List<TriggerHistory> histories = repository.getByJobNameAndJobGroup(
         jobKey.getName(),
@@ -38,22 +37,12 @@ public class TriggerHistoryDaoImpl implements TriggerHistoryDao {
         return Collections.emptyList();
       }
 
-      if (histories.size() > this.maxHistorySize) {
-        this.cleanHistory(jobKey, histories.get(this.maxHistorySize).getStartTime());
-        history = histories.subList(0, this.maxHistorySize);
-      } else {
-        history = histories;
-      }
-      return history;
+      return histories;
 
     } catch (Exception e) {
       logger.error("Cannot get last TriggerHistory", e);
       return Collections.emptyList();
     }
-  }
-
-  private void cleanHistory(JobKey jobKey, Timestamp olderThan) {
-    repository.deleteByJobNameAndJobGroupAndStartTimeBefore(jobKey.getName(), jobKey.getGroup(), olderThan);
   }
 
   @Override

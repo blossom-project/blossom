@@ -12,8 +12,6 @@ public interface TriggerHistoryRepository extends JpaRepository<TriggerHistory, 
 
   List<TriggerHistory> getByJobNameAndJobGroup(String jobName, String jobGroup, Pageable page);
 
-  void deleteByJobNameAndJobGroupAndStartTimeBefore(String jobName, String jobGroup, Timestamp date);
-
   void deleteAllByStartTimeBefore(Timestamp date);
 
   TriggerHistory getFirstByFireInstanceId(String fireIstanceId);
