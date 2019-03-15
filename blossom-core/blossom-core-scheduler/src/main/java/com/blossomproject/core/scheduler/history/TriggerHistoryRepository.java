@@ -14,6 +14,6 @@ public interface TriggerHistoryRepository extends JpaRepository<TriggerHistory, 
 
   void deleteAllByStartTimeBefore(Timestamp date);
 
-  TriggerHistory getFirstByFireInstanceId(String fireIstanceId);
+  TriggerHistory getFirstByFireInstanceId(String fireInstanceId);
 
 }
