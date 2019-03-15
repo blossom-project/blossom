@@ -27,18 +27,11 @@ public class TriggerHistoryDaoImpl implements TriggerHistoryDao {
   @Transactional
   public List<TriggerHistory> getJobHistory(JobKey jobKey) {
     try {
-      List<TriggerHistory> histories = repository.getByJobNameAndJobGroup(
+      return repository.getByJobNameAndJobGroup(
         jobKey.getName(),
         jobKey.getGroup(),
         PageRequest.of(0, maxHistorySize + 1, Sort.Direction.DESC, "startTime")
       );
-
-      if (histories.isEmpty()) {
-        return Collections.emptyList();
-      }
-
-      return histories;
-
     } catch (Exception e) {
       logger.error("Cannot get last TriggerHistory", e);
       return Collections.emptyList();
