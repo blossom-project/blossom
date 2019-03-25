@@ -28,7 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 @BlossomController
 @RequestMapping("/system/loggers")
 @OpenedMenu("loggerManager")
-@PreAuthorize("hasAuthority('system:logger:manager')")
+@PreAuthorize("hasAuthority('system:loggers:manager')")
 public class LoggerManagerController {
 
   private final static String ROOT_LOGGER = "ROOT";
