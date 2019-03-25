@@ -1,14 +1,9 @@
 package com.blossomproject.core.user;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import com.blossomproject.core.common.utils.action_token.ActionTokenService;
+import com.blossomproject.core.common.utils.mail.BlossomMail;
+import com.blossomproject.core.common.utils.mail.BlossomMailBuilderImpl;
 import com.blossomproject.core.common.utils.mail.MailSender;
-import java.util.Locale;
-import javax.mail.internet.InternetAddress;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -18,7 +13,9 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-;
+import java.util.Locale;
+
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserMailServiceImplTest {
@@ -36,19 +33,29 @@ public class UserMailServiceImplTest {
   @InjectMocks
   private UserMailServiceImpl userMailService;
 
+  private BlossomMail setupBlossomMail() {
+    BlossomMail mail = mock(BlossomMail.class);
+    when(mailSender.builder()).thenReturn(new BlossomMailBuilderImpl() {
+      @Override
+      public BlossomMail build() {
+        return mail;
+      }
+    });
+    return mail;
+  }
+
   @Test
   public void test_send_change_password_email_user_not_null_token_not_null() throws Exception {
     UserDTO userDTO = new UserDTO();
     userDTO.setLocale(Locale.FRANCE);
     userDTO.setEmail("test@test.test");
-    userMailService.sendChangePasswordEmail(userDTO , "token !");
 
-    verify(mailSender, times(1))
-      .sendMail(anyString(),
-        any(),
-        anyString(),
-        any(Locale.class),
-        any(InternetAddress.class));
+    BlossomMail mail = setupBlossomMail();
+
+    userMailService.sendChangePasswordEmail(userDTO, "token !");
+
+    verify(mailSender, times(1)).builder();
+    verify(mail, times(1)).asyncSend();
   }
 
   @Test
@@ -73,11 +80,12 @@ public class UserMailServiceImplTest {
     userDTO.setLocale(Locale.FRANCE);
     userDTO.setEmail("test@test.test");
 
+    BlossomMail mail = setupBlossomMail();
+
     userMailService.sendAccountCreationEmail(userDTO, "token !");
 
-    verify(mailSender, times(1))
-      .sendMail(anyString(), any(),
-        anyString(), any(Locale.class), any(InternetAddress.class));
+    verify(mailSender, times(1)).builder();
+    verify(mail, times(1)).asyncSend();
   }
 
   @Test

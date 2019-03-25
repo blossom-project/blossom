@@ -14,7 +14,7 @@ env:
    - secure: "God2lC/sDopYXAH8BwEPynjFFMo+Ems6gY/dIgaJUecDtrmKVJuQn5FaFZmIGa+JipxCVzar16c5O6K3Au5MxqWvgPA26wRh2va376jorcdKOX2INT1Aopm7LL7yuw3HLzAZhF8m9eXqoRkOuCiInvbPig/dP9qytREyC4qIdhxcaMmUaszgnqpSJS4fVe0fc1zXdTCbHqNG2YApCWc6cUusElZxivNW3js6qB9VcoRAdpayNpwjqKU9zWmigcvCN2/0cVuNZfIfA6eaOHjtNHQKaprfHlfj0xF+A45mGLAfS6Trh+uoBWQzDN2g4/q/RtQVBq0DiHv1A/PP3EZLmD07DrKJk85zq53f5vdhbZu0g6OugVgcG+TKz0YCpIlVQvG4Sc6tW1d45T7fbvETK+zcQnNez+8wPFgFr8wwZGKPyEgFipVT+2xygxol3OltmkqdCC4WNILXP4zSkDtXkYlxfhl1gseOgnWRCldQrfshwxH5QoZOkJm38VGGI4LBkLniRNcsfAinxiLj+2gxzU49qPAT8KYhBQI3JIpaT0JLW4b/OFBo2504/+jcq0yOdygtSPf6FlmcyNaI3aSeALeQNBMa9KQelb1RFz37TNauwCPB7hRZodTaFkCHIlXXWJzhsTEwEOIlMf/4tehnSIhIi44M31asx1c43BK0AFQ="
    - # ^^ GPG_PASSPHRASE
 
-install: mvn clean install org.jacoco:jacoco-maven-plugin:report org.eluder.coveralls:coveralls-maven-plugin:report -P !build-extras  -B -V
+install: mvn clean package org.jacoco:jacoco-maven-plugin:report org.eluder.coveralls:coveralls-maven-plugin:report -P !build-extras  -B -V
 
 cache:
   directories:

@@ -10,6 +10,7 @@ import org.springframework.boot.actuate.logging.LoggersEndpoint;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 @BlossomController
 @RequestMapping("/system/loggers")
 @OpenedMenu("loggerManager")
+@PreAuthorize("hasAuthority('system:logger:manager')")
 public class LoggerManagerController {
 
   private final static String ROOT_LOGGER = "ROOT";
