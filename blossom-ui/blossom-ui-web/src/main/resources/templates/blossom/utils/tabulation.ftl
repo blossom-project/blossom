@@ -51,6 +51,15 @@
         $(targetSelector).html(responseText);
       }
       $(targetSelector).removeClass("sk-loading");
+    })
+    .fail(function (jqXHR) {
+      var errorMessage = jqXHR.status + ': ' + jqXHR.statusText;
+      if (jqXHR.status === 0) {
+        errorMessage = "<@spring.message 'errored' />"
+      }
+      $(targetSelector + ' > .ibox-content').html('<@spring.message 'error' /> - ' + errorMessage);
+      $(targetSelector + ' > .ibox-footer').remove();
+      $(targetSelector).removeClass("sk-loading");
     });
   };
 
