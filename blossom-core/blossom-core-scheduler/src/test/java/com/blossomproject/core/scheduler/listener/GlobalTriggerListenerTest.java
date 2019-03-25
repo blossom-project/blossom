@@ -96,6 +96,8 @@ public class GlobalTriggerListenerTest {
   @Test
   public void should_not_throw_any_exception_on_trigger_fired() {
     Trigger trigger = mock(Trigger.class);
+    when(trigger.getJobKey()).thenReturn(new JobKey("job","group"));
+    when(trigger.getKey()).thenReturn(new TriggerKey("trigger","group"));
 
     JobExecutionContext context = mock(JobExecutionContext.class);
     when(context.getFireInstanceId()).thenReturn("fireInstanceId");

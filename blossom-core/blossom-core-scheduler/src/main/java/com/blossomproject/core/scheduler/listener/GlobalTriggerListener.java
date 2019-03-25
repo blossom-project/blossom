@@ -47,15 +47,15 @@ public class GlobalTriggerListener implements TriggerListener {
         trigger.getJobKey().getGroup(), trigger.getJobKey().getName());
     }
 
-    TriggerHistory history = new TriggerHistory();
-    history.ensureId();
-    history.setFireInstanceId(context.getFireInstanceId());
-    history.setJobKey(trigger.getJobKey());
-    history.setTriggerKey(trigger.getKey());
-    history.setStartTime(new Timestamp(context.getFireTime().getTime()));
-    history.setEndTime(null);
-
     try {
+      TriggerHistory history = new TriggerHistory();
+      history.ensureId();
+      history.setFireInstanceId(context.getFireInstanceId());
+      history.setJobKey(trigger.getJobKey());
+      history.setTriggerKey(trigger.getKey());
+      history.setStartTime(new Timestamp(context.getFireTime().getTime()));
+      history.setEndTime(null);
+
       triggerHistoryDao.create(history);
     } catch (Exception e) {
       logger.error("Error trying to save trigger firing information", e);

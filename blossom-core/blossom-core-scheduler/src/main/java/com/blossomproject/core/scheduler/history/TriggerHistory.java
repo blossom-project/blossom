@@ -1,32 +1,84 @@
 package com.blossomproject.core.scheduler.history;
 
 import com.blossomproject.core.common.entity.AbstractEntity;
-import java.sql.Timestamp;
 import org.quartz.JobKey;
 import org.quartz.TriggerKey;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.sql.Timestamp;
+
+@Entity
+@Table(name = "qrtz_trigger_history")
 public class TriggerHistory extends AbstractEntity {
 
-  private TriggerKey triggerKey;
-  private JobKey jobKey;
+  @Column(name = "trigger_name")
+  private String triggerName;
+  @Column(name = "trigger_group")
+  private String triggerGroup;
+  @Column(name = "job_name")
+  private String jobName;
+  @Column(name = "job_group")
+  private String jobGroup;
+  @Column(name = "fire_instance_id")
   private String fireInstanceId;
+  @Column(name = "start_time")
   private Timestamp startTime;
+  @Column(name = "end_time")
   private Timestamp endTime;
 
   public TriggerKey getTriggerKey() {
-    return triggerKey;
+    return new TriggerKey(triggerName, triggerGroup);
   }
 
+  @Transient
   public void setTriggerKey(TriggerKey triggerKey) {
-    this.triggerKey = triggerKey;
+    this.triggerName = triggerKey.getName();
+    this.triggerGroup = triggerKey.getGroup();
+  }
+
+  public String getTriggerName() {
+    return triggerName;
+  }
+
+  public void setTriggerName(String triggerName) {
+    this.triggerName = triggerName;
+  }
+
+  public String getTriggerGroup() {
+    return triggerGroup;
+  }
+
+  public void setTriggerGroup(String triggerGroup) {
+    this.triggerGroup = triggerGroup;
   }
 
   public JobKey getJobKey() {
-    return jobKey;
+    return new JobKey(jobName, jobGroup);
   }
 
+  @Transient
   public void setJobKey(JobKey jobKey) {
-    this.jobKey = jobKey;
+    this.jobGroup = jobKey.getGroup();
+    this.jobName = jobKey.getName();
+  }
+
+  public String getJobName() {
+    return jobName;
+  }
+
+  public void setJobName(String jobName) {
+    this.jobName = jobName;
+  }
+
+  public String getJobGroup() {
+    return jobGroup;
+  }
+
+  public void setJobGroup(String jobGroup) {
+    this.jobGroup = jobGroup;
   }
 
   public String getFireInstanceId() {
