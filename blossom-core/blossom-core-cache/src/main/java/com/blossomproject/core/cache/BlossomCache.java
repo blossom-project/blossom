@@ -1,8 +1,9 @@
 package com.blossomproject.core.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import java.util.concurrent.Callable;
 import org.springframework.cache.caffeine.CaffeineCache;
+
+import java.util.concurrent.Callable;
 
 public class BlossomCache extends CaffeineCache {
   private final CacheConfig configuration;
@@ -40,9 +41,8 @@ public class BlossomCache extends CaffeineCache {
   public <T> T get(Object key, Callable<T> valueLoader) {
     if (!enabled) {
       try {
-        return (T) toStoreValue(valueLoader.call());
-      }
-      catch (Exception ex) {
+        return valueLoader.call();
+      } catch (Exception ex) {
         throw new ValueRetrievalException(key, valueLoader, ex);
       }
     }
