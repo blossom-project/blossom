@@ -1,29 +1,29 @@
 package com.blossomproject.core.cache;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+import com.blossomproject.core.cache.CacheConfig.CacheConfigBuilder;
+import com.blossomproject.core.common.entity.AbstractEntity;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
-import com.blossomproject.core.cache.CacheConfig.CacheConfigBuilder;
-import com.blossomproject.core.common.entity.AbstractEntity;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+
+import static org.junit.Assert.*;
+
+;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BlossomCacheTest {
@@ -139,10 +139,11 @@ public class BlossomCacheTest {
     assertNotNull("Should not be null", valueFromCache);
     assertEquals("Should be equals to the value loader value", valueFromCache, valueLoader.call());
   }
+
   @Test
   public void should_get_object_with_value_loader_if_present() throws Exception {
     String key = "test";
-    blossomCache.put(key,key);
+    blossomCache.put(key, key);
 
     Callable<String> valueLoader = () -> "valueLoader";
     String valueFromCache = blossomCache.get(key, valueLoader);
@@ -185,6 +186,16 @@ public class BlossomCacheTest {
   }
 
   @Test
+  public void should_get_nullable_with_value_loader_when_disabled() {
+    String key = "test";
+    blossomCache.put(key, key);
+    blossomCache.disable();
+
+    String valueFromCache = blossomCache.get(key, () -> null);
+    assertNull("'Key' should return a null value", valueFromCache);
+  }
+
+  @Test
   public void should_not_put_object_when_disabled() {
     String key = "test";
     blossomCache.disable();
@@ -201,30 +212,30 @@ public class BlossomCacheTest {
   }
 
   @Test
-  public void should_be_enabled(){
+  public void should_be_enabled() {
     blossomCache.enable();
     Assert.assertTrue(blossomCache.isEnabled());
   }
 
   @Test
-  public void should_be_enabled_by_value(){
+  public void should_be_enabled_by_value() {
     blossomCache.setEnabled(true);
     Assert.assertTrue(blossomCache.isEnabled());
   }
 
   @Test
-  public void should_be_disabled(){
+  public void should_be_disabled() {
     blossomCache.disable();
     Assert.assertTrue(!blossomCache.isEnabled());
     Mockito.verify(cache, Mockito.times(1)).invalidateAll();
   }
+
   @Test
-  public void should_be_disabled_by_value(){
+  public void should_be_disabled_by_value() {
     blossomCache.setEnabled(false);
     Assert.assertTrue(!blossomCache.isEnabled());
     Mockito.verify(cache, Mockito.times(1)).invalidateAll();
   }
-
 
 
   private class TestAbstractEntity extends AbstractEntity {
