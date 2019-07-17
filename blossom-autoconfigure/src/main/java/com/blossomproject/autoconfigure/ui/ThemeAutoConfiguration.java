@@ -20,6 +20,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -46,6 +47,7 @@ import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 @Configuration
 @EnablePluginRegistries({Theme.class})
 @ConditionalOnWebApplication
+@ConditionalOnClass({Theme.class})
 @EnableConfigurationProperties(BlossomThemeProperties.class)
 public class ThemeAutoConfiguration {
 
