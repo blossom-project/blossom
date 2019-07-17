@@ -13,6 +13,7 @@ import com.blossomproject.ui.security.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,6 +42,7 @@ import static com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration.BL
  */
 @Configuration
 @ConditionalOnWebApplication
+@ConditionalOnClass({AuthenticationFailureListener.class})
 @Order(SecurityProperties.DEFAULT_FILTER_ORDER)
 @PropertySource("classpath:/security.properties")
 @EnableConfigurationProperties({DefaultAccountProperties.class, BlossomWebBackOfficeProperties.class})
