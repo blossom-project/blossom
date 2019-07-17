@@ -9,13 +9,6 @@ import com.blossomproject.core.common.utils.privilege.Privilege;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import org.apache.tika.Tika;
-import org.elasticsearch.action.bulk.BulkProcessor;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.unit.ByteSizeUnit;
-import org.elasticsearch.common.unit.ByteSizeValue;
-import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -53,7 +46,6 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -104,36 +96,6 @@ public class CommonAutoConfiguration {
   @ConditionalOnMissingBean(PasswordEncoder.class)
   public PasswordEncoder passwordEncoder(SecureRandom secureRandom) {
     return new BCryptPasswordEncoder(10, secureRandom);
-  }
-
-  @Bean
-  @ConditionalOnMissingBean(BulkProcessor.class)
-  public BulkProcessor bulkProcessor(Client client) {
-    return BulkProcessor.builder(client, new BulkProcessor.Listener() {
-
-      @Override
-      public void beforeBulk(long executionId, BulkRequest request) {
-        logger.info("Before bulk {} with {} actions to execute", executionId,
-          request.numberOfActions());
-      }
-
-      @Override
-      public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-        logger.error("Error on bulk {} with {} actions to execute", executionId,
-          request.numberOfActions(), failure);
-      }
-
-      @Override
-      public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-        logger.info("Successful bulk {} with {} actions executed in {} ms.", executionId,
-          request.numberOfActions(), response.getTookInMillis());
-      }
-    })
-      .setName("Blossom Bulk Processor")
-      .setBulkActions(500)
-      .setBulkSize(new ByteSizeValue(10, ByteSizeUnit.MB))
-      .setFlushInterval(new TimeValue(30, TimeUnit.SECONDS))
-      .build();
   }
 
   @Bean

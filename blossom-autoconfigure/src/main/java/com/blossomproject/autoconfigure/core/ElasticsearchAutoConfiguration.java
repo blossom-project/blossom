@@ -8,11 +8,19 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import org.elasticsearch.action.bulk.BulkProcessor;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.lease.Releasable;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.unit.ByteSizeUnit;
+import org.elasticsearch.common.unit.ByteSizeValue;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.slf4j.Logger;
@@ -49,6 +57,36 @@ public class ElasticsearchAutoConfiguration implements DisposableBean {
 
   public ElasticsearchAutoConfiguration(ElasticsearchProperties properties) {
     this.properties = properties;
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(BulkProcessor.class)
+  public BulkProcessor bulkProcessor(Client client) {
+    return BulkProcessor.builder(client, new BulkProcessor.Listener() {
+
+      @Override
+      public void beforeBulk(long executionId, BulkRequest request) {
+        logger.info("Before bulk {} with {} actions to execute", executionId,
+          request.numberOfActions());
+      }
+
+      @Override
+      public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
+        logger.error("Error on bulk {} with {} actions to execute", executionId,
+          request.numberOfActions(), failure);
+      }
+
+      @Override
+      public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+        logger.info("Successful bulk {} with {} actions executed in {} ms.", executionId,
+          request.numberOfActions(), response.getTookInMillis());
+      }
+    })
+      .setName("Blossom Bulk Processor")
+      .setBulkActions(500)
+      .setBulkSize(new ByteSizeValue(10, ByteSizeUnit.MB))
+      .setFlushInterval(new TimeValue(30, TimeUnit.SECONDS))
+      .build();
   }
 
   @Bean
