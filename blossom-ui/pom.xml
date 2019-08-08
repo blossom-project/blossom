@@ -17,6 +17,7 @@
     <module>blossom-ui-common</module>
     <module>blossom-ui-web</module>
     <module>blossom-ui-api</module>
+    <module>blossom-ui-supervision</module>
   </modules>
 
 </project>

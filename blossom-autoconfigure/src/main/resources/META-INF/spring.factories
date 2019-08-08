@@ -17,6 +17,7 @@ com.blossomproject.autoconfigure.core.CamundaAutoConfiguration,\
 com.blossomproject.autoconfigure.core.CryptoAutoConfiguration,\
 com.blossomproject.autoconfigure.module.FileManagerAutoConfiguration,\
 com.blossomproject.autoconfigure.module.ArticleAutoConfiguration,\
+com.blossomproject.autoconfigure.ui.supervision.SupervisionInterfaceConfiguration,\
 com.blossomproject.autoconfigure.ui.MenuAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.ThemeAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration,\
