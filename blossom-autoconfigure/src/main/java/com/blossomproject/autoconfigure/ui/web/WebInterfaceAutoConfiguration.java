@@ -102,11 +102,6 @@ public class WebInterfaceAutoConfiguration {
   }
 
   @Bean
-  public StatusController statusController(HealthEndpoint healthEndpoint) {
-    return new StatusController(healthEndpoint);
-  }
-
-  @Bean
   public OmnisearchController searchController(Client client,
                                                @Qualifier(PluginConstants.PLUGIN_SEARCH_ENGINE) PluginRegistry<SearchEngine, Class<? extends AbstractDTO>> registry) {
     return new OmnisearchController(client, registry);
