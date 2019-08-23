@@ -23,6 +23,7 @@ com.blossomproject.autoconfigure.ui.ThemeAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.WebContextAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.WebSecurityAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.web.WebInterfaceAutoConfiguration,\
+com.blossomproject.autoconfigure.ui.web.FormLoginWebSecurityConfigurerAdapter,\
 com.blossomproject.autoconfigure.ui.web.administration.WebAdministrationUserAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.web.administration.WebAdministrationGroupAutoConfiguration,\
 com.blossomproject.autoconfigure.ui.web.administration.WebAdministrationRoleAutoConfiguration,\
