@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.0
+
+- Upgrade to spring boot 2.1.9 [#224](https://github.com/blossom-project/blossom/pull/224)
+- Extract UI Web Security Configuration [#222](https://github.com/blossom-project/blossom/pull/222)
+- Build with OpenJDK 8 [#221](https://github.com/blossom-project/blossom/pull/221)
+- Extract supervision controller to a standalone module [#220](https://github.com/blossom-project/blossom/pull/220)
+- Upgrade Apache Tika to 1.22 [#219](https://github.com/blossom-project/blossom/pull/219)
+- Do not configure Elasticsearch client & node if not on the classpath [#218](https://github.com/blossom-project/blossom/pull/218)
+- Do not configure web unless blossom-ui-common is present [#218](https://github.com/blossom-project/blossom/pull/218)
+- Do not wrap results for cache storage when bypassing cache altogether [#217](https://github.com/blossom-project/blossom/pull/217)
+- Upgrade dependencies [#215](https://github.com/blossom-project/blossom/pull/215)
+
 ## 1.2.1
 - Fix trigger history [#211](https://github.com/blossom-project/blossom/pull/211)  
 - Fix loggers page security [#213](https://github.com/blossom-project/blossom/pull/213)  
@@ -50,7 +62,3 @@
 - Fix profile page for users with empty values [#157](https://github.com/blossom-project/blossom/pull/157)  
 - Add job supervision to detect when jobs stop firing [#158](https://github.com/blossom-project/blossom/pull/158)  
 - Async mail sender [#161](https://github.com/blossom-project/blossom/pull/161)  
-
-## 1.0.0
-
-Initial release
