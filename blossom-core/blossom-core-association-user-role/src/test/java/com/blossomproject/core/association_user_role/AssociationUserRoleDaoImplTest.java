@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import com.blossomproject.core.role.RoleRepository;
+import com.blossomproject.core.user.UserRepository;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -20,17 +22,17 @@ public class AssociationUserRoleDaoImplTest {
   @Test
   public void should_create_fail_on_null_repository() {
     thrown.expect(NullPointerException.class);
-    new AssociationUserRoleDaoImpl(null);
+    new AssociationUserRoleDaoImpl(null,null,null);
   }
 
   @Test
   public void should_create_with_repository() {
-    new AssociationUserRoleDaoImpl(mock(AssociationUserRoleRepository.class));
+    new AssociationUserRoleDaoImpl(mock(UserRepository.class), mock(RoleRepository.class), mock(AssociationUserRoleRepository.class));
   }
 
   @Test
   public void should_create_new_association() {
-    AssociationUserRoleDaoImpl dao =new AssociationUserRoleDaoImpl(mock(AssociationUserRoleRepository.class));
+    AssociationUserRoleDaoImpl dao =new AssociationUserRoleDaoImpl(mock(UserRepository.class), mock(RoleRepository.class), mock(AssociationUserRoleRepository.class));
     AssociationUserRole association = dao.create();
     assertNotNull(association);
     assertTrue(association instanceof  AssociationUserRole);
