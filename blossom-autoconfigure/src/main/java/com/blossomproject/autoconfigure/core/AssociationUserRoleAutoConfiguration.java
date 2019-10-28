@@ -2,7 +2,9 @@ package com.blossomproject.autoconfigure.core;
 
 import com.blossomproject.core.association_user_role.*;
 import com.blossomproject.core.role.RoleDTOMapper;
+import com.blossomproject.core.role.RoleRepository;
 import com.blossomproject.core.user.UserDTOMapper;
+import com.blossomproject.core.user.UserRepository;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,8 +26,10 @@ public class AssociationUserRoleAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(AssociationUserRoleDao.class)
-    public AssociationUserRoleDao associationUserRoleDao(AssociationUserRoleRepository repository) {
-        return new AssociationUserRoleDaoImpl(repository);
+    public AssociationUserRoleDao associationUserRoleDao(UserRepository userRepository,
+            RoleRepository roleRepository,
+            AssociationUserRoleRepository repository) {
+        return new AssociationUserRoleDaoImpl(userRepository, roleRepository, repository);
     }
 
     @Bean

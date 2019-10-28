@@ -1,36 +1,11 @@
 package com.blossomproject.core.role;
 
-import com.blossomproject.core.common.mapper.AbstractDTOMapper;
+import com.blossomproject.core.common.mapper.AbstractBlossomDTOMapper;
+import org.mapstruct.factory.Mappers;
 
-public class RoleDTOMapper extends AbstractDTOMapper<Role, RoleDTO> {
+public class RoleDTOMapper extends AbstractBlossomDTOMapper<Role, RoleDTO> {
 
-  @Override
-  public RoleDTO mapEntity(Role entity) {
-    if (entity == null) {
-      return null;
+    public RoleDTOMapper() {
+        super(Mappers.getMapper(RoleMapper.class));
     }
-
-    RoleDTO dto = new RoleDTO();
-    mapEntityCommonFields(dto, entity);
-    dto.setName(entity.getName());
-    dto.setDescription(entity.getDescription());
-    dto.setPrivileges(entity.getPrivileges());
-
-    return dto;
-  }
-
-  @Override
-  public Role mapDto(RoleDTO dto) {
-    if (dto == null) {
-      return null;
-    }
-
-    Role entity = new Role();
-    mapDtoCommonFields(entity, dto);
-    entity.setName(dto.getName());
-    entity.setDescription(dto.getDescription());
-    entity.setPrivileges(dto.getPrivileges());
-
-    return entity;
-  }
 }

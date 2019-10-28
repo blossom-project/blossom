@@ -2,7 +2,9 @@ package com.blossomproject.autoconfigure.core;
 
 import com.blossomproject.core.association_user_group.*;
 import com.blossomproject.core.group.GroupDTOMapper;
+import com.blossomproject.core.group.GroupRepository;
 import com.blossomproject.core.user.UserDTOMapper;
+import com.blossomproject.core.user.UserRepository;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,8 +26,10 @@ public class AssociationUserGroupAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(AssociationUserGroupDao.class)
-    public AssociationUserGroupDao associationUserGroupDao(AssociationUserGroupRepository repository) {
-        return new AssociationUserGroupDaoImpl(repository);
+    public AssociationUserGroupDao associationUserGroupDao(UserRepository userRepository,
+            GroupRepository groupRepository,
+            AssociationUserGroupRepository repository) {
+        return new AssociationUserGroupDaoImpl(userRepository, groupRepository, repository);
     }
 
     @Bean

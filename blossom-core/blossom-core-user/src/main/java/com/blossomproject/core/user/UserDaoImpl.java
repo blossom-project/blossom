@@ -2,6 +2,8 @@ package com.blossomproject.core.user;
 
 import java.util.Date;
 
+import com.blossomproject.core.common.dao.BlossomGenericCrudDaoImpl;
+import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 
@@ -13,27 +15,13 @@ import com.blossomproject.core.common.dao.GenericCrudDaoImpl;
  * Created by Maël Gargadennnec on 03/05/2017.
  */
 @CacheConfig(cacheResolver = "blossomCacheResolver")
-public class UserDaoImpl extends GenericCrudDaoImpl<User> implements UserDao {
+public class UserDaoImpl extends BlossomGenericCrudDaoImpl<User> implements UserDao {
   private final UserRepository userRepository;
 
   public UserDaoImpl(UserRepository repository) {
-    super(repository);
+    super(repository, Mappers.getMapper(UserEntityMapper.class));
     Preconditions.checkNotNull(repository);
     this.userRepository = repository;
-  }
-
-  @Override
-  protected User updateEntity(User originalEntity, User modifiedEntity) {
-    originalEntity.setActivated(modifiedEntity.isActivated());
-    originalEntity.setFirstname(modifiedEntity.getFirstname());
-    originalEntity.setLastname(modifiedEntity.getLastname());
-    originalEntity.setCivility(modifiedEntity.getCivility());
-    originalEntity.setEmail(modifiedEntity.getEmail());
-    originalEntity.setPhone(modifiedEntity.getPhone());
-    originalEntity.setDescription(modifiedEntity.getDescription());
-    originalEntity.setCompany(modifiedEntity.getCompany());
-    originalEntity.setFunction(modifiedEntity.getFunction());
-    return originalEntity;
   }
 
   @Override
