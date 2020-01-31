@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.Cache;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
@@ -91,5 +92,12 @@ public class CacheManagerController {
     if (cache != null) {
       cache.enable();
     }
+  }
+
+  @PostMapping("/_empty")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void emptyCaches() {
+    cacheManager.getCacheNames().stream().map(cacheManager::getCache).forEach(Cache::clear);
   }
 }
