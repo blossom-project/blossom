@@ -1,6 +1,7 @@
 package com.blossomproject.ui.web.system.sessions;
 
 import com.blossomproject.ui.current_user.CurrentUser;
+import com.blossomproject.ui.security.AttemptDTO;
 import com.blossomproject.ui.security.LoginAttemptsService;
 import com.google.common.collect.Lists;
 import org.junit.Assert;
@@ -67,9 +68,12 @@ public class SessionControllerTest {
 
     @Test
     public void should_display_sessions_with_attempt() {
-        Map<String, Map<String, Integer>> map = new HashMap();
-        Map<String, Integer> nestedMap = new HashMap<>();
-        nestedMap.put("nested", 1);
+        Map<String, List<AttemptDTO>> map = new HashMap();
+        List<AttemptDTO> nestedMap = new ArrayList<>();
+        AttemptDTO attemptDTO = new AttemptDTO();
+        attemptDTO.setAttemptNumber(1);
+        attemptDTO.setIp("nested");
+        nestedMap.add(attemptDTO);
         map.put("test", nestedMap);
 
         when(loginAttemptsService.get()).thenReturn(map);

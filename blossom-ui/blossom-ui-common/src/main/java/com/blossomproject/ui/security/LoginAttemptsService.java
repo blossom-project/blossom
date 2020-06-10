@@ -1,5 +1,6 @@
 package com.blossomproject.ui.security;
 
+import java.util.List;
 import java.util.Map;
 
 public interface LoginAttemptsService {
@@ -10,6 +11,8 @@ public interface LoginAttemptsService {
 
   boolean isBlocked(String identifier, String ip);
 
-  Map<String, Map<String, Integer>> get();
+  void clear(String identifier, String ip);
+
+  Map<String, List<AttemptDTO>> get();
 
 }
