@@ -87,6 +87,7 @@
           </#list>
         </tbody>
       </table>
+      <button class="btn btn-xs btn-danger emptyAllCaches"><i class="fa fa-trash"></i> <@spring.message "caches.clear.all.label"/></button>
     </div>
   </div>
 </div>
@@ -114,6 +115,12 @@
       var cache = $(this).data("cache");
 
       $.post("caches/" + cache + "/_disable", function () {
+        window.location.reload(true);
+      });
+    });
+
+    $(".emptyAllCaches").click(function (e) {
+      $.post("caches/_empty", function () {
         window.location.reload(true);
       });
     });
