@@ -35,7 +35,7 @@ public abstract class GenericReadOnlyDaoImpl<ENTITY extends AbstractEntity> impl
   protected TypeToken<ENTITY> type = new TypeToken<ENTITY>(getClass()) {
   };
 
-  GenericReadOnlyDaoImpl(CrudRepository<ENTITY> repository) {
+  public GenericReadOnlyDaoImpl(CrudRepository<ENTITY> repository) {
     Preconditions.checkNotNull(repository);
     this.repository = repository;
   }
