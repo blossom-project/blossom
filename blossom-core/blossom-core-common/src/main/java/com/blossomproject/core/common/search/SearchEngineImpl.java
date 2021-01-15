@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -148,17 +149,30 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
       }
     }
 
+    getSortBuilders(pageable).forEach(searchRequest::addSort);
+
+    return searchRequest;
+  }
+
+
+
+
+  @Override
+  public List<SortBuilder> getSortBuilders(Pageable pageable){
+    List<SortBuilder> sortBuilders = new ArrayList<>();
     Sort sort = pageable.getSort();
     if (sort != null) {
       for (Order order : pageable.getSort()) {
-        SortBuilder sortBuilder = SortBuilders.fieldSort("dto." + order.getProperty())
-          .order(SortOrder.valueOf(order.getDirection().name()));
-        searchRequest.addSort(sortBuilder);
+        sortBuilders.add(prepareSortBuilderForOrder(order));
       }
-      searchRequest.addSort(SortBuilders.scoreSort());
     }
+    sortBuilders.add(SortBuilders.scoreSort());
+    return sortBuilders;
+  }
 
-    return searchRequest;
+  private SortBuilder prepareSortBuilderForOrder(Order order){
+    return SortBuilders.fieldSort("dto." + order.getProperty())
+      .order(SortOrder.valueOf(order.getDirection().name()));
   }
 
   @Override

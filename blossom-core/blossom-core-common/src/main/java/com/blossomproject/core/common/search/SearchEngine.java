@@ -4,9 +4,11 @@ package com.blossomproject.core.common.search;
 import com.blossomproject.core.common.PluginConstants;
 import com.blossomproject.core.common.dto.AbstractDTO;
 import com.blossomproject.core.common.search.facet.FacetConfiguration;
+import java.util.List;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.plugin.core.Plugin;
@@ -35,5 +37,7 @@ public interface SearchEngine extends Plugin<Class<? extends AbstractDTO>> {
   SearchResult<?> search(String q, Pageable pageable, Iterable<QueryBuilder> filters);
 
   SearchResult<?> search(String q, Pageable pageable, Iterable<QueryBuilder> filters, Iterable<FacetConfiguration> aggregations);
+
+  List<SortBuilder> getSortBuilders(Pageable pageable);
 
 }
