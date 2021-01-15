@@ -170,7 +170,7 @@ public class SearchEngineImpl<DTO extends AbstractDTO> implements SearchEngine {
     return sortBuilders;
   }
 
-  private SortBuilder prepareSortBuilderForOrder(Order order){
+  protected SortBuilder prepareSortBuilderForOrder(Order order){
     return SortBuilders.fieldSort("dto." + order.getProperty())
       .order(SortOrder.valueOf(order.getDirection().name()));
   }
