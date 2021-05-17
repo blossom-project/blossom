@@ -5,26 +5,13 @@ import com.blossomproject.core.common.search.SearchEngineImpl;
 import com.blossomproject.core.common.search.SearchResult;
 import com.blossomproject.core.common.search.facet.Facet;
 import com.blossomproject.core.common.search.facet.TermsFacetConfiguration;
-import com.blossomproject.core.user.User;
-import com.blossomproject.core.user.UserCreateForm;
-import com.blossomproject.core.user.UserDTO;
-import com.blossomproject.core.user.UserService;
-import com.blossomproject.core.user.UserUpdateForm;
+import com.blossomproject.core.user.*;
 import com.blossomproject.ui.filter.FilterDefault;
 import com.blossomproject.ui.menu.OpenedMenu;
 import com.blossomproject.ui.stereotype.BlossomController;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import org.apache.tika.Tika;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.slf4j.Logger;
@@ -39,19 +26,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-/**
- * Created by Maël Gargadennnec on 05/05/2017.
- */
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+
+/** Created by Maël Gargadennnec on 05/05/2017. */
 @BlossomController
 @RequestMapping("/administration/users")
 @OpenedMenu("users")
@@ -63,8 +48,8 @@ public class UsersController {
   private final SearchEngineImpl<UserDTO> searchEngine;
   private final Tika tika;
 
-  public UsersController(UserService userService, SearchEngineImpl<UserDTO> searchEngine,
-    Tika tika) {
+  public UsersController(
+      UserService userService, SearchEngineImpl<UserDTO> searchEngine, Tika tika) {
     this.userService = userService;
     this.searchEngine = searchEngine;
     this.tika = tika;
@@ -72,15 +57,16 @@ public class UsersController {
 
   @GetMapping
   @PreAuthorize("hasAuthority('administration:users:read')")
-  public ModelAndView getUsersPage(@RequestParam(value = "q", required = false) String q,
-    @PageableDefault(size = 25) Pageable pageable,
-    @FilterDefault QueryBuilder queryBuilder,
-    Model model) {
+  public ModelAndView getUsersPage(
+      @RequestParam(value = "q", required = false) String q,
+      @PageableDefault(size = 25) Pageable pageable,
+      @FilterDefault QueryBuilder queryBuilder,
+      Model model) {
     return tableView(q, pageable, queryBuilder, model, "blossom/users/users");
   }
 
-  private ModelAndView tableView(String q, Pageable pageable, QueryBuilder filterBuilder,
-    Model model, String viewName) {
+  private ModelAndView tableView(
+      String q, Pageable pageable, QueryBuilder filterBuilder, Model model, String viewName) {
     Page<UserDTO> users;
     List<Facet> facets;
 
@@ -89,18 +75,18 @@ public class UsersController {
       facets = Lists.newArrayList();
     } else {
       List<QueryBuilder> filters = Lists.newArrayList();
-      if(filterBuilder!=null){
+      if (filterBuilder != null) {
         filters.add(filterBuilder);
       }
 
-      SearchResult<UserDTO> searchResult = this.searchEngine
-        .search(q,
-          pageable,
-          filters,
-          Lists.newArrayList(
-            new TermsFacetConfiguration<>("users.search.facet.company", 50),
-            new TermsFacetConfiguration<>("users.search.facet.function", 50)
-          ));
+      SearchResult<UserDTO> searchResult =
+          this.searchEngine.search(
+              q,
+              pageable,
+              filters,
+              Lists.newArrayList(
+                  new TermsFacetConfiguration<>("users.search.facet.company", 50),
+                  new TermsFacetConfiguration<>("users.search.facet.function", 50)));
       users = searchResult.getPage();
       facets = searchResult.getFacets();
     }
@@ -123,8 +109,9 @@ public class UsersController {
   @PostMapping("/_create")
   @PreAuthorize("hasAuthority('administration:users:create')")
   public ModelAndView handleUserCreateForm(
-    @Valid @ModelAttribute("userCreateForm") UserCreateForm userCreateForm,
-    BindingResult bindingResult, Model model) {
+      @Valid @ModelAttribute("userCreateForm") UserCreateForm userCreateForm,
+      BindingResult bindingResult,
+      Model model) {
     if (bindingResult.hasErrors()) {
       return this.createView(userCreateForm, model);
     }
@@ -175,17 +162,19 @@ public class UsersController {
 
   @PostMapping("/{id}/_informations/_edit")
   @PreAuthorize("hasAuthority('administration:users:write')")
-  public ModelAndView handleUserInformationsUpdateForm(@PathVariable Long id,
-    @Valid @ModelAttribute("userUpdateForm") UserUpdateForm userUpdateForm,
-    BindingResult bindingResult, Model model) {
+  public ModelAndView handleUserInformationsUpdateForm(
+      @PathVariable Long id,
+      @Valid @ModelAttribute("userUpdateForm") UserUpdateForm userUpdateForm,
+      BindingResult bindingResult,
+      Model model) {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
       throw new NoSuchElementException(String.format("User=%s not found", id));
     }
 
     if (bindingResult.hasErrors()) {
-      return this
-        .updateUserInformationView(userUpdateForm, user, model, Optional.of(HttpStatus.CONFLICT));
+      return this.updateUserInformationView(
+          userUpdateForm, user, model, Optional.of(HttpStatus.CONFLICT));
     }
 
     UserDTO updatedUser = this.userService.update(id, userUpdateForm);
@@ -196,13 +185,13 @@ public class UsersController {
     return new ModelAndView("blossom/users/userinformations", "user", user);
   }
 
-  private ModelAndView updateUserInformationView(UserUpdateForm userUpdateForm, UserDTO user,
-    Model model, Optional<HttpStatus> status) {
+  private ModelAndView updateUserInformationView(
+      UserUpdateForm userUpdateForm, UserDTO user, Model model, Optional<HttpStatus> status) {
     model.addAttribute("userUpdateForm", userUpdateForm);
     model.addAttribute("user", user);
     model.addAttribute("civilities", User.Civility.values());
-    ModelAndView modelAndView = new ModelAndView("blossom/users/userinformations-edit",
-      model.asMap());
+    ModelAndView modelAndView =
+        new ModelAndView("blossom/users/userinformations-edit", model.asMap());
     modelAndView.setStatus(status.orElse(HttpStatus.OK));
     return modelAndView;
   }
@@ -210,11 +199,17 @@ public class UsersController {
   @GetMapping(value = "/{id}/avatar")
   @ResponseBody
   public ResponseEntity<InputStreamResource> displayAvatar(@PathVariable Long id)
-    throws IOException {
+      throws IOException {
     InputStream avatar = this.userService.loadAvatar(id);
+
+    MediaType mediaType = MediaType.parseMediaType(this.tika.detect(avatar));
+    if (!mediaType.isCompatibleWith(MediaType.parseMediaType("image/*"))) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
     return ResponseEntity.ok()
-      .contentType(MediaType.parseMediaType(this.tika.detect(avatar)))
-      .body(new InputStreamResource(avatar));
+        .contentType(MediaType.parseMediaType(this.tika.detect(avatar)))
+        .body(new InputStreamResource(avatar));
   }
 
   @GetMapping("/{id}/_avatar/_edit")
@@ -229,14 +224,20 @@ public class UsersController {
 
   @PostMapping("/{id}/_avatar/_edit")
   @PreAuthorize("hasAuthority('administration:users:write')")
-  public ResponseEntity<Void> handleUserAvatarUpdateForm(@PathVariable Long id,
-    @RequestParam("avatar") MultipartFile file)
-    throws IOException {
+  public ResponseEntity<Void> handleUserAvatarUpdateForm(
+      @PathVariable Long id, @RequestParam("avatar") MultipartFile file) throws IOException {
     UserDTO user = this.userService.getOne(id);
     if (user == null) {
       throw new NoSuchElementException(String.format("User=%s not found", id));
     }
-    this.userService.updateAvatar(id, file.getBytes());
+
+    byte[] avatarBytes = file.getBytes();
+    MediaType mediaType = MediaType.parseMediaType(this.tika.detect(avatarBytes));
+    if (!mediaType.isCompatibleWith(MediaType.parseMediaType("image/*"))) {
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+    }
+
+    this.userService.updateAvatar(id, avatarBytes);
     return ResponseEntity.ok().build();
   }
 
@@ -244,10 +245,10 @@ public class UsersController {
   @PreAuthorize("hasAuthority('administration:users:delete')")
   @ResponseBody
   public ResponseEntity<Map<Class<? extends AbstractDTO>, Long>> deleteUser(
-    @PathVariable Long id,
-    @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force) {
-    Optional<Map<Class<? extends AbstractDTO>, Long>> result = this.userService
-      .delete(this.userService.getOne(id), force);
+      @PathVariable Long id,
+      @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force) {
+    Optional<Map<Class<? extends AbstractDTO>, Long>> result =
+        this.userService.delete(this.userService.getOne(id), force);
 
     if (!result.isPresent() || result.get().isEmpty()) {
       return new ResponseEntity<>(Maps.newHashMap(), HttpStatus.OK);

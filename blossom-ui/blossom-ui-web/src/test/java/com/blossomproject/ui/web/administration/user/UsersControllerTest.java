@@ -1,5 +1,6 @@
 package com.blossomproject.ui.web.administration.user;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -23,7 +24,9 @@ import com.blossomproject.core.user.UserUpdateForm;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -48,6 +51,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ExtendedModelMap;
+import org.springframework.util.ResourceUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -315,11 +319,32 @@ public class UsersControllerTest {
             return userDTO;
         });
 
+        when(tika.detect(any(byte[].class))).thenReturn("image/jpeg");
+
         MultipartFile multipartFile = new MockMultipartFile("testFile", "content".getBytes());
 
         controller.handleUserAvatarUpdateForm(id, multipartFile);
         verify(service, times(1)).getOne(eq(id));
         verify(service, times(1)).updateAvatar(eq(id), eq(multipartFile.getBytes()));
+    }
+
+    @Test
+    public void should_not_update_avatar_with_invalid_content_type() throws Exception {
+        Long id = 1L;
+
+        when(service.getOne(any(Long.class))).thenAnswer(a -> {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId((Long) a.getArguments()[0]);
+            return userDTO;
+        });
+
+        when(tika.detect(any(byte[].class))).thenReturn("text/html");
+
+        MultipartFile multipartFile = new MockMultipartFile("testFile", "content".getBytes());
+
+        ResponseEntity response = controller.handleUserAvatarUpdateForm(id, multipartFile);
+        verify(service, times(0)).updateAvatar(eq(id), eq(multipartFile.getBytes()));
+        assertEquals("Content should not be accepted", HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
     }
 
     @Test
