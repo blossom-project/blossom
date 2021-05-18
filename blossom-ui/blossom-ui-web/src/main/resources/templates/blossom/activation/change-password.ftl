@@ -38,10 +38,12 @@
         <div class="row">
 
           <div class="col-lg-12">
-            <form id="updatePasswordForm" class="m-t" role="form" method="POST" novalidate>
+            <form action="?" id="updatePasswordForm" class="m-t" role="form" method="POST" novalidate>
 
               <@spring.bind "updatePasswordForm"/>
               <#assign hasGlobalError = spring.status.error/>
+
+              <input type="hidden" name="token" value="${updatePasswordForm.token}"/>
 
               <@spring.bind "updatePasswordForm.password"/>
               <div class="form-group <#if spring.status.error || hasGlobalError>has-error</#if>">

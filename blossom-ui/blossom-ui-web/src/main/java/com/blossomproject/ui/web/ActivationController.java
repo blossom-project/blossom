@@ -6,23 +6,20 @@ import com.blossomproject.core.user.UserDTO;
 import com.blossomproject.core.user.UserService;
 import com.blossomproject.core.validation.FieldMatch;
 import com.blossomproject.ui.stereotype.BlossomController;
-import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.util.Optional;
 
 @BlossomController
 @RequestMapping("/public")
@@ -74,8 +71,11 @@ public class ActivationController {
 
       if (user.isPresent()) {
         UpdatePasswordForm updatePasswordForm = new UpdatePasswordForm();
+        updatePasswordForm.setToken(token);
 
-        return new ModelAndView("blossom/activation/change-password", "updatePasswordForm",
+        return new ModelAndView(
+          "blossom/activation/change-password",
+          "updatePasswordForm",
           updatePasswordForm);
       }
     }
@@ -84,8 +84,8 @@ public class ActivationController {
 
   @PostMapping("/change_password")
   public ModelAndView changePassword(Model model,
-    @Valid @ModelAttribute("updatePasswordForm") UpdatePasswordForm updatePasswordForm,
-    BindingResult bindingResult) {
+                                     @Valid @ModelAttribute("updatePasswordForm") UpdatePasswordForm updatePasswordForm,
+                                     BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
       return new ModelAndView("blossom/activation/change-password", "updatePasswordForm",
         updatePasswordForm);
@@ -118,12 +118,13 @@ public class ActivationController {
     @Valid @ModelAttribute("askPasswordForm") AskPasswordForm form, BindingResult bindingResult,
     Model model)
     throws Exception {
-    LOGGER.info(
-      "Demande de réinitialisation du mot de passe de l'utilisateur " + form.getLoginOrEmail());
+
+    LOGGER.info("Demande de réinitialisation du mot de passe de l'utilisateur " + form.getLoginOrEmail());
     if (!bindingResult.hasErrors()) {
-      Optional<UserDTO> userDTO = Optional.ofNullable(this.userService.getByIdentifier(form.getLoginOrEmail()).orElse(this.userService.getByEmail(form.getLoginOrEmail()).orElse(null)));
-      if(userDTO.isPresent()){
-        this.userService.askPasswordChange(userDTO.get().getId());
+      UserDTO userDTO = this.userService.getByIdentifier(form.getLoginOrEmail())
+        .orElse(this.userService.getByEmail(form.getLoginOrEmail()).orElse(null));
+      if (userDTO != null) {
+        this.userService.askPasswordChange(userDTO.getId());
         model.addAttribute("resetPasswordMail", true);
       }
     }
