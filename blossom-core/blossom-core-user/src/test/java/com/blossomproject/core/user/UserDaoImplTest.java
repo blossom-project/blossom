@@ -101,26 +101,6 @@ public class UserDaoImplTest {
   }
 
   @Test
-  public void test_update_entity() throws Exception {
-    User user = new User();
-    user.setFirstname("F");
-    user.setLastname("L");
-    user.setPasswordHash("H");
-    user.setIdentifier("I");
-    user.setDescription("D");
-    user.setEmail("E");
-    user.setLocale(Locale.FRANCE);
-    userDao.create(user);
-
-    User modifiedUser = new User();
-    BeanUtils.copyProperties(user, modifiedUser);
-    modifiedUser.setFirstname("B");
-    Assert.assertEquals("F", user.getFirstname());
-    Assert.assertEquals(user, userDaoImpl.updateEntity(user, modifiedUser));
-    Assert.assertEquals("B", user.getFirstname());
-  }
-
-  @Test
   public void test_update_activation() throws Exception {
     User userToFind = new User();
     userToFind.setActivated(false);

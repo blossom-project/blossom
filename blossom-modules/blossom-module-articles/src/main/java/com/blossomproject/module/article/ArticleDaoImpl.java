@@ -1,29 +1,20 @@
 package com.blossomproject.module.article;
 
-import com.blossomproject.core.common.dao.GenericCrudDaoImpl;
+import com.blossomproject.core.common.dao.BlossomGenericCrudDaoImpl;
 import com.google.common.base.Preconditions;
-
-import java.util.List;
+import org.mapstruct.factory.Mappers;
 
 /**
  * Created by Maël Gargadennnec on 03/05/2017.
  */
-public class ArticleDaoImpl extends GenericCrudDaoImpl<Article> implements ArticleDao {
+public class ArticleDaoImpl extends BlossomGenericCrudDaoImpl<Article> implements ArticleDao {
 
-  private final ArticleRepository articleRepository;
-  public ArticleDaoImpl(ArticleRepository repository) {
-    super(repository);
-    Preconditions.checkNotNull(repository);
-    this.articleRepository=repository;
-  }
+    private final ArticleRepository articleRepository;
 
-  @Override
-  protected Article updateEntity(Article originalEntity, Article modifiedEntity) {
-    originalEntity.setName(modifiedEntity.getName());
-    originalEntity.setSummary(modifiedEntity.getSummary());
-    originalEntity.setContent(modifiedEntity.getContent());
-    originalEntity.setStatus(modifiedEntity.getStatus());
-    return originalEntity;
-  }
+    public ArticleDaoImpl(ArticleRepository repository) {
+        super(repository, Mappers.getMapper(ArticleEntityMapper.class));
+        Preconditions.checkNotNull(repository);
+        this.articleRepository = repository;
+    }
 
 }

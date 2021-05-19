@@ -25,19 +25,21 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Import({DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 public class DaoTestContext {
 
-  @Bean
-  public UserDao userDao(UserRepository userRepository) {
-    return new UserDaoImpl(userRepository);
-  }
+    @Bean
+    public UserDao userDao(UserRepository userRepository) {
+        return new UserDaoImpl(userRepository);
+    }
 
-  @Bean
-  public RoleDao roleDao(RoleRepository roleRepository) {
-    return new RoleDaoImpl(roleRepository);
-  }
+    @Bean
+    public RoleDao roleDao(RoleRepository roleRepository) {
+        return new RoleDaoImpl(roleRepository);
+    }
 
-  @Bean
-  public AssociationUserRoleDao associationUserRoleDao(AssociationUserRoleRepository repository) {
-    return new AssociationUserRoleDaoImpl(repository);
-  }
+    @Bean
+    public AssociationUserRoleDao associationUserRoleDao(UserRepository userRepository,
+            RoleRepository roleRepository,
+            AssociationUserRoleRepository repository) {
+        return new AssociationUserRoleDaoImpl(userRepository, roleRepository, repository);
+    }
 
 }
