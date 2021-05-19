@@ -36,7 +36,6 @@ public class LimitLoginAuthenticationProvider extends DaoAuthenticationProvider 
           .successfulAttempt(authentication.getName(), details.getRemoteAddress());
         return auth;
       } catch (BadCredentialsException e) {
-        userLoginAttemptsService.failAttempt(authentication.getName(), details.getRemoteAddress());
         throw e;
       }
     }

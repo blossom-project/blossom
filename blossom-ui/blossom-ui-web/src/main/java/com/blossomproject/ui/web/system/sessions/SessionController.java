@@ -53,4 +53,9 @@ public class SessionController {
       sessionInformation.expireNow();
     }
   }
+  @PostMapping("/{sessionId}/{ip}/clear")
+  @ResponseBody
+  public void clearSession(@PathVariable("sessionId") String sessionId, @PathVariable("ip") String ip) {
+    loginAttemptsService.clear(sessionId, ip);
+  }
 }

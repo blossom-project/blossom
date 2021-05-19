@@ -94,18 +94,30 @@
             <th><@spring.message "sessions.properties.identifier"/></th>
             <th><@spring.message "sessions.properties.ip_address"/></th>
             <th><@spring.message "sessions.properties.attempts"/></th>
+            <th><@spring.message "sessions.properties.timeLock"/></th>
+            <th><@spring.message "sessions.properties.clear"/></th>
           </tr>
           </thead>
           <tbody>
 
+          <#assign now = .now>
             <#list attempts as identifier, datas>
             <tr>
-              <td rowspan="${datas?keys?size}">${identifier}</td>
-              <#list datas as ip, count>
-                <td>${ip}</td>
-                <td>${count?c}</td>
+              <td rowspan="${datas?size}">${identifier}</td>
+              <#list datas as data>
+                <td>${data.ip}</td>
+                <td>${data.attemptNumber?c}</td>
+                <td><#if data.attemptNumber == 10>${data.hours}h${data.minutes}</#if></td>
+                <td>
+                  <button
+                          class="btn btn-xs btn-danger"
+                          data-action="clearCache"
+                          data-session-ip="${data.ip}"
+                          data-session-id="${identifier}"
+                  >
+                    <i class="fa fa-trash"></i></td>
               </tr>
-                <#if ip?has_next>
+                <#if data_has_next>
                 <tr></#if>
               </#list>
             </#list>
@@ -123,6 +135,14 @@
       var sessionId = $(this).data("session-id");
 
       $.post("sessions/" + sessionId + "/_invalidate", function () {
+        window.location.reload(true);
+      });
+    });
+    $("[data-action='clearCache']").click(function (e) {
+      var sessionId = $(this).data("session-id");
+      var ip = $(this).data("session-ip");
+
+      $.post("sessions/" + sessionId + "/" + ip + "/clear", function () {
         window.location.reload(true);
       });
     });
