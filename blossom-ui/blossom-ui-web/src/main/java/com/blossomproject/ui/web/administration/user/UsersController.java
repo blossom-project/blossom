@@ -117,6 +117,7 @@ public class UsersController {
     }
     try {
       UserDTO user = this.userService.create(userCreateForm);
+      this.userService.setGravatar(user.getId());
       return new ModelAndView("redirect:../users/" + user.getId());
     } catch (Exception e) {
       return this.createView(userCreateForm, model);

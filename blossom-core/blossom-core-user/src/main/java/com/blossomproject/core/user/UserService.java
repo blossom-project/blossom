@@ -45,6 +45,8 @@ public interface UserService extends CrudService<UserDTO> {
 
   void updateAvatar(long id, byte[] avatar);
 
+  void setGravatar(long id) throws IOException;
+
   InputStream loadAvatar(long id) throws IOException;
 
   /**

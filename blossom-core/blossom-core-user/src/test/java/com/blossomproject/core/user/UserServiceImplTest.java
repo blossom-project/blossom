@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -368,4 +369,47 @@ public class UserServiceImplTest {
     new UserServiceImpl(userDao, userMapper, publisher, associationRegistry, passwordEncoder,
       tokenService, userMailService, null);
   }
+
+
+
+  @Test
+  public void test_get_gravatar_url() throws Exception {
+
+    String url = userService.buildGravatarUrl("pimbert@cardiweb.com");
+
+    Assert.assertEquals(url, "http://www.gravatar.com/avatar/6a7e92a6c1a9e2c6e50407bb43f73bed.jpg");
+  }
+
+  @Test
+  public void test_download_gravatar_url() throws Exception {
+
+    byte[] hex = userService.downloadGravatar("pimbert@cardiweb.com");
+
+    int lgth = hex.length;
+
+    Assert.assertEquals(hex[0], -119);
+    Assert.assertEquals(lgth, 11796);
+  }
+
+  @Mock
+  private UserRepository repository;
+
+  @Test
+  public void test_set_gravatar_compare() throws Exception {
+
+    UserDTO userdto = new UserDTO();
+    userdto.setEmail("pimbert@cardiweb.com");
+
+    User user = new User();
+
+    given(userService.getOne(1L)).willReturn(userdto);
+    given(this.userDao.updateAvatar(any(),any())).willReturn(user);
+
+    userService.setGravatar(1L);
+
+    verify(this.userDao, times(1)).updateAvatar(any(), any());
+
+  }
+
+
 }

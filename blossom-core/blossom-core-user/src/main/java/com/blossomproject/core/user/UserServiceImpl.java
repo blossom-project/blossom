@@ -13,13 +13,16 @@ import com.blossomproject.core.common.utils.action_token.ActionTokenService;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.io.IOUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -170,6 +173,34 @@ public class UserServiceImpl extends GenericCrudServiceImpl<UserDTO, User> imple
       this.userDao.updateAvatar(id, avatar);
     }
     this.publisher.publishEvent(new UpdatedEvent<>(this, user));
+  }
+
+  public void setGravatar(long id) throws IOException{
+    UserDTO user = this.getOne(id);
+    if (user != null) {
+      String email = user.getEmail();
+      byte[] hex = downloadGravatar(email);
+      if(!Arrays.equals(downloadGravatar(StringUtils.EMPTY), hex)) {
+        if (hex != null)
+          this.userDao.updateAvatar(id, hex);
+      }
+    }
+  }
+
+  public byte[] downloadGravatar(String email)throws IOException{
+    InputStream stream = null;
+    try {
+      URL url = new URL(buildGravatarUrl(email));
+      stream = url.openStream();
+      return IOUtils.toByteArray(stream);
+    }  finally {
+      IOUtils.closeQuietly(stream);
+    }
+  }
+
+  public String buildGravatarUrl(String email) {
+    String emailHash = DigestUtils.md5Hex(email.toLowerCase().trim());
+    return "http://www.gravatar.com/avatar/" + emailHash + ".jpg";
   }
 
   @Override
