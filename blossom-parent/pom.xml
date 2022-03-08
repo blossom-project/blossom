@@ -22,7 +22,7 @@
     <springboot.version>2.1.9.RELEASE</springboot.version>
     <jna.version>3.0.9</jna.version>
     <bouncycastle.version>1.62</bouncycastle.version>
-    <liquibase.version>3.6.3</liquibase.version>
+    <liquibase.version>4.8.0</liquibase.version>
     <camunda.version>3.2.0</camunda.version>
     <tika.version>1.22</tika.version>
     <powermock.version>2.0.2</powermock.version>
